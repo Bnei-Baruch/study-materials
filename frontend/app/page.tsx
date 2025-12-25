@@ -256,8 +256,7 @@ export default function PublicPage() {
                 >
                   {isRTL ? (
                     <div className="flex items-center justify-between">
-                      <ChevronDown className="w-6 h-6 text-blue-600 transform -rotate-90" />
-                      <div className="text-right">
+                      <div className="text-right flex-1 mr-4">
                         <h2 className="text-xl font-bold text-blue-900 mb-2">
                           {getEventTitle(event)}
                         </h2>
@@ -265,11 +264,11 @@ export default function PublicPage() {
                           {formatDate(event.date)}
                         </p>
                       </div>
+                      <ChevronDown className="w-6 h-6 text-blue-600 transform rotate-90" />
                     </div>
                   ) : (
                     <div className="flex items-center justify-between">
-                      <ChevronDown className="w-6 h-6 text-blue-600 transform rotate-90" />
-                      <div className="text-left flex-1 ml-4">
+                      <div className="text-left flex-1 mr-4">
                         <h2 className="text-xl font-bold text-blue-900 mb-2">
                           {getEventTitle(event)}
                         </h2>
@@ -277,6 +276,7 @@ export default function PublicPage() {
                           {formatDate(event.date)}
                         </p>
                       </div>
+                      <ChevronDown className="w-6 h-6 text-blue-600 transform -rotate-90" />
                     </div>
                   )}
                 </button>
