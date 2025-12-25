@@ -1077,7 +1077,7 @@ export default function EventDetailPage() {
                       )}
 
                       {/* Sources */}
-                      {part.sources.length > 0 && (
+                      {part.sources && part.sources.length > 0 && (
                         <div>
                           <div className="text-sm font-medium text-gray-700 mb-1">Sources:</div>
                           <ul className="text-sm text-gray-600 space-y-1">
