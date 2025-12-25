@@ -104,6 +104,8 @@ export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [editingOrderId, setEditingOrderId] = useState<string | null>(null)
+  const [tempOrder, setTempOrder] = useState<number>(0)
 
   useEffect(() => {
     fetchEvents()
@@ -116,16 +118,60 @@ export default function EventsPage() {
         throw new Error('Failed to fetch events')
       }
       const data = await response.json()
-      // Sort by date descending (newest first)
-      const sorted = (data.events || []).sort((a: Event, b: Event) => 
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-      )
-      setEvents(sorted)
+      // Events are already sorted by backend (order asc, then date desc)
+      setEvents(data.events || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
     }
+  }
+
+  const updateEventOrder = async (eventId: string, newOrder: number) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ order: newOrder }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update order')
+      }
+
+      // Refresh events list
+      await fetchEvents()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to update order')
+    }
+  }
+
+  const startEditOrder = (event: Event, e: React.MouseEvent) => {
+    e.preventDefault() // Prevent navigation
+    e.stopPropagation()
+    setEditingOrderId(event.id)
+    setTempOrder(event.order)
+  }
+
+  const saveOrder = async (eventId: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    await updateEventOrder(eventId, tempOrder)
+    setEditingOrderId(null)
+  }
+
+  const cancelEdit = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setEditingOrderId(null)
+  }
+
+  const adjustOrder = async (event: Event, delta: number, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    await updateEventOrder(event.id, event.order + delta)
   }
 
   if (loading) {
@@ -190,32 +236,95 @@ export default function EventsPage() {
 
                 // Get title in Hebrew (default) or fallback to generated title
                 const eventTitle = event.titles?.he || getDefaultTitle(event.type, 'he')
+                const isEditing = editingOrderId === event.id
 
                 return (
-                  <Link
+                  <div
                     key={event.id}
-                    href={`/events/${event.id}`}
-                    className="block hover:bg-gray-50 transition"
+                    className="hover:bg-gray-50 transition"
                   >
                     <div className="px-6 py-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4 flex-1">
-                          <div className="text-sm text-gray-500 w-40">
-                            {formatDate(event.date)}
+                          {/* Order controls */}
+                          <div className="flex items-center gap-1">
+                            {isEditing ? (
+                              <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                                <input
+                                  type="number"
+                                  value={tempOrder}
+                                  onChange={(e) => setTempOrder(parseInt(e.target.value) || 0)}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="w-16 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                                  autoFocus
+                                />
+                                <button
+                                  onClick={(e) => saveOrder(event.id, e)}
+                                  className="p-1 text-green-600 hover:bg-green-50 rounded"
+                                  title="Save"
+                                >
+                                  ✓
+                                </button>
+                                <button
+                                  onClick={cancelEdit}
+                                  className="p-1 text-gray-600 hover:bg-gray-100 rounded"
+                                  title="Cancel"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={(e) => adjustOrder(event, -1, e)}
+                                  className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+                                  title="Move up"
+                                >
+                                  ▲
+                                </button>
+                                <button
+                                  onClick={(e) => startEditOrder(event, e)}
+                                  className="px-2 py-1 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded min-w-[2rem] text-center"
+                                  title="Click to edit order"
+                                >
+                                  {event.order}
+                                </button>
+                                <button
+                                  onClick={(e) => adjustOrder(event, 1, e)}
+                                  className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+                                  title="Move down"
+                                >
+                                  ▼
+                                </button>
+                              </div>
+                            )}
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-base font-medium text-gray-800">
-                              {eventTitle}
-                            </span>
-                            <span className="text-sm text-gray-500">#{event.number}</span>
-                          </div>
+
+                          {/* Date and title - clickable to navigate */}
+                          <Link
+                            href={`/events/${event.id}`}
+                            className="flex items-center gap-4 flex-1"
+                          >
+                            <div className="text-sm text-gray-500 w-40">
+                              {formatDate(event.date)}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-base font-medium text-gray-800">
+                                {eventTitle}
+                              </span>
+                              <span className="text-sm text-gray-500">#{event.number}</span>
+                            </div>
+                          </Link>
                         </div>
-                        <div className="text-sm text-gray-400">
+                        <Link
+                          href={`/events/${event.id}`}
+                          className="text-sm text-gray-400 hover:text-gray-600"
+                        >
                           →
-                        </div>
+                        </Link>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 )
               })}
             </div>
