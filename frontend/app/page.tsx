@@ -497,13 +497,12 @@ export default function PublicPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
-                          title={t('readSource')}
                         >
                           <BookOpen className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
                           <div className="flex-1">
-                            <span className={colors.text}>{source.source_title}</span>
+                            <span className={colors.text}>{t('readSource')}</span>
                             {source.page_number && (
-                              <span className="text-gray-600 text-sm mr-2">
+                              <span className="text-gray-600 text-sm ml-2">
                                 {` ${t('page')} ${source.page_number}`}
                               </span>
                             )}
