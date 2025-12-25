@@ -202,6 +202,7 @@ export default function PublicPage() {
   }
 
   const handleEventClick = (event: Event) => {
+    console.log('Event clicked:', event.id, event.titles?.he)
     setSelectedEvent(event)
     setParts([])
     setExpandedParts(new Set())
@@ -229,16 +230,6 @@ export default function PublicPage() {
       dir={isRTL ? 'rtl' : 'ltr'}
     >
       <div className="max-w-2xl mx-auto px-6 py-12">
-        {/* Admin Link (top-right) */}
-        <div className={`${isRTL ? 'text-left' : 'text-right'} mb-4`}>
-          <a
-            href="/events"
-            className="text-sm text-blue-600 hover:text-blue-800 underline"
-          >
-            {language === 'he' ? 'ממשק ניהול' : 'Admin Interface'}
-          </a>
-        </div>
-
         {/* Header with Language Selector */}
         <div className="text-center mb-12">
           <div className="inline-block bg-white rounded-2xl shadow-lg px-8 py-6 mb-4">
