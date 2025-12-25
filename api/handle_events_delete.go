@@ -47,3 +47,4 @@ func (a *App) HandleDeleteEvent(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Deleted event %s and %d parts\n", eventID, deletedParts)
 	w.WriteHeader(http.StatusNoContent)
 }
+

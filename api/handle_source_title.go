@@ -34,3 +34,4 @@ func (a *App) HandleGetSourceTitle(w http.ResponseWriter, r *http.Request) {
 		"url":   fmt.Sprintf("https://kabbalahmedia.info/sources/%s", sourceID),
 	})
 }
+

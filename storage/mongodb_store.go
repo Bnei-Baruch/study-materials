@@ -171,3 +171,4 @@ func (s *MongoDBStore) Close() error {
 	defer cancel()
 	return s.client.Disconnect(ctx)
 }
+

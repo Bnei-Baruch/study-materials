@@ -11,3 +11,4 @@ echo "Stopping frontend..."
 pkill -f "next dev"
 
 echo "✅ All servers stopped"
+

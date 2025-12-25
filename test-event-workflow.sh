@@ -117,3 +117,4 @@ echo "  - Part 2 ID: $PART2_ID (Order: 2)"
 echo ""
 echo "🎉 You can now view this in the UI:"
 echo "   http://localhost:3000/events/$EVENT_ID"
+

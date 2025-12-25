@@ -43,3 +43,4 @@ curl -s "http://localhost:8080/api/parts/$PART_ID" | jq '.'
 echo ""
 
 echo "✅ POC API test complete!"
+

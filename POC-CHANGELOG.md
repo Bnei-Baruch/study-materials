@@ -50,3 +50,4 @@ curl "http://localhost:8080/api/sources/search?q=preface"
 - Backend: `storage/`, `integrations/`, `api/handle_parts_poc.go`, etc.
 - Frontend: `frontend/app/page.tsx`, `frontend/components/SourceSearch.tsx`
 - Docs: `POC-README.md`, `START-POC.sh`, `STOP-SERVERS.sh`
+

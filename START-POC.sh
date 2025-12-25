@@ -41,3 +41,4 @@ sleep 5
 echo "✅ POC should be ready now!"
 echo ""
 echo "Open http://localhost:3000 in your browser"
+

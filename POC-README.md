@@ -192,3 +192,4 @@ After POC validation, expand to:
 
 Backend running on: http://localhost:8080
 Frontend running on: http://localhost:3000
+
