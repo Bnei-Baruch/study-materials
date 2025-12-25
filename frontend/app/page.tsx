@@ -292,6 +292,17 @@ export default function PublicPage() {
               <ChevronDown className={`w-5 h-5 transform ${isRTL ? 'rotate-90' : 'rotate-90'}`} />
               {language === 'he' ? 'חזרה לרשימת אירועים' : 'Back to events'}
             </button>
+            
+            {/* Event Title Header */}
+            <div className="mb-8 text-center">
+              <h1 className="text-3xl font-bold text-blue-900 mb-2">
+                {getEventTitle(selectedEvent)}
+              </h1>
+              <p className="text-gray-600 text-lg">
+                {formatDate(selectedEvent.date)}
+              </p>
+            </div>
+
             <div className="space-y-6">
               {parts.map((part) => {
             const colors = getPartColorClasses(part.order)
