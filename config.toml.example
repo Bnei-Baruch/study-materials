@@ -1,0 +1,11 @@
+[server]
+bind-address = ":8080"
+
+[app]
+# Password for Google Apps Script to authenticate sync requests
+app-script-pass = "change-this-to-a-secure-password"
+
+# Maximum number of lessons to keep per language
+max-lessons-per-language = 5
+
+
