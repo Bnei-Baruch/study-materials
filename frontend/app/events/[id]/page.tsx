@@ -12,6 +12,16 @@ interface Event {
   date: string
   type: string
   number: number
+  titles?: {
+    he?: string
+    en?: string
+    ru?: string
+    es?: string
+    de?: string
+    it?: string
+    fr?: string
+    uk?: string
+  }
   public: boolean
   created_at: string
 }
@@ -57,6 +67,8 @@ export default function EventDetailPage() {
   const [selectedLanguage, setSelectedLanguage] = useState('he')
   const [editingPartId, setEditingPartId] = useState<string | null>(null)
   const [editedPart, setEditedPart] = useState<Part | null>(null)
+  const [showTitleEdit, setShowTitleEdit] = useState(false)
+  const [editedTitles, setEditedTitles] = useState<{ [key: string]: string }>({})
 
   const languageNames: { [key: string]: string } = {
     he: '🇮🇱 עברית',
@@ -290,6 +302,118 @@ export default function EventDetailPage() {
     }
   }
 
+  // Helper function to get default title for an event type in a specific language
+  const getDefaultTitle = (eventType: string, lang: string): string => {
+    const defaults: { [type: string]: { [lang: string]: string } } = {
+      morning_lesson: {
+        he: 'שיעור בוקר',
+        en: 'Morning Lesson',
+        ru: 'Утренний урок',
+        es: 'Lección matutina',
+        de: 'Morgenlektion',
+        it: 'Lezione mattutina',
+        fr: 'Leçon du matin',
+        uk: 'Ранковий урок',
+      },
+      noon_lesson: {
+        he: 'שיעור צהריים',
+        en: 'Noon Lesson',
+        ru: 'Дневной урок',
+        es: 'Lección del mediodía',
+        de: 'Mittagslektion',
+        it: 'Lezione di mezzogiorno',
+        fr: 'Leçon de midi',
+        uk: 'Денний урок',
+      },
+      evening_lesson: {
+        he: 'שיעור ערב',
+        en: 'Evening Lesson',
+        ru: 'Вечерний урок',
+        es: 'Lección nocturna',
+        de: 'Abendlektion',
+        it: 'Lezione serale',
+        fr: 'Leçon du soir',
+        uk: 'Вечірній урок',
+      },
+      meal: {
+        he: 'סעודה',
+        en: 'Meal',
+        ru: 'Трапеза',
+        es: 'Comida',
+        de: 'Mahlzeit',
+        it: 'Pasto',
+        fr: 'Repas',
+        uk: 'Трапеза',
+      },
+      convention: {
+        he: 'כנס',
+        en: 'Convention',
+        ru: 'Конгресс',
+        es: 'Congreso',
+        de: 'Kongress',
+        it: 'Congresso',
+        fr: 'Congrès',
+        uk: 'Конгрес',
+      },
+      lecture: {
+        he: 'הרצאה',
+        en: 'Lecture',
+        ru: 'Лекция',
+        es: 'Conferencia',
+        de: 'Vortrag',
+        it: 'Conferenza',
+        fr: 'Conférence',
+        uk: 'Лекція',
+      },
+      other: {
+        he: 'אחר',
+        en: 'Other',
+        ru: 'Другое',
+        es: 'Otro',
+        de: 'Andere',
+        it: 'Altro',
+        fr: 'Autre',
+        uk: 'Інше',
+      },
+    }
+
+    return defaults[eventType]?.[lang] || defaults['morning_lesson']?.[lang] || 'Event'
+  }
+
+  const startTitleEdit = () => {
+    if (!event) return
+    // Initialize with current titles or empty
+    const currentTitles = event.titles || {}
+    setEditedTitles(currentTitles)
+    setShowTitleEdit(true)
+  }
+
+  const saveTitles = async () => {
+    if (!event) return
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          titles: editedTitles,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update event titles')
+      }
+
+      // Refresh event data
+      await fetchEventAndParts()
+      setShowTitleEdit(false)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to update titles')
+    }
+  }
+
   const handlePartCreated = () => {
     setShowPartForm(false)
     fetchEventAndParts() // Refresh the parts list
@@ -357,6 +481,12 @@ export default function EventDetailPage() {
             </div>
             <div className="flex gap-2">
               <button
+                onClick={startTitleEdit}
+                className="px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition"
+              >
+                ✏️ Edit Titles
+              </button>
+              <button
                 onClick={togglePublic}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                   event.public
@@ -383,6 +513,44 @@ export default function EventDetailPage() {
           <div className="text-sm text-gray-500">
             Event ID: {event.id}
           </div>
+
+          {/* Title Edit Form */}
+          {showTitleEdit && (
+            <div className="mt-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Edit Event Titles</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                {Object.entries(languageNames).map(([code, name]) => (
+                  <div key={code}>
+                    <label htmlFor={`title-${code}`} className="block text-sm font-medium text-gray-700 mb-1">
+                      {name}
+                    </label>
+                    <input
+                      id={`title-${code}`}
+                      type="text"
+                      value={editedTitles[code] || ''}
+                      onChange={(e) => setEditedTitles({ ...editedTitles, [code]: e.target.value })}
+                      placeholder={getDefaultTitle(event.type, code)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition text-gray-900"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={saveTitles}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition"
+                >
+                  💾 Save Titles
+                </button>
+                <button
+                  onClick={() => setShowTitleEdit(false)}
+                  className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-lg text-sm font-medium transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Language Selector */}

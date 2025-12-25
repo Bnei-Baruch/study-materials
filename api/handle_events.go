@@ -58,11 +58,24 @@ func (a *App) HandleCreateEvent(w http.ResponseWriter, r *http.Request) {
 		isPublic = *req.Public
 	}
 
+	// Generate default titles for the event type
+	titles := getDefaultTitles(req.Type)
+	
+	// Merge user-provided titles with defaults (user overrides take precedence)
+	if req.Titles != nil {
+		for lang, title := range req.Titles {
+			if title != "" {
+				titles[lang] = title
+			}
+		}
+	}
+
 	// Create event
 	event := &storage.Event{
 		Date:   date,
 		Type:   req.Type,
 		Number: req.Number,
+		Titles: titles,
 		Public: isPublic,
 	}
 
@@ -104,4 +117,86 @@ func (a *App) HandleListEvents(w http.ResponseWriter, r *http.Request) {
 		"events": events,
 		"total":  len(events),
 	})
+}
+
+// getDefaultTitles returns default titles for an event type in all supported languages
+func getDefaultTitles(eventType string) map[string]string {
+	defaults := map[string]map[string]string{
+		"morning_lesson": {
+			"he": "שיעור בוקר",
+			"en": "Morning Lesson",
+			"ru": "Утренний урок",
+			"es": "Lección matutina",
+			"de": "Morgenlektion",
+			"it": "Lezione mattutina",
+			"fr": "Leçon du matin",
+			"uk": "Ранковий урок",
+		},
+		"noon_lesson": {
+			"he": "שיעור צהריים",
+			"en": "Noon Lesson",
+			"ru": "Дневной урок",
+			"es": "Lección del mediodía",
+			"de": "Mittagslektion",
+			"it": "Lezione di mezzogiorno",
+			"fr": "Leçon de midi",
+			"uk": "Денний урок",
+		},
+		"evening_lesson": {
+			"he": "שיעור ערב",
+			"en": "Evening Lesson",
+			"ru": "Вечерний урок",
+			"es": "Lección nocturna",
+			"de": "Abendlektion",
+			"it": "Lezione serale",
+			"fr": "Leçon du soir",
+			"uk": "Вечірній урок",
+		},
+		"meal": {
+			"he": "סעודה",
+			"en": "Meal",
+			"ru": "Трапеза",
+			"es": "Comida",
+			"de": "Mahlzeit",
+			"it": "Pasto",
+			"fr": "Repas",
+			"uk": "Трапеза",
+		},
+		"convention": {
+			"he": "כנס",
+			"en": "Convention",
+			"ru": "Конгресс",
+			"es": "Congreso",
+			"de": "Kongress",
+			"it": "Congresso",
+			"fr": "Congrès",
+			"uk": "Конгрес",
+		},
+		"lecture": {
+			"he": "הרצאה",
+			"en": "Lecture",
+			"ru": "Лекция",
+			"es": "Conferencia",
+			"de": "Vortrag",
+			"it": "Conferenza",
+			"fr": "Conférence",
+			"uk": "Лекція",
+		},
+		"other": {
+			"he": "אחר",
+			"en": "Other",
+			"ru": "Другое",
+			"es": "Otro",
+			"de": "Andere",
+			"it": "Altro",
+			"fr": "Autre",
+			"uk": "Інше",
+		},
+	}
+	
+	if titles, ok := defaults[eventType]; ok {
+		return titles
+	}
+	// Fallback to morning_lesson if type is unknown
+	return defaults["morning_lesson"]
 }

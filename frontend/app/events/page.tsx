@@ -8,7 +8,95 @@ interface Event {
   date: string
   type: string
   number: number
+  titles?: {
+    he?: string
+    en?: string
+    ru?: string
+    es?: string
+    de?: string
+    it?: string
+    fr?: string
+    uk?: string
+  }
   created_at: string
+}
+
+// Helper function to get default title for an event type in a specific language
+function getDefaultTitle(eventType: string, lang: string): string {
+  const defaults: { [type: string]: { [lang: string]: string } } = {
+    morning_lesson: {
+      he: 'שיעור בוקר',
+      en: 'Morning Lesson',
+      ru: 'Утренний урок',
+      es: 'Lección matutina',
+      de: 'Morgenlektion',
+      it: 'Lezione mattutina',
+      fr: 'Leçon du matin',
+      uk: 'Ранковий урок',
+    },
+    noon_lesson: {
+      he: 'שיעור צהריים',
+      en: 'Noon Lesson',
+      ru: 'Дневной урок',
+      es: 'Lección del mediodía',
+      de: 'Mittagslektion',
+      it: 'Lezione di mezzogiorno',
+      fr: 'Leçon de midi',
+      uk: 'Денний урок',
+    },
+    evening_lesson: {
+      he: 'שיעור ערב',
+      en: 'Evening Lesson',
+      ru: 'Вечерний урок',
+      es: 'Lección nocturna',
+      de: 'Abendlektion',
+      it: 'Lezione serale',
+      fr: 'Leçon du soir',
+      uk: 'Вечірній урок',
+    },
+    meal: {
+      he: 'סעודה',
+      en: 'Meal',
+      ru: 'Трапеза',
+      es: 'Comida',
+      de: 'Mahlzeit',
+      it: 'Pasto',
+      fr: 'Repas',
+      uk: 'Трапеза',
+    },
+    convention: {
+      he: 'כנס',
+      en: 'Convention',
+      ru: 'Конгресс',
+      es: 'Congreso',
+      de: 'Kongress',
+      it: 'Congresso',
+      fr: 'Congrès',
+      uk: 'Конгрес',
+    },
+    lecture: {
+      he: 'הרצאה',
+      en: 'Lecture',
+      ru: 'Лекция',
+      es: 'Conferencia',
+      de: 'Vortrag',
+      it: 'Conferenza',
+      fr: 'Conférence',
+      uk: 'Лекція',
+    },
+    other: {
+      he: 'אחר',
+      en: 'Other',
+      ru: 'Другое',
+      es: 'Otro',
+      de: 'Andere',
+      it: 'Altro',
+      fr: 'Autre',
+      uk: 'Інше',
+    },
+  }
+
+  return defaults[eventType]?.[lang] || defaults['morning_lesson']?.[lang] || 'Event'
 }
 
 export default function EventsPage() {
@@ -99,24 +187,8 @@ export default function EventsPage() {
                   }).format(date)
                 }
 
-                const eventTypeColors = {
-                  daily_lesson: 'bg-blue-100 text-blue-800',
-                  meal: 'bg-green-100 text-green-800',
-                  convention: 'bg-purple-100 text-purple-800',
-                  lecture: 'bg-yellow-100 text-yellow-800',
-                  other: 'bg-gray-100 text-gray-800',
-                }
-
-                const eventTypeLabels = {
-                  daily_lesson: 'Daily Lesson',
-                  meal: 'Meal',
-                  convention: 'Convention',
-                  lecture: 'Lecture',
-                  other: 'Other',
-                }
-
-                const colorClass = eventTypeColors[event.type as keyof typeof eventTypeColors] || eventTypeColors.other
-                const label = eventTypeLabels[event.type as keyof typeof eventTypeLabels] || event.type
+                // Get title in Hebrew (default) or fallback to generated title
+                const eventTitle = event.titles?.he || getDefaultTitle(event.type, 'he')
 
                 return (
                   <Link
@@ -127,14 +199,14 @@ export default function EventsPage() {
                     <div className="px-6 py-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4 flex-1">
-                          <div className="text-sm text-gray-500 w-32">
+                          <div className="text-sm text-gray-500 w-40">
                             {formatDate(event.date)}
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}>
-                              {label}
+                            <span className="text-base font-medium text-gray-800">
+                              {eventTitle}
                             </span>
-                            <span className="text-sm text-gray-600">#{event.number}</span>
+                            <span className="text-sm text-gray-500">#{event.number}</span>
                           </div>
                         </div>
                         <div className="text-sm text-gray-400">

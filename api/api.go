@@ -71,6 +71,7 @@ func (a *App) initRouters() {
 	a.router.HandleFunc("/api/events", a.HandleCreateEvent).Methods(http.MethodPost)
 	a.router.HandleFunc("/api/events", a.HandleListEvents).Methods(http.MethodGet)
 	a.router.HandleFunc("/api/events/{id}", a.HandleGetEvent).Methods(http.MethodGet)
+	a.router.HandleFunc("/api/events/{id}", a.HandleUpdateEvent).Methods(http.MethodPut)
 	a.router.HandleFunc("/api/events/{id}", a.HandleDeleteEvent).Methods(http.MethodDelete)
 	a.router.HandleFunc("/api/events/{id}/duplicate", a.HandleDuplicateEvent).Methods(http.MethodPost)
 	a.router.HandleFunc("/api/events/{id}/toggle-public", a.HandleToggleEventPublic).Methods(http.MethodPut)
