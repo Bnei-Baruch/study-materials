@@ -82,6 +82,7 @@ const TRANSLATIONS = {
     originalDate: 'תאריך השיעור המקורי: ',
     page: 'עמ\'',
     copyLink: 'העתק קישור',
+    readSource: 'לקריאת המקור',
     readingBeforeSleep: 'קטע הכנה לשינה',
     lessonPreparation: 'מסמך הכנה לשיעור',
     watchLesson: 'צפייה בשיעור',
@@ -95,6 +96,7 @@ const TRANSLATIONS = {
     originalDate: 'Original lesson date: ',
     page: 'p.',
     copyLink: 'Copy link',
+    readSource: 'Read the source',
     readingBeforeSleep: 'Reading Before Sleep',
     lessonPreparation: 'Lesson Preparation',
     watchLesson: 'Watch Lesson',
@@ -108,6 +110,7 @@ const TRANSLATIONS = {
     originalDate: 'Дата оригинального урока: ',
     page: 'стр.',
     copyLink: 'Копировать ссылку',
+    readSource: 'Читать источник',
     readingBeforeSleep: 'Чтение перед сном',
     lessonPreparation: 'Подготовка к уроку',
     watchLesson: 'Смотреть урок',
@@ -121,6 +124,7 @@ const TRANSLATIONS = {
     originalDate: 'Fecha de la lección original: ',
     page: 'p.',
     copyLink: 'Copiar enlace',
+    readSource: 'Leer la fuente',
     readingBeforeSleep: 'Lectura antes de dormir',
     lessonPreparation: 'Preparación de la lección',
     watchLesson: 'Ver lección',
@@ -134,6 +138,7 @@ const TRANSLATIONS = {
     originalDate: 'Ursprüngliches Lektionsdatum: ',
     page: 'S.',
     copyLink: 'Link kopieren',
+    readSource: 'Quelle lesen',
     readingBeforeSleep: 'Lesen vor dem Schlafengehen',
     lessonPreparation: 'Lektionsvorbereitung',
     watchLesson: 'Lektion ansehen',
@@ -147,6 +152,7 @@ const TRANSLATIONS = {
     originalDate: 'Data della lezione originale: ',
     page: 'p.',
     copyLink: 'Copia link',
+    readSource: 'Leggi la fonte',
     readingBeforeSleep: 'Lettura prima di dormire',
     lessonPreparation: 'Preparazione della lezione',
     watchLesson: 'Guarda la lezione',
@@ -160,6 +166,7 @@ const TRANSLATIONS = {
     originalDate: 'Date de la leçon originale: ',
     page: 'p.',
     copyLink: 'Copier le lien',
+    readSource: 'Lire la source',
     readingBeforeSleep: 'Lecture avant de dormir',
     lessonPreparation: 'Préparation de la leçon',
     watchLesson: 'Regarder la leçon',
@@ -173,6 +180,7 @@ const TRANSLATIONS = {
     originalDate: 'Дата оригінального уроку: ',
     page: 'стор.',
     copyLink: 'Копіювати посилання',
+    readSource: 'Читати джерело',
     readingBeforeSleep: 'Читання перед сном',
     lessonPreparation: 'Підготовка до уроку',
     watchLesson: 'Дивитися урок',
@@ -489,6 +497,7 @@ export default function PublicPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
+                          title={t('readSource')}
                         >
                           <BookOpen className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
                           <div className="flex-1">
