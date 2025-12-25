@@ -2,6 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 interface Event {
   id: string
@@ -100,12 +117,107 @@ function getDefaultTitle(eventType: string, lang: string): string {
   return defaults[eventType]?.[lang] || defaults['morning_lesson']?.[lang] || 'Event'
 }
 
+// Sortable event item component
+function SortableEventItem({ event }: { event: Event }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: event.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return new Intl.DateTimeFormat('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(date)
+  }
+
+  // Get title in Hebrew (default) or fallback to generated title
+  const eventTitle = event.titles?.he || getDefaultTitle(event.type, 'he')
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="hover:bg-gray-50 transition border-b border-gray-200 last:border-b-0"
+    >
+      <div className="px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4 flex-1">
+            {/* Drag handle */}
+            <div
+              {...attributes}
+              {...listeners}
+              className="cursor-grab active:cursor-grabbing p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+              title="Drag to reorder"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="4" cy="4" r="1.5" />
+                <circle cx="4" cy="8" r="1.5" />
+                <circle cx="4" cy="12" r="1.5" />
+                <circle cx="12" cy="4" r="1.5" />
+                <circle cx="12" cy="8" r="1.5" />
+                <circle cx="12" cy="12" r="1.5" />
+              </svg>
+            </div>
+
+            {/* Date and title - clickable to navigate */}
+            <Link
+              href={`/events/${event.id}`}
+              className="flex items-center gap-4 flex-1"
+            >
+              <div className="text-sm text-gray-500 w-40">
+                {formatDate(event.date)}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-medium text-gray-800">
+                  {eventTitle}
+                </span>
+                <span className="text-sm text-gray-500">#{event.number}</span>
+              </div>
+            </Link>
+          </div>
+          <Link
+            href={`/events/${event.id}`}
+            className="text-sm text-gray-400 hover:text-gray-600"
+          >
+            →
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [editingOrderId, setEditingOrderId] = useState<string | null>(null)
-  const [tempOrder, setTempOrder] = useState<number>(0)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
 
   useEffect(() => {
     fetchEvents()
@@ -127,51 +239,38 @@ export default function EventsPage() {
     }
   }
 
-  const updateEventOrder = async (eventId: string, newOrder: number) => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ order: newOrder }),
-      })
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
 
-      if (!response.ok) {
-        throw new Error('Failed to update order')
+    if (over && active.id !== over.id) {
+      const oldIndex = events.findIndex((e) => e.id === active.id)
+      const newIndex = events.findIndex((e) => e.id === over.id)
+
+      // Optimistically update UI
+      const newEvents = arrayMove(events, oldIndex, newIndex)
+      setEvents(newEvents)
+
+      // Update order values on backend
+      try {
+        // Update all affected events with their new order
+        for (let i = 0; i < newEvents.length; i++) {
+          const eventToUpdate = newEvents[i]
+          await fetch(`http://localhost:8080/api/events/${eventToUpdate.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ order: i }),
+          })
+        }
+        // Refresh to ensure consistency
+        await fetchEvents()
+      } catch (err) {
+        alert(err instanceof Error ? err.message : 'Failed to update order')
+        // Revert on error
+        await fetchEvents()
       }
-
-      // Refresh events list
-      await fetchEvents()
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to update order')
     }
-  }
-
-  const startEditOrder = (event: Event, e: React.MouseEvent) => {
-    e.preventDefault() // Prevent navigation
-    e.stopPropagation()
-    setEditingOrderId(event.id)
-    setTempOrder(event.order)
-  }
-
-  const saveOrder = async (eventId: string, e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    await updateEventOrder(eventId, tempOrder)
-    setEditingOrderId(null)
-  }
-
-  const cancelEdit = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setEditingOrderId(null)
-  }
-
-  const adjustOrder = async (event: Event, delta: number, e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    await updateEventOrder(event.id, event.order + delta)
   }
 
   if (loading) {
@@ -222,112 +321,20 @@ export default function EventsPage() {
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <div className="divide-y divide-gray-200">
-              {events.map((event) => {
-                const formatDate = (dateString: string) => {
-                  const date = new Date(dateString)
-                  return new Intl.DateTimeFormat('en-US', {
-                    weekday: 'short',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  }).format(date)
-                }
-
-                // Get title in Hebrew (default) or fallback to generated title
-                const eventTitle = event.titles?.he || getDefaultTitle(event.type, 'he')
-                const isEditing = editingOrderId === event.id
-
-                return (
-                  <div
-                    key={event.id}
-                    className="hover:bg-gray-50 transition"
-                  >
-                    <div className="px-6 py-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4 flex-1">
-                          {/* Order controls */}
-                          <div className="flex items-center gap-1">
-                            {isEditing ? (
-                              <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                                <input
-                                  type="number"
-                                  value={tempOrder}
-                                  onChange={(e) => setTempOrder(parseInt(e.target.value) || 0)}
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="w-16 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
-                                  autoFocus
-                                />
-                                <button
-                                  onClick={(e) => saveOrder(event.id, e)}
-                                  className="p-1 text-green-600 hover:bg-green-50 rounded"
-                                  title="Save"
-                                >
-                                  ✓
-                                </button>
-                                <button
-                                  onClick={cancelEdit}
-                                  className="p-1 text-gray-600 hover:bg-gray-100 rounded"
-                                  title="Cancel"
-                                >
-                                  ✕
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-1">
-                                <button
-                                  onClick={(e) => adjustOrder(event, -1, e)}
-                                  className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
-                                  title="Move up"
-                                >
-                                  ▲
-                                </button>
-                                <button
-                                  onClick={(e) => startEditOrder(event, e)}
-                                  className="px-2 py-1 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded min-w-[2rem] text-center"
-                                  title="Click to edit order"
-                                >
-                                  {event.order}
-                                </button>
-                                <button
-                                  onClick={(e) => adjustOrder(event, 1, e)}
-                                  className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
-                                  title="Move down"
-                                >
-                                  ▼
-                                </button>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Date and title - clickable to navigate */}
-                          <Link
-                            href={`/events/${event.id}`}
-                            className="flex items-center gap-4 flex-1"
-                          >
-                            <div className="text-sm text-gray-500 w-40">
-                              {formatDate(event.date)}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-base font-medium text-gray-800">
-                                {eventTitle}
-                              </span>
-                              <span className="text-sm text-gray-500">#{event.number}</span>
-                            </div>
-                          </Link>
-                        </div>
-                        <Link
-                          href={`/events/${event.id}`}
-                          className="text-sm text-gray-400 hover:text-gray-600"
-                        >
-                          →
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={events.map((e) => e.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {events.map((event) => (
+                  <SortableEventItem key={event.id} event={event} />
+                ))}
+              </SortableContext>
+            </DndContext>
           </div>
         )}
       </div>
