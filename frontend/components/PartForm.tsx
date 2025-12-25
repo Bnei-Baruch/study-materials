@@ -160,6 +160,10 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       setReadingBeforeSleepLink('https://goo.gl/zCBDD4')
       setLessonPreparationLink('https://docs.google.com/document/d/1uHtE1U7sgWCumeWUc5jyE2dfECqj09DZgaPQys-jbzs/edit')
     } else {
+      // Clear title if it was a preparation title
+      if (order === 0 && Object.values(preparationTitles).includes(title)) {
+        setTitle('')
+      }
       // Clear preparation links when switching to regular part
       setReadingBeforeSleepLink('')
       setLessonPreparationLink('')
