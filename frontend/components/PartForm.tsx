@@ -111,6 +111,19 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
         uk: 'Бесіди на шляху',
       }
     },
+    {
+      id: 'studying_friends',
+      translations: {
+        he: 'לימוד בין חברים',
+        en: 'Studying with Friends',
+        ru: 'Учеба в кругу друзей',
+        es: 'Estudio entre amigos',
+        de: 'Lernen mit Freunden',
+        it: 'Studio tra amici',
+        fr: 'Étudier avec des amis',
+        uk: 'Навчання з друзями',
+      }
+    },
   ]
 
   // Calculate next order number based on existing parts
