@@ -254,7 +254,7 @@ export default function PublicPage() {
                   className="w-full bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow"
                   dir={isRTL ? 'rtl' : 'ltr'}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className={`flex items-center justify-between ${isRTL ? '' : 'flex-row-reverse'}`}>
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <h2 className="text-xl font-bold text-blue-900 mb-2">
                         {getEventTitle(event)}
