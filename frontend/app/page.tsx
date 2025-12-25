@@ -270,11 +270,10 @@ export default function PublicPage() {
 
         {/* Content */}
         <div className="max-w-2xl mx-auto">
-
-        {/* Events List or Parts View */}
-        {!selectedEvent ? (
-          // Events List
-          <div className="space-y-4">
+          {/* Events List or Parts View */}
+          {!selectedEvent ? (
+            // Events List
+            <div className="space-y-4">
             {events.length === 0 ? (
               <div className="text-center text-gray-600 py-12">
                 {language === 'he' ? 'אין אירועים זמינים' : 'No events available'}
