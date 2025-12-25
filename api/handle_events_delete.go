@@ -13,7 +13,7 @@ func (a *App) HandleDeleteEvent(w http.ResponseWriter, r *http.Request) {
 	eventID := vars["id"]
 
 	// Verify event exists
-	_, err := a.store.GetEvent(eventID)
+	_, err := a.eventStore.GetEvent(eventID)
 	if err != nil {
 		http.Error(w, "Event not found", http.StatusNotFound)
 		return
@@ -39,7 +39,7 @@ func (a *App) HandleDeleteEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Delete the event
-	if err := a.store.DeleteEvent(eventID); err != nil {
+	if err := a.eventStore.DeleteEvent(eventID); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to delete event: %v", err), http.StatusInternalServerError)
 		return
 	}

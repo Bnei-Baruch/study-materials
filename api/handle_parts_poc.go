@@ -59,7 +59,7 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 
 	// If event_id is provided, verify event exists
 	if req.EventID != "" {
-		_, err := a.store.GetEvent(req.EventID)
+		_, err := a.eventStore.GetEvent(req.EventID)
 		if err != nil {
 			http.Error(w, "Event not found", http.StatusNotFound)
 			return
@@ -265,7 +265,7 @@ func (a *App) HandleGetEventParts(w http.ResponseWriter, r *http.Request) {
 	languageFilter := r.URL.Query().Get("language")
 
 	// Verify event exists
-	_, err := a.store.GetEvent(eventID)
+	_, err := a.eventStore.GetEvent(eventID)
 	if err != nil {
 		http.Error(w, "Event not found", http.StatusNotFound)
 		return

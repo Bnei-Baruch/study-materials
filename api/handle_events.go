@@ -87,7 +87,7 @@ func (a *App) HandleCreateEvent(w http.ResponseWriter, r *http.Request) {
 		Public: isPublic,
 	}
 
-	if err := a.store.SaveEvent(event); err != nil {
+	if err := a.eventStore.SaveEvent(event); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to save event: %v", err), http.StatusInternalServerError)
 		return
 	}
@@ -102,7 +102,7 @@ func (a *App) HandleGetEvent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	event, err := a.store.GetEvent(id)
+	event, err := a.eventStore.GetEvent(id)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Event not found: %v", err), http.StatusNotFound)
 		return
@@ -114,7 +114,7 @@ func (a *App) HandleGetEvent(w http.ResponseWriter, r *http.Request) {
 
 // HandleListEvents lists all events sorted by order (asc) and date (desc)
 func (a *App) HandleListEvents(w http.ResponseWriter, r *http.Request) {
-	events, err := a.store.ListEvents()
+	events, err := a.eventStore.ListEvents()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to list events: %v", err), http.StatusInternalServerError)
 		return

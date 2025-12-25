@@ -19,7 +19,7 @@ func (a *App) HandleToggleEventPublic(w http.ResponseWriter, r *http.Request) {
 	eventId := vars["id"]
 
 	// Get existing event
-	event, err := a.store.GetEvent(eventId)
+	event, err := a.eventStore.GetEvent(eventId)
 	if err != nil {
 		http.Error(w, "Event not found", http.StatusNotFound)
 		return
@@ -36,7 +36,7 @@ func (a *App) HandleToggleEventPublic(w http.ResponseWriter, r *http.Request) {
 	event.Public = req.Public
 
 	// Save updated event
-	if err := a.store.SaveEvent(event); err != nil {
+	if err := a.eventStore.SaveEvent(event); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to update event: %v", err), http.StatusInternalServerError)
 		return
 	}

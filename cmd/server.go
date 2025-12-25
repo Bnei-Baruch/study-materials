@@ -23,16 +23,55 @@ func init() {
 }
 
 func serverFn(cmd *cobra.Command, args []string) {
-	// Initialize JSON storage for POC
-	dataDir := viper.GetString("storage.data_dir")
-	if dataDir == "" {
-		dataDir = "./data" // Default
+	// Determine storage type
+	storageType := viper.GetString("storage.type")
+	if storageType == "" {
+		storageType = "mongodb" // Default to MongoDB
 	}
-	store, err := storage.NewStore(dataDir)
-	if err != nil {
-		log.Fatalf("Failed to initialize storage: %v", err)
+
+	var partStore storage.PartStore
+	var eventStore storage.EventStore
+
+	if storageType == "mongodb" {
+		// Initialize MongoDB storage
+		mongoURI := viper.GetString("mongodb.uri")
+		if mongoURI == "" {
+			mongoURI = "mongodb://localhost:27017"
+		}
+		mongoDatabase := viper.GetString("mongodb.database")
+		if mongoDatabase == "" {
+			mongoDatabase = "study_materials_db"
+		}
+
+		mongoPartStore, err := storage.NewMongoDBStore(mongoURI, mongoDatabase)
+		if err != nil {
+			log.Fatalf("Failed to initialize MongoDB storage: %v", err)
+		}
+		partStore = mongoPartStore
+
+		// Create event store using the same MongoDB database
+		mongoEventStore, err := storage.NewMongoDBEventStore(mongoPartStore.GetDatabase())
+		if err != nil {
+			log.Fatalf("Failed to initialize MongoDB event store: %v", err)
+		}
+		eventStore = mongoEventStore
+
+		log.Printf("Initialized MongoDB storage: %s/%s", mongoURI, mongoDatabase)
+	} else {
+		// Initialize JSON storage (for backward compatibility)
+		dataDir := viper.GetString("storage.data_dir")
+		if dataDir == "" {
+			dataDir = "./data"
+		}
+		jsonStore, err := storage.NewStore(dataDir)
+		if err != nil {
+			log.Fatalf("Failed to initialize storage: %v", err)
+		}
+		// JSON store implements both interfaces
+		partStore = jsonStore
+		eventStore = jsonStore
+		log.Printf("Initialized JSON storage at: %s", dataDir)
 	}
-	log.Printf("Initialized JSON storage at: %s", dataDir)
 
 	// Initialize kabbalahmedia client for POC
 	kabbalahmediaURL := viper.GetString("kabbalahmedia.sqdata_url")
@@ -68,6 +107,6 @@ func serverFn(cmd *cobra.Command, args []string) {
 	}()
 
 	// Start API server with dependencies
-	app := api.NewApp(store, kabbalahmediaClient, templateConfig)
+	app := api.NewApp(partStore, eventStore, kabbalahmediaClient, templateConfig)
 	app.Init()
 }

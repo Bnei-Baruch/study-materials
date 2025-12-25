@@ -35,7 +35,7 @@ func (a *App) HandleDuplicateEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get original event
-	originalEvent, err := a.store.GetEvent(eventID)
+	originalEvent, err := a.eventStore.GetEvent(eventID)
 	if err != nil {
 		http.Error(w, "Event not found", http.StatusNotFound)
 		return
@@ -51,7 +51,7 @@ func (a *App) HandleDuplicateEvent(w http.ResponseWriter, r *http.Request) {
 		Public: originalEvent.Public,
 	}
 
-	if err := a.store.SaveEvent(newEvent); err != nil {
+	if err := a.eventStore.SaveEvent(newEvent); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to create duplicate event: %v", err), http.StatusInternalServerError)
 		return
 	}

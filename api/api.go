@@ -15,15 +15,17 @@ import (
 type App struct {
 	router              *mux.Router
 	cors                *cors.Cors
-	store               *storage.Store
+	store               storage.PartStore
+	eventStore          storage.EventStore
 	kabbalahmediaClient *kabbalahmedia.Client
 	templateConfig      *storage.TemplateConfig
 }
 
 // NewApp creates a new App instance with dependencies
-func NewApp(store *storage.Store, kabbalahmediaClient *kabbalahmedia.Client, templateConfig *storage.TemplateConfig) *App {
+func NewApp(partStore storage.PartStore, eventStore storage.EventStore, kabbalahmediaClient *kabbalahmedia.Client, templateConfig *storage.TemplateConfig) *App {
 	return &App{
-		store:               store,
+		store:               partStore,
+		eventStore:          eventStore,
 		kabbalahmediaClient: kabbalahmediaClient,
 		templateConfig:      templateConfig,
 	}
