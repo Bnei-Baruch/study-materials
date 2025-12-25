@@ -74,6 +74,113 @@ const LANGUAGES = {
   uk: '🇺🇦 Українська',
 }
 
+const TRANSLATIONS = {
+  he: {
+    noEvents: 'אין אירועים זמינים',
+    backToEvents: 'חזרה לרשימת אירועים',
+    noMaterials: 'אין חומרים זמינים',
+    originalDate: 'תאריך השיעור המקורי: ',
+    page: 'עמ\'',
+    copyLink: 'העתק קישור',
+    readingBeforeSleep: 'קטע הכנה לשינה',
+    lessonPreparation: 'מסמך הכנה לשיעור',
+    watchLesson: 'צפייה בשיעור',
+    lessonTranscript: 'תמליל השיעור',
+    selectedExcerpts: 'קטעים נבחרים',
+  },
+  en: {
+    noEvents: 'No events available',
+    backToEvents: 'Back to events',
+    noMaterials: 'No materials available',
+    originalDate: 'Original lesson date: ',
+    page: 'p.',
+    copyLink: 'Copy link',
+    readingBeforeSleep: 'Reading Before Sleep',
+    lessonPreparation: 'Lesson Preparation',
+    watchLesson: 'Watch Lesson',
+    lessonTranscript: 'Lesson Transcript',
+    selectedExcerpts: 'Selected Excerpts',
+  },
+  ru: {
+    noEvents: 'Нет доступных событий',
+    backToEvents: 'Вернуться к событиям',
+    noMaterials: 'Нет доступных материалов',
+    originalDate: 'Дата оригинального урока: ',
+    page: 'стр.',
+    copyLink: 'Копировать ссылку',
+    readingBeforeSleep: 'Чтение перед сном',
+    lessonPreparation: 'Подготовка к уроку',
+    watchLesson: 'Смотреть урок',
+    lessonTranscript: 'Транскрипт урока',
+    selectedExcerpts: 'Избранные отрывки',
+  },
+  es: {
+    noEvents: 'No hay eventos disponibles',
+    backToEvents: 'Volver a eventos',
+    noMaterials: 'No hay materiales disponibles',
+    originalDate: 'Fecha de la lección original: ',
+    page: 'p.',
+    copyLink: 'Copiar enlace',
+    readingBeforeSleep: 'Lectura antes de dormir',
+    lessonPreparation: 'Preparación de la lección',
+    watchLesson: 'Ver lección',
+    lessonTranscript: 'Transcripción de la lección',
+    selectedExcerpts: 'Extractos seleccionados',
+  },
+  de: {
+    noEvents: 'Keine Veranstaltungen verfügbar',
+    backToEvents: 'Zurück zu Veranstaltungen',
+    noMaterials: 'Keine Materialien verfügbar',
+    originalDate: 'Ursprüngliches Lektionsdatum: ',
+    page: 'S.',
+    copyLink: 'Link kopieren',
+    readingBeforeSleep: 'Lesen vor dem Schlafengehen',
+    lessonPreparation: 'Lektionsvorbereitung',
+    watchLesson: 'Lektion ansehen',
+    lessonTranscript: 'Lektionstranskript',
+    selectedExcerpts: 'Ausgewählte Auszüge',
+  },
+  it: {
+    noEvents: 'Nessun evento disponibile',
+    backToEvents: 'Torna agli eventi',
+    noMaterials: 'Nessun materiale disponibile',
+    originalDate: 'Data della lezione originale: ',
+    page: 'p.',
+    copyLink: 'Copia link',
+    readingBeforeSleep: 'Lettura prima di dormire',
+    lessonPreparation: 'Preparazione della lezione',
+    watchLesson: 'Guarda la lezione',
+    lessonTranscript: 'Trascrizione della lezione',
+    selectedExcerpts: 'Estratti selezionati',
+  },
+  fr: {
+    noEvents: 'Aucun événement disponible',
+    backToEvents: 'Retour aux événements',
+    noMaterials: 'Aucun matériel disponible',
+    originalDate: 'Date de la leçon originale: ',
+    page: 'p.',
+    copyLink: 'Copier le lien',
+    readingBeforeSleep: 'Lecture avant de dormir',
+    lessonPreparation: 'Préparation de la leçon',
+    watchLesson: 'Regarder la leçon',
+    lessonTranscript: 'Transcription de la leçon',
+    selectedExcerpts: 'Extraits sélectionnés',
+  },
+  uk: {
+    noEvents: 'Немає доступних подій',
+    backToEvents: 'Повернутися до подій',
+    noMaterials: 'Немає доступних матеріалів',
+    originalDate: 'Дата оригінального уроку: ',
+    page: 'стор.',
+    copyLink: 'Копіювати посилання',
+    readingBeforeSleep: 'Читання перед сном',
+    lessonPreparation: 'Підготовка до уроку',
+    watchLesson: 'Дивитися урок',
+    lessonTranscript: 'Транскрипт уроку',
+    selectedExcerpts: 'Вибрані уривки',
+  },
+}
+
 export default function PublicPage() {
   const [language, setLanguage] = useState('he')
   const [events, setEvents] = useState<Event[]>([])
@@ -82,6 +189,11 @@ export default function PublicPage() {
   const [loading, setLoading] = useState(true)
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
   const [expandedParts, setExpandedParts] = useState<Set<string>>(new Set())
+
+  // Translation helper
+  const t = (key: keyof typeof TRANSLATIONS.en) => {
+    return TRANSLATIONS[language as keyof typeof TRANSLATIONS]?.[key] || TRANSLATIONS.en[key]
+  }
 
   // Load language from localStorage and listen for changes from Navigation
   useEffect(() => {
@@ -254,7 +366,7 @@ export default function PublicPage() {
             <div className="space-y-4">
             {events.length === 0 ? (
               <div className="text-center text-gray-600 py-12">
-                {language === 'he' ? 'אין אירועים זמינים' : 'No events available'}
+                {t('noEvents')}
               </div>
             ) : (
               events.map((event) => (
@@ -300,10 +412,10 @@ export default function PublicPage() {
               className={`mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
             >
               <ChevronDown className={`w-5 h-5 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
-              {language === 'he' ? 'חזרה לרשימת אירועים' : 'Back to events'}
+              {t('backToEvents')}
             </button>
             <div className="text-center text-gray-600">
-              {language === 'he' ? 'אין חומרים זמינים' : 'No materials available'}
+              {t('noMaterials')}
             </div>
           </div>
         ) : (
@@ -314,7 +426,7 @@ export default function PublicPage() {
               className={`mb-6 text-blue-600 hover:text-blue-800 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
             >
               <ChevronDown className={`w-5 h-5 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
-              {language === 'he' ? 'חזרה לרשימת אירועים' : 'Back to events'}
+              {t('backToEvents')}
             </button>
             
             {/* Event Title Header */}
@@ -353,7 +465,7 @@ export default function PublicPage() {
                       )}
                       {part.recorded_lesson_date && (
                         <p className="text-gray-600 mt-1">
-                          {language === 'he' ? 'תאריך השיעור המקורי: ' : 'Original lesson date: '}
+                          {t('originalDate')}
                           {new Date(part.recorded_lesson_date).toLocaleDateString()}
                         </p>
                       )}
@@ -383,7 +495,7 @@ export default function PublicPage() {
                             <span className={colors.text}>{source.source_title}</span>
                             {source.page_number && (
                               <span className="text-gray-600 text-sm mr-2">
-                                {language === 'he' ? ` עמ' ${source.page_number}` : ` p. ${source.page_number}`}
+                                {` ${t('page')} ${source.page_number}`}
                               </span>
                             )}
                           </div>
@@ -391,7 +503,7 @@ export default function PublicPage() {
                         <button
                           onClick={(e) => copyToClipboard(source.source_url, e)}
                           className={`${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4`}
-                          title={language === 'he' ? 'העתק קישור' : 'Copy link'}
+                          title={t('copyLink')}
                         >
                           {copiedUrl === source.source_url ? (
                             <Check className={`w-5 h-5 ${colors.icon}`} />
@@ -413,7 +525,7 @@ export default function PublicPage() {
                         >
                           <Shield className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
                           <span className={colors.text}>
-                            {language === 'he' ? 'קטע הכנה לשינה' : 'Reading Before Sleep'}
+                            {t('readingBeforeSleep')}
                           </span>
                         </a>
                         <button
@@ -439,7 +551,7 @@ export default function PublicPage() {
                         >
                           <FileText className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
                           <span className={colors.text}>
-                            {language === 'he' ? 'מסמך הכנה לשיעור' : 'Lesson Preparation'}
+                            {t('lessonPreparation')}
                           </span>
                         </a>
                         <button
@@ -466,7 +578,7 @@ export default function PublicPage() {
                         >
                           <Video className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
                           <span className={colors.text}>
-                            {language === 'he' ? 'צפייה בשיעור' : 'Watch Lesson'}
+                            {t('watchLesson')}
                           </span>
                         </a>
                         <button
@@ -493,7 +605,7 @@ export default function PublicPage() {
                         >
                           <FileText className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
                           <span className={colors.text}>
-                            {language === 'he' ? 'תמליל השיעור' : 'Lesson Transcript'}
+                            {t('lessonTranscript')}
                           </span>
                         </a>
                         <button
@@ -520,7 +632,7 @@ export default function PublicPage() {
                         >
                           <FileText className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
                           <span className={colors.text}>
-                            {language === 'he' ? 'קטעים נבחרים' : 'Selected Excerpts'}
+                            {t('selectedExcerpts')}
                           </span>
                         </a>
                         <button
