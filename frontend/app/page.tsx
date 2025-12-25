@@ -251,10 +251,10 @@ export default function PublicPage() {
                 <button
                   key={event.id}
                   onClick={() => handleEventClick(event)}
-                  className="w-full bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow text-right"
+                  className="w-full bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow"
                   dir={isRTL ? 'rtl' : 'ltr'}
                 >
-                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <div className="flex items-center justify-between">
                     <div className={isRTL ? 'text-right' : 'text-left'}>
                       <h2 className="text-xl font-bold text-blue-900 mb-2">
                         {getEventTitle(event)}
@@ -263,19 +263,19 @@ export default function PublicPage() {
                         {formatDate(event.date)}
                       </p>
                     </div>
-                    <ChevronDown className={`w-6 h-6 text-blue-600 transform ${isRTL ? 'rotate-90' : '-rotate-90'}`} />
+                    <ChevronDown className={`w-6 h-6 text-blue-600 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
                   </div>
                 </button>
               ))
             )}
           </div>
         ) : parts.length === 0 ? (
-          <div>
+          <div dir={isRTL ? 'rtl' : 'ltr'}>
             <button
               onClick={handleBackToEvents}
-              className="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2"
+              className={`mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
             >
-              <ChevronDown className={`w-5 h-5 transform ${isRTL ? 'rotate-90' : 'rotate-90'}`} />
+              <ChevronDown className={`w-5 h-5 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
               {language === 'he' ? 'חזרה לרשימת אירועים' : 'Back to events'}
             </button>
             <div className="text-center text-gray-600">
@@ -284,12 +284,12 @@ export default function PublicPage() {
           </div>
         ) : (
           // Parts List
-          <div>
+          <div dir={isRTL ? 'rtl' : 'ltr'}>
             <button
               onClick={handleBackToEvents}
-              className="mb-6 text-blue-600 hover:text-blue-800 flex items-center gap-2"
+              className={`mb-6 text-blue-600 hover:text-blue-800 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
             >
-              <ChevronDown className={`w-5 h-5 transform ${isRTL ? 'rotate-90' : 'rotate-90'}`} />
+              <ChevronDown className={`w-5 h-5 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
               {language === 'he' ? 'חזרה לרשימת אירועים' : 'Back to events'}
             </button>
             
