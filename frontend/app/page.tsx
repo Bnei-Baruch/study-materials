@@ -122,11 +122,7 @@ export default function PublicPage() {
       const response = await fetch('http://localhost:8080/api/events?public=true&limit=10')
       const data = await response.json()
       setEvents(data.events || [])
-      
-      // Auto-select first event
-      if (data.events && data.events.length > 0 && !selectedEvent) {
-        setSelectedEvent(data.events[0])
-      }
+      // Don't auto-select - let user choose
     } catch (error) {
       console.error('Failed to fetch events:', error)
     } finally {
@@ -205,6 +201,18 @@ export default function PublicPage() {
            `Event ${event.number}`
   }
 
+  const handleEventClick = (event: Event) => {
+    setSelectedEvent(event)
+    setParts([])
+    setExpandedParts(new Set())
+  }
+
+  const handleBackToEvents = () => {
+    setSelectedEvent(null)
+    setParts([])
+    setExpandedParts(new Set())
+  }
+
   const isRTL = language === 'he'
 
   if (loading) {
@@ -263,35 +271,64 @@ export default function PublicPage() {
               ))}
             </select>
           </div>
-
-          {/* Event Selector (if multiple events) */}
-          {events.length > 1 && (
-            <div className="mt-4 inline-block">
-              <select
-                value={selectedEvent?.id || ''}
-                onChange={(e) => {
-                  const event = events.find(ev => ev.id === e.target.value)
-                  if (event) setSelectedEvent(event)
-                }}
-                className="bg-white rounded-xl shadow-md px-4 py-2 text-gray-700 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {events.map((event) => (
-                  <option key={event.id} value={event.id}>
-                    {formatDate(event.date)} - {getEventTitle(event)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
         </div>
 
-        {/* Parts List */}
-        {parts.length === 0 ? (
-          <div className="text-center text-gray-600">
-            {language === 'he' ? 'אין חומרים זמינים' : 'No materials available'}
+        {/* Events List or Parts View */}
+        {!selectedEvent ? (
+          // Events List
+          <div className="space-y-4">
+            {events.length === 0 ? (
+              <div className="text-center text-gray-600 py-12">
+                {language === 'he' ? 'אין אירועים זמינים' : 'No events available'}
+              </div>
+            ) : (
+              events.map((event) => (
+                <button
+                  key={event.id}
+                  onClick={() => handleEventClick(event)}
+                  className="w-full bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow text-right"
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                >
+                  <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <h2 className="text-xl font-bold text-blue-900 mb-2">
+                        {getEventTitle(event)}
+                      </h2>
+                      <p className="text-gray-600">
+                        {formatDate(event.date)}
+                      </p>
+                    </div>
+                    <ChevronDown className={`w-6 h-6 text-blue-600 transform ${isRTL ? 'rotate-90' : '-rotate-90'}`} />
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+        ) : parts.length === 0 ? (
+          <div>
+            <button
+              onClick={handleBackToEvents}
+              className="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2"
+            >
+              <ChevronDown className={`w-5 h-5 transform ${isRTL ? 'rotate-90' : 'rotate-90'}`} />
+              {language === 'he' ? 'חזרה לרשימת אירועים' : 'Back to events'}
+            </button>
+            <div className="text-center text-gray-600">
+              {language === 'he' ? 'אין חומרים זמינים' : 'No materials available'}
+            </div>
           </div>
         ) : (
-          parts.map((part) => {
+          // Parts List
+          <div>
+            <button
+              onClick={handleBackToEvents}
+              className="mb-6 text-blue-600 hover:text-blue-800 flex items-center gap-2"
+            >
+              <ChevronDown className={`w-5 h-5 transform ${isRTL ? 'rotate-90' : 'rotate-90'}`} />
+              {language === 'he' ? 'חזרה לרשימת אירועים' : 'Back to events'}
+            </button>
+            <div className="space-y-6">
+              {parts.map((part) => {
             const colors = getPartColorClasses(part.order)
             const isExpanded = expandedParts.has(part.id)
             const isPreparation = part.order === 0
@@ -527,7 +564,9 @@ export default function PublicPage() {
                 )}
               </div>
             )
-          })
+          })}
+            </div>
+          </div>
         )}
       </div>
     </div>
