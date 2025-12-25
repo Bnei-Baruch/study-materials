@@ -83,6 +83,7 @@ const TRANSLATIONS = {
     page: 'עמ\'',
     copyLink: 'העתק קישור',
     readSource: 'לקריאת המקור',
+    part: 'חלק',
     readingBeforeSleep: 'קטע הכנה לשינה',
     lessonPreparation: 'מסמך הכנה לשיעור',
     watchLesson: 'צפייה בשיעור',
@@ -97,6 +98,7 @@ const TRANSLATIONS = {
     page: 'p.',
     copyLink: 'Copy link',
     readSource: 'Read the source',
+    part: 'Part',
     readingBeforeSleep: 'Reading Before Sleep',
     lessonPreparation: 'Lesson Preparation',
     watchLesson: 'Watch Lesson',
@@ -111,6 +113,7 @@ const TRANSLATIONS = {
     page: 'стр.',
     copyLink: 'Копировать ссылку',
     readSource: 'Читать источник',
+    part: 'Часть',
     readingBeforeSleep: 'Чтение перед сном',
     lessonPreparation: 'Подготовка к уроку',
     watchLesson: 'Смотреть урок',
@@ -125,6 +128,7 @@ const TRANSLATIONS = {
     page: 'p.',
     copyLink: 'Copiar enlace',
     readSource: 'Leer la fuente',
+    part: 'Parte',
     readingBeforeSleep: 'Lectura antes de dormir',
     lessonPreparation: 'Preparación de la lección',
     watchLesson: 'Ver lección',
@@ -139,6 +143,7 @@ const TRANSLATIONS = {
     page: 'S.',
     copyLink: 'Link kopieren',
     readSource: 'Quelle lesen',
+    part: 'Teil',
     readingBeforeSleep: 'Lesen vor dem Schlafengehen',
     lessonPreparation: 'Lektionsvorbereitung',
     watchLesson: 'Lektion ansehen',
@@ -153,6 +158,7 @@ const TRANSLATIONS = {
     page: 'p.',
     copyLink: 'Copia link',
     readSource: 'Leggi la fonte',
+    part: 'Parte',
     readingBeforeSleep: 'Lettura prima di dormire',
     lessonPreparation: 'Preparazione della lezione',
     watchLesson: 'Guarda la lezione',
@@ -167,6 +173,7 @@ const TRANSLATIONS = {
     page: 'p.',
     copyLink: 'Copier le lien',
     readSource: 'Lire la source',
+    part: 'Partie',
     readingBeforeSleep: 'Lecture avant de dormir',
     lessonPreparation: 'Préparation de la leçon',
     watchLesson: 'Regarder la leçon',
@@ -181,6 +188,7 @@ const TRANSLATIONS = {
     page: 'стор.',
     copyLink: 'Копіювати посилання',
     readSource: 'Читати джерело',
+    part: 'Частина',
     readingBeforeSleep: 'Читання перед сном',
     lessonPreparation: 'Підготовка до уроку',
     watchLesson: 'Дивитися урок',
@@ -466,7 +474,7 @@ export default function PublicPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <h2 className={`text-2xl font-bold ${colors.text} mb-2`}>
-                        {part.title}
+                        {t('part')} {part.order}: {part.title}
                       </h2>
                       {part.description && (
                         <p className="text-gray-600">{part.description}</p>
