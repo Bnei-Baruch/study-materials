@@ -254,17 +254,31 @@ export default function PublicPage() {
                   className="w-full bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow"
                   dir={isRTL ? 'rtl' : 'ltr'}
                 >
-                  <div className={`flex items-center justify-between ${isRTL ? '' : 'flex-row-reverse'}`}>
-                    <div className={isRTL ? 'text-right' : 'text-left'}>
-                      <h2 className="text-xl font-bold text-blue-900 mb-2">
-                        {getEventTitle(event)}
-                      </h2>
-                      <p className="text-gray-600">
-                        {formatDate(event.date)}
-                      </p>
+                  {isRTL ? (
+                    <div className="flex items-center justify-between">
+                      <ChevronDown className="w-6 h-6 text-blue-600 transform -rotate-90" />
+                      <div className="text-right">
+                        <h2 className="text-xl font-bold text-blue-900 mb-2">
+                          {getEventTitle(event)}
+                        </h2>
+                        <p className="text-gray-600">
+                          {formatDate(event.date)}
+                        </p>
+                      </div>
                     </div>
-                    <ChevronDown className={`w-6 h-6 text-blue-600 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
-                  </div>
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <ChevronDown className="w-6 h-6 text-blue-600 transform rotate-90" />
+                      <div className="text-left flex-1 ml-4">
+                        <h2 className="text-xl font-bold text-blue-900 mb-2">
+                          {getEventTitle(event)}
+                        </h2>
+                        <p className="text-gray-600">
+                          {formatDate(event.date)}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </button>
               ))
             )}
