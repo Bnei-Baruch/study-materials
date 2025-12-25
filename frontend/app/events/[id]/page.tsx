@@ -12,6 +12,7 @@ interface Event {
   date: string
   type: string
   number: number
+  order: number
   titles?: {
     he?: string
     en?: string
@@ -69,6 +70,8 @@ export default function EventDetailPage() {
   const [editedPart, setEditedPart] = useState<Part | null>(null)
   const [showTitleEdit, setShowTitleEdit] = useState(false)
   const [editedTitles, setEditedTitles] = useState<{ [key: string]: string }>({})
+  const [editingOrder, setEditingOrder] = useState(false)
+  const [newOrder, setNewOrder] = useState(0)
 
   const languageNames: { [key: string]: string } = {
     he: '🇮🇱 עברית',
@@ -414,6 +417,38 @@ export default function EventDetailPage() {
     }
   }
 
+  const startOrderEdit = () => {
+    if (!event) return
+    setNewOrder(event.order)
+    setEditingOrder(true)
+  }
+
+  const saveOrder = async () => {
+    if (!event) return
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          order: newOrder,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update event order')
+      }
+
+      // Refresh event data
+      await fetchEventAndParts()
+      setEditingOrder(false)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to update order')
+    }
+  }
+
   const handlePartCreated = () => {
     setShowPartForm(false)
     fetchEventAndParts() // Refresh the parts list
@@ -510,8 +545,40 @@ export default function EventDetailPage() {
               </button>
             </div>
           </div>
-          <div className="text-sm text-gray-500">
-            Event ID: {event.id}
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            <span>Event ID: {event.id}</span>
+            <span className="text-gray-300">|</span>
+            {editingOrder ? (
+              <div className="flex items-center gap-2">
+                <span>Display Order:</span>
+                <input
+                  type="number"
+                  value={newOrder}
+                  onChange={(e) => setNewOrder(parseInt(e.target.value) || 0)}
+                  className="w-20 px-2 py-1 border border-gray-300 rounded text-gray-900"
+                />
+                <button
+                  onClick={saveOrder}
+                  className="px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded"
+                >
+                  ✓
+                </button>
+                <button
+                  onClick={() => setEditingOrder(false)}
+                  className="px-2 py-1 bg-gray-300 hover:bg-gray-400 text-gray-700 text-xs rounded"
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={startOrderEdit}
+                className="flex items-center gap-1 hover:text-gray-700"
+              >
+                <span>Display Order: {event.order}</span>
+                <span className="text-xs">✏️</span>
+              </button>
+            )}
           </div>
 
           {/* Title Edit Form */}

@@ -46,6 +46,7 @@ func (a *App) HandleDuplicateEvent(w http.ResponseWriter, r *http.Request) {
 		Date:   newDate,
 		Type:   originalEvent.Type,
 		Number: originalEvent.Number,
+		Order:  originalEvent.Order, // Copy order
 		Titles: originalEvent.Titles, // Copy titles
 		Public: originalEvent.Public,
 	}

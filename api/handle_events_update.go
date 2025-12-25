@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Bnei-Baruch/study-material-service/storage"
 	"github.com/gorilla/mux"
 )
 
 // UpdateEventRequest represents the request to update an event
 type UpdateEventRequest struct {
 	Titles map[string]string `json:"titles,omitempty"` // Optional: update titles
+	Order  *int              `json:"order,omitempty"`  // Optional: update order
 	Public *bool             `json:"public,omitempty"` // Optional: update public status
 }
 
@@ -40,13 +40,18 @@ func (a *App) HandleUpdateEvent(w http.ResponseWriter, r *http.Request) {
 		if event.Titles == nil {
 			event.Titles = getDefaultTitles(event.Type)
 		}
-		
+
 		// Merge with user-provided titles
 		for lang, title := range req.Titles {
 			if title != "" {
 				event.Titles[lang] = title
 			}
 		}
+	}
+
+	// Update order if provided
+	if req.Order != nil {
+		event.Order = *req.Order
 	}
 
 	// Update public status if provided

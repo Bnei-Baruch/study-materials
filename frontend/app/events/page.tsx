@@ -8,6 +8,7 @@ interface Event {
   date: string
   type: string
   number: number
+  order: number
   titles?: {
     he?: string
     en?: string

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/Bnei-Baruch/study-material-service/storage"
@@ -58,9 +59,15 @@ func (a *App) HandleCreateEvent(w http.ResponseWriter, r *http.Request) {
 		isPublic = *req.Public
 	}
 
+	// Default order to 0
+	order := 0
+	if req.Order != nil {
+		order = *req.Order
+	}
+
 	// Generate default titles for the event type
 	titles := getDefaultTitles(req.Type)
-	
+
 	// Merge user-provided titles with defaults (user overrides take precedence)
 	if req.Titles != nil {
 		for lang, title := range req.Titles {
@@ -75,6 +82,7 @@ func (a *App) HandleCreateEvent(w http.ResponseWriter, r *http.Request) {
 		Date:   date,
 		Type:   req.Type,
 		Number: req.Number,
+		Order:  order,
 		Titles: titles,
 		Public: isPublic,
 	}
@@ -104,13 +112,23 @@ func (a *App) HandleGetEvent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(event)
 }
 
-// HandleListEvents lists all events
+// HandleListEvents lists all events sorted by order (asc) and date (desc)
 func (a *App) HandleListEvents(w http.ResponseWriter, r *http.Request) {
 	events, err := a.store.ListEvents()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to list events: %v", err), http.StatusInternalServerError)
 		return
 	}
+
+	// Sort events by order (ascending), then by date (descending)
+	// Events with lower order numbers appear first
+	// Within same order, newer dates appear first
+	sort.Slice(events, func(i, j int) bool {
+		if events[i].Order != events[j].Order {
+			return events[i].Order < events[j].Order
+		}
+		return events[i].Date.After(events[j].Date)
+	})
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
@@ -193,7 +211,7 @@ func getDefaultTitles(eventType string) map[string]string {
 			"uk": "Інше",
 		},
 	}
-	
+
 	if titles, ok := defaults[eventType]; ok {
 		return titles
 	}
