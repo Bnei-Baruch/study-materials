@@ -122,11 +122,10 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
     return maxOrder + 1 // Next order after the highest existing
   }
 
-  const initialOrder = calculateInitialOrder()
   const [partType, setPartType] = useState('live_lesson')
   const [language, setLanguage] = useState('he')
-  const [order, setOrder] = useState(initialOrder)
-  const [title, setTitle] = useState(initialOrder === 0 ? preparationTitles['he'] : '') // Auto-fill only if prep
+  const [order, setOrder] = useState<number | ''>('') // Start blank
+  const [title, setTitle] = useState('') // Start blank
   const [description, setDescription] = useState('')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('') // Track selected template
   const [sources, setSources] = useState<Source[]>([])
@@ -136,8 +135,8 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
   const [programLink, setProgramLink] = useState('')
   const [customLinks, setCustomLinks] = useState<Array<{ title: string; url: string }>>([])
 
-  const [readingBeforeSleepLink, setReadingBeforeSleepLink] = useState(initialOrder === 0 ? 'https://goo.gl/zCBDD4' : '') // Auto-fill only if prep
-  const [lessonPreparationLink, setLessonPreparationLink] = useState(initialOrder === 0 ? 'https://docs.google.com/document/d/1uHtE1U7sgWCumeWUc5jyE2dfECqj09DZgaPQys-jbzs/edit' : '') // Auto-fill only if prep
+  const [readingBeforeSleepLink, setReadingBeforeSleepLink] = useState('') // Start blank
+  const [lessonPreparationLink, setLessonPreparationLink] = useState('') // Start blank
   const [recordedLessonDate, setRecordedLessonDate] = useState('') // Date the recorded lesson was given
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -153,7 +152,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
   }
 
   // Auto-update title and links when order is 0 (preparation)
-  const handleOrderChange = (newOrder: number) => {
+  const handleOrderChange = (newOrder: number | '') => {
     setOrder(newOrder)
     if (newOrder === 0) {
       setTitle(preparationTitles[language] || 'Preparation to lesson')
@@ -219,6 +218,11 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    if (order === '') {
+      setError('Please select a part number')
+      return
+    }
+
     if (!title.trim()) {
       setError('Title is required')
       return
@@ -271,7 +275,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       setDescription('')
       setPartType('live_lesson')
       setLanguage('he')
-      setOrder(order === 0 ? 1 : order + 1) // If was prep, go to 1; else increment
+      setOrder('') // Reset to blank
       setSelectedTemplate('') // Clear template selection
       setSources([])
       setExcerptsLink('')
@@ -310,9 +314,10 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
           <select
             id="order"
             value={order}
-            onChange={(e) => handleOrderChange(parseInt(e.target.value))}
+            onChange={(e) => handleOrderChange(e.target.value === '' ? '' : parseInt(e.target.value))}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           >
+            <option value="">-- Select Part Number --</option>
             <option value={0}>0 - Preparation</option>
             <option value={1}>1</option>
             <option value={2}>2</option>
