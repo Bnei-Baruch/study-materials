@@ -278,3 +278,4 @@ func getDefaultTitles(eventType string) map[string]string {
 	// Fallback to morning_lesson if type is unknown
 	return defaults["morning_lesson"]
 }
+

@@ -46,3 +46,4 @@ func (a *App) HandleToggleEventPublic(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(event)
 }
 
+

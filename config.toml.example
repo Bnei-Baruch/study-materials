@@ -30,3 +30,4 @@ database = "study_materials_db"
 [kabbalahmedia]
 sqdata_url = "https://kabbalahmedia.info/backend/sqdata"
 timeout = "120s"
+

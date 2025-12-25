@@ -110,3 +110,4 @@ func serverFn(cmd *cobra.Command, args []string) {
 	app := api.NewApp(partStore, eventStore, kabbalahmediaClient, templateConfig)
 	app.Init()
 }
+

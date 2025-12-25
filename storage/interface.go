@@ -68,3 +68,4 @@ func (s *Store) ListEventsFiltered(filter bson.M, limit, offset int) ([]Event, i
 	return filtered, total, nil
 }
 
+
