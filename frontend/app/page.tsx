@@ -409,9 +409,9 @@ export default function PublicPage() {
           <div dir={isRTL ? 'rtl' : 'ltr'}>
             <button
               onClick={handleBackToEvents}
-              className={`mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+              className="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2"
             >
-              <ChevronDown className={`w-5 h-5 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
+              <ChevronDown className={`w-5 h-5 transform ${isRTL ? 'rotate-90' : '-rotate-90'}`} />
               {t('backToEvents')}
             </button>
             <div className="text-center text-gray-600">
@@ -423,9 +423,9 @@ export default function PublicPage() {
           <div dir={isRTL ? 'rtl' : 'ltr'}>
             <button
               onClick={handleBackToEvents}
-              className={`mb-6 text-blue-600 hover:text-blue-800 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+              className="mb-6 text-blue-600 hover:text-blue-800 flex items-center gap-2"
             >
-              <ChevronDown className={`w-5 h-5 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
+              <ChevronDown className={`w-5 h-5 transform ${isRTL ? 'rotate-90' : '-rotate-90'}`} />
               {t('backToEvents')}
             </button>
             
