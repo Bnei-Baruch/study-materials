@@ -167,7 +167,17 @@ export default function PublicPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return new Intl.DateTimeFormat(language === 'he' ? 'he-IL' : 'en-US', {
+    const localeMap: { [key: string]: string } = {
+      he: 'he-IL',
+      en: 'en-US',
+      ru: 'ru-RU',
+      es: 'es-ES',
+      de: 'de-DE',
+      it: 'it-IT',
+      fr: 'fr-FR',
+      uk: 'uk-UA',
+    }
+    return new Intl.DateTimeFormat(localeMap[language] || 'en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
