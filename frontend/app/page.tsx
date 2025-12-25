@@ -474,7 +474,7 @@ export default function PublicPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <h2 className={`text-2xl font-bold ${colors.text} mb-2`}>
-                        {t('part')} {part.order}: {part.title}
+                        {part.order === 0 ? part.title : `${t('part')} ${part.order}: ${part.title}`}
                       </h2>
                       {part.description && (
                         <p className="text-gray-600">{part.description}</p>
