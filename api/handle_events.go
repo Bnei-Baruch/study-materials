@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"sort"
+	"strconv"
 	"time"
 
 	"github.com/Bnei-Baruch/study-material-service/storage"
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // HandleCreateEvent creates a new event
@@ -112,28 +113,87 @@ func (a *App) HandleGetEvent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(event)
 }
 
-// HandleListEvents lists all events sorted by order (asc) and date (desc)
+// HandleListEvents lists all events with optional filtering
+// Query parameters:
+//   - public (bool): filter by public status (e.g., ?public=true)
+//   - limit (int): maximum number of results (e.g., ?limit=10)
+//   - offset (int): offset for pagination (e.g., ?offset=20)
+//   - from_date (string): filter events from this date (YYYY-MM-DD)
+//   - to_date (string): filter events until this date (YYYY-MM-DD)
 func (a *App) HandleListEvents(w http.ResponseWriter, r *http.Request) {
-	events, err := a.eventStore.ListEvents()
+	queryParams := r.URL.Query()
+
+	// Parse query parameters
+	var publicFilter *bool
+	if publicStr := queryParams.Get("public"); publicStr != "" {
+		if publicStr == "true" {
+			trueVal := true
+			publicFilter = &trueVal
+		} else if publicStr == "false" {
+			falseVal := false
+			publicFilter = &falseVal
+		}
+	}
+
+	limit := 0
+	if limitStr := queryParams.Get("limit"); limitStr != "" {
+		if parsedLimit, err := strconv.Atoi(limitStr); err == nil && parsedLimit > 0 {
+			limit = parsedLimit
+		}
+	}
+
+	offset := 0
+	if offsetStr := queryParams.Get("offset"); offsetStr != "" {
+		if parsedOffset, err := strconv.Atoi(offsetStr); err == nil && parsedOffset >= 0 {
+			offset = parsedOffset
+		}
+	}
+
+	fromDate := queryParams.Get("from_date")
+	toDate := queryParams.Get("to_date")
+
+	// Build MongoDB filter
+	filter := bson.M{}
+
+	if publicFilter != nil {
+		filter["public"] = *publicFilter
+	}
+
+	// Date range filter
+	if fromDate != "" || toDate != "" {
+		dateFilter := bson.M{}
+		if fromDate != "" {
+			// Parse date and set to start of day
+			if parsedDate, err := time.Parse("2006-01-02", fromDate); err == nil {
+				dateFilter["$gte"] = parsedDate
+			}
+		}
+		if toDate != "" {
+			// Parse date and set to end of day
+			if parsedDate, err := time.Parse("2006-01-02", toDate); err == nil {
+				// Add 24 hours to include the entire end date
+				dateFilter["$lte"] = parsedDate.Add(24 * time.Hour)
+			}
+		}
+		if len(dateFilter) > 0 {
+			filter["date"] = dateFilter
+		}
+	}
+
+	// Use filtered query
+	events, total, err := a.eventStore.ListEventsFiltered(filter, limit, offset)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to list events: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	// Sort events by order (ascending), then by date (descending)
-	// Events with lower order numbers appear first
-	// Within same order, newer dates appear first
-	sort.Slice(events, func(i, j int) bool {
-		if events[i].Order != events[j].Order {
-			return events[i].Order < events[j].Order
-		}
-		return events[i].Date.After(events[j].Date)
-	})
-
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"events": events,
-		"total":  len(events),
+		"events":   events,
+		"total":    total,
+		"returned": len(events),
+		"limit":    limit,
+		"offset":   offset,
 	})
 }
 
