@@ -10,6 +10,9 @@ import {
   Shield,
   ChevronDown,
   ChevronUp,
+  Share2,
+  MessageCircle,
+  Send,
 } from 'lucide-react'
 
 interface Event {
@@ -84,6 +87,9 @@ const TRANSLATIONS = {
     copyLink: 'העתק קישור',
     readSource: 'לקריאת המקור',
     part: 'חלק',
+    share: 'שתף',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
     readingBeforeSleep: 'קטע הכנה לשינה',
     lessonPreparation: 'מסמך הכנה לשיעור',
     watchLesson: 'צפייה בשיעור',
@@ -99,6 +105,9 @@ const TRANSLATIONS = {
     copyLink: 'Copy link',
     readSource: 'Read the source',
     part: 'Part',
+    share: 'Share',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
     readingBeforeSleep: 'Reading Before Sleep',
     lessonPreparation: 'Lesson Preparation',
     watchLesson: 'Watch Lesson',
@@ -114,6 +123,9 @@ const TRANSLATIONS = {
     copyLink: 'Копировать ссылку',
     readSource: 'Читать источник',
     part: 'Часть',
+    share: 'Поделиться',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
     readingBeforeSleep: 'Чтение перед сном',
     lessonPreparation: 'Подготовка к уроку',
     watchLesson: 'Смотреть урок',
@@ -129,6 +141,9 @@ const TRANSLATIONS = {
     copyLink: 'Copiar enlace',
     readSource: 'Leer la fuente',
     part: 'Parte',
+    share: 'Compartir',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
     readingBeforeSleep: 'Lectura antes de dormir',
     lessonPreparation: 'Preparación de la lección',
     watchLesson: 'Ver lección',
@@ -144,6 +159,9 @@ const TRANSLATIONS = {
     copyLink: 'Link kopieren',
     readSource: 'Quelle lesen',
     part: 'Teil',
+    share: 'Teilen',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
     readingBeforeSleep: 'Lesen vor dem Schlafengehen',
     lessonPreparation: 'Lektionsvorbereitung',
     watchLesson: 'Lektion ansehen',
@@ -159,6 +177,9 @@ const TRANSLATIONS = {
     copyLink: 'Copia link',
     readSource: 'Leggi la fonte',
     part: 'Parte',
+    share: 'Condividi',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
     readingBeforeSleep: 'Lettura prima di dormire',
     lessonPreparation: 'Preparazione della lezione',
     watchLesson: 'Guarda la lezione',
@@ -174,6 +195,9 @@ const TRANSLATIONS = {
     copyLink: 'Copier le lien',
     readSource: 'Lire la source',
     part: 'Partie',
+    share: 'Partager',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
     readingBeforeSleep: 'Lecture avant de dormir',
     lessonPreparation: 'Préparation de la leçon',
     watchLesson: 'Regarder la leçon',
@@ -189,6 +213,9 @@ const TRANSLATIONS = {
     copyLink: 'Копіювати посилання',
     readSource: 'Читати джерело',
     part: 'Частина',
+    share: 'Поділитися',
+    whatsapp: 'WhatsApp',
+    telegram: 'Telegram',
     readingBeforeSleep: 'Читання перед сном',
     lessonPreparation: 'Підготовка до уроку',
     watchLesson: 'Дивитися урок',
@@ -205,6 +232,7 @@ export default function PublicPage() {
   const [loading, setLoading] = useState(true)
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
   const [expandedParts, setExpandedParts] = useState<Set<string>>(new Set())
+  const [openShareDropdown, setOpenShareDropdown] = useState<string | null>(null)
 
   // Translation helper
   const t = (key: keyof typeof TRANSLATIONS.en) => {
@@ -250,6 +278,13 @@ export default function PublicPage() {
     }
   }, [parts])
 
+  // Close share dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setOpenShareDropdown(null)
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
+
   const fetchEvents = async () => {
     try {
       setLoading(true)
@@ -291,6 +326,90 @@ export default function PublicPage() {
       newExpanded.add(partId)
     }
     setExpandedParts(newExpanded)
+  }
+
+  const generatePartMessage = (part: Part, event: Event) => {
+    const eventTitle = getEventTitle(event)
+    const eventDate = formatDate(event.date)
+    const isPreparation = part.order === 0
+    const partTitle = isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
+    
+    let message = `📚 *${eventTitle}*\n📅 ${eventDate}\n\n━━━━━━━━━━\n\n`
+    
+    if (isPreparation) {
+      message += `📝 *${partTitle}*\n`
+    } else {
+      message += `📖 *${partTitle}*\n`
+    }
+    
+    if (part.description) {
+      message += `${part.description}\n`
+    }
+    
+    if (part.recorded_lesson_date) {
+      message += `📅 ${t('originalDate')}${new Date(part.recorded_lesson_date).toLocaleDateString()}\n`
+    }
+    
+    // Sources
+    if (part.sources && part.sources.length > 0) {
+      message += `\n📚 *${t('readSource')}:*\n`
+      part.sources.forEach(source => {
+        message += `• ${source.source_title}`
+        if (source.page_number) {
+          message += ` (${t('page')} ${source.page_number})`
+        }
+        message += `\n  ${source.source_url}\n`
+      })
+    }
+    
+    // Links
+    const links = []
+    
+    if (isPreparation) {
+      if (part.reading_before_sleep_link) {
+        links.push(`📖 ${t('readingBeforeSleep')}: ${part.reading_before_sleep_link}`)
+      }
+      if (part.lesson_preparation_link) {
+        links.push(`📄 ${t('lessonPreparation')}: ${part.lesson_preparation_link}`)
+      }
+    } else {
+      if (part.lesson_link) {
+        links.push(`🎥 ${t('watchLesson')}: ${part.lesson_link}`)
+      }
+      if (part.transcript_link) {
+        links.push(`📄 ${t('lessonTranscript')}: ${part.transcript_link}`)
+      }
+      if (part.excerpts_link) {
+        links.push(`📋 ${t('selectedExcerpts')}: ${part.excerpts_link}`)
+      }
+    }
+    
+    // Custom links
+    if (part.custom_links && part.custom_links.length > 0) {
+      part.custom_links.forEach(link => {
+        links.push(`🔗 ${link.title}: ${link.url}`)
+      })
+    }
+    
+    if (links.length > 0) {
+      message += `\n🔗 *Links:*\n${links.join('\n')}\n`
+    }
+    
+    return message
+  }
+
+  const sharePartToWhatsApp = (part: Part, event: Event) => {
+    const message = generatePartMessage(part, event)
+    const encodedMessage = encodeURIComponent(message)
+    const whatsappUrl = `https://wa.me/?text=${encodedMessage}`
+    window.open(whatsappUrl, '_blank')
+  }
+
+  const sharePartToTelegram = (part: Part, event: Event) => {
+    const message = generatePartMessage(part, event)
+    const encodedMessage = encodeURIComponent(message)
+    const telegramUrl = `https://t.me/share/url?url=&text=${encodedMessage}`
+    window.open(telegramUrl, '_blank')
   }
 
   const formatDate = (dateString: string) => {
@@ -468,9 +587,51 @@ export default function PublicPage() {
               >
                 {/* Part Header */}
                 <div
-                  className={`${isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4'} ${colors.border} mb-6 cursor-pointer`}
+                  className={`${isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4'} ${colors.border} mb-6 cursor-pointer relative`}
                   onClick={() => togglePart(part.id)}
                 >
+                  {/* Share button with dropdown */}
+                  <div className={`absolute top-0 ${isRTL ? 'left-0' : 'right-0'} z-10`}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setOpenShareDropdown(openShareDropdown === part.id ? null : part.id)
+                      }}
+                      className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors shadow-md"
+                      title={t('share')}
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </button>
+                    
+                    {/* Dropdown menu */}
+                    {openShareDropdown === part.id && (
+                      <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[160px]`}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            sharePartToWhatsApp(part, selectedEvent)
+                            setOpenShareDropdown(null)
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                        >
+                          <MessageCircle className="w-5 h-5 text-green-600" />
+                          <span>{t('whatsapp')}</span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            sharePartToTelegram(part, selectedEvent)
+                            setOpenShareDropdown(null)
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                        >
+                          <Send className="w-5 h-5 text-blue-600" />
+                          <span>{t('telegram')}</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <h2 className={`text-2xl font-bold ${colors.text} mb-2`}>
