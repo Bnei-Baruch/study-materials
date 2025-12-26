@@ -80,12 +80,14 @@ func (a *App) HandleCreateEvent(w http.ResponseWriter, r *http.Request) {
 
 	// Create event
 	event := &storage.Event{
-		Date:   date,
-		Type:   req.Type,
-		Number: req.Number,
-		Order:  order,
-		Titles: titles,
-		Public: isPublic,
+		Date:      date,
+		StartTime: req.StartTime,
+		EndTime:   req.EndTime,
+		Type:      req.Type,
+		Number:    req.Number,
+		Order:     order,
+		Titles:    titles,
+		Public:    isPublic,
 	}
 
 	if err := a.eventStore.SaveEvent(event); err != nil {
@@ -278,4 +280,3 @@ func getDefaultTitles(eventType string) map[string]string {
 	// Fallback to morning_lesson if type is unknown
 	return defaults["morning_lesson"]
 }
-

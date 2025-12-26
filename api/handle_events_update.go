@@ -10,9 +10,11 @@ import (
 
 // UpdateEventRequest represents the request to update an event
 type UpdateEventRequest struct {
-	Titles map[string]string `json:"titles,omitempty"` // Optional: update titles
-	Order  *int              `json:"order,omitempty"`  // Optional: update order
-	Public *bool             `json:"public,omitempty"` // Optional: update public status
+	Titles    map[string]string `json:"titles,omitempty"`     // Optional: update titles
+	StartTime *string           `json:"start_time,omitempty"` // Optional: update start time (HH:MM)
+	EndTime   *string           `json:"end_time,omitempty"`   // Optional: update end time (HH:MM)
+	Order     *int              `json:"order,omitempty"`      // Optional: update order
+	Public    *bool             `json:"public,omitempty"`     // Optional: update public status
 }
 
 // HandleUpdateEvent updates an existing event
@@ -49,6 +51,16 @@ func (a *App) HandleUpdateEvent(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Update start time if provided
+	if req.StartTime != nil {
+		event.StartTime = *req.StartTime
+	}
+
+	// Update end time if provided
+	if req.EndTime != nil {
+		event.EndTime = *req.EndTime
+	}
+
 	// Update order if provided
 	if req.Order != nil {
 		event.Order = *req.Order
@@ -69,5 +81,3 @@ func (a *App) HandleUpdateEvent(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(event)
 }
-
-

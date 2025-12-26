@@ -43,12 +43,14 @@ func (a *App) HandleDuplicateEvent(w http.ResponseWriter, r *http.Request) {
 
 	// Create new event with the new date
 	newEvent := &storage.Event{
-		Date:   newDate,
-		Type:   originalEvent.Type,
-		Number: originalEvent.Number,
-		Order:  originalEvent.Order,  // Copy order
-		Titles: originalEvent.Titles, // Copy titles
-		Public: originalEvent.Public,
+		Date:      newDate,
+		StartTime: originalEvent.StartTime, // Copy start time
+		EndTime:   originalEvent.EndTime,   // Copy end time
+		Type:      originalEvent.Type,
+		Number:    originalEvent.Number,
+		Order:     originalEvent.Order,  // Copy order
+		Titles:    originalEvent.Titles, // Copy titles
+		Public:    originalEvent.Public,
 	}
 
 	if err := a.eventStore.SaveEvent(newEvent); err != nil {
@@ -102,5 +104,3 @@ func (a *App) HandleDuplicateEvent(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newEvent)
 }
-
-
