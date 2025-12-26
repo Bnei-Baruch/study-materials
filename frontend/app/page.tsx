@@ -13,11 +13,19 @@ import {
   Share2,
   MessageCircle,
   Send,
+  Calendar,
+  Clock,
+  Filter,
+  X,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 
 interface Event {
   id: string
   date: string
+  start_time?: string
+  end_time?: string
   type: string
   number: number
   titles?: {
@@ -92,6 +100,14 @@ const TRANSLATIONS = {
     telegram: 'Telegram',
     links: 'קישורים',
     sources: 'מקורות',
+    studyMaterials: 'חומרי לימוד',
+    studyMaterialsDescription: 'חומרי לימוד ומקורות לשיעורים, כנסים ואירועים של בני ברוך',
+    filterByDate: 'סינון לפי תאריך',
+    fromDate: 'מתאריך',
+    toDate: 'עד תאריך',
+    clearFilters: 'נקה סינון',
+    eventsFound: 'שיעורים נמצאו',
+    loadMore: 'טען עוד שיעורים',
     readingBeforeSleep: 'קטע הכנה לשינה',
     lessonPreparation: 'מסמך הכנה לשיעור',
     watchLesson: 'צפייה בשיעור',
@@ -112,6 +128,14 @@ const TRANSLATIONS = {
     telegram: 'Telegram',
     links: 'Links',
     sources: 'Sources',
+    studyMaterials: 'Study Materials',
+    studyMaterialsDescription: 'Study materials and sources for lessons, conventions and events of Bnei Baruch',
+    filterByDate: 'Filter by date',
+    fromDate: 'From date',
+    toDate: 'To date',
+    clearFilters: 'Clear filters',
+    eventsFound: 'events found',
+    loadMore: 'Load more lessons',
     readingBeforeSleep: 'Reading Before Sleep',
     lessonPreparation: 'Lesson Preparation',
     watchLesson: 'Watch Lesson',
@@ -132,6 +156,14 @@ const TRANSLATIONS = {
     telegram: 'Telegram',
     links: 'Ссылки',
     sources: 'Источники',
+    studyMaterials: 'Учебные материалы',
+    studyMaterialsDescription: 'Учебные материалы и источники для уроков, конгрессов и событий Бней Барух',
+    filterByDate: 'Фильтр по дате',
+    fromDate: 'С даты',
+    toDate: 'По дату',
+    clearFilters: 'Очистить фильтры',
+    eventsFound: 'уроков найдено',
+    loadMore: 'Загрузить еще уроки',
     readingBeforeSleep: 'Чтение перед сном',
     lessonPreparation: 'Подготовка к уроку',
     watchLesson: 'Смотреть урок',
