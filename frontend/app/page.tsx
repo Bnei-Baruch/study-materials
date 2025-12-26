@@ -90,6 +90,8 @@ const TRANSLATIONS = {
     share: 'שתף',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    links: 'קישורים',
+    sources: 'מקורות',
     readingBeforeSleep: 'קטע הכנה לשינה',
     lessonPreparation: 'מסמך הכנה לשיעור',
     watchLesson: 'צפייה בשיעור',
@@ -108,6 +110,8 @@ const TRANSLATIONS = {
     share: 'Share',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    links: 'Links',
+    sources: 'Sources',
     readingBeforeSleep: 'Reading Before Sleep',
     lessonPreparation: 'Lesson Preparation',
     watchLesson: 'Watch Lesson',
@@ -126,6 +130,8 @@ const TRANSLATIONS = {
     share: 'Поделиться',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    links: 'Ссылки',
+    sources: 'Источники',
     readingBeforeSleep: 'Чтение перед сном',
     lessonPreparation: 'Подготовка к уроку',
     watchLesson: 'Смотреть урок',
@@ -144,6 +150,8 @@ const TRANSLATIONS = {
     share: 'Compartir',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    links: 'Enlaces',
+    sources: 'Fuentes',
     readingBeforeSleep: 'Lectura antes de dormir',
     lessonPreparation: 'Preparación de la lección',
     watchLesson: 'Ver lección',
@@ -162,6 +170,8 @@ const TRANSLATIONS = {
     share: 'Teilen',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    links: 'Links',
+    sources: 'Quellen',
     readingBeforeSleep: 'Lesen vor dem Schlafengehen',
     lessonPreparation: 'Lektionsvorbereitung',
     watchLesson: 'Lektion ansehen',
@@ -180,6 +190,8 @@ const TRANSLATIONS = {
     share: 'Condividi',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    links: 'Collegamenti',
+    sources: 'Fonti',
     readingBeforeSleep: 'Lettura prima di dormire',
     lessonPreparation: 'Preparazione della lezione',
     watchLesson: 'Guarda la lezione',
@@ -198,6 +210,8 @@ const TRANSLATIONS = {
     share: 'Partager',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    links: 'Liens',
+    sources: 'Sources',
     readingBeforeSleep: 'Lecture avant de dormir',
     lessonPreparation: 'Préparation de la leçon',
     watchLesson: 'Regarder la leçon',
@@ -216,6 +230,8 @@ const TRANSLATIONS = {
     share: 'Поділитися',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    links: 'Посилання',
+    sources: 'Джерела',
     readingBeforeSleep: 'Читання перед сном',
     lessonPreparation: 'Підготовка до уроку',
     watchLesson: 'Дивитися урок',
@@ -334,37 +350,46 @@ export default function PublicPage() {
     setExpandedParts(newExpanded)
   }
 
+  const addLanguageToUrl = (url: string) => {
+    // Add language code to kabbalahmedia.info URLs
+    if (url.includes('kabbalahmedia.info')) {
+      // Check if URL already has a language code
+      if (!url.match(/kabbalahmedia\.info\/[a-z]{2}\//)) {
+        // Insert language code after domain
+        return url.replace('kabbalahmedia.info/', `kabbalahmedia.info/${language}/`)
+      }
+    }
+    return url
+  }
+
   const generatePartMessage = (part: Part, event: Event) => {
     const eventTitle = getEventTitle(event)
     const eventDate = formatDate(event.date)
     const isPreparation = part.order === 0
     const partTitle = isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
     
-    let message = `📚 *${eventTitle}*\n📅 ${eventDate}\n\n━━━━━━━━━━\n\n`
+    let message = `*${eventTitle}*\n${eventDate}\n\n━━━━━━━━━━\n\n`
     
-    if (isPreparation) {
-      message += `📝 *${partTitle}*\n`
-    } else {
-      message += `📖 *${partTitle}*\n`
-    }
+    message += `*${partTitle}*\n`
     
     if (part.description) {
       message += `${part.description}\n`
     }
     
     if (part.recorded_lesson_date) {
-      message += `📅 ${t('originalDate')}${new Date(part.recorded_lesson_date).toLocaleDateString()}\n`
+      message += `${t('originalDate')}${new Date(part.recorded_lesson_date).toLocaleDateString()}\n`
     }
     
     // Sources
     if (part.sources && part.sources.length > 0) {
-      message += `\n📚 *${t('readSource')}:*\n`
+      message += `\n◆ *${t('sources')}:*\n`
       part.sources.forEach(source => {
-        message += `• ${source.source_title}`
+        const sourceUrl = addLanguageToUrl(source.source_url)
+        message += `◆ ${t('readSource')}: ${sourceUrl}\n`
         if (source.page_number) {
-          message += ` (${t('page')} ${source.page_number})`
+          message += `   ${t('page')} ${source.page_number}\n`
         }
-        message += `\n  ${source.source_url}\n`
+        message += `\n`
       })
     }
     
@@ -373,32 +398,35 @@ export default function PublicPage() {
     
     if (isPreparation) {
       if (part.reading_before_sleep_link) {
-        links.push(`📖 ${t('readingBeforeSleep')}: ${part.reading_before_sleep_link}`)
+        links.push({ label: t('readingBeforeSleep'), url: addLanguageToUrl(part.reading_before_sleep_link) })
       }
       if (part.lesson_preparation_link) {
-        links.push(`📄 ${t('lessonPreparation')}: ${part.lesson_preparation_link}`)
+        links.push({ label: t('lessonPreparation'), url: addLanguageToUrl(part.lesson_preparation_link) })
       }
     } else {
       if (part.lesson_link) {
-        links.push(`🎥 ${t('watchLesson')}: ${part.lesson_link}`)
+        links.push({ label: t('watchLesson'), url: addLanguageToUrl(part.lesson_link) })
       }
       if (part.transcript_link) {
-        links.push(`📄 ${t('lessonTranscript')}: ${part.transcript_link}`)
+        links.push({ label: t('lessonTranscript'), url: addLanguageToUrl(part.transcript_link) })
       }
       if (part.excerpts_link) {
-        links.push(`📋 ${t('selectedExcerpts')}: ${part.excerpts_link}`)
+        links.push({ label: t('selectedExcerpts'), url: addLanguageToUrl(part.excerpts_link) })
       }
     }
     
     // Custom links
     if (part.custom_links && part.custom_links.length > 0) {
       part.custom_links.forEach(link => {
-        links.push(`🔗 ${link.title}: ${link.url}`)
+        links.push({ label: link.title, url: addLanguageToUrl(link.url) })
       })
     }
     
     if (links.length > 0) {
-      message += `\n🔗 *Links:*\n${links.join('\n')}\n`
+      message += `\n◆ *${t('links')}:*\n`
+      links.forEach(link => {
+        message += `◆ ${link.label}: ${link.url}\n\n`
+      })
     }
     
     return message
