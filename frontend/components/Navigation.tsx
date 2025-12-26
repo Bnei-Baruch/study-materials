@@ -76,7 +76,7 @@ export default function Navigation() {
             <select
               value={language}
               onChange={(e) => handleLanguageChange(e.target.value)}
-              className="appearance-none bg-white border-2 border-gray-200 rounded-lg px-4 py-2 pl-10 pr-3 text-gray-700 hover:border-blue-300 focus:border-blue-500 focus:outline-none cursor-pointer transition-colors"
+              className={`appearance-none bg-white border-2 border-gray-200 rounded-lg px-4 py-2 ${isRTL ? 'pl-10 pr-3' : 'pr-10 pl-3'} text-gray-700 hover:border-blue-300 focus:border-blue-500 focus:outline-none cursor-pointer transition-colors`}
               style={{ fontSize: '14px' }}
             >
               {Object.entries(LANGUAGES).map(([code, name]) => (
@@ -85,7 +85,7 @@ export default function Navigation() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <ChevronDown className={`w-4 h-4 text-gray-500 absolute ${isRTL ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 pointer-events-none`} />
           </div>
         </div>
       </div>

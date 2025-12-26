@@ -753,7 +753,11 @@ export default function PublicPage() {
                           )}
                         </div>
                       </div>
-                      <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0 mt-1" />
+                      {isRTL ? (
+                        <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0 mt-1" />
+                      ) : (
+                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
+                      )}
                     </div>
                   </div>
                 </button>
