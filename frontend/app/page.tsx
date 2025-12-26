@@ -184,6 +184,14 @@ const TRANSLATIONS = {
     telegram: 'Telegram',
     links: 'Enlaces',
     sources: 'Fuentes',
+    studyMaterials: 'Materiales de estudio',
+    studyMaterialsDescription: 'Materiales de estudio y fuentes para lecciones, congresos y eventos de Bnei Baruch',
+    filterByDate: 'Filtrar por fecha',
+    fromDate: 'Desde fecha',
+    toDate: 'Hasta fecha',
+    clearFilters: 'Limpiar filtros',
+    eventsFound: 'lecciones encontradas',
+    loadMore: 'Cargar más lecciones',
     readingBeforeSleep: 'Lectura antes de dormir',
     lessonPreparation: 'Preparación de la lección',
     watchLesson: 'Ver lección',
@@ -204,6 +212,14 @@ const TRANSLATIONS = {
     telegram: 'Telegram',
     links: 'Links',
     sources: 'Quellen',
+    studyMaterials: 'Studienmaterialien',
+    studyMaterialsDescription: 'Studienmaterialien und Quellen für Lektionen, Kongresse und Veranstaltungen von Bnei Baruch',
+    filterByDate: 'Nach Datum filtern',
+    fromDate: 'Von Datum',
+    toDate: 'Bis Datum',
+    clearFilters: 'Filter löschen',
+    eventsFound: 'Lektionen gefunden',
+    loadMore: 'Mehr Lektionen laden',
     readingBeforeSleep: 'Lesen vor dem Schlafengehen',
     lessonPreparation: 'Lektionsvorbereitung',
     watchLesson: 'Lektion ansehen',
@@ -224,6 +240,14 @@ const TRANSLATIONS = {
     telegram: 'Telegram',
     links: 'Collegamenti',
     sources: 'Fonti',
+    studyMaterials: 'Materiali di studio',
+    studyMaterialsDescription: 'Materiali di studio e fonti per lezioni, congressi ed eventi di Bnei Baruch',
+    filterByDate: 'Filtra per data',
+    fromDate: 'Dalla data',
+    toDate: 'Alla data',
+    clearFilters: 'Cancella filtri',
+    eventsFound: 'lezioni trovate',
+    loadMore: 'Carica altre lezioni',
     readingBeforeSleep: 'Lettura prima di dormire',
     lessonPreparation: 'Preparazione della lezione',
     watchLesson: 'Guarda la lezione',
@@ -244,6 +268,14 @@ const TRANSLATIONS = {
     telegram: 'Telegram',
     links: 'Liens',
     sources: 'Sources',
+    studyMaterials: 'Matériaux d\'étude',
+    studyMaterialsDescription: 'Matériaux d\'étude et sources pour les leçons, congrès et événements de Bnei Baruch',
+    filterByDate: 'Filtrer par date',
+    fromDate: 'De la date',
+    toDate: 'À la date',
+    clearFilters: 'Effacer les filtres',
+    eventsFound: 'leçons trouvées',
+    loadMore: 'Charger plus de leçons',
     readingBeforeSleep: 'Lecture avant de dormir',
     lessonPreparation: 'Préparation de la leçon',
     watchLesson: 'Regarder la leçon',
@@ -264,6 +296,14 @@ const TRANSLATIONS = {
     telegram: 'Telegram',
     links: 'Посилання',
     sources: 'Джерела',
+    studyMaterials: 'Навчальні матеріали',
+    studyMaterialsDescription: 'Навчальні матеріали та джерела для уроків, конгресів та подій Бней Барух',
+    filterByDate: 'Фільтр за датою',
+    fromDate: 'Від дати',
+    toDate: 'До дати',
+    clearFilters: 'Очистити фільтри',
+    eventsFound: 'уроків знайдено',
+    loadMore: 'Завантажити більше уроків',
     readingBeforeSleep: 'Читання перед сном',
     lessonPreparation: 'Підготовка до уроку',
     watchLesson: 'Дивитися урок',
@@ -281,6 +321,10 @@ export default function PublicPage() {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
   const [expandedParts, setExpandedParts] = useState<Set<string>>(new Set())
   const [openShareDropdown, setOpenShareDropdown] = useState<string | null>(null)
+  const [showFilters, setShowFilters] = useState(false)
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [totalEvents, setTotalEvents] = useState(0)
 
   // Translation helper
   const t = (key: keyof typeof TRANSLATIONS.en) => {
@@ -306,10 +350,10 @@ export default function PublicPage() {
     return () => window.removeEventListener('languageChange', handleLanguageChange)
   }, [])
 
-  // Fetch public events when language changes
+  // Fetch public events when language or date filters change
   useEffect(() => {
     fetchEvents()
-  }, [language])
+  }, [language, startDate, endDate])
 
   // Fetch parts when event is selected
   useEffect(() => {
@@ -342,9 +386,18 @@ export default function PublicPage() {
   const fetchEvents = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`http://localhost:8080/api/events?public=true&limit=10&language=${language}`)
+      const params = new URLSearchParams({
+        public: 'true',
+        limit: '10',
+        language: language
+      })
+      if (startDate) params.append('from_date', startDate)
+      if (endDate) params.append('to_date', endDate)
+      
+      const response = await fetch(`http://localhost:8080/api/events?${params}`)
       const data = await response.json()
       setEvents(data.events || [])
+      setTotalEvents(data.total || 0)
       // Don't auto-select - let user choose
     } catch (error) {
       console.error('Failed to fetch events:', error)
@@ -352,6 +405,33 @@ export default function PublicPage() {
       setLoading(false)
     }
   }
+
+  const loadMore = async () => {
+    try {
+      const params = new URLSearchParams({
+        public: 'true',
+        limit: '10',
+        offset: events.length.toString(),
+        language: language
+      })
+      if (startDate) params.append('from_date', startDate)
+      if (endDate) params.append('to_date', endDate)
+      
+      const response = await fetch(`http://localhost:8080/api/events?${params}`)
+      const data = await response.json()
+      setEvents([...events, ...(data.events || [])])
+      setTotalEvents(data.total || 0)
+    } catch (error) {
+      console.error('Failed to fetch more events:', error)
+    }
+  }
+
+  const clearFilters = () => {
+    setStartDate('')
+    setEndDate('')
+  }
+
+  const hasActiveFilters = startDate || endDate
 
   const fetchParts = async (eventId: string) => {
     try {
@@ -555,15 +635,93 @@ export default function PublicPage() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50"
+      className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50"
       dir={isRTL ? 'rtl' : 'ltr'}
     >
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Content */}
-        <div className="max-w-2xl mx-auto">
-          {/* Events List or Parts View */}
-          {!selectedEvent ? (
-            // Events List
+        {!selectedEvent ? (
+          // Events List
+          <div>
+            {/* Page Header */}
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold text-blue-900 mb-2">
+                {t('studyMaterials')}
+              </h1>
+              <p className="text-gray-600" style={{ fontSize: '15px' }}>
+                {t('studyMaterialsDescription')}
+              </p>
+            </div>
+
+            {/* Filters */}
+            <div className="mb-6">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                  hasActiveFilters
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
+                }`}
+                style={{ fontSize: '14px' }}
+              >
+                <Filter className="w-4 h-4" />
+                <span>{t('filterByDate')}</span>
+                {hasActiveFilters && (
+                  <span className="bg-white text-blue-600 rounded-full w-5 h-5 flex items-center justify-center" style={{ fontSize: '11px' }}>
+                    1
+                  </span>
+                )}
+              </button>
+
+              {showFilters && (
+                <div className="mt-4 bg-white rounded-xl shadow-md p-5">
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-gray-700 mb-2" style={{ fontSize: '13px' }}>
+                        {t('fromDate')}
+                      </label>
+                      <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
+                        style={{ fontSize: '14px' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 mb-2" style={{ fontSize: '13px' }}>
+                        {t('toDate')}
+                      </label>
+                      <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
+                        style={{ fontSize: '14px' }}
+                      />
+                    </div>
+                  </div>
+
+                  {hasActiveFilters && (
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                      <span className="text-gray-600" style={{ fontSize: '13px' }}>
+                        {events.length} {t('eventsFound')}
+                      </span>
+                      <button
+                        onClick={clearFilters}
+                        className="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-1"
+                        style={{ fontSize: '13px' }}
+                      >
+                        <X className="w-4 h-4" />
+                        <span>{t('clearFilters')}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Events List */}
             <div className="space-y-4">
             {events.length === 0 ? (
               <div className="text-center text-gray-600 py-12">
@@ -574,40 +732,54 @@ export default function PublicPage() {
                 <button
                   key={event.id}
                   onClick={() => handleEventClick(event)}
-                  className="w-full bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow"
-                  dir={isRTL ? 'rtl' : 'ltr'}
+                  className="w-full block bg-white rounded-xl shadow-md hover:shadow-lg transition-all border-2 border-transparent hover:border-blue-500 group"
                 >
-                  {isRTL ? (
-                    <div className="flex items-center justify-between">
-                      <div className="text-right flex-1 mr-4">
-                        <h2 className="text-xl font-bold text-blue-900 mb-2">
+                  <div className="p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <h3 className={`text-xl font-semibold text-blue-900 group-hover:text-blue-700 mb-2 transition-colors ${isRTL ? 'text-right' : 'text-left'}`}>
                           {getEventTitle(event)}
-                        </h2>
-                        <p className="text-gray-600">
-                          {formatDate(event.date)}
-                        </p>
+                        </h3>
+                        <div className={`flex items-center gap-4 text-gray-500 ${isRTL ? 'flex-row-reverse' : ''}`} style={{ fontSize: '13px' }}>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            <span>{formatDate(event.date)}</span>
+                          </div>
+                          {event.start_time && event.end_time && (
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              <span>{event.start_time} - {event.end_time}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <ChevronDown className="w-6 h-6 text-blue-600 transform rotate-90" />
+                      {isRTL ? (
+                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
+                      ) : (
+                        <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0 mt-1" />
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex items-center justify-between">
-                      <div className="text-left flex-1 mr-4">
-                        <h2 className="text-xl font-bold text-blue-900 mb-2">
-                          {getEventTitle(event)}
-                        </h2>
-                        <p className="text-gray-600">
-                          {formatDate(event.date)}
-                        </p>
-                      </div>
-                      <ChevronDown className="w-6 h-6 text-blue-600 transform -rotate-90" />
-                    </div>
-                  )}
+                  </div>
                 </button>
               ))
             )}
+
+            {/* Load More Button */}
+            {events.length > 0 && events.length < totalEvents && (
+              <div className="mt-8 text-center">
+                <button 
+                  onClick={loadMore}
+                  className="px-6 py-3 bg-white text-blue-700 border-2 border-blue-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-colors shadow-md font-semibold"
+                  style={{ fontSize: '14px' }}
+                >
+                  {t('loadMore')}
+                </button>
+              </div>
+            )}
+          </div>
           </div>
         ) : parts.length === 0 ? (
-          <div dir={isRTL ? 'rtl' : 'ltr'}>
+          <div dir={isRTL ? 'rtl' : 'ltr'} className="max-w-2xl mx-auto">
             <button
               onClick={handleBackToEvents}
               className="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2"
@@ -621,7 +793,7 @@ export default function PublicPage() {
           </div>
         ) : (
           // Parts List
-          <div dir={isRTL ? 'rtl' : 'ltr'}>
+          <div dir={isRTL ? 'rtl' : 'ltr'} className="max-w-2xl mx-auto">
             <button
               onClick={handleBackToEvents}
               className="mb-6 text-blue-600 hover:text-blue-800 flex items-center gap-2"
@@ -924,7 +1096,6 @@ export default function PublicPage() {
             </div>
           </div>
         )}
-        </div>
       </div>
     </div>
   )
