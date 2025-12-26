@@ -90,6 +90,8 @@ export default function CreateEventPage() {
   })
   const [type, setType] = useState('morning_lesson')
   const [number, setNumber] = useState(1)
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
   const [showTitleCustomization, setShowTitleCustomization] = useState(false)
   const [customTitles, setCustomTitles] = useState<{ [key: string]: string }>({})
   const [loading, setLoading] = useState(false)
@@ -118,8 +120,16 @@ export default function CreateEventPage() {
     setError('')
 
     try {
-      // Build request body with optional custom titles
+      // Build request body with optional custom titles and times
       const requestBody: any = { date, type, number }
+      
+      // Add times if provided
+      if (startTime) {
+        requestBody.start_time = startTime
+      }
+      if (endTime) {
+        requestBody.end_time = endTime
+      }
       
       // Only include titles if at least one custom title was entered
       const hasCustomTitles = Object.values(customTitles).some(title => title.trim() !== '')
@@ -215,6 +225,34 @@ export default function CreateEventPage() {
               <p className="mt-1 text-sm text-gray-500">
                 Use this to differentiate multiple events on the same day
               </p>
+            </div>
+
+            {/* Time Fields */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="startTime" className="block text-sm font-medium text-gray-700 mb-2">
+                  Start Time (Optional)
+                </label>
+                <input
+                  id="startTime"
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900"
+                />
+              </div>
+              <div>
+                <label htmlFor="endTime" className="block text-sm font-medium text-gray-700 mb-2">
+                  End Time (Optional)
+                </label>
+                <input
+                  id="endTime"
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900"
+                />
+              </div>
             </div>
 
             {/* Optional Title Customization */}

@@ -10,6 +10,8 @@ import { SourceSearch } from '@/components/SourceSearch'
 interface Event {
   id: string
   date: string
+  start_time?: string
+  end_time?: string
   type: string
   number: number
   order: number
@@ -72,6 +74,9 @@ export default function EventDetailPage() {
   const [editedTitles, setEditedTitles] = useState<{ [key: string]: string }>({})
   const [editingOrder, setEditingOrder] = useState(false)
   const [newOrder, setNewOrder] = useState(0)
+  const [editingTimes, setEditingTimes] = useState(false)
+  const [newStartTime, setNewStartTime] = useState('')
+  const [newEndTime, setNewEndTime] = useState('')
 
   const languageNames: { [key: string]: string } = {
     he: '🇮🇱 עברית',
@@ -449,6 +454,40 @@ export default function EventDetailPage() {
     }
   }
 
+  const startTimesEdit = () => {
+    if (!event) return
+    setNewStartTime(event.start_time || '')
+    setNewEndTime(event.end_time || '')
+    setEditingTimes(true)
+  }
+
+  const saveTimes = async () => {
+    if (!event) return
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          start_time: newStartTime || undefined,
+          end_time: newEndTime || undefined,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update event times')
+      }
+
+      // Refresh event data
+      await fetchEventAndParts()
+      setEditingTimes(false)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to update times')
+    }
+  }
+
   const handlePartCreated = () => {
     setShowPartForm(false)
     fetchEventAndParts() // Refresh the parts list
@@ -545,7 +584,7 @@ export default function EventDetailPage() {
               </button>
             </div>
           </div>
-          <div className="flex items-center gap-4 text-sm text-gray-500">
+          <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
             <span>Event ID: {event.id}</span>
             <span className="text-gray-300">|</span>
             {editingOrder ? (
@@ -576,6 +615,51 @@ export default function EventDetailPage() {
                 className="flex items-center gap-1 hover:text-gray-700"
               >
                 <span>Display Order: {event.order}</span>
+                <span className="text-xs">✏️</span>
+              </button>
+            )}
+            <span className="text-gray-300">|</span>
+            {editingTimes ? (
+              <div className="flex items-center gap-2">
+                <span>Time:</span>
+                <input
+                  type="time"
+                  value={newStartTime}
+                  onChange={(e) => setNewStartTime(e.target.value)}
+                  className="px-2 py-1 border border-gray-300 rounded text-gray-900"
+                  placeholder="Start"
+                />
+                <span>-</span>
+                <input
+                  type="time"
+                  value={newEndTime}
+                  onChange={(e) => setNewEndTime(e.target.value)}
+                  className="px-2 py-1 border border-gray-300 rounded text-gray-900"
+                  placeholder="End"
+                />
+                <button
+                  onClick={saveTimes}
+                  className="px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded"
+                >
+                  ✓
+                </button>
+                <button
+                  onClick={() => setEditingTimes(false)}
+                  className="px-2 py-1 bg-gray-300 hover:bg-gray-400 text-gray-700 text-xs rounded"
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={startTimesEdit}
+                className="flex items-center gap-1 hover:text-gray-700"
+              >
+                <span>
+                  Time: {event.start_time && event.end_time 
+                    ? `${event.start_time} - ${event.end_time}` 
+                    : 'Not set'}
+                </span>
                 <span className="text-xs">✏️</span>
               </button>
             )}
