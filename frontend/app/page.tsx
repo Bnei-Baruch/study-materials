@@ -735,7 +735,7 @@ export default function PublicPage() {
                   className="w-full block bg-white rounded-xl shadow-md hover:shadow-lg transition-all border-2 border-transparent hover:border-blue-500 group"
                 >
                   <div className="p-5">
-                    <div className="flex items-start justify-between gap-4">
+                    <div className={`flex items-start justify-between gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <div className="flex-1">
                         <h3 className={`text-xl font-semibold text-blue-900 group-hover:text-blue-700 mb-2 transition-colors ${isRTL ? 'text-right' : 'text-left'}`}>
                           {getEventTitle(event)}
