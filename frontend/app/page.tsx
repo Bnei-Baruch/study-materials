@@ -735,12 +735,12 @@ export default function PublicPage() {
                   className="w-full block bg-white rounded-xl shadow-md hover:shadow-lg transition-all border-2 border-transparent hover:border-blue-500 group"
                 >
                   <div className="p-5">
-                    <div className={`flex items-start justify-between gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <h3 className={`text-xl font-semibold text-blue-900 group-hover:text-blue-700 mb-2 transition-colors ${isRTL ? 'text-right' : 'text-left'}`}>
                           {getEventTitle(event)}
                         </h3>
-                        <div className={`flex items-center gap-4 text-gray-500 ${isRTL ? 'flex-row-reverse' : ''}`} style={{ fontSize: '13px' }}>
+                        <div className="flex items-center gap-4 text-gray-500" style={{ fontSize: '13px' }}>
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
                             <span>{formatDate(event.date)}</span>
@@ -753,11 +753,7 @@ export default function PublicPage() {
                           )}
                         </div>
                       </div>
-                      {isRTL ? (
-                        <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0 mt-1" />
-                      ) : (
-                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
-                      )}
+                      <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0 mt-1" />
                     </div>
                   </div>
                 </button>
