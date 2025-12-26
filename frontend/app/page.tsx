@@ -280,7 +280,13 @@ export default function PublicPage() {
 
   // Close share dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => setOpenShareDropdown(null)
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      // Don't close if clicking inside a dropdown or share button
+      if (!target.closest('[data-share-dropdown]') && !target.closest('[data-share-button]')) {
+        setOpenShareDropdown(null)
+      }
+    }
     document.addEventListener('click', handleClickOutside)
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
@@ -593,6 +599,7 @@ export default function PublicPage() {
                   {/* Share button with dropdown */}
                   <div className={`absolute top-0 ${isRTL ? 'left-0' : 'right-0'} z-10`}>
                     <button
+                      data-share-button
                       onClick={(e) => {
                         e.stopPropagation()
                         setOpenShareDropdown(openShareDropdown === part.id ? null : part.id)
@@ -605,7 +612,7 @@ export default function PublicPage() {
                     
                     {/* Dropdown menu */}
                     {openShareDropdown === part.id && (
-                      <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[160px]`}>
+                      <div data-share-dropdown className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[160px]`}>
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
