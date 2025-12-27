@@ -22527,19 +22527,19 @@ ${partsText}`;
         ] })
       ] }),
       parts.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "p-4 text-center text-gray-500", style: { fontSize: "13px" }, children: t.noPartsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "space-y-3 p-3", children: parts.map((part, index) => {
-        var _a2;
+        var _a2, _b2;
         const isExpanded = expandedSections.includes(index);
         const colors = getSectionColor(part.order);
         const partTitle = part.order === 0 ? t.preparation : `${t.part} ${part.order}: ${part.title}`;
         const allLinks = [
-          ...part.sources.map((s) => ({ type: "source", text: s.source_title, url: s.source_url, page: s.page_number })),
+          ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => ({ type: "source", text: s.source_title, url: s.source_url, page: s.page_number }))) || [],
           part.excerpts_link && { type: "document", text: t.viewExcerpts, url: part.excerpts_link },
           part.transcript_link && { type: "document", text: t.viewTranscript, url: part.transcript_link },
           part.lesson_link && { type: "video", text: t.watchLesson, url: part.lesson_link },
           part.program_link && { type: "audio", text: t.viewProgram, url: part.program_link },
           part.reading_before_sleep_link && { type: "document", text: t.readDocument, url: part.reading_before_sleep_link },
           part.lesson_preparation_link && { type: "document", text: t.readDocument, url: part.lesson_preparation_link },
-          ...((_a2 = part.custom_links) == null ? void 0 : _a2.map((l) => ({ type: "document", text: l.title, url: l.url }))) || []
+          ...((_b2 = part.custom_links) == null ? void 0 : _b2.map((l) => ({ type: "document", text: l.title, url: l.url }))) || []
         ].filter(Boolean);
         return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
           "div",

@@ -476,7 +476,7 @@ export function EmbeddedLessonSidebar({
 
             // Collect all links for this part
             const allLinks = [
-              ...part.sources.map(s => ({ type: 'source' as const, text: s.source_title, url: s.source_url, page: s.page_number })),
+              ...(part.sources?.map(s => ({ type: 'source' as const, text: s.source_title, url: s.source_url, page: s.page_number })) || []),
               part.excerpts_link && { type: 'document' as const, text: t.viewExcerpts, url: part.excerpts_link },
               part.transcript_link && { type: 'document' as const, text: t.viewTranscript, url: part.transcript_link },
               part.lesson_link && { type: 'video' as const, text: t.watchLesson, url: part.lesson_link },
