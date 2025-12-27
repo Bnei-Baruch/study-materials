@@ -6,7 +6,22 @@ The Study Materials Widget is a universal JavaScript component that can be embed
 
 ## Quick Start (5 minutes)
 
-### Step 1: Copy the integration code
+### Option A: Events List Mode (Recommended - No Event ID Needed!)
+
+```html
+<!-- Add to your HTML -->
+<script src="http://localhost:3000/widget/widget.js"></script>
+
+<div 
+  data-studymaterials-widget
+  data-language="he"
+  data-limit="10"
+></div>
+```
+
+That's it! The widget shows the last 10 events. Users click an event to see its parts, then click back to return to the list.
+
+### Option B: Direct Event Mode (Show Specific Event)
 
 ```html
 <!-- Add to your HTML -->
@@ -19,15 +34,10 @@ The Study Materials Widget is a universal JavaScript component that can be embed
 ></div>
 ```
 
-### Step 2: Get your event ID
-
+**To get an event ID:**
 1. Go to the admin panel: `http://localhost:3000/events`
 2. Click on an event
 3. Copy the Event ID from the URL or page
-
-### Step 3: Test it!
-
-Open your webpage and the widget will automatically load with your study materials.
 
 ## Live Demo
 
@@ -45,9 +55,23 @@ The demo shows:
 
 ## Integration Methods
 
-### Method 1: Simple Embed (Recommended)
+### Method 1: Events List (Default - Recommended)
 
-Best for: Adding widget to a specific location on your page
+Best for: Letting users browse and select from recent lessons
+
+```html
+<script src="http://localhost:3000/widget/widget.js"></script>
+
+<div 
+  data-studymaterials-widget
+  data-language="he"
+  data-limit="10"
+></div>
+```
+
+### Method 2: Direct Event
+
+Best for: Showing a specific lesson's materials
 
 ```html
 <script src="http://localhost:3000/widget/widget.js"></script>
@@ -60,9 +84,23 @@ Best for: Adding widget to a specific location on your page
 ></div>
 ```
 
-### Method 2: Fixed Sidebar
+### Method 3: Fixed Sidebar (Events List)
 
-Best for: Floating widget that doesn't affect page layout
+Best for: Floating events list that doesn't affect page layout
+
+```html
+<script 
+  src="http://localhost:3000/widget/widget.js"
+  data-auto-inject="true"
+  data-language="he"
+  data-limit="10"
+  data-position="fixed-right"
+></script>
+```
+
+### Method 4: Fixed Sidebar (Direct Event)
+
+Best for: Floating widget showing specific lesson
 
 ```html
 <script 
@@ -74,7 +112,7 @@ Best for: Floating widget that doesn't affect page layout
 ></script>
 ```
 
-### Method 3: JavaScript API
+### Method 5: JavaScript API (Events List)
 
 Best for: Dynamic loading or single-page applications
 
@@ -82,7 +120,24 @@ Best for: Dynamic loading or single-page applications
 <script src="http://localhost:3000/widget/widget.js"></script>
 
 <script>
-// Load widget programmatically
+// Load events list (no event ID)
+StudyMaterialsWidget.load(null, 'he', {
+  position: 'inline',
+  apiUrl: 'http://localhost:8080',
+  limit: 10,
+  width: '320px',
+  target: document.getElementById('my-container')
+});
+</script>
+```
+
+### Method 6: JavaScript API (Direct Event)
+
+```javascript
+<script src="http://localhost:3000/widget/widget.js"></script>
+
+<script>
+// Load specific event
 StudyMaterialsWidget.load('df2b081d-884f-40ac', 'he', {
   position: 'inline',
   apiUrl: 'http://localhost:8080',
@@ -92,25 +147,26 @@ StudyMaterialsWidget.load('df2b081d-884f-40ac', 'he', {
 </script>
 ```
 
-### Method 4: Bookmarklet
+### Method 7: Bookmarklet (Events List)
 
 Best for: Users who want to inject widget on any page
 
 Create a browser bookmark with this URL:
 
 ```javascript
-javascript:(function(){const s=document.createElement('script');s.src='http://localhost:3000/widget/widget.js';s.setAttribute('data-auto-inject','true');s.setAttribute('data-event-id','YOUR_EVENT_ID');s.setAttribute('data-api-url','http://localhost:8080');document.head.appendChild(s);})();
+javascript:(function(){const s=document.createElement('script');s.src='http://localhost:3000/widget/widget.js';s.setAttribute('data-auto-inject','true');s.setAttribute('data-language','he');s.setAttribute('data-limit','10');s.setAttribute('data-api-url','http://localhost:8080');document.head.appendChild(s);})();
 ```
 
-Users click the bookmark to inject the widget on any page!
+Users click the bookmark to inject the events list widget on any page!
 
 ## Configuration Options
 
 | Option | Values | Default | Description |
 |--------|--------|---------|-------------|
-| `data-event-id` | string | **required** | The UUID of the event to display |
+| `data-event-id` | string | **optional** | If provided, shows this event directly. If omitted, shows events list |
 | `data-language` | he, en, ru, es, de, it, fr, uk | `he` | UI language |
 | `data-api-url` | URL | `http://localhost:8080` | Backend API endpoint |
+| `data-limit` | number | `10` | Number of events to show in list mode |
 | `data-position` | inline, fixed-right, fixed-left | `inline` | Widget positioning |
 | `data-width` | CSS width | `320px` | Widget width |
 
@@ -223,18 +279,24 @@ function changeLanguage(lang) {
 ## Features
 
 ### Visual Features
+- ✅ **Two-view navigation**: Events list → Event detail
 - ✅ Compact 320px width design
 - ✅ Color-coded sections (orange, blue, green, purple)
 - ✅ Collapsible/expandable lesson parts
-- ✅ Sticky header with event title and date
+- ✅ Sticky header with title and date
 - ✅ Icons for different content types (book, video, document, audio)
 - ✅ RTL support for Hebrew
+- ✅ Language selector in events list
 
 ### Functional Features
+- ✅ **Browse recent events** (list view)
+- ✅ **Click event to see parts** (detail view)
+- ✅ **Back button** returns to list
 - ✅ Share individual lesson parts
 - ✅ Share entire lesson
 - ✅ Copy links on hover
 - ✅ Real-time API data fetching
+- ✅ **Language persistence** (localStorage)
 - ✅ Loading and error states
 - ✅ Responsive design
 - ✅ Works on mobile devices
@@ -246,6 +308,7 @@ function changeLanguage(lang) {
 - ✅ Small bundle size (80-100KB gzipped in production)
 - ✅ Works in all modern browsers
 - ✅ CSP compliant
+- ✅ **Backward compatible** (old event ID integrations still work)
 
 ## Development
 

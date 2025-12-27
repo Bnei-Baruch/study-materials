@@ -88,9 +88,35 @@
       Test the embeddable widget with different integration methods
     </p>
 
-    <!-- Method 1: Manual Container -->
+    <!-- NEW: Events List Mode (Default) -->
     <div class="demo-section">
-      <h2>Method 1: Manual Container</h2>
+      <h2>🆕 Events List Mode (Default - No Event ID Required)</h2>
+      <div class="code-block">
+&lt;script src="/widget/widget.js"&gt;&lt;/script&gt;
+
+&lt;div 
+  data-studymaterials-widget
+  data-language="he"
+  data-limit="10"
+&gt;&lt;/div&gt;
+      </div>
+      <div class="demo-area">
+        <div 
+          data-studymaterials-widget
+          data-language="he"
+          data-limit="10"
+          data-api-url="http://localhost:8080"
+          style="height: 600px;"
+        ></div>
+      </div>
+      <p style="color: #6b7280; font-size: 14px; margin-top: 10px;">
+        ✨ Shows last 10 events. Click an event to see its parts. Click back to return to list.
+      </p>
+    </div>
+
+    <!-- Method 1: Manual Container (Direct to Event) -->
+    <div class="demo-section">
+      <h2>Method 1: Manual Container (Direct to Event)</h2>
       <div class="code-block">
 &lt;script src="/widget/widget.js"&gt;&lt;/script&gt;
 
@@ -113,9 +139,27 @@
       </div>
     </div>
 
-    <!-- Method 2: Auto-Inject -->
+    <!-- Method 2: Auto-Inject Events List -->
     <div class="demo-section">
-      <h2>Method 2: Auto-Inject (Fixed Sidebar)</h2>
+      <h2>Method 2: Auto-Inject Events List (Fixed Sidebar)</h2>
+      <div class="code-block">
+&lt;script 
+  src="/widget/widget.js"
+  data-auto-inject="true"
+  data-language="he"
+  data-position="fixed-right"
+  data-limit="10"
+&gt;&lt;/script&gt;
+      </div>
+      <button onclick="loadAutoInjectList()">Test Auto-Inject (Events List)</button>
+      <p style="color: #6b7280; font-size: 14px; margin-top: 10px;">
+        Click to inject an events list as a fixed sidebar on the right side (no event ID needed!)
+      </p>
+    </div>
+
+    <!-- Method 2b: Auto-Inject Direct Event -->
+    <div class="demo-section">
+      <h2>Method 2b: Auto-Inject Direct Event (Fixed Sidebar)</h2>
       <div class="code-block">
 &lt;script 
   src="/widget/widget.js"
@@ -125,24 +169,41 @@
   data-position="fixed-right"
 &gt;&lt;/script&gt;
       </div>
-      <button onclick="loadAutoInject()">Test Auto-Inject</button>
+      <button onclick="loadAutoInjectDirect()">Test Auto-Inject (Direct Event)</button>
       <p style="color: #6b7280; font-size: 14px; margin-top: 10px;">
-        Click to inject a fixed sidebar widget on the right side
+        Click to inject a specific event as a fixed sidebar on the right side
       </p>
     </div>
 
-    <!-- Method 3: JavaScript API -->
+    <!-- Method 3: JavaScript API (Events List) -->
     <div class="demo-section">
-      <h2>Method 3: JavaScript API</h2>
+      <h2>Method 3: JavaScript API (Events List)</h2>
       <div class="code-block">
+// Load events list (no eventId)
+StudyMaterialsWidget.load(null, 'he', {
+  position: 'inline',
+  apiUrl: 'http://localhost:8080',
+  limit: 10,
+  target: document.getElementById('widget-container')
+});
+      </div>
+      <button onclick="loadViaAPIList()">Load Events List via API</button>
+      <div id="api-widget-container-list" class="demo-area" style="margin-top: 16px; height: 500px;"></div>
+    </div>
+
+    <!-- Method 3b: JavaScript API (Direct Event) -->
+    <div class="demo-section">
+      <h2>Method 3b: JavaScript API (Direct Event)</h2>
+      <div class="code-block">
+// Load specific event
 StudyMaterialsWidget.load('eventId', 'he', {
   position: 'inline',
   apiUrl: 'http://localhost:8080',
   target: document.getElementById('widget-container')
 });
       </div>
-      <button onclick="loadViaAPI()">Load via API</button>
-      <div id="api-widget-container" class="demo-area" style="margin-top: 16px;"></div>
+      <button onclick="loadViaAPIDirect()">Load Direct Event via API</button>
+      <div id="api-widget-container-direct" class="demo-area" style="margin-top: 16px;"></div>
     </div>
 
     <!-- Method 4: Split Screen Layout -->
@@ -172,10 +233,17 @@ StudyMaterialsWidget.load('eventId', 'he', {
       <h2>📝 Instructions</h2>
       <ol style="color: #4b5563; line-height: 1.8;">
         <li>Make sure your backend server is running on <code>http://localhost:8080</code></li>
-        <li>Create an event in the admin panel and note its ID</li>
-        <li>Replace <code>YOUR_EVENT_ID</code> in the examples with your actual event ID</li>
-        <li>The widget will automatically fetch event data and lesson parts from the API</li>
+        <li>The widget now has TWO modes:
+          <ul>
+            <li><strong>Events List Mode</strong> (default): Shows recent events, no event ID needed</li>
+            <li><strong>Direct Event Mode</strong>: Shows specific event parts when event ID is provided</li>
+          </ul>
+        </li>
+        <li>Create events in the admin panel and mark them as public</li>
+        <li>For direct event mode, replace <code>YOUR_EVENT_ID</code> with an actual event ID</li>
+        <li>The widget will automatically fetch data from the API</li>
         <li>Try switching between different languages (he, en, ru, es, de, it, fr, uk)</li>
+        <li>Click events in the list to navigate to detail view, click back to return</li>
       </ol>
     </div>
   </div>
@@ -184,14 +252,34 @@ StudyMaterialsWidget.load('eventId', 'he', {
   <script src="/widget/widget.js"></script>
 
   <script>
-    function loadAutoInject() {
+    function loadAutoInjectList() {
       // Remove any existing auto-injected widgets
       const existing = document.querySelector('[data-studymaterials-widget][data-position="fixed-right"]');
       if (existing && !existing.hasAttribute('data-manual')) {
         existing.remove();
       }
 
-      // Load a new one
+      // Load events list widget
+      const script = document.createElement('script');
+      script.src = '/widget/widget.js?v=' + Date.now();
+      script.setAttribute('data-auto-inject', 'true');
+      script.setAttribute('data-language', 'he');
+      script.setAttribute('data-limit', '10');
+      script.setAttribute('data-position', 'fixed-right');
+      script.setAttribute('data-api-url', 'http://localhost:8080');
+      document.head.appendChild(script);
+
+      alert('Events list loading as fixed sidebar... Check the right side of the page!');
+    }
+
+    function loadAutoInjectDirect() {
+      // Remove any existing auto-injected widgets
+      const existing = document.querySelector('[data-studymaterials-widget][data-position="fixed-right"]');
+      if (existing && !existing.hasAttribute('data-manual')) {
+        existing.remove();
+      }
+
+      // Load specific event widget
       const script = document.createElement('script');
       script.src = '/widget/widget.js?v=' + Date.now();
       script.setAttribute('data-auto-inject', 'true');
@@ -201,11 +289,28 @@ StudyMaterialsWidget.load('eventId', 'he', {
       script.setAttribute('data-api-url', 'http://localhost:8080');
       document.head.appendChild(script);
 
-      alert('Fixed sidebar widget loading... Check the right side of the page!');
+      alert('Direct event loading as fixed sidebar... Check the right side of the page!');
     }
 
-    function loadViaAPI() {
-      const container = document.getElementById('api-widget-container');
+    function loadViaAPIList() {
+      const container = document.getElementById('api-widget-container-list');
+      container.innerHTML = '';
+      
+      if (window.StudyMaterialsWidget && window.StudyMaterialsWidget.load) {
+        window.StudyMaterialsWidget.load(null, 'he', {
+          position: 'inline',
+          apiUrl: 'http://localhost:8080',
+          limit: 10,
+          width: '320px',
+          target: container
+        });
+      } else {
+        alert('Widget not loaded yet. Please wait a moment and try again.');
+      }
+    }
+
+    function loadViaAPIDirect() {
+      const container = document.getElementById('api-widget-container-direct');
       container.innerHTML = '';
       
       if (window.StudyMaterialsWidget && window.StudyMaterialsWidget.load) {

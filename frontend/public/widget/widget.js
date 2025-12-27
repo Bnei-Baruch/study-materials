@@ -53,16 +53,14 @@
 
   // Initialize widget in container
   function initWidgetInContainer(container) {
-    const eventId = container.getAttribute('data-event-id');
+    const eventId = container.getAttribute('data-event-id');  // Optional now
     const language = container.getAttribute('data-language') || 'he';
     const apiUrl = container.getAttribute('data-api-url') || 'http://localhost:8080';
+    const limit = parseInt(container.getAttribute('data-limit') || '10');
     const position = container.getAttribute('data-position') || 'inline';
     const width = container.getAttribute('data-width') || '320px';
 
-    if (!eventId) {
-      console.error('Widget container missing data-event-id attribute');
-      return;
-    }
+    // eventId is now optional - if not provided, shows events list
 
     // Apply positioning styles
     if (position === 'fixed-right') {
@@ -101,9 +99,10 @@
         }
 
         window.StudyMaterialsWidget.initWidget(container, {
-          eventId: eventId,
+          eventId: eventId || undefined,
           language: language,
           apiBaseUrl: apiUrl,
+          limit: limit,
         });
       })
       .catch(error => {
@@ -121,23 +120,24 @@
     const autoInject = currentScript.getAttribute('data-auto-inject');
     if (autoInject !== 'true') return;
 
-    const eventId = currentScript.getAttribute('data-event-id');
+    const eventId = currentScript.getAttribute('data-event-id');  // Optional now
     const language = currentScript.getAttribute('data-language') || 'he';
     const apiUrl = currentScript.getAttribute('data-api-url') || 'http://localhost:8080';
+    const limit = parseInt(currentScript.getAttribute('data-limit') || '10');
     const position = currentScript.getAttribute('data-position') || 'fixed-right';
     const width = currentScript.getAttribute('data-width') || '320px';
 
-    if (!eventId) {
-      console.error('Auto-inject mode requires data-event-id attribute on script tag');
-      return;
-    }
+    // eventId is now optional - if not provided, shows events list
 
     // Create container
     const container = document.createElement('div');
     container.setAttribute('data-studymaterials-widget', '');
-    container.setAttribute('data-event-id', eventId);
+    if (eventId) {
+      container.setAttribute('data-event-id', eventId);
+    }
     container.setAttribute('data-language', language);
     container.setAttribute('data-api-url', apiUrl);
+    container.setAttribute('data-limit', limit.toString());
     container.setAttribute('data-position', position);
     container.setAttribute('data-width', width);
 
@@ -171,11 +171,16 @@
     options = options || {};
     const container = document.createElement('div');
     container.setAttribute('data-studymaterials-widget', '');
-    container.setAttribute('data-event-id', eventId);
+    if (eventId) {
+      container.setAttribute('data-event-id', eventId);
+    }
     container.setAttribute('data-language', language || 'he');
     
     if (options.apiUrl) {
       container.setAttribute('data-api-url', options.apiUrl);
+    }
+    if (options.limit) {
+      container.setAttribute('data-limit', options.limit.toString());
     }
     if (options.position) {
       container.setAttribute('data-position', options.position);

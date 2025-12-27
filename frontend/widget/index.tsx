@@ -1,22 +1,22 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { EmbeddedLessonSidebar } from '../components/EmbeddedLessonSidebar'
+import { StudyMaterialsWidget } from '../components/StudyMaterialsWidget'
 
 // Widget initialization function
 export function initWidget(container: HTMLElement, config: {
-  eventId: string
+  eventId?: string  // Now optional
   language?: string
   apiBaseUrl?: string
-  onBack?: () => void
+  limit?: number  // Number of events to show in list
 }) {
   const root = createRoot(container)
   root.render(
     <React.StrictMode>
-      <EmbeddedLessonSidebar
+      <StudyMaterialsWidget
         eventId={config.eventId}
         language={config.language || 'he'}
         apiBaseUrl={config.apiBaseUrl || 'http://localhost:8080'}
-        onBack={config.onBack}
+        limit={config.limit || 10}
       />
     </React.StrictMode>
   )

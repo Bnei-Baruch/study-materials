@@ -1379,7 +1379,7 @@
           return dispatcher;
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var React3 = require_react(), Internals = {
+        var React5 = require_react(), Internals = {
           d: {
             f: noop,
             r: function() {
@@ -1397,7 +1397,7 @@
           },
           p: 0,
           findDOMNode: null
-        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React3.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+        }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
         "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
           "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
         );
@@ -2932,7 +2932,7 @@
           "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
         }
         function validateOptionProps(element, props) {
-          null == props.value && ("object" === typeof props.children && null !== props.children ? React3.Children.forEach(props.children, function(child) {
+          null == props.value && ("object" === typeof props.children && null !== props.children ? React5.Children.forEach(props.children, function(child) {
             null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
               "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
             ));
@@ -18564,14 +18564,14 @@
           ));
         }
         "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-        var Scheduler = require_scheduler(), React3 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+        var Scheduler = require_scheduler(), React5 = require_react(), ReactDOM = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
         Symbol.for("react.scope");
         var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
         Symbol.for("react.legacy_hidden");
         Symbol.for("react.tracing_marker");
         var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
         Symbol.for("react.view_transition");
-        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React3.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+        var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
           pending: false,
           data: null,
           method: null,
@@ -21359,7 +21359,7 @@
           }
         };
         (function() {
-          var isomorphicReactPackageVersion = React3.version;
+          var isomorphicReactPackageVersion = React5.version;
           if ("19.2.3" !== isomorphicReactPackageVersion)
             throw Error(
               'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.3\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21713,18 +21713,18 @@
         function isValidElement(object) {
           return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
         }
-        var React3 = require_react(), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), ReactSharedInternals = React3.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
+        var React5 = require_react(), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = Symbol.for("react.activity"), REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), ReactSharedInternals = React5.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, hasOwnProperty = Object.prototype.hasOwnProperty, isArrayImpl = Array.isArray, createTask = console.createTask ? console.createTask : function() {
           return null;
         };
-        React3 = {
+        React5 = {
           react_stack_bottom_frame: function(callStackForError) {
             return callStackForError();
           }
         };
         var specialPropKeyWarningShown;
         var didWarnAboutElementRef = {};
-        var unknownOwnerDebugStack = React3.react_stack_bottom_frame.bind(
-          React3,
+        var unknownOwnerDebugStack = React5.react_stack_bottom_frame.bind(
+          React5,
           UnknownOwner
         )();
         var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
@@ -21769,10 +21769,13 @@
   });
 
   // widget/index.tsx
-  var import_react4 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
-  // components/EmbeddedLessonSidebar.tsx
+  // components/StudyMaterialsWidget.tsx
+  var import_react5 = __toESM(require_react());
+
+  // components/EmbeddedEventsList.tsx
   var import_react3 = __toESM(require_react());
 
   // node_modules/lucide-react/dist/esm/createLucideIcon.js
@@ -21887,27 +21890,43 @@
   ];
   var BookOpen = createLucideIcon("book-open", __iconNode);
 
+  // node_modules/lucide-react/dist/esm/icons/calendar.js
+  var __iconNode2 = [
+    ["path", { d: "M8 2v4", key: "1cmpym" }],
+    ["path", { d: "M16 2v4", key: "4m81vk" }],
+    ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
+    ["path", { d: "M3 10h18", key: "8toen8" }]
+  ];
+  var Calendar = createLucideIcon("calendar", __iconNode2);
+
   // node_modules/lucide-react/dist/esm/icons/check.js
-  var __iconNode2 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-  var Check = createLucideIcon("check", __iconNode2);
+  var __iconNode3 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+  var Check = createLucideIcon("check", __iconNode3);
 
   // node_modules/lucide-react/dist/esm/icons/chevron-down.js
-  var __iconNode3 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-  var ChevronDown = createLucideIcon("chevron-down", __iconNode3);
+  var __iconNode4 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+  var ChevronDown = createLucideIcon("chevron-down", __iconNode4);
 
   // node_modules/lucide-react/dist/esm/icons/chevron-up.js
-  var __iconNode4 = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
-  var ChevronUp = createLucideIcon("chevron-up", __iconNode4);
+  var __iconNode5 = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
+  var ChevronUp = createLucideIcon("chevron-up", __iconNode5);
+
+  // node_modules/lucide-react/dist/esm/icons/clock.js
+  var __iconNode6 = [
+    ["path", { d: "M12 6v6l4 2", key: "mmk7yg" }],
+    ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]
+  ];
+  var Clock = createLucideIcon("clock", __iconNode6);
 
   // node_modules/lucide-react/dist/esm/icons/copy.js
-  var __iconNode5 = [
+  var __iconNode7 = [
     ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
     ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
   ];
-  var Copy = createLucideIcon("copy", __iconNode5);
+  var Copy = createLucideIcon("copy", __iconNode7);
 
   // node_modules/lucide-react/dist/esm/icons/file-text.js
-  var __iconNode6 = [
+  var __iconNode8 = [
     [
       "path",
       {
@@ -21920,10 +21939,10 @@
     ["path", { d: "M16 13H8", key: "t4e002" }],
     ["path", { d: "M16 17H8", key: "z1uh3a" }]
   ];
-  var FileText = createLucideIcon("file-text", __iconNode6);
+  var FileText = createLucideIcon("file-text", __iconNode8);
 
   // node_modules/lucide-react/dist/esm/icons/headphones.js
-  var __iconNode7 = [
+  var __iconNode9 = [
     [
       "path",
       {
@@ -21932,20 +21951,20 @@
       }
     ]
   ];
-  var Headphones = createLucideIcon("headphones", __iconNode7);
+  var Headphones = createLucideIcon("headphones", __iconNode9);
 
   // node_modules/lucide-react/dist/esm/icons/share-2.js
-  var __iconNode8 = [
+  var __iconNode10 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode8);
+  var Share2 = createLucideIcon("share-2", __iconNode10);
 
   // node_modules/lucide-react/dist/esm/icons/video.js
-  var __iconNode9 = [
+  var __iconNode11 = [
     [
       "path",
       {
@@ -21955,10 +21974,200 @@
     ],
     ["rect", { x: "2", y: "6", width: "14", height: "12", rx: "2", key: "158x01" }]
   ];
-  var Video = createLucideIcon("video", __iconNode9);
+  var Video = createLucideIcon("video", __iconNode11);
+
+  // components/EmbeddedEventsList.tsx
+  var import_jsx_runtime = __toESM(require_jsx_runtime());
+  var LIST_TRANSLATIONS = {
+    he: {
+      studyMaterials: "\u05D7\u05D5\u05DE\u05E8\u05D9 \u05DC\u05D9\u05DE\u05D5\u05D3",
+      loading: "\u05D8\u05D5\u05E2\u05DF...",
+      error: "\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05D8\u05E2\u05D9\u05E0\u05EA \u05D4\u05E0\u05EA\u05D5\u05E0\u05D9\u05DD",
+      noEventsAvailable: "\u05D0\u05D9\u05DF \u05E9\u05D9\u05E2\u05D5\u05E8\u05D9\u05DD \u05D6\u05DE\u05D9\u05E0\u05D9\u05DD"
+    },
+    en: {
+      studyMaterials: "Study Materials",
+      loading: "Loading...",
+      error: "Error loading data",
+      noEventsAvailable: "No lessons available"
+    },
+    ru: {
+      studyMaterials: "\u0423\u0447\u0435\u0431\u043D\u044B\u0435 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u044B",
+      loading: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430...",
+      error: "\u041E\u0448\u0438\u0431\u043A\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438 \u0434\u0430\u043D\u043D\u044B\u0445",
+      noEventsAvailable: "\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0443\u0440\u043E\u043A\u043E\u0432"
+    },
+    es: {
+      studyMaterials: "Materiales de estudio",
+      loading: "Cargando...",
+      error: "Error al cargar datos",
+      noEventsAvailable: "No hay lecciones disponibles"
+    },
+    de: {
+      studyMaterials: "Studienmaterialien",
+      loading: "L\xE4dt...",
+      error: "Fehler beim Laden der Daten",
+      noEventsAvailable: "Keine Lektionen verf\xFCgbar"
+    },
+    it: {
+      studyMaterials: "Materiali di studio",
+      loading: "Caricamento...",
+      error: "Errore nel caricamento dei dati",
+      noEventsAvailable: "Nessuna lezione disponibile"
+    },
+    fr: {
+      studyMaterials: "Mat\xE9riel d'\xE9tude",
+      loading: "Chargement...",
+      error: "Erreur de chargement des donn\xE9es",
+      noEventsAvailable: "Aucune le\xE7on disponible"
+    },
+    uk: {
+      studyMaterials: "\u041D\u0430\u0432\u0447\u0430\u043B\u044C\u043D\u0456 \u043C\u0430\u0442\u0435\u0440\u0456\u0430\u043B\u0438",
+      loading: "\u0417\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F...",
+      error: "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
+      noEventsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0443\u0440\u043E\u043A\u0456\u0432"
+    }
+  };
+  var LANGUAGE_NAMES = {
+    he: "\u05E2\u05D1\u05E8\u05D9\u05EA",
+    en: "English",
+    ru: "\u0420\u0443\u0441\u0441\u043A\u0438\u0439",
+    es: "Espa\xF1ol",
+    de: "Deutsch",
+    it: "Italiano",
+    fr: "Fran\xE7ais",
+    uk: "\u0423\u043A\u0440\u0430\u0457\u043D\u0441\u044C\u043A\u0430"
+  };
+  function EmbeddedEventsList({
+    language,
+    apiBaseUrl,
+    limit = 10,
+    onSelectEvent,
+    onLanguageChange
+  }) {
+    const [events, setEvents] = (0, import_react3.useState)([]);
+    const [loading, setLoading] = (0, import_react3.useState)(true);
+    const [error, setError] = (0, import_react3.useState)(null);
+    const t = LIST_TRANSLATIONS[language] || LIST_TRANSLATIONS.he;
+    const isRTL = language === "he";
+    (0, import_react3.useEffect)(() => {
+      const fetchEvents = () => __async(this, null, function* () {
+        try {
+          setLoading(true);
+          setError(null);
+          const params = new URLSearchParams({
+            public: "true",
+            limit: limit.toString(),
+            offset: "0"
+          });
+          const response = yield fetch(`${apiBaseUrl}/api/events?${params}`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch events");
+          }
+          const data = yield response.json();
+          setEvents(data.events || []);
+        } catch (err) {
+          console.error("Error fetching events:", err);
+          setError(err instanceof Error ? err.message : t.error);
+        } finally {
+          setLoading(false);
+        }
+      });
+      fetchEvents();
+    }, [apiBaseUrl, limit, t.error]);
+    const formatEventDate = (dateString) => {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat(language === "he" ? "he-IL" : "en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }).format(date);
+    };
+    const getEventTitle = (event) => {
+      var _a, _b, _c;
+      return ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson";
+    };
+    const handleLanguageChange = (newLang) => {
+      if (onLanguageChange) {
+        onLanguageChange(newLang);
+      }
+    };
+    if (loading) {
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full flex items-center justify-center bg-gray-50", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-gray-600", style: { fontSize: "13px" }, children: t.loading }) });
+    }
+    if (error) {
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full flex items-center justify-center bg-gray-50", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "13px" }, children: error }) });
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "h-full overflow-y-auto bg-gray-50", dir: isRTL ? "rtl" : "ltr", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-white p-4 border-b border-gray-200 sticky top-0 z-10", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "flex items-center justify-between mb-3", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-blue-900 font-semibold", style: { fontSize: "18px" }, children: t.studyMaterials }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "relative", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+            "select",
+            {
+              value: language,
+              onChange: (e) => handleLanguageChange(e.target.value),
+              className: `appearance-none w-full bg-white border-2 border-gray-200 rounded-lg px-3 py-2 ${isRTL ? "pl-8 pr-3" : "pr-8 pl-3"} text-gray-700 hover:border-blue-300 focus:border-blue-500 focus:outline-none cursor-pointer transition-colors`,
+              style: { fontSize: "14px" },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "he", children: LANGUAGE_NAMES.he }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "en", children: LANGUAGE_NAMES.en }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "ru", children: LANGUAGE_NAMES.ru }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "es", children: LANGUAGE_NAMES.es }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "de", children: LANGUAGE_NAMES.de }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "it", children: LANGUAGE_NAMES.it }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "fr", children: LANGUAGE_NAMES.fr }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "uk", children: LANGUAGE_NAMES.uk })
+              ]
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            ChevronDown,
+            {
+              className: `w-4 h-4 text-gray-500 absolute ${isRTL ? "left-3" : "right-3"} top-1/2 -translate-y-1/2 pointer-events-none`
+            }
+          )
+        ] })
+      ] }),
+      events.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-4 text-center text-gray-500", style: { fontSize: "13px" }, children: t.noEventsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-3 space-y-3", children: events.map((event) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+        "button",
+        {
+          onClick: () => onSelectEvent(event.id),
+          className: "w-full bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-4 text-left border border-gray-100 hover:border-blue-200",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+              "h3",
+              {
+                className: `text-blue-900 font-medium mb-2 ${isRTL ? "text-right" : "text-left"}`,
+                style: { fontSize: "15px" },
+                children: getEventTitle(event)
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex flex-col gap-1.5 text-gray-600", style: { fontSize: "12px" }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calendar, { className: "w-3.5 h-3.5 flex-shrink-0" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: formatEventDate(event.date) })
+              ] }),
+              event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3.5 h-3.5 flex-shrink-0" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+                  event.start_time,
+                  " - ",
+                  event.end_time
+                ] })
+              ] })
+            ] })
+          ]
+        },
+        event.id
+      )) })
+    ] });
+  }
 
   // components/EmbeddedLessonSidebar.tsx
-  var import_jsx_runtime = __toESM(require_jsx_runtime());
+  var import_react4 = __toESM(require_react());
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
   var TRANSLATIONS = {
     he: {
       preparation: "\u05D4\u05DB\u05E0\u05D4 \u05DC\u05E9\u05D9\u05E2\u05D5\u05E8",
@@ -22104,17 +22313,17 @@
     onBack
   }) {
     var _a, _b;
-    const [event, setEvent] = (0, import_react3.useState)(null);
-    const [parts, setParts] = (0, import_react3.useState)([]);
-    const [loading, setLoading] = (0, import_react3.useState)(true);
-    const [error, setError] = (0, import_react3.useState)(null);
-    const [copiedUrl, setCopiedUrl] = (0, import_react3.useState)(null);
-    const [expandedSections, setExpandedSections] = (0, import_react3.useState)([]);
-    const [sharedSection, setSharedSection] = (0, import_react3.useState)(null);
-    const [sharedLesson, setSharedLesson] = (0, import_react3.useState)(false);
+    const [event, setEvent] = (0, import_react4.useState)(null);
+    const [parts, setParts] = (0, import_react4.useState)([]);
+    const [loading, setLoading] = (0, import_react4.useState)(true);
+    const [error, setError] = (0, import_react4.useState)(null);
+    const [copiedUrl, setCopiedUrl] = (0, import_react4.useState)(null);
+    const [expandedSections, setExpandedSections] = (0, import_react4.useState)([]);
+    const [sharedSection, setSharedSection] = (0, import_react4.useState)(null);
+    const [sharedLesson, setSharedLesson] = (0, import_react4.useState)(false);
     const t = TRANSLATIONS[language] || TRANSLATIONS.he;
     const isRTL = language === "he";
-    (0, import_react3.useEffect)(() => {
+    (0, import_react4.useEffect)(() => {
       const fetchData = () => __async(this, null, function* () {
         try {
           setLoading(true);
@@ -22226,15 +22435,15 @@ ${partsText}`;
     const getIcon = (type) => {
       switch (type) {
         case "book":
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BookOpen, { className: "w-3.5 h-3.5" });
+          return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(BookOpen, { className: "w-3.5 h-3.5" });
         case "video":
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Video, { className: "w-3.5 h-3.5" });
+          return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Video, { className: "w-3.5 h-3.5" });
         case "document":
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileText, { className: "w-3.5 h-3.5" });
+          return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(FileText, { className: "w-3.5 h-3.5" });
         case "audio":
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Headphones, { className: "w-3.5 h-3.5" });
+          return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Headphones, { className: "w-3.5 h-3.5" });
         default:
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(FileText, { className: "w-3.5 h-3.5" });
+          return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(FileText, { className: "w-3.5 h-3.5" });
       }
     };
     const getSectionColor = (order) => {
@@ -22270,45 +22479,45 @@ ${partsText}`;
       }).format(date);
     };
     if (loading) {
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-gray-600", style: { fontSize: "13px" }, children: t.loading }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-gray-600", style: { fontSize: "13px" }, children: t.loading }) });
     }
     if (error || !event) {
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "13px" }, children: error || t.error }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "13px" }, children: error || t.error }) });
     }
     const eventTitle = ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || "Lesson";
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "h-full overflow-y-auto bg-white", dir: isRTL ? "rtl" : "ltr", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-blue-50 p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-blue-900", style: { fontSize: "15px" }, children: eventTitle }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "text-gray-600", style: { fontSize: "11px" }, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "h-full overflow-y-auto bg-white", dir: isRTL ? "rtl" : "ltr", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "bg-blue-50 p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { className: "text-blue-900", style: { fontSize: "15px" }, children: eventTitle }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { className: "text-gray-600", style: { fontSize: "11px" }, children: [
           formatEventDate(event.date),
-          event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+          event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { children: [
             " \u2022 ",
             event.start_time,
             " - ",
             event.end_time
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `absolute ${isRTL ? "left-3" : "right-3"} top-3 flex gap-1`, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: `absolute ${isRTL ? "left-3" : "right-3"} top-3 flex gap-1`, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
             "button",
             {
               onClick: shareLesson,
               className: "bg-green-500 text-white rounded-full p-1 hover:bg-green-600 transition-all",
               title: t.shareLesson,
-              children: sharedLesson ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Check, { className: "w-3 h-3" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Share2, { className: "w-3 h-3" })
+              children: sharedLesson ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-3 h-3" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Share2, { className: "w-3 h-3" })
             }
           ),
-          onBack && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          onBack && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
             "button",
             {
               onClick: onBack,
               className: "bg-blue-500 text-white rounded-full p-1 hover:bg-blue-600 transition-all",
-              children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronDown, { className: "w-3 h-3" })
+              children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ChevronDown, { className: "w-3 h-3" })
             }
           )
         ] })
       ] }),
-      parts.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-4 text-center text-gray-500", style: { fontSize: "13px" }, children: t.noPartsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "space-y-3 p-3", children: parts.map((part, index) => {
+      parts.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "p-4 text-center text-gray-500", style: { fontSize: "13px" }, children: t.noPartsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "space-y-3 p-3", children: parts.map((part, index) => {
         var _a2;
         const isExpanded = expandedSections.includes(index);
         const colors = getSectionColor(part.order);
@@ -22323,43 +22532,43 @@ ${partsText}`;
           part.lesson_preparation_link && { type: "document", text: t.readDocument, url: part.lesson_preparation_link },
           ...((_a2 = part.custom_links) == null ? void 0 : _a2.map((l) => ({ type: "document", text: l.title, url: l.url }))) || []
         ].filter(Boolean);
-        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+        return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
           "div",
           {
             className: `bg-white rounded-lg border-r-3 ${colors.border} shadow-sm`,
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "p-2.5 flex items-start gap-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex-1 ${isRTL ? "pr-2" : "pl-2"}`, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", { className: `${colors.text}`, style: { fontSize: "13px", fontWeight: "bold" }, children: partTitle }),
-                  part.description && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-gray-600 leading-snug mt-0.5", style: { fontSize: "10px" }, children: part.description })
+              /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "p-2.5 flex items-start gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: `flex-1 ${isRTL ? "pr-2" : "pl-2"}`, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: `${colors.text}`, style: { fontSize: "13px", fontWeight: "bold" }, children: partTitle }),
+                  part.description && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-gray-600 leading-snug mt-0.5", style: { fontSize: "10px" }, children: part.description })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex gap-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex gap-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                     "button",
                     {
                       onClick: () => shareSection(part, index),
                       className: "bg-white text-green-500 border border-green-400 rounded-full p-1 hover:bg-green-50 transition-all flex-shrink-0",
                       title: t.shareSection,
-                      children: sharedSection === index ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Check, { className: "w-3 h-3" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Share2, { className: "w-3 h-3" })
+                      children: sharedSection === index ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-3 h-3" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Share2, { className: "w-3 h-3" })
                     }
                   ),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                     "button",
                     {
                       onClick: () => toggleSection(index),
                       className: "bg-white text-blue-500 border border-blue-400 rounded-full p-1 hover:bg-blue-50 transition-all flex-shrink-0",
-                      children: isExpanded ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronUp, { className: "w-3 h-3" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronDown, { className: "w-3 h-3" })
+                      children: isExpanded ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ChevronUp, { className: "w-3 h-3" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ChevronDown, { className: "w-3 h-3" })
                     }
                   )
                 ] })
               ] }),
-              isExpanded && allLinks.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `${isRTL ? "pr-2.5 pl-2.5" : "px-2.5"} pb-2.5 space-y-1.5`, children: allLinks.map((link, linkIdx) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+              isExpanded && allLinks.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: `${isRTL ? "pr-2.5 pl-2.5" : "px-2.5"} pb-2.5 space-y-1.5`, children: allLinks.map((link, linkIdx) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
                 "div",
                 {
                   className: `flex items-center gap-2 ${colors.bg} rounded-md p-2 hover:opacity-80 transition-all group`,
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: colors.text, children: getLinkIcon(link.url, link.type) }),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+                    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: colors.text, children: getLinkIcon(link.url, link.type) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
                       "a",
                       {
                         href: link.url,
@@ -22369,7 +22578,7 @@ ${partsText}`;
                         rel: "noopener noreferrer",
                         children: [
                           link.text,
-                          link.page && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "text-gray-500", children: [
+                          link.page && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "text-gray-500", children: [
                             " (p. ",
                             link.page,
                             ")"
@@ -22377,7 +22586,7 @@ ${partsText}`;
                         ]
                       }
                     ),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                       "button",
                       {
                         onClick: (e) => {
@@ -22386,7 +22595,7 @@ ${partsText}`;
                         },
                         className: `${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-1 transition-all opacity-0 group-hover:opacity-100`,
                         title: t.copyLink,
-                        children: copiedUrl === link.url ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Check, { className: "w-3 h-3 text-green-600" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Copy, { className: "w-3 h-3" })
+                        children: copiedUrl === link.url ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-3 h-3 text-green-600" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Copy, { className: "w-3 h-3" })
                       }
                     )
                   ]
@@ -22401,18 +22610,74 @@ ${partsText}`;
     ] });
   }
 
+  // components/StudyMaterialsWidget.tsx
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime());
+  function StudyMaterialsWidget({
+    eventId,
+    language = "he",
+    apiBaseUrl = "http://localhost:8080",
+    limit = 10
+  }) {
+    const [view, setView] = (0, import_react5.useState)(eventId ? "detail" : "list");
+    const [selectedEventId, setSelectedEventId] = (0, import_react5.useState)(eventId);
+    const [currentLanguage, setCurrentLanguage] = (0, import_react5.useState)(language);
+    (0, import_react5.useEffect)(() => {
+      if (typeof window !== "undefined") {
+        const savedLanguage = localStorage.getItem("studymaterials-language");
+        if (savedLanguage && !eventId) {
+          setCurrentLanguage(savedLanguage);
+        }
+      }
+    }, [eventId]);
+    const handleSelectEvent = (id) => {
+      setSelectedEventId(id);
+      setView("detail");
+    };
+    const handleBack = () => {
+      setView("list");
+      setSelectedEventId(void 0);
+    };
+    const handleLanguageChange = (lang) => {
+      setCurrentLanguage(lang);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("studymaterials-language", lang);
+      }
+    };
+    if (view === "list") {
+      return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+        EmbeddedEventsList,
+        {
+          language: currentLanguage,
+          apiBaseUrl,
+          limit,
+          onSelectEvent: handleSelectEvent,
+          onLanguageChange: handleLanguageChange
+        }
+      );
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+      EmbeddedLessonSidebar,
+      {
+        eventId: selectedEventId,
+        language: currentLanguage,
+        apiBaseUrl,
+        onBack: handleBack
+      }
+    );
+  }
+
   // widget/index.tsx
-  var import_jsx_runtime2 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime());
   function initWidget(container, config) {
     const root = (0, import_client.createRoot)(container);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_react4.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-        EmbeddedLessonSidebar,
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+        StudyMaterialsWidget,
         {
           eventId: config.eventId,
           language: config.language || "he",
           apiBaseUrl: config.apiBaseUrl || "http://localhost:8080",
-          onBack: config.onBack
+          limit: config.limit || 10
         }
       ) })
     );
@@ -22519,6 +22784,14 @@ lucide-react/dist/esm/icons/book-open.js:
    * See the LICENSE file in the root directory of this source tree.
    *)
 
+lucide-react/dist/esm/icons/calendar.js:
+  (**
+   * @license lucide-react v0.562.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
 lucide-react/dist/esm/icons/check.js:
   (**
    * @license lucide-react v0.562.0 - ISC
@@ -22536,6 +22809,14 @@ lucide-react/dist/esm/icons/chevron-down.js:
    *)
 
 lucide-react/dist/esm/icons/chevron-up.js:
+  (**
+   * @license lucide-react v0.562.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/clock.js:
   (**
    * @license lucide-react v0.562.0 - ISC
    *
