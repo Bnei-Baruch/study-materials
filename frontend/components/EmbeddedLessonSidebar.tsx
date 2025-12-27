@@ -88,6 +88,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     viewExcerpts: 'Избранные отрывки',
     viewTranscript: 'Транскрипт урока',
     viewProgram: 'Документ',
+    readingBeforeSleep: 'Чтение перед сном',
+    lessonPreparation: 'Подготовка к уроку',
     loading: 'Загрузка...',
     error: 'Ошибка загрузки данных',
     noPartsAvailable: 'Нет доступных частей',
