@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { StudyMaterialsWidget } from '../components/StudyMaterialsWidget'
 
 // Widget initialization function
-export function initWidget(container: HTMLElement, config: {
+function initWidget(container: HTMLElement, config: {
   eventId?: string  // Now optional
   language?: string
   apiBaseUrl?: string
@@ -24,7 +24,10 @@ export function initWidget(container: HTMLElement, config: {
   return () => root.unmount()
 }
 
-// Make it available globally
+// Export for esbuild to pick up with globalName
+export { initWidget }
+
+// Also set on window.StudyMaterialsWidget for the loader
 if (typeof window !== 'undefined') {
   (window as any).StudyMaterialsWidget = { initWidget }
 }

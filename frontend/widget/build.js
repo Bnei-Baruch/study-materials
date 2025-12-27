@@ -29,6 +29,7 @@ esbuild.build({
   sourcemap: !isProduction,
   target: ['es2015'],
   format: 'iife',
+  globalName: 'StudyMaterialsWidgetBundle',
   outfile: path.join(outputDir, 'widget.bundle.js'),
   define: {
     'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
