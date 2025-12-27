@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Study Materials Widget - Scoped Styles */
+
+/* Reset and base styles for widget container */
+[data-studymaterials-widget] {
+  all: initial;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  display: block;
+}
+
+[data-studymaterials-widget] *,
+[data-studymaterials-widget] *::before,
+[data-studymaterials-widget] *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+[data-studymaterials-widget] a {
+  color: inherit;
+  text-decoration: none;
+}
+
+[data-studymaterials-widget] button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Ensure widget is isolated from parent styles */
+[data-studymaterials-widget] {
+  line-height: 1.5;
+  color: #374151;
+}
+
+/* Override any parent page styles that might interfere */
+[data-studymaterials-widget] h1,
+[data-studymaterials-widget] h2,
+[data-studymaterials-widget] h3,
+[data-studymaterials-widget] h4,
+[data-studymaterials-widget] h5,
+[data-studymaterials-widget] h6,
+[data-studymaterials-widget] p {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+/* Scrollbar styling for webkit browsers */
+[data-studymaterials-widget] ::-webkit-scrollbar {
+  width: 8px;
+}
+
+[data-studymaterials-widget] ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+[data-studymaterials-widget] ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+[data-studymaterials-widget] ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

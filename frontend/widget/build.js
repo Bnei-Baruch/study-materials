@@ -50,17 +50,28 @@ esbuild.build({
   );
   console.log('✓ Loader script copied');
   
-  // Copy CSS
-  fs.copyFileSync(
-    path.join(__dirname, 'widget.css'),
-    path.join(outputDir, 'widget.css')
-  );
-  console.log('✓ Widget styles copied');
+  // Build Tailwind CSS
+  console.log('Building Tailwind CSS...');
+  const { execSync } = require('child_process');
+  try {
+    execSync(
+      `npx tailwindcss -c ${path.join(__dirname, 'tailwind.config.js')} -i ${path.join(__dirname, 'input.css')} -o ${path.join(outputDir, 'widget.css')} ${isProduction ? '--minify' : ''}`,
+      { cwd: path.join(__dirname, '..'), stdio: 'inherit' }
+    );
+    console.log('✓ Widget styles built');
+  } catch (error) {
+    console.error('Failed to build Tailwind CSS:', error.message);
+    process.exit(1);
+  }
   
   // Generate bundle stats
   const bundleSize = fs.statSync(path.join(outputDir, 'widget.bundle.js')).size;
   const bundleSizeKB = (bundleSize / 1024).toFixed(2);
+  const cssSize = fs.statSync(path.join(outputDir, 'widget.css')).size;
+  const cssSizeKB = (cssSize / 1024).toFixed(2);
+  
   console.log(`\nBundle size: ${bundleSizeKB} KB`);
+  console.log(`CSS size: ${cssSizeKB} KB`);
   
   console.log('\nWidget files ready in:', outputDir);
   console.log('- widget.js (loader)');
