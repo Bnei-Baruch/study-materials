@@ -11,6 +11,7 @@ import {
   ChevronUp,
   ChevronDown,
   Share2,
+  List,
 } from 'lucide-react'
 
 // Translation type
@@ -27,6 +28,8 @@ interface Translations {
   viewExcerpts: string
   viewTranscript: string
   viewProgram: string
+  readingBeforeSleep: string
+  lessonPreparation: string
   loading: string
   error: string
   noPartsAvailable: string
@@ -37,16 +40,18 @@ const TRANSLATIONS: Record<string, Translations> = {
   he: {
     preparation: 'הכנה לשיעור',
     part: 'חלק',
-    shareLesson: 'שתף שיעור',
-    shareSection: 'שתף חלק',
+    shareLesson: 'שתף',
+    shareSection: 'שתף',
     copyLink: 'העתק קישור',
     copied: 'הועתק!',
     readSource: 'לקריאת המקור',
-    watchLesson: 'לצפייה בשיעור',
-    readDocument: 'לקריאת מסמכים',
-    viewExcerpts: 'לקריאת תמצית',
-    viewTranscript: 'לקריאת תמליל',
-    viewProgram: 'לצפייה בתוכנית',
+    watchLesson: 'צפייה בשיעור',
+    readDocument: 'מסמך',
+    viewExcerpts: 'קטעים נבחרים',
+    viewTranscript: 'תמליל השיעור',
+    viewProgram: 'מסמך',
+    readingBeforeSleep: 'קטע הכנה לשינה',
+    lessonPreparation: 'מסמך הכנה לשיעור',
     loading: 'טוען...',
     error: 'שגיאה בטעינת הנתונים',
     noPartsAvailable: 'אין חלקים זמינים',
@@ -54,16 +59,18 @@ const TRANSLATIONS: Record<string, Translations> = {
   en: {
     preparation: 'Lesson Preparation',
     part: 'Part',
-    shareLesson: 'Share Lesson',
-    shareSection: 'Share Section',
+    shareLesson: 'Share',
+    shareSection: 'Share',
     copyLink: 'Copy Link',
     copied: 'Copied!',
     readSource: 'Read the source',
-    watchLesson: 'Watch lesson',
-    readDocument: 'Read documents',
-    viewExcerpts: 'View excerpts',
-    viewTranscript: 'View transcript',
-    viewProgram: 'View program',
+    watchLesson: 'Watch Lesson',
+    readDocument: 'Document',
+    viewExcerpts: 'Selected Excerpts',
+    viewTranscript: 'Lesson Transcript',
+    viewProgram: 'Document',
+    readingBeforeSleep: 'Reading Before Sleep',
+    lessonPreparation: 'Lesson Preparation',
     loading: 'Loading...',
     error: 'Error loading data',
     noPartsAvailable: 'No parts available',
@@ -71,16 +78,16 @@ const TRANSLATIONS: Record<string, Translations> = {
   ru: {
     preparation: 'Подготовка к уроку',
     part: 'Часть',
-    shareLesson: 'Поделиться уроком',
-    shareSection: 'Поделиться частью',
+    shareLesson: 'Поделиться',
+    shareSection: 'Поделиться',
     copyLink: 'Скопировать ссылку',
     copied: 'Скопировано!',
     readSource: 'Читать источник',
     watchLesson: 'Смотреть урок',
-    readDocument: 'Читать документы',
-    viewExcerpts: 'Просмотр выдержек',
-    viewTranscript: 'Просмотр транскрипта',
-    viewProgram: 'Просмотр программы',
+    readDocument: 'Документ',
+    viewExcerpts: 'Избранные отрывки',
+    viewTranscript: 'Транскрипт урока',
+    viewProgram: 'Документ',
     loading: 'Загрузка...',
     error: 'Ошибка загрузки данных',
     noPartsAvailable: 'Нет доступных частей',
@@ -88,33 +95,37 @@ const TRANSLATIONS: Record<string, Translations> = {
   es: {
     preparation: 'Preparación de la lección',
     part: 'Parte',
-    shareLesson: 'Compartir lección',
-    shareSection: 'Compartir parte',
+    shareLesson: 'Compartir',
+    shareSection: 'Compartir',
     copyLink: 'Copiar enlace',
     copied: '¡Copiado!',
     readSource: 'Leer la fuente',
     watchLesson: 'Ver lección',
-    readDocument: 'Leer documentos',
-    viewExcerpts: 'Ver extractos',
-    viewTranscript: 'Ver transcripción',
-    viewProgram: 'Ver programa',
+    readDocument: 'Documento',
+    viewExcerpts: 'Extractos seleccionados',
+    viewTranscript: 'Transcripción de la lección',
+    viewProgram: 'Documento',
+    readingBeforeSleep: 'Lectura antes de dormir',
+    lessonPreparation: 'Preparación de la lección',
     loading: 'Cargando...',
     error: 'Error al cargar datos',
     noPartsAvailable: 'No hay partes disponibles',
   },
   de: {
-    preparation: 'Unterrichtsvorbereitung',
+    preparation: 'Lektionsvorbereitung',
     part: 'Teil',
-    shareLesson: 'Lektion teilen',
-    shareSection: 'Teil teilen',
+    shareLesson: 'Teilen',
+    shareSection: 'Teilen',
     copyLink: 'Link kopieren',
     copied: 'Kopiert!',
     readSource: 'Quelle lesen',
     watchLesson: 'Lektion ansehen',
-    readDocument: 'Dokumente lesen',
-    viewExcerpts: 'Auszüge ansehen',
-    viewTranscript: 'Transkript ansehen',
-    viewProgram: 'Programm ansehen',
+    readDocument: 'Dokument',
+    viewExcerpts: 'Ausgewählte Auszüge',
+    viewTranscript: 'Lektionstranskript',
+    viewProgram: 'Dokument',
+    readingBeforeSleep: 'Lesen vor dem Schlafengehen',
+    lessonPreparation: 'Lektionsvorbereitung',
     loading: 'Lädt...',
     error: 'Fehler beim Laden der Daten',
     noPartsAvailable: 'Keine Teile verfügbar',
@@ -122,16 +133,18 @@ const TRANSLATIONS: Record<string, Translations> = {
   it: {
     preparation: 'Preparazione della lezione',
     part: 'Parte',
-    shareLesson: 'Condividi lezione',
-    shareSection: 'Condividi parte',
+    shareLesson: 'Condividi',
+    shareSection: 'Condividi',
     copyLink: 'Copia link',
     copied: 'Copiato!',
     readSource: 'Leggi la fonte',
-    watchLesson: 'Guarda lezione',
-    readDocument: 'Leggi documenti',
-    viewExcerpts: 'Visualizza estratti',
-    viewTranscript: 'Visualizza trascrizione',
-    viewProgram: 'Visualizza programma',
+    watchLesson: 'Guarda la lezione',
+    readDocument: 'Documento',
+    viewExcerpts: 'Estratti selezionati',
+    viewTranscript: 'Trascrizione della lezione',
+    viewProgram: 'Documento',
+    readingBeforeSleep: 'Lettura prima di dormire',
+    lessonPreparation: 'Preparazione della lezione',
     loading: 'Caricamento...',
     error: 'Errore nel caricamento dei dati',
     noPartsAvailable: 'Nessuna parte disponibile',
@@ -139,16 +152,18 @@ const TRANSLATIONS: Record<string, Translations> = {
   fr: {
     preparation: 'Préparation de la leçon',
     part: 'Partie',
-    shareLesson: 'Partager la leçon',
-    shareSection: 'Partager la partie',
+    shareLesson: 'Partager',
+    shareSection: 'Partager',
     copyLink: 'Copier le lien',
     copied: 'Copié!',
     readSource: 'Lire la source',
     watchLesson: 'Regarder la leçon',
-    readDocument: 'Lire les documents',
-    viewExcerpts: 'Voir les extraits',
-    viewTranscript: 'Voir la transcription',
-    viewProgram: 'Voir le programme',
+    readDocument: 'Document',
+    viewExcerpts: 'Extraits sélectionnés',
+    viewTranscript: 'Transcription de la leçon',
+    viewProgram: 'Document',
+    readingBeforeSleep: 'Lecture avant de dormir',
+    lessonPreparation: 'Préparation de la leçon',
     loading: 'Chargement...',
     error: 'Erreur de chargement des données',
     noPartsAvailable: 'Aucune partie disponible',
@@ -156,16 +171,18 @@ const TRANSLATIONS: Record<string, Translations> = {
   uk: {
     preparation: 'Підготовка до уроку',
     part: 'Частина',
-    shareLesson: 'Поділитися уроком',
-    shareSection: 'Поділитися частиною',
-    copyLink: 'Скопіювати посилання',
+    shareLesson: 'Поділитися',
+    shareSection: 'Поділитися',
+    copyLink: 'Копіювати посилання',
     copied: 'Скопійовано!',
     readSource: 'Читати джерело',
     watchLesson: 'Дивитися урок',
-    readDocument: 'Читати документи',
-    viewExcerpts: 'Переглянути витяги',
-    viewTranscript: 'Переглянути транскрипт',
-    viewProgram: 'Переглянути програму',
+    readDocument: 'Документ',
+    viewExcerpts: 'Вибрані уривки',
+    viewTranscript: 'Транскрипт уроку',
+    viewProgram: 'Документ',
+    readingBeforeSleep: 'Читання перед сном',
+    lessonPreparation: 'Підготовка до уроку',
     loading: 'Завантаження...',
     error: 'Помилка завантаження даних',
     noPartsAvailable: 'Немає доступних частин',
@@ -232,9 +249,12 @@ export function EmbeddedLessonSidebar({
   const [expandedSections, setExpandedSections] = useState<number[]>([])
   const [sharedSection, setSharedSection] = useState<number | null>(null)
   const [sharedLesson, setSharedLesson] = useState<boolean>(false)
+  const [showShareMenu, setShowShareMenu] = useState<'lesson' | 'section' | null>(null)
+  const [shareMenuSection, setShareMenuSection] = useState<number | null>(null)
 
   const t = TRANSLATIONS[language] || TRANSLATIONS.he
   const isRTL = language === 'he'
+  const isLTR = !isRTL
 
   // Fetch event and parts data
   useEffect(() => {
@@ -287,52 +307,60 @@ export function EmbeddedLessonSidebar({
     )
   }
 
-  const shareSection = async (part: Part, index: number) => {
+  const shareSection = (part: Part, index: number) => {
+    setShareMenuSection(index)
+    setShowShareMenu('section')
+  }
+
+  const shareToWhatsApp = (text: string) => {
+    const url = `https://wa.me/?text=${encodeURIComponent(text)}`
+    window.open(url, '_blank')
+    setShowShareMenu(null)
+  }
+
+  const shareToTelegram = (text: string) => {
+    const url = `https://t.me/share/url?text=${encodeURIComponent(text)}`
+    window.open(url, '_blank')
+    setShowShareMenu(null)
+  }
+
+  const getSectionShareText = (part: Part) => {
     const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`
     const links = [
-      ...(part.sources?.map((s) => `${s.source_title}: ${s.source_url}`) || []),
+      ...(part.sources?.map((s) => `${t.readSource}: ${s.source_url}`) || []),
       part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
       part.transcript_link && `${t.viewTranscript}: ${part.transcript_link}`,
       part.lesson_link && `${t.watchLesson}: ${part.lesson_link}`,
       part.program_link && `${t.viewProgram}: ${part.program_link}`,
+      part.reading_before_sleep_link && `${t.readingBeforeSleep}: ${part.reading_before_sleep_link}`,
+      part.lesson_preparation_link && `${t.lessonPreparation}: ${part.lesson_preparation_link}`,
       ...(part.custom_links?.map((l) => `${l.title}: ${l.url}`) || []),
     ].filter(Boolean)
 
-    const shareText = `${partNumber}: ${part.title}\n${
-      part.description || ''
-    }\n\n${links.join('\n')}`
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: part.title,
-          text: shareText,
-        })
-      } catch (err) {
-        console.log('Share cancelled')
-      }
-    } else {
-      navigator.clipboard.writeText(shareText)
-      setSharedSection(index)
-      setTimeout(() => setSharedSection(null), 2000)
-    }
+    return `${partNumber}: ${part.title}\n${part.description || ''}\n\n${links.join('\n')}`
   }
 
-  const shareLesson = async () => {
-    if (!event) return
+  const shareLesson = () => {
+    setShowShareMenu('lesson')
+  }
+
+  const getLessonShareText = () => {
+    if (!event) return ''
 
     const title = event.titles?.[language] || 'Lesson'
-    const date = new Date(event.date).toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US')
+    const date = formatEventDate(event.date)
     
     const partsText = parts
       .map((part) => {
         const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`
         const links = [
-          ...(part.sources?.map((s) => `${s.source_title}: ${s.source_url}`) || []),
+          ...(part.sources?.map((s) => `${t.readSource}: ${s.source_url}`) || []),
           part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
           part.transcript_link && `${t.viewTranscript}: ${part.transcript_link}`,
           part.lesson_link && `${t.watchLesson}: ${part.lesson_link}`,
           part.program_link && `${t.viewProgram}: ${part.program_link}`,
+          part.reading_before_sleep_link && `${t.readingBeforeSleep}: ${part.reading_before_sleep_link}`,
+          part.lesson_preparation_link && `${t.lessonPreparation}: ${part.lesson_preparation_link}`,
           ...(part.custom_links?.map((l) => `${l.title}: ${l.url}`) || []),
         ].filter(Boolean)
         
@@ -340,22 +368,7 @@ export function EmbeddedLessonSidebar({
       })
       .join('\n\n')
 
-    const shareText = `${title}\n${date}\n\n${partsText}`
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: title,
-          text: shareText,
-        })
-      } catch (err) {
-        console.log('Share cancelled')
-      }
-    } else {
-      navigator.clipboard.writeText(shareText)
-      setSharedLesson(true)
-      setTimeout(() => setSharedLesson(false), 2000)
-    }
+    return `${title}\n${date}\n\n${partsText}`
   }
 
   const getIcon = (type: string) => {
@@ -374,12 +387,13 @@ export function EmbeddedLessonSidebar({
   }
 
   const getSectionColor = (order: number) => {
-    if (order === 0) return { text: 'text-orange-700', border: 'border-r-orange-500', bg: 'bg-orange-300/10' }
+    const borderSide = isLTR ? 'border-l-[5px]' : 'border-r-[5px]'
+    if (order === 0) return { text: 'text-orange-700', border: `${borderSide} border-orange-500`, bg: 'bg-orange-300/10' }
     const colors = [
-      { text: 'text-blue-700', border: 'border-r-blue-500', bg: 'bg-blue-300/10' },
-      { text: 'text-orange-700', border: 'border-r-orange-500', bg: 'bg-orange-300/10' },
-      { text: 'text-green-700', border: 'border-r-green-500', bg: 'bg-green-300/10' },
-      { text: 'text-purple-700', border: 'border-r-purple-500', bg: 'bg-purple-300/10' },
+      { text: 'text-blue-700', border: `${borderSide} border-blue-500`, bg: 'bg-blue-300/10' },
+      { text: 'text-orange-700', border: `${borderSide} border-orange-500`, bg: 'bg-orange-300/10' },
+      { text: 'text-green-700', border: `${borderSide} border-green-500`, bg: 'bg-green-300/10' },
+      { text: 'text-purple-700', border: `${borderSide} border-purple-500`, bg: 'bg-purple-300/10' },
     ]
     return colors[(order - 1) % colors.length]
   }
@@ -410,7 +424,7 @@ export function EmbeddedLessonSidebar({
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="h-full flex items-center justify-center bg-white" style={{ width: '350px' }} dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="text-gray-600" style={{ fontSize: '13px' }}>
           {t.loading}
         </div>
@@ -420,7 +434,7 @@ export function EmbeddedLessonSidebar({
 
   if (error || !event) {
     return (
-      <div className="h-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="h-full flex items-center justify-center bg-white" style={{ width: '350px' }} dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="text-red-600 text-center p-4" style={{ fontSize: '13px' }}>
           {error || t.error}
         </div>
@@ -431,13 +445,13 @@ export function EmbeddedLessonSidebar({
   const eventTitle = event.titles?.[language] || event.titles?.['he'] || 'Lesson'
 
   return (
-    <div className="h-full overflow-y-auto bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="h-full overflow-y-auto bg-white" style={{ width: '350px' }} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Compact Header */}
       <div className="bg-blue-50 p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative">
-        <h3 className="text-blue-900" style={{ fontSize: '15px' }}>
+        <h3 className="text-blue-900" style={{ fontSize: '17px' }}>
           {eventTitle}
         </h3>
-        <p className="text-gray-600" style={{ fontSize: '11px' }}>
+        <p className="text-gray-600" style={{ fontSize: '13px' }}>
           {formatEventDate(event.date)}
           {event.start_time && event.end_time && (
             <span> • {event.start_time} - {event.end_time}</span>
@@ -454,9 +468,9 @@ export function EmbeddedLessonSidebar({
           {onBack && (
             <button
               onClick={onBack}
-              className="bg-blue-500 text-white rounded-full p-1 hover:bg-blue-600 transition-all"
+              className="bg-blue-500 text-white rounded-full p-1.5 hover:bg-blue-600 transition-all"
             >
-              <ChevronDown className="w-3 h-3" />
+              <List className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
@@ -476,29 +490,29 @@ export function EmbeddedLessonSidebar({
 
             // Collect all links for this part
             const allLinks = [
-              ...(part.sources?.map(s => ({ type: 'source' as const, text: s.source_title, url: s.source_url, page: s.page_number })) || []),
+              ...(part.sources?.map(s => ({ type: 'source' as const, text: t.readSource, url: s.source_url, page: s.page_number })) || []),
               part.excerpts_link && { type: 'document' as const, text: t.viewExcerpts, url: part.excerpts_link },
               part.transcript_link && { type: 'document' as const, text: t.viewTranscript, url: part.transcript_link },
               part.lesson_link && { type: 'video' as const, text: t.watchLesson, url: part.lesson_link },
               part.program_link && { type: 'audio' as const, text: t.viewProgram, url: part.program_link },
-              part.reading_before_sleep_link && { type: 'document' as const, text: t.readDocument, url: part.reading_before_sleep_link },
-              part.lesson_preparation_link && { type: 'document' as const, text: t.readDocument, url: part.lesson_preparation_link },
+              part.reading_before_sleep_link && { type: 'document' as const, text: t.readingBeforeSleep, url: part.reading_before_sleep_link },
+              part.lesson_preparation_link && { type: 'document' as const, text: t.lessonPreparation, url: part.lesson_preparation_link },
               ...(part.custom_links?.map(l => ({ type: 'document' as const, text: l.title, url: l.url })) || []),
             ].filter(Boolean) as Array<{ type: 'source' | 'video' | 'document' | 'audio', text: string, url: string, page?: string }>
 
             return (
               <div
                 key={part.id}
-                className={`bg-white rounded-lg border-r-3 ${colors.border} shadow-sm`}
+                className={`bg-white rounded-lg ${colors.border} shadow-lg`}
               >
                 {/* Section Header */}
                 <div className="p-2.5 flex items-start gap-2">
                   <div className={`flex-1 ${isRTL ? 'pr-2' : 'pl-2'}`}>
-                    <h4 className={`${colors.text}`} style={{ fontSize: '13px', fontWeight: 'bold' }}>
+                    <h4 className={`${colors.text}`} style={{ fontSize: '14px', fontWeight: 'bold' }}>
                       {partTitle}
                     </h4>
                     {part.description && (
-                      <p className="text-gray-600 leading-snug mt-0.5" style={{ fontSize: '10px' }}>
+                      <p className="text-gray-600 leading-snug mt-0.5" style={{ fontSize: '12px' }}>
                         {part.description}
                       </p>
                     )}
@@ -545,7 +559,7 @@ export function EmbeddedLessonSidebar({
                         <a
                           href={link.url}
                           className={`flex-1 ${colors.text} hover:underline`}
-                          style={{ fontSize: '11px' }}
+                          style={{ fontSize: '13px' }}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -574,6 +588,65 @@ export function EmbeddedLessonSidebar({
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* Share Menu Modal */}
+      {showShareMenu && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setShowShareMenu(null)}
+        >
+          <div
+            className="bg-white rounded-lg p-4 m-4 max-w-sm w-full"
+            onClick={(e) => e.stopPropagation()}
+            dir={isRTL ? 'rtl' : 'ltr'}
+          >
+            <h4 className="text-gray-900 font-bold mb-3" style={{ fontSize: '16px' }}>
+              {t.shareLesson}
+            </h4>
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  const text = showShareMenu === 'lesson' 
+                    ? getLessonShareText() 
+                    : shareMenuSection !== null 
+                      ? getSectionShareText(parts[shareMenuSection])
+                      : ''
+                  shareToWhatsApp(text)
+                }}
+                className="w-full flex items-center gap-3 p-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all"
+              >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+                <span style={{ fontSize: '14px' }}>WhatsApp</span>
+              </button>
+              <button
+                onClick={() => {
+                  const text = showShareMenu === 'lesson' 
+                    ? getLessonShareText() 
+                    : shareMenuSection !== null 
+                      ? getSectionShareText(parts[shareMenuSection])
+                      : ''
+                  shareToTelegram(text)
+                }}
+                className="w-full flex items-center gap-3 p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all"
+              >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+                <span style={{ fontSize: '14px' }}>Telegram</span>
+              </button>
+            </div>
+            <button
+              onClick={() => setShowShareMenu(null)}
+              className="w-full mt-3 p-2 text-gray-600 hover:text-gray-800 transition-colors"
+              style={{ fontSize: '14px' }}
+            >
+              {language === 'he' ? 'ביטול' : 'Cancel'}
+            </button>
+          </div>
         </div>
       )}
     </div>

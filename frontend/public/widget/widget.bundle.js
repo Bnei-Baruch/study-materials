@@ -21962,18 +21962,29 @@ var StudyMaterialsWidgetBundle = (() => {
   ];
   var Headphones = createLucideIcon("headphones", __iconNode9);
 
-  // node_modules/lucide-react/dist/esm/icons/share-2.js
+  // node_modules/lucide-react/dist/esm/icons/list.js
   var __iconNode10 = [
+    ["path", { d: "M3 5h.01", key: "18ugdj" }],
+    ["path", { d: "M3 12h.01", key: "nlz23k" }],
+    ["path", { d: "M3 19h.01", key: "noohij" }],
+    ["path", { d: "M8 5h13", key: "1pao27" }],
+    ["path", { d: "M8 12h13", key: "1za7za" }],
+    ["path", { d: "M8 19h13", key: "m83p4d" }]
+  ];
+  var List = createLucideIcon("list", __iconNode10);
+
+  // node_modules/lucide-react/dist/esm/icons/share-2.js
+  var __iconNode11 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode10);
+  var Share2 = createLucideIcon("share-2", __iconNode11);
 
   // node_modules/lucide-react/dist/esm/icons/video.js
-  var __iconNode11 = [
+  var __iconNode12 = [
     [
       "path",
       {
@@ -21983,69 +21994,75 @@ var StudyMaterialsWidgetBundle = (() => {
     ],
     ["rect", { x: "2", y: "6", width: "14", height: "12", rx: "2", key: "158x01" }]
   ];
-  var Video = createLucideIcon("video", __iconNode11);
+  var Video = createLucideIcon("video", __iconNode12);
 
   // components/EmbeddedEventsList.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime());
   var LIST_TRANSLATIONS = {
     he: {
       studyMaterials: "\u05D7\u05D5\u05DE\u05E8\u05D9 \u05DC\u05D9\u05DE\u05D5\u05D3",
+      selectLesson: "\u05D1\u05D7\u05E8 \u05E9\u05D9\u05E2\u05D5\u05E8 \u05DE\u05D4\u05E8\u05E9\u05D9\u05DE\u05D4",
       loading: "\u05D8\u05D5\u05E2\u05DF...",
       error: "\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05D8\u05E2\u05D9\u05E0\u05EA \u05D4\u05E0\u05EA\u05D5\u05E0\u05D9\u05DD",
-      noEventsAvailable: "\u05D0\u05D9\u05DF \u05E9\u05D9\u05E2\u05D5\u05E8\u05D9\u05DD \u05D6\u05DE\u05D9\u05E0\u05D9\u05DD"
+      noEventsAvailable: "\u05D0\u05D9\u05DF \u05E9\u05D9\u05E2\u05D5\u05E8\u05D9\u05DD \u05D6\u05DE\u05D9\u05E0\u05D9\u05DD",
+      viewAllMaterials: "\u05E6\u05E4\u05D9\u05D9\u05D4 \u05D1\u05DB\u05DC \u05D7\u05D5\u05DE\u05E8\u05D9 \u05D4\u05DC\u05D9\u05DE\u05D5\u05D3"
     },
     en: {
       studyMaterials: "Study Materials",
+      selectLesson: "Select a lesson from the list",
       loading: "Loading...",
       error: "Error loading data",
-      noEventsAvailable: "No lessons available"
+      noEventsAvailable: "No lessons available",
+      viewAllMaterials: "View all study materials"
     },
     ru: {
       studyMaterials: "\u0423\u0447\u0435\u0431\u043D\u044B\u0435 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u044B",
+      selectLesson: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0443\u0440\u043E\u043A \u0438\u0437 \u0441\u043F\u0438\u0441\u043A\u0430",
       loading: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430...",
       error: "\u041E\u0448\u0438\u0431\u043A\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438 \u0434\u0430\u043D\u043D\u044B\u0445",
-      noEventsAvailable: "\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0443\u0440\u043E\u043A\u043E\u0432"
+      noEventsAvailable: "\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0443\u0440\u043E\u043A\u043E\u0432",
+      viewAllMaterials: "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0432\u0441\u0435 \u0443\u0447\u0435\u0431\u043D\u044B\u0435 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u044B"
     },
     es: {
       studyMaterials: "Materiales de estudio",
+      selectLesson: "Seleccione una lecci\xF3n de la lista",
       loading: "Cargando...",
       error: "Error al cargar datos",
-      noEventsAvailable: "No hay lecciones disponibles"
+      noEventsAvailable: "No hay lecciones disponibles",
+      viewAllMaterials: "Ver todos los materiales de estudio"
     },
     de: {
       studyMaterials: "Studienmaterialien",
+      selectLesson: "W\xE4hlen Sie eine Lektion aus der Liste",
       loading: "L\xE4dt...",
       error: "Fehler beim Laden der Daten",
-      noEventsAvailable: "Keine Lektionen verf\xFCgbar"
+      noEventsAvailable: "Keine Lektionen verf\xFCgbar",
+      viewAllMaterials: "Alle Studienmaterialien anzeigen"
     },
     it: {
       studyMaterials: "Materiali di studio",
+      selectLesson: "Seleziona una lezione dall'elenco",
       loading: "Caricamento...",
       error: "Errore nel caricamento dei dati",
-      noEventsAvailable: "Nessuna lezione disponibile"
+      noEventsAvailable: "Nessuna lezione disponibile",
+      viewAllMaterials: "Visualizza tutti i materiali di studio"
     },
     fr: {
       studyMaterials: "Mat\xE9riel d'\xE9tude",
+      selectLesson: "S\xE9lectionnez une le\xE7on dans la liste",
       loading: "Chargement...",
       error: "Erreur de chargement des donn\xE9es",
-      noEventsAvailable: "Aucune le\xE7on disponible"
+      noEventsAvailable: "Aucune le\xE7on disponible",
+      viewAllMaterials: "Voir tous les mat\xE9riaux d'\xE9tude"
     },
     uk: {
       studyMaterials: "\u041D\u0430\u0432\u0447\u0430\u043B\u044C\u043D\u0456 \u043C\u0430\u0442\u0435\u0440\u0456\u0430\u043B\u0438",
+      selectLesson: "\u0412\u0438\u0431\u0435\u0440\u0456\u0442\u044C \u0443\u0440\u043E\u043A \u0437\u0456 \u0441\u043F\u0438\u0441\u043A\u0443",
       loading: "\u0417\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F...",
       error: "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
-      noEventsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0443\u0440\u043E\u043A\u0456\u0432"
+      noEventsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0443\u0440\u043E\u043A\u0456\u0432",
+      viewAllMaterials: "\u041F\u0435\u0440\u0435\u0433\u043B\u044F\u043D\u0443\u0442\u0438 \u0432\u0441\u0456 \u043D\u0430\u0432\u0447\u0430\u043B\u044C\u043D\u0456 \u043C\u0430\u0442\u0435\u0440\u0456\u0430\u043B\u0438"
     }
-  };
-  var LANGUAGE_NAMES = {
-    he: "\u05E2\u05D1\u05E8\u05D9\u05EA",
-    en: "English",
-    ru: "\u0420\u0443\u0441\u0441\u043A\u0438\u0439",
-    es: "Espa\xF1ol",
-    de: "Deutsch",
-    it: "Italiano",
-    fr: "Fran\xE7ais",
-    uk: "\u0423\u043A\u0440\u0430\u0457\u043D\u0441\u044C\u043A\u0430"
   };
   function EmbeddedEventsList({
     language,
@@ -22059,6 +22076,7 @@ var StudyMaterialsWidgetBundle = (() => {
     const [error, setError] = (0, import_react3.useState)(null);
     const t = LIST_TRANSLATIONS[language] || LIST_TRANSLATIONS.he;
     const isRTL = language === "he";
+    const isLTR = !isRTL;
     (0, import_react3.useEffect)(() => {
       const fetchEvents = () => __async(this, null, function* () {
         try {
@@ -22084,10 +22102,15 @@ var StudyMaterialsWidgetBundle = (() => {
       });
       fetchEvents();
     }, [apiBaseUrl, limit, t.error]);
+    const formatEventDayOfWeek = (dateString) => {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat(language === "he" ? "he-IL" : language === "ru" ? "ru-RU" : language === "es" ? "es-ES" : language === "de" ? "de-DE" : "en-US", {
+        weekday: "long"
+      }).format(date);
+    };
     const formatEventDate = (dateString) => {
       const date = new Date(dateString);
-      return new Intl.DateTimeFormat(language === "he" ? "he-IL" : "en-US", {
-        weekday: "long",
+      return new Intl.DateTimeFormat(language === "he" ? "he-IL" : language === "ru" ? "ru-RU" : language === "es" ? "es-ES" : language === "de" ? "de-DE" : "en-US", {
         year: "numeric",
         month: "long",
         day: "numeric"
@@ -22103,74 +22126,77 @@ var StudyMaterialsWidgetBundle = (() => {
       }
     };
     if (loading) {
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full flex items-center justify-center bg-gray-50", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-gray-600", style: { fontSize: "13px" }, children: t.loading }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-gray-600", style: { fontSize: "13px" }, children: t.loading }) });
     }
     if (error) {
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full flex items-center justify-center bg-gray-50", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "13px" }, children: error }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full flex items-center justify-center bg-white", style: { width: "350px" }, dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "13px" }, children: error }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "h-full overflow-y-auto bg-gray-50", dir: isRTL ? "rtl" : "ltr", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-white p-4 border-b border-gray-200 sticky top-0 z-10", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "flex items-center justify-between mb-3", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "text-blue-900 font-semibold", style: { fontSize: "18px" }, children: t.studyMaterials }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "relative", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-            "select",
-            {
-              value: language,
-              onChange: (e) => handleLanguageChange(e.target.value),
-              className: `appearance-none w-full bg-white border-2 border-gray-200 rounded-lg px-3 py-2 ${isRTL ? "pl-8 pr-3" : "pr-8 pl-3"} text-gray-700 hover:border-blue-300 focus:border-blue-500 focus:outline-none cursor-pointer transition-colors`,
-              style: { fontSize: "14px" },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "he", children: LANGUAGE_NAMES.he }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "en", children: LANGUAGE_NAMES.en }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "ru", children: LANGUAGE_NAMES.ru }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "es", children: LANGUAGE_NAMES.es }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "de", children: LANGUAGE_NAMES.de }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "it", children: LANGUAGE_NAMES.it }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "fr", children: LANGUAGE_NAMES.fr }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "uk", children: LANGUAGE_NAMES.uk })
-              ]
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-            ChevronDown,
-            {
-              className: `w-4 h-4 text-gray-500 absolute ${isRTL ? "left-3" : "right-3"} top-1/2 -translate-y-1/2 pointer-events-none`
-            }
-          )
-        ] })
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "h-full overflow-y-auto", style: { width: "350px" }, dir: isRTL ? "rtl" : "ltr", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-blue-50 p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-blue-900", style: { fontSize: "15px" }, children: t.studyMaterials }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-gray-600", style: { fontSize: "10px" }, children: t.selectLesson }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `absolute ${isLTR ? "right-3" : "left-3"} top-3`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+          "select",
+          {
+            value: language,
+            onChange: (e) => handleLanguageChange(e.target.value),
+            className: "bg-white border border-blue-300 rounded-md px-2 py-1 text-blue-900 cursor-pointer hover:border-blue-500 transition-colors",
+            style: { fontSize: "10px" },
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "he", children: "\u05E2\u05D1\u05E8\u05D9\u05EA" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "en", children: "English" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "ru", children: "\u0420\u0443\u0441\u0441\u043A\u0438\u0439" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "es", children: "Espa\xF1ol" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "de", children: "Deutsch" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "it", children: "Italiano" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "fr", children: "Fran\xE7ais" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "uk", children: "\u0423\u043A\u0440\u0430\u0457\u043D\u0441\u044C\u043A\u0430" })
+            ]
+          }
+        ) })
       ] }),
-      events.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-4 text-center text-gray-500", style: { fontSize: "13px" }, children: t.noEventsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-3 space-y-3", children: events.map((event) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+      events.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-4 text-center text-gray-500", style: { fontSize: "13px" }, children: t.noEventsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 space-y-2", children: events.map((event) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
         "button",
         {
           onClick: () => onSelectEvent(event.id),
-          className: "w-full bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-4 text-left border border-gray-100 hover:border-blue-200",
+          className: `w-full bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl hover:border-blue-400 transition-all p-2.5 ${isRTL ? "text-right" : "text-left"}`,
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-              "h3",
-              {
-                className: `text-blue-900 font-medium mb-2 ${isRTL ? "text-right" : "text-left"}`,
-                style: { fontSize: "15px" },
-                children: getEventTitle(event)
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex flex-col gap-1.5 text-gray-600", style: { fontSize: "12px" }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calendar, { className: "w-3.5 h-3.5 flex-shrink-0" }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: formatEventDate(event.date) })
-              ] }),
-              event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3.5 h-3.5 flex-shrink-0" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", { className: "text-blue-900 mb-1", style: { fontSize: "13px" }, children: getEventTitle(event) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex flex-col gap-0.5 text-gray-500", style: { fontSize: "10px" }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calendar, { className: "w-3 h-3" }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
-                  event.start_time,
+                  formatEventDayOfWeek(event.date),
+                  ", ",
+                  formatEventDate(event.date)
+                ] })
+              ] }),
+              event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3 h-3" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+                  event.end_time,
                   " - ",
-                  event.end_time
+                  event.start_time
                 ] })
               ] })
             ] })
           ]
         },
         event.id
-      )) })
+      )) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-4", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+        "a",
+        {
+          href: "https://stmat.kab.info",
+          target: "_blank",
+          rel: "noopener noreferrer",
+          className: "block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-3 transition-all",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-700 font-medium", style: { fontSize: "14px" }, children: t.viewAllMaterials }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-600 mt-1", style: { fontSize: "11px" }, children: "stmat.kab.info" })
+          ]
+        }
+      ) })
     ] });
   }
 
@@ -22181,16 +22207,18 @@ var StudyMaterialsWidgetBundle = (() => {
     he: {
       preparation: "\u05D4\u05DB\u05E0\u05D4 \u05DC\u05E9\u05D9\u05E2\u05D5\u05E8",
       part: "\u05D7\u05DC\u05E7",
-      shareLesson: "\u05E9\u05EA\u05E3 \u05E9\u05D9\u05E2\u05D5\u05E8",
-      shareSection: "\u05E9\u05EA\u05E3 \u05D7\u05DC\u05E7",
+      shareLesson: "\u05E9\u05EA\u05E3",
+      shareSection: "\u05E9\u05EA\u05E3",
       copyLink: "\u05D4\u05E2\u05EA\u05E7 \u05E7\u05D9\u05E9\u05D5\u05E8",
       copied: "\u05D4\u05D5\u05E2\u05EA\u05E7!",
       readSource: "\u05DC\u05E7\u05E8\u05D9\u05D0\u05EA \u05D4\u05DE\u05E7\u05D5\u05E8",
-      watchLesson: "\u05DC\u05E6\u05E4\u05D9\u05D9\u05D4 \u05D1\u05E9\u05D9\u05E2\u05D5\u05E8",
-      readDocument: "\u05DC\u05E7\u05E8\u05D9\u05D0\u05EA \u05DE\u05E1\u05DE\u05DB\u05D9\u05DD",
-      viewExcerpts: "\u05DC\u05E7\u05E8\u05D9\u05D0\u05EA \u05EA\u05DE\u05E6\u05D9\u05EA",
-      viewTranscript: "\u05DC\u05E7\u05E8\u05D9\u05D0\u05EA \u05EA\u05DE\u05DC\u05D9\u05DC",
-      viewProgram: "\u05DC\u05E6\u05E4\u05D9\u05D9\u05D4 \u05D1\u05EA\u05D5\u05DB\u05E0\u05D9\u05EA",
+      watchLesson: "\u05E6\u05E4\u05D9\u05D9\u05D4 \u05D1\u05E9\u05D9\u05E2\u05D5\u05E8",
+      readDocument: "\u05DE\u05E1\u05DE\u05DA",
+      viewExcerpts: "\u05E7\u05D8\u05E2\u05D9\u05DD \u05E0\u05D1\u05D7\u05E8\u05D9\u05DD",
+      viewTranscript: "\u05EA\u05DE\u05DC\u05D9\u05DC \u05D4\u05E9\u05D9\u05E2\u05D5\u05E8",
+      viewProgram: "\u05DE\u05E1\u05DE\u05DA",
+      readingBeforeSleep: "\u05E7\u05D8\u05E2 \u05D4\u05DB\u05E0\u05D4 \u05DC\u05E9\u05D9\u05E0\u05D4",
+      lessonPreparation: "\u05DE\u05E1\u05DE\u05DA \u05D4\u05DB\u05E0\u05D4 \u05DC\u05E9\u05D9\u05E2\u05D5\u05E8",
       loading: "\u05D8\u05D5\u05E2\u05DF...",
       error: "\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05D8\u05E2\u05D9\u05E0\u05EA \u05D4\u05E0\u05EA\u05D5\u05E0\u05D9\u05DD",
       noPartsAvailable: "\u05D0\u05D9\u05DF \u05D7\u05DC\u05E7\u05D9\u05DD \u05D6\u05DE\u05D9\u05E0\u05D9\u05DD"
@@ -22198,16 +22226,18 @@ var StudyMaterialsWidgetBundle = (() => {
     en: {
       preparation: "Lesson Preparation",
       part: "Part",
-      shareLesson: "Share Lesson",
-      shareSection: "Share Section",
+      shareLesson: "Share",
+      shareSection: "Share",
       copyLink: "Copy Link",
       copied: "Copied!",
       readSource: "Read the source",
-      watchLesson: "Watch lesson",
-      readDocument: "Read documents",
-      viewExcerpts: "View excerpts",
-      viewTranscript: "View transcript",
-      viewProgram: "View program",
+      watchLesson: "Watch Lesson",
+      readDocument: "Document",
+      viewExcerpts: "Selected Excerpts",
+      viewTranscript: "Lesson Transcript",
+      viewProgram: "Document",
+      readingBeforeSleep: "Reading Before Sleep",
+      lessonPreparation: "Lesson Preparation",
       loading: "Loading...",
       error: "Error loading data",
       noPartsAvailable: "No parts available"
@@ -22215,16 +22245,16 @@ var StudyMaterialsWidgetBundle = (() => {
     ru: {
       preparation: "\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u043A \u0443\u0440\u043E\u043A\u0443",
       part: "\u0427\u0430\u0441\u0442\u044C",
-      shareLesson: "\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F \u0443\u0440\u043E\u043A\u043E\u043C",
-      shareSection: "\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F \u0447\u0430\u0441\u0442\u044C\u044E",
+      shareLesson: "\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F",
+      shareSection: "\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F",
       copyLink: "\u0421\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0441\u0441\u044B\u043B\u043A\u0443",
       copied: "\u0421\u043A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u043D\u043E!",
       readSource: "\u0427\u0438\u0442\u0430\u0442\u044C \u0438\u0441\u0442\u043E\u0447\u043D\u0438\u043A",
       watchLesson: "\u0421\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0443\u0440\u043E\u043A",
-      readDocument: "\u0427\u0438\u0442\u0430\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u044B",
-      viewExcerpts: "\u041F\u0440\u043E\u0441\u043C\u043E\u0442\u0440 \u0432\u044B\u0434\u0435\u0440\u0436\u0435\u043A",
-      viewTranscript: "\u041F\u0440\u043E\u0441\u043C\u043E\u0442\u0440 \u0442\u0440\u0430\u043D\u0441\u043A\u0440\u0438\u043F\u0442\u0430",
-      viewProgram: "\u041F\u0440\u043E\u0441\u043C\u043E\u0442\u0440 \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u044B",
+      readDocument: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442",
+      viewExcerpts: "\u0418\u0437\u0431\u0440\u0430\u043D\u043D\u044B\u0435 \u043E\u0442\u0440\u044B\u0432\u043A\u0438",
+      viewTranscript: "\u0422\u0440\u0430\u043D\u0441\u043A\u0440\u0438\u043F\u0442 \u0443\u0440\u043E\u043A\u0430",
+      viewProgram: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442",
       loading: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430...",
       error: "\u041E\u0448\u0438\u0431\u043A\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438 \u0434\u0430\u043D\u043D\u044B\u0445",
       noPartsAvailable: "\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0447\u0430\u0441\u0442\u0435\u0439"
@@ -22232,33 +22262,37 @@ var StudyMaterialsWidgetBundle = (() => {
     es: {
       preparation: "Preparaci\xF3n de la lecci\xF3n",
       part: "Parte",
-      shareLesson: "Compartir lecci\xF3n",
-      shareSection: "Compartir parte",
+      shareLesson: "Compartir",
+      shareSection: "Compartir",
       copyLink: "Copiar enlace",
       copied: "\xA1Copiado!",
       readSource: "Leer la fuente",
       watchLesson: "Ver lecci\xF3n",
-      readDocument: "Leer documentos",
-      viewExcerpts: "Ver extractos",
-      viewTranscript: "Ver transcripci\xF3n",
-      viewProgram: "Ver programa",
+      readDocument: "Documento",
+      viewExcerpts: "Extractos seleccionados",
+      viewTranscript: "Transcripci\xF3n de la lecci\xF3n",
+      viewProgram: "Documento",
+      readingBeforeSleep: "Lectura antes de dormir",
+      lessonPreparation: "Preparaci\xF3n de la lecci\xF3n",
       loading: "Cargando...",
       error: "Error al cargar datos",
       noPartsAvailable: "No hay partes disponibles"
     },
     de: {
-      preparation: "Unterrichtsvorbereitung",
+      preparation: "Lektionsvorbereitung",
       part: "Teil",
-      shareLesson: "Lektion teilen",
-      shareSection: "Teil teilen",
+      shareLesson: "Teilen",
+      shareSection: "Teilen",
       copyLink: "Link kopieren",
       copied: "Kopiert!",
       readSource: "Quelle lesen",
       watchLesson: "Lektion ansehen",
-      readDocument: "Dokumente lesen",
-      viewExcerpts: "Ausz\xFCge ansehen",
-      viewTranscript: "Transkript ansehen",
-      viewProgram: "Programm ansehen",
+      readDocument: "Dokument",
+      viewExcerpts: "Ausgew\xE4hlte Ausz\xFCge",
+      viewTranscript: "Lektionstranskript",
+      viewProgram: "Dokument",
+      readingBeforeSleep: "Lesen vor dem Schlafengehen",
+      lessonPreparation: "Lektionsvorbereitung",
       loading: "L\xE4dt...",
       error: "Fehler beim Laden der Daten",
       noPartsAvailable: "Keine Teile verf\xFCgbar"
@@ -22266,16 +22300,18 @@ var StudyMaterialsWidgetBundle = (() => {
     it: {
       preparation: "Preparazione della lezione",
       part: "Parte",
-      shareLesson: "Condividi lezione",
-      shareSection: "Condividi parte",
+      shareLesson: "Condividi",
+      shareSection: "Condividi",
       copyLink: "Copia link",
       copied: "Copiato!",
       readSource: "Leggi la fonte",
-      watchLesson: "Guarda lezione",
-      readDocument: "Leggi documenti",
-      viewExcerpts: "Visualizza estratti",
-      viewTranscript: "Visualizza trascrizione",
-      viewProgram: "Visualizza programma",
+      watchLesson: "Guarda la lezione",
+      readDocument: "Documento",
+      viewExcerpts: "Estratti selezionati",
+      viewTranscript: "Trascrizione della lezione",
+      viewProgram: "Documento",
+      readingBeforeSleep: "Lettura prima di dormire",
+      lessonPreparation: "Preparazione della lezione",
       loading: "Caricamento...",
       error: "Errore nel caricamento dei dati",
       noPartsAvailable: "Nessuna parte disponibile"
@@ -22283,16 +22319,18 @@ var StudyMaterialsWidgetBundle = (() => {
     fr: {
       preparation: "Pr\xE9paration de la le\xE7on",
       part: "Partie",
-      shareLesson: "Partager la le\xE7on",
-      shareSection: "Partager la partie",
+      shareLesson: "Partager",
+      shareSection: "Partager",
       copyLink: "Copier le lien",
       copied: "Copi\xE9!",
       readSource: "Lire la source",
       watchLesson: "Regarder la le\xE7on",
-      readDocument: "Lire les documents",
-      viewExcerpts: "Voir les extraits",
-      viewTranscript: "Voir la transcription",
-      viewProgram: "Voir le programme",
+      readDocument: "Document",
+      viewExcerpts: "Extraits s\xE9lectionn\xE9s",
+      viewTranscript: "Transcription de la le\xE7on",
+      viewProgram: "Document",
+      readingBeforeSleep: "Lecture avant de dormir",
+      lessonPreparation: "Pr\xE9paration de la le\xE7on",
       loading: "Chargement...",
       error: "Erreur de chargement des donn\xE9es",
       noPartsAvailable: "Aucune partie disponible"
@@ -22300,16 +22338,18 @@ var StudyMaterialsWidgetBundle = (() => {
     uk: {
       preparation: "\u041F\u0456\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0434\u043E \u0443\u0440\u043E\u043A\u0443",
       part: "\u0427\u0430\u0441\u0442\u0438\u043D\u0430",
-      shareLesson: "\u041F\u043E\u0434\u0456\u043B\u0438\u0442\u0438\u0441\u044F \u0443\u0440\u043E\u043A\u043E\u043C",
-      shareSection: "\u041F\u043E\u0434\u0456\u043B\u0438\u0442\u0438\u0441\u044F \u0447\u0430\u0441\u0442\u0438\u043D\u043E\u044E",
-      copyLink: "\u0421\u043A\u043E\u043F\u0456\u044E\u0432\u0430\u0442\u0438 \u043F\u043E\u0441\u0438\u043B\u0430\u043D\u043D\u044F",
+      shareLesson: "\u041F\u043E\u0434\u0456\u043B\u0438\u0442\u0438\u0441\u044F",
+      shareSection: "\u041F\u043E\u0434\u0456\u043B\u0438\u0442\u0438\u0441\u044F",
+      copyLink: "\u041A\u043E\u043F\u0456\u044E\u0432\u0430\u0442\u0438 \u043F\u043E\u0441\u0438\u043B\u0430\u043D\u043D\u044F",
       copied: "\u0421\u043A\u043E\u043F\u0456\u0439\u043E\u0432\u0430\u043D\u043E!",
       readSource: "\u0427\u0438\u0442\u0430\u0442\u0438 \u0434\u0436\u0435\u0440\u0435\u043B\u043E",
       watchLesson: "\u0414\u0438\u0432\u0438\u0442\u0438\u0441\u044F \u0443\u0440\u043E\u043A",
-      readDocument: "\u0427\u0438\u0442\u0430\u0442\u0438 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0438",
-      viewExcerpts: "\u041F\u0435\u0440\u0435\u0433\u043B\u044F\u043D\u0443\u0442\u0438 \u0432\u0438\u0442\u044F\u0433\u0438",
-      viewTranscript: "\u041F\u0435\u0440\u0435\u0433\u043B\u044F\u043D\u0443\u0442\u0438 \u0442\u0440\u0430\u043D\u0441\u043A\u0440\u0438\u043F\u0442",
-      viewProgram: "\u041F\u0435\u0440\u0435\u0433\u043B\u044F\u043D\u0443\u0442\u0438 \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u0443",
+      readDocument: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442",
+      viewExcerpts: "\u0412\u0438\u0431\u0440\u0430\u043D\u0456 \u0443\u0440\u0438\u0432\u043A\u0438",
+      viewTranscript: "\u0422\u0440\u0430\u043D\u0441\u043A\u0440\u0438\u043F\u0442 \u0443\u0440\u043E\u043A\u0443",
+      viewProgram: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442",
+      readingBeforeSleep: "\u0427\u0438\u0442\u0430\u043D\u043D\u044F \u043F\u0435\u0440\u0435\u0434 \u0441\u043D\u043E\u043C",
+      lessonPreparation: "\u041F\u0456\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0434\u043E \u0443\u0440\u043E\u043A\u0443",
       loading: "\u0417\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F...",
       error: "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
       noPartsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0447\u0430\u0441\u0442\u0438\u043D"
@@ -22330,8 +22370,11 @@ var StudyMaterialsWidgetBundle = (() => {
     const [expandedSections, setExpandedSections] = (0, import_react4.useState)([]);
     const [sharedSection, setSharedSection] = (0, import_react4.useState)(null);
     const [sharedLesson, setSharedLesson] = (0, import_react4.useState)(false);
+    const [showShareMenu, setShowShareMenu] = (0, import_react4.useState)(null);
+    const [shareMenuSection, setShareMenuSection] = (0, import_react4.useState)(null);
     const t = TRANSLATIONS[language] || TRANSLATIONS.he;
     const isRTL = language === "he";
+    const isLTR = !isRTL;
     (0, import_react4.useEffect)(() => {
       const fetchData = () => __async(this, null, function* () {
         try {
@@ -22372,75 +22415,68 @@ var StudyMaterialsWidgetBundle = (() => {
         (prev) => prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
       );
     };
-    const shareSection = (part, index) => __async(this, null, function* () {
+    const shareSection = (part, index) => {
+      setShareMenuSection(index);
+      setShowShareMenu("section");
+    };
+    const shareToWhatsApp = (text) => {
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, "_blank");
+      setShowShareMenu(null);
+    };
+    const shareToTelegram = (text) => {
+      const url = `https://t.me/share/url?text=${encodeURIComponent(text)}`;
+      window.open(url, "_blank");
+      setShowShareMenu(null);
+    };
+    const getSectionShareText = (part) => {
       var _a2, _b2;
       const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`;
       const links = [
-        ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => `${s.source_title}: ${s.source_url}`)) || [],
+        ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => `${t.readSource}: ${s.source_url}`)) || [],
         part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
         part.transcript_link && `${t.viewTranscript}: ${part.transcript_link}`,
         part.lesson_link && `${t.watchLesson}: ${part.lesson_link}`,
         part.program_link && `${t.viewProgram}: ${part.program_link}`,
+        part.reading_before_sleep_link && `${t.readingBeforeSleep}: ${part.reading_before_sleep_link}`,
+        part.lesson_preparation_link && `${t.lessonPreparation}: ${part.lesson_preparation_link}`,
         ...((_b2 = part.custom_links) == null ? void 0 : _b2.map((l) => `${l.title}: ${l.url}`)) || []
       ].filter(Boolean);
-      const shareText = `${partNumber}: ${part.title}
+      return `${partNumber}: ${part.title}
 ${part.description || ""}
 
 ${links.join("\n")}`;
-      if (navigator.share) {
-        try {
-          yield navigator.share({
-            title: part.title,
-            text: shareText
-          });
-        } catch (err) {
-          console.log("Share cancelled");
-        }
-      } else {
-        navigator.clipboard.writeText(shareText);
-        setSharedSection(index);
-        setTimeout(() => setSharedSection(null), 2e3);
-      }
-    });
-    const shareLesson = () => __async(this, null, function* () {
+    };
+    const shareLesson = () => {
+      setShowShareMenu("lesson");
+    };
+    const getLessonShareText = () => {
       var _a2;
-      if (!event) return;
+      if (!event) return "";
       const title = ((_a2 = event.titles) == null ? void 0 : _a2[language]) || "Lesson";
-      const date = new Date(event.date).toLocaleDateString(language === "he" ? "he-IL" : "en-US");
+      const date = formatEventDate(event.date);
       const partsText = parts.map((part) => {
         var _a3, _b2;
         const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`;
         const links = [
-          ...((_a3 = part.sources) == null ? void 0 : _a3.map((s) => `${s.source_title}: ${s.source_url}`)) || [],
+          ...((_a3 = part.sources) == null ? void 0 : _a3.map((s) => `${t.readSource}: ${s.source_url}`)) || [],
           part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
           part.transcript_link && `${t.viewTranscript}: ${part.transcript_link}`,
           part.lesson_link && `${t.watchLesson}: ${part.lesson_link}`,
           part.program_link && `${t.viewProgram}: ${part.program_link}`,
+          part.reading_before_sleep_link && `${t.readingBeforeSleep}: ${part.reading_before_sleep_link}`,
+          part.lesson_preparation_link && `${t.lessonPreparation}: ${part.lesson_preparation_link}`,
           ...((_b2 = part.custom_links) == null ? void 0 : _b2.map((l) => `${l.title}: ${l.url}`)) || []
         ].filter(Boolean);
         return `${partNumber}: ${part.title}
 ${part.description || ""}
 ${links.join("\n")}`;
       }).join("\n\n");
-      const shareText = `${title}
+      return `${title}
 ${date}
 
 ${partsText}`;
-      if (navigator.share) {
-        try {
-          yield navigator.share({
-            title,
-            text: shareText
-          });
-        } catch (err) {
-          console.log("Share cancelled");
-        }
-      } else {
-        navigator.clipboard.writeText(shareText);
-        setSharedLesson(true);
-        setTimeout(() => setSharedLesson(false), 2e3);
-      }
-    });
+    };
     const getIcon = (type) => {
       switch (type) {
         case "book":
@@ -22456,12 +22492,13 @@ ${partsText}`;
       }
     };
     const getSectionColor = (order) => {
-      if (order === 0) return { text: "text-orange-700", border: "border-r-orange-500", bg: "bg-orange-300/10" };
+      const borderSide = isLTR ? "border-l-[5px]" : "border-r-[5px]";
+      if (order === 0) return { text: "text-orange-700", border: `${borderSide} border-orange-500`, bg: "bg-orange-300/10" };
       const colors = [
-        { text: "text-blue-700", border: "border-r-blue-500", bg: "bg-blue-300/10" },
-        { text: "text-orange-700", border: "border-r-orange-500", bg: "bg-orange-300/10" },
-        { text: "text-green-700", border: "border-r-green-500", bg: "bg-green-300/10" },
-        { text: "text-purple-700", border: "border-r-purple-500", bg: "bg-purple-300/10" }
+        { text: "text-blue-700", border: `${borderSide} border-blue-500`, bg: "bg-blue-300/10" },
+        { text: "text-orange-700", border: `${borderSide} border-orange-500`, bg: "bg-orange-300/10" },
+        { text: "text-green-700", border: `${borderSide} border-green-500`, bg: "bg-green-300/10" },
+        { text: "text-purple-700", border: `${borderSide} border-purple-500`, bg: "bg-purple-300/10" }
       ];
       return colors[(order - 1) % colors.length];
     };
@@ -22488,16 +22525,16 @@ ${partsText}`;
       }).format(date);
     };
     if (loading) {
-      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-gray-600", style: { fontSize: "13px" }, children: t.loading }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full flex items-center justify-center bg-white", style: { width: "350px" }, dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-gray-600", style: { fontSize: "13px" }, children: t.loading }) });
     }
     if (error || !event) {
-      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "13px" }, children: error || t.error }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full flex items-center justify-center bg-white", style: { width: "350px" }, dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "13px" }, children: error || t.error }) });
     }
     const eventTitle = ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || "Lesson";
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "h-full overflow-y-auto bg-white", dir: isRTL ? "rtl" : "ltr", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "h-full overflow-y-auto bg-white", style: { width: "350px" }, dir: isRTL ? "rtl" : "ltr", children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "bg-blue-50 p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { className: "text-blue-900", style: { fontSize: "15px" }, children: eventTitle }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { className: "text-gray-600", style: { fontSize: "11px" }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { className: "text-blue-900", style: { fontSize: "17px" }, children: eventTitle }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { className: "text-gray-600", style: { fontSize: "13px" }, children: [
           formatEventDate(event.date),
           event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { children: [
             " \u2022 ",
@@ -22520,8 +22557,8 @@ ${partsText}`;
             "button",
             {
               onClick: onBack,
-              className: "bg-blue-500 text-white rounded-full p-1 hover:bg-blue-600 transition-all",
-              children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ChevronDown, { className: "w-3 h-3" })
+              className: "bg-blue-500 text-white rounded-full p-1.5 hover:bg-blue-600 transition-all",
+              children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(List, { className: "w-3.5 h-3.5" })
             }
           )
         ] })
@@ -22532,24 +22569,24 @@ ${partsText}`;
         const colors = getSectionColor(part.order);
         const partTitle = part.order === 0 ? t.preparation : `${t.part} ${part.order}: ${part.title}`;
         const allLinks = [
-          ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => ({ type: "source", text: s.source_title, url: s.source_url, page: s.page_number }))) || [],
+          ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => ({ type: "source", text: t.readSource, url: s.source_url, page: s.page_number }))) || [],
           part.excerpts_link && { type: "document", text: t.viewExcerpts, url: part.excerpts_link },
           part.transcript_link && { type: "document", text: t.viewTranscript, url: part.transcript_link },
           part.lesson_link && { type: "video", text: t.watchLesson, url: part.lesson_link },
           part.program_link && { type: "audio", text: t.viewProgram, url: part.program_link },
-          part.reading_before_sleep_link && { type: "document", text: t.readDocument, url: part.reading_before_sleep_link },
-          part.lesson_preparation_link && { type: "document", text: t.readDocument, url: part.lesson_preparation_link },
+          part.reading_before_sleep_link && { type: "document", text: t.readingBeforeSleep, url: part.reading_before_sleep_link },
+          part.lesson_preparation_link && { type: "document", text: t.lessonPreparation, url: part.lesson_preparation_link },
           ...((_b2 = part.custom_links) == null ? void 0 : _b2.map((l) => ({ type: "document", text: l.title, url: l.url }))) || []
         ].filter(Boolean);
         return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
           "div",
           {
-            className: `bg-white rounded-lg border-r-3 ${colors.border} shadow-sm`,
+            className: `bg-white rounded-lg ${colors.border} shadow-lg`,
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "p-2.5 flex items-start gap-2", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: `flex-1 ${isRTL ? "pr-2" : "pl-2"}`, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: `${colors.text}`, style: { fontSize: "13px", fontWeight: "bold" }, children: partTitle }),
-                  part.description && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-gray-600 leading-snug mt-0.5", style: { fontSize: "10px" }, children: part.description })
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: `${colors.text}`, style: { fontSize: "14px", fontWeight: "bold" }, children: partTitle }),
+                  part.description && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-gray-600 leading-snug mt-0.5", style: { fontSize: "12px" }, children: part.description })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex gap-1", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
@@ -22582,7 +22619,7 @@ ${partsText}`;
                       {
                         href: link.url,
                         className: `flex-1 ${colors.text} hover:underline`,
-                        style: { fontSize: "11px" },
+                        style: { fontSize: "13px" },
                         target: "_blank",
                         rel: "noopener noreferrer",
                         children: [
@@ -22615,7 +22652,64 @@ ${partsText}`;
           },
           part.id
         );
-      }) })
+      }) }),
+      showShareMenu && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+        "div",
+        {
+          className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50",
+          onClick: () => setShowShareMenu(null),
+          children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+            "div",
+            {
+              className: "bg-white rounded-lg p-4 m-4 max-w-sm w-full",
+              onClick: (e) => e.stopPropagation(),
+              dir: isRTL ? "rtl" : "ltr",
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: "text-gray-900 font-bold mb-3", style: { fontSize: "16px" }, children: t.shareLesson }),
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "space-y-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+                    "button",
+                    {
+                      onClick: () => {
+                        const text = showShareMenu === "lesson" ? getLessonShareText() : shareMenuSection !== null ? getSectionShareText(parts[shareMenuSection]) : "";
+                        shareToWhatsApp(text);
+                      },
+                      className: "w-full flex items-center gap-3 p-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all",
+                      children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("svg", { className: "w-6 h-6", fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("path", { d: "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" }) }),
+                        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { style: { fontSize: "14px" }, children: "WhatsApp" })
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+                    "button",
+                    {
+                      onClick: () => {
+                        const text = showShareMenu === "lesson" ? getLessonShareText() : shareMenuSection !== null ? getSectionShareText(parts[shareMenuSection]) : "";
+                        shareToTelegram(text);
+                      },
+                      className: "w-full flex items-center gap-3 p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all",
+                      children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("svg", { className: "w-6 h-6", fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("path", { d: "M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" }) }),
+                        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { style: { fontSize: "14px" }, children: "Telegram" })
+                      ]
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                  "button",
+                  {
+                    onClick: () => setShowShareMenu(null),
+                    className: "w-full mt-3 p-2 text-gray-600 hover:text-gray-800 transition-colors",
+                    style: { fontSize: "14px" },
+                    children: language === "he" ? "\u05D1\u05D9\u05D8\u05D5\u05DC" : "Cancel"
+                  }
+                )
+              ]
+            }
+          )
+        }
+      )
     ] });
   }
 
@@ -22851,6 +22945,14 @@ lucide-react/dist/esm/icons/file-text.js:
    *)
 
 lucide-react/dist/esm/icons/headphones.js:
+  (**
+   * @license lucide-react v0.562.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/list.js:
   (**
    * @license lucide-react v0.562.0 - ISC
    *

@@ -6,72 +6,79 @@ import { Calendar, Clock, ChevronDown } from 'lucide-react'
 // Translation type
 interface ListTranslations {
   studyMaterials: string
+  selectLesson: string
   loading: string
   error: string
   noEventsAvailable: string
+  viewAllMaterials: string
 }
 
 // Translation object for all supported languages
 const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
   he: {
     studyMaterials: 'חומרי לימוד',
+    selectLesson: 'בחר שיעור מהרשימה',
     loading: 'טוען...',
     error: 'שגיאה בטעינת הנתונים',
     noEventsAvailable: 'אין שיעורים זמינים',
+    viewAllMaterials: 'צפייה בכל חומרי הלימוד',
   },
   en: {
     studyMaterials: 'Study Materials',
+    selectLesson: 'Select a lesson from the list',
     loading: 'Loading...',
     error: 'Error loading data',
     noEventsAvailable: 'No lessons available',
+    viewAllMaterials: 'View all study materials',
   },
   ru: {
     studyMaterials: 'Учебные материалы',
+    selectLesson: 'Выберите урок из списка',
     loading: 'Загрузка...',
     error: 'Ошибка загрузки данных',
     noEventsAvailable: 'Нет доступных уроков',
+    viewAllMaterials: 'Посмотреть все учебные материалы',
   },
   es: {
     studyMaterials: 'Materiales de estudio',
+    selectLesson: 'Seleccione una lección de la lista',
     loading: 'Cargando...',
     error: 'Error al cargar datos',
     noEventsAvailable: 'No hay lecciones disponibles',
+    viewAllMaterials: 'Ver todos los materiales de estudio',
   },
   de: {
     studyMaterials: 'Studienmaterialien',
+    selectLesson: 'Wählen Sie eine Lektion aus der Liste',
     loading: 'Lädt...',
     error: 'Fehler beim Laden der Daten',
     noEventsAvailable: 'Keine Lektionen verfügbar',
+    viewAllMaterials: 'Alle Studienmaterialien anzeigen',
   },
   it: {
     studyMaterials: 'Materiali di studio',
+    selectLesson: 'Seleziona una lezione dall\'elenco',
     loading: 'Caricamento...',
     error: 'Errore nel caricamento dei dati',
     noEventsAvailable: 'Nessuna lezione disponibile',
+    viewAllMaterials: 'Visualizza tutti i materiali di studio',
   },
   fr: {
     studyMaterials: 'Matériel d\'étude',
+    selectLesson: 'Sélectionnez une leçon dans la liste',
     loading: 'Chargement...',
     error: 'Erreur de chargement des données',
     noEventsAvailable: 'Aucune leçon disponible',
+    viewAllMaterials: 'Voir tous les matériaux d\'étude',
   },
   uk: {
     studyMaterials: 'Навчальні матеріали',
+    selectLesson: 'Виберіть урок зі списку',
     loading: 'Завантаження...',
     error: 'Помилка завантаження даних',
     noEventsAvailable: 'Немає доступних уроків',
+    viewAllMaterials: 'Переглянути всі навчальні матеріали',
   },
-}
-
-const LANGUAGE_NAMES: Record<string, string> = {
-  he: 'עברית',
-  en: 'English',
-  ru: 'Русский',
-  es: 'Español',
-  de: 'Deutsch',
-  it: 'Italiano',
-  fr: 'Français',
-  uk: 'Українська',
 }
 
 interface Event {
@@ -105,6 +112,7 @@ export function EmbeddedEventsList({
 
   const t = LIST_TRANSLATIONS[language] || LIST_TRANSLATIONS.he
   const isRTL = language === 'he'
+  const isLTR = !isRTL
 
   // Fetch events
   useEffect(() => {
@@ -137,10 +145,16 @@ export function EmbeddedEventsList({
     fetchEvents()
   }, [apiBaseUrl, limit, t.error])
 
+  const formatEventDayOfWeek = (dateString: string) => {
+    const date = new Date(dateString)
+    return new Intl.DateTimeFormat(language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'de' ? 'de-DE' : 'en-US', {
+      weekday: 'long',
+    }).format(date)
+  }
+
   const formatEventDate = (dateString: string) => {
     const date = new Date(dateString)
-    return new Intl.DateTimeFormat(language === 'he' ? 'he-IL' : 'en-US', {
-      weekday: 'long',
+    return new Intl.DateTimeFormat(language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'de' ? 'de-DE' : 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -159,7 +173,7 @@ export function EmbeddedEventsList({
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="h-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="text-gray-600" style={{ fontSize: '13px' }}>
           {t.loading}
         </div>
@@ -169,7 +183,7 @@ export function EmbeddedEventsList({
 
   if (error) {
     return (
-      <div className="h-full flex items-center justify-center bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="h-full flex items-center justify-center bg-white" style={{ width: '350px' }} dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="text-red-600 text-center p-4" style={{ fontSize: '13px' }}>
           {error}
         </div>
@@ -178,39 +192,33 @@ export function EmbeddedEventsList({
   }
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* Header */}
-      <div className="bg-white p-4 border-b border-gray-200 sticky top-0 z-10">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-blue-900 font-semibold" style={{ fontSize: '18px' }}>
-            {t.studyMaterials}
-          </h2>
-        </div>
+    <div className="h-full overflow-y-auto" style={{ width: '350px' }} dir={isRTL ? 'rtl' : 'ltr'}>
+      {/* Sidebar Header */}
+      <div className="bg-blue-50 p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative">
+        <h3 className="text-blue-900" style={{ fontSize: '15px' }}>
+          {t.studyMaterials}
+        </h3>
+        <p className="text-gray-600" style={{ fontSize: '10px' }}>
+          {t.selectLesson}
+        </p>
         
-        {/* Language Selector */}
-        <div className="relative">
+        {/* Language Selector - Left Corner */}
+        <div className={`absolute ${isLTR ? 'right-3' : 'left-3'} top-3`}>
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className={`appearance-none w-full bg-white border-2 border-gray-200 rounded-lg px-3 py-2 ${
-              isRTL ? 'pl-8 pr-3' : 'pr-8 pl-3'
-            } text-gray-700 hover:border-blue-300 focus:border-blue-500 focus:outline-none cursor-pointer transition-colors`}
-            style={{ fontSize: '14px' }}
+            className="bg-white border border-blue-300 rounded-md px-2 py-1 text-blue-900 cursor-pointer hover:border-blue-500 transition-colors"
+            style={{ fontSize: '10px' }}
           >
-            <option value="he">{LANGUAGE_NAMES.he}</option>
-            <option value="en">{LANGUAGE_NAMES.en}</option>
-            <option value="ru">{LANGUAGE_NAMES.ru}</option>
-            <option value="es">{LANGUAGE_NAMES.es}</option>
-            <option value="de">{LANGUAGE_NAMES.de}</option>
-            <option value="it">{LANGUAGE_NAMES.it}</option>
-            <option value="fr">{LANGUAGE_NAMES.fr}</option>
-            <option value="uk">{LANGUAGE_NAMES.uk}</option>
+            <option value="he">עברית</option>
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+            <option value="es">Español</option>
+            <option value="de">Deutsch</option>
+            <option value="it">Italiano</option>
+            <option value="fr">Français</option>
+            <option value="uk">Українська</option>
           </select>
-          <ChevronDown
-            className={`w-4 h-4 text-gray-500 absolute ${
-              isRTL ? 'left-3' : 'right-3'
-            } top-1/2 -translate-y-1/2 pointer-events-none`}
-          />
         </div>
       </div>
 
@@ -220,32 +228,25 @@ export function EmbeddedEventsList({
           {t.noEventsAvailable}
         </div>
       ) : (
-        <div className="p-3 space-y-3">
+        <div className="p-2 space-y-2">
           {events.map((event) => (
             <button
               key={event.id}
               onClick={() => onSelectEvent(event.id)}
-              className="w-full bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-4 text-left border border-gray-100 hover:border-blue-200"
+              className={`w-full bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl hover:border-blue-400 transition-all p-2.5 ${isRTL ? 'text-right' : 'text-left'}`}
             >
-              <h3
-                className={`text-blue-900 font-medium mb-2 ${isRTL ? 'text-right' : 'text-left'}`}
-                style={{ fontSize: '15px' }}
-              >
+              <h4 className="text-blue-900 mb-1" style={{ fontSize: '13px' }}>
                 {getEventTitle(event)}
-              </h3>
-              
-              <div className="flex flex-col gap-1.5 text-gray-600" style={{ fontSize: '12px' }}>
-                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span>{formatEventDate(event.date)}</span>
+              </h4>
+              <div className="flex flex-col gap-0.5 text-gray-500" style={{ fontSize: '10px' }}>
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  <span>{formatEventDayOfWeek(event.date)}, {formatEventDate(event.date)}</span>
                 </div>
-                
                 {event.start_time && event.end_time && (
-                  <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                    <span>
-                      {event.start_time} - {event.end_time}
-                    </span>
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    <span>{event.end_time} - {event.start_time}</span>
                   </div>
                 )}
               </div>
@@ -253,6 +254,24 @@ export function EmbeddedEventsList({
           ))}
         </div>
       )}
+
+      {/* Footer Link */}
+      <div className="p-4">
+        <a
+          href="https://stmat.kab.info"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-3 transition-all"
+        >
+          <div className="text-blue-700 font-medium" style={{ fontSize: '14px' }}>
+            {t.viewAllMaterials}
+          </div>
+          <div className="text-blue-600 mt-1" style={{ fontSize: '11px' }}>
+            stmat.kab.info
+          </div>
+        </a>
+      </div>
     </div>
   )
 }
+

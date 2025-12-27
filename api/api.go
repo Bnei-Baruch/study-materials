@@ -49,10 +49,12 @@ func (a *App) Init() {
 // initCors initializes CORS settings
 func (a *App) initCors() {
 	a.cors = cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
-		AllowedHeaders: []string{"Accept", "Accept-Language", "Content-Type", "Authorization"},
-		MaxAge:         0,
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
+		AllowedHeaders:   []string{"*"},
+		ExposedHeaders:   []string{"Content-Length", "Content-Type"},
+		AllowCredentials: false,
+		MaxAge:           300, // Cache preflight for 5 minutes
 	})
 }
 
@@ -61,29 +63,29 @@ func (a *App) initRouters() {
 	a.router = mux.NewRouter()
 
 	// Part endpoints
-	a.router.HandleFunc("/api/parts", a.HandleCreatePart).Methods(http.MethodPost)
-	a.router.HandleFunc("/api/parts", a.HandleListParts).Methods(http.MethodGet)
-	a.router.HandleFunc("/api/parts/{id}", a.HandleGetPart).Methods(http.MethodGet)
-	a.router.HandleFunc("/api/parts/{id}", a.HandleUpdatePart).Methods(http.MethodPut)
-	a.router.HandleFunc("/api/parts/{id}", a.HandleDeletePart).Methods(http.MethodDelete)
-	a.router.HandleFunc("/api/sources/search", a.HandleSearchSources).Methods(http.MethodGet)
-	a.router.HandleFunc("/api/sources/title", a.HandleGetSourceTitle).Methods(http.MethodGet)
+	a.router.HandleFunc("/api/parts", a.HandleCreatePart).Methods(http.MethodPost, http.MethodOptions)
+	a.router.HandleFunc("/api/parts", a.HandleListParts).Methods(http.MethodGet, http.MethodOptions)
+	a.router.HandleFunc("/api/parts/{id}", a.HandleGetPart).Methods(http.MethodGet, http.MethodOptions)
+	a.router.HandleFunc("/api/parts/{id}", a.HandleUpdatePart).Methods(http.MethodPut, http.MethodOptions)
+	a.router.HandleFunc("/api/parts/{id}", a.HandleDeletePart).Methods(http.MethodDelete, http.MethodOptions)
+	a.router.HandleFunc("/api/sources/search", a.HandleSearchSources).Methods(http.MethodGet, http.MethodOptions)
+	a.router.HandleFunc("/api/sources/title", a.HandleGetSourceTitle).Methods(http.MethodGet, http.MethodOptions)
 
 	// Event endpoints
-	a.router.HandleFunc("/api/events", a.HandleCreateEvent).Methods(http.MethodPost)
-	a.router.HandleFunc("/api/events", a.HandleListEvents).Methods(http.MethodGet)
-	a.router.HandleFunc("/api/events/{id}", a.HandleGetEvent).Methods(http.MethodGet)
-	a.router.HandleFunc("/api/events/{id}", a.HandleUpdateEvent).Methods(http.MethodPut)
-	a.router.HandleFunc("/api/events/{id}", a.HandleDeleteEvent).Methods(http.MethodDelete)
-	a.router.HandleFunc("/api/events/{id}/duplicate", a.HandleDuplicateEvent).Methods(http.MethodPost)
-	a.router.HandleFunc("/api/events/{id}/toggle-public", a.HandleToggleEventPublic).Methods(http.MethodPut)
-	a.router.HandleFunc("/api/events/{event_id}/parts", a.HandleGetEventParts).Methods(http.MethodGet)
+	a.router.HandleFunc("/api/events", a.HandleCreateEvent).Methods(http.MethodPost, http.MethodOptions)
+	a.router.HandleFunc("/api/events", a.HandleListEvents).Methods(http.MethodGet, http.MethodOptions)
+	a.router.HandleFunc("/api/events/{id}", a.HandleGetEvent).Methods(http.MethodGet, http.MethodOptions)
+	a.router.HandleFunc("/api/events/{id}", a.HandleUpdateEvent).Methods(http.MethodPut, http.MethodOptions)
+	a.router.HandleFunc("/api/events/{id}", a.HandleDeleteEvent).Methods(http.MethodDelete, http.MethodOptions)
+	a.router.HandleFunc("/api/events/{id}/duplicate", a.HandleDuplicateEvent).Methods(http.MethodPost, http.MethodOptions)
+	a.router.HandleFunc("/api/events/{id}/toggle-public", a.HandleToggleEventPublic).Methods(http.MethodPut, http.MethodOptions)
+	a.router.HandleFunc("/api/events/{event_id}/parts", a.HandleGetEventParts).Methods(http.MethodGet, http.MethodOptions)
 
 	// Template endpoints
-	a.router.HandleFunc("/api/templates", a.HandleGetTemplates).Methods(http.MethodGet)
+	a.router.HandleFunc("/api/templates", a.HandleGetTemplates).Methods(http.MethodGet, http.MethodOptions)
 
 	// Health check
-	a.router.HandleFunc("/health", handleHealth).Methods(http.MethodGet)
+	a.router.HandleFunc("/health", handleHealth).Methods(http.MethodGet, http.MethodOptions)
 }
 
 // handleHealth returns simple health check
@@ -91,4 +93,3 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 }
-
