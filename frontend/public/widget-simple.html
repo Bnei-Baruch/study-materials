@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Materials Widget</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f9fafb;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 320px;
+      height: 100vh;
+      background: white;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    }
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+    }
+    h1 {
+      color: #1f2937;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #6b7280;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Widget Sidebar -->
+    <div class="sidebar">
+      <div 
+        data-studymaterials-widget
+        data-language="he"
+        data-limit="10"
+        data-api-url="http://localhost:8080"
+        style="height: 100%; width: 100%;"
+      ></div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <h1>Study Materials</h1>
+      <p>Your main content goes here.</p>
+    </div>
+  </div>
+
+  <!-- Load Widget -->
+  <script src="/widget/widget.js"></script>
+</body>
+</html>
