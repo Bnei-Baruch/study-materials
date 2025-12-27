@@ -38,14 +38,21 @@
   // Load widget bundle
   function loadBundle() {
     return new Promise((resolve, reject) => {
-      if (window.StudyMaterialsWidget) {
+      if (window.StudyMaterialsWidget && window.StudyMaterialsWidget.initWidget) {
         resolve();
         return;
       }
 
       const script = document.createElement('script');
-      script.src = baseUrl + 'widget.bundle.js?v=' + WIDGET_VERSION;
-      script.onload = resolve;
+      script.src = baseUrl + 'widget.bundle.js?v=' + WIDGET_VERSION + '&t=' + Date.now();
+      script.onload = () => {
+        // Double-check that the bundle loaded correctly
+        if (window.StudyMaterialsWidget && window.StudyMaterialsWidget.initWidget) {
+          resolve();
+        } else {
+          reject(new Error('Bundle loaded but initWidget not available'));
+        }
+      };
       script.onerror = reject;
       document.head.appendChild(script);
     });
