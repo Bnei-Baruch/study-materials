@@ -809,8 +809,8 @@ export default function PublicPage() {
               </h1>
               <p className="text-gray-600 text-lg">
                 {formatDate(selectedEvent.date)}
-              </p>
-            </div>
+          </p>
+        </div>
 
             <div className="space-y-6">
               {parts.map((part) => {
@@ -1042,8 +1042,8 @@ export default function PublicPage() {
                       <div className="flex items-center gap-2">
                         <a
                           href={part.excerpts_link}
-                          target="_blank"
-                          rel="noopener noreferrer"
+            target="_blank"
+            rel="noopener noreferrer"
                           className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
                         >
                           <FileText className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
@@ -1069,8 +1069,8 @@ export default function PublicPage() {
                       <div key={idx} className="flex items-center gap-2">
                         <a
                           href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
+            target="_blank"
+            rel="noopener noreferrer"
                           className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
                         >
                           <FileText className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
@@ -1096,7 +1096,7 @@ export default function PublicPage() {
             </div>
           </div>
         )}
-      </div>
+        </div>
     </div>
   )
 }
