@@ -137,7 +137,7 @@ export default function CreateEventPage() {
         requestBody.titles = customTitles
       }
 
-      const response = await fetch('http://localhost:8080/api/events', {
+      const response = await fetch('http://10.66.1.76:8080/api/events', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

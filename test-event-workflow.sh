@@ -10,7 +10,7 @@ NC='\033[0m' # No Color
 
 # Step 1: Create an event
 echo -e "${BLUE}Step 1: Create an event${NC}"
-EVENT_RESPONSE=$(curl -s -X POST http://localhost:8080/api/events \
+EVENT_RESPONSE=$(curl -s -X POST http://10.66.1.76:8080/api/events \
   -H "Content-Type: application/json" \
   -d '{
     "date": "2025-12-22",
@@ -25,13 +25,13 @@ echo ""
 
 # Step 2: Get the event
 echo -e "${BLUE}Step 2: Get the event${NC}"
-curl -s "http://localhost:8080/api/events/$EVENT_ID" | jq '.'
+curl -s "http://10.66.1.76:8080/api/events/$EVENT_ID" | jq '.'
 echo -e "${GREEN}✓ Event retrieved${NC}"
 echo ""
 
 # Step 3: Create first lesson part
 echo -e "${BLUE}Step 3: Create first lesson part${NC}"
-PART1_RESPONSE=$(curl -s -X POST http://localhost:8080/api/parts \
+PART1_RESPONSE=$(curl -s -X POST http://10.66.1.76:8080/api/parts \
   -H "Content-Type: application/json" \
   -d "{
     \"title\": \"Shamati #1 - There Is None Else Besides Him\",
@@ -60,7 +60,7 @@ echo ""
 
 # Step 4: Create second lesson part
 echo -e "${BLUE}Step 4: Create second lesson part${NC}"
-PART2_RESPONSE=$(curl -s -X POST http://localhost:8080/api/parts \
+PART2_RESPONSE=$(curl -s -X POST http://10.66.1.76:8080/api/parts \
   -H "Content-Type: application/json" \
   -d "{
     \"title\": \"Zohar - Introduction to the Book of Zohar\",
@@ -88,23 +88,23 @@ echo ""
 
 # Step 5: List all parts for the event
 echo -e "${BLUE}Step 5: List all parts for the event${NC}"
-curl -s "http://localhost:8080/api/events/$EVENT_ID/parts" | jq '.'
+curl -s "http://10.66.1.76:8080/api/events/$EVENT_ID/parts" | jq '.'
 echo -e "${GREEN}✓ Parts retrieved and ordered correctly${NC}"
 echo ""
 
 # Step 6: Verify part details
 echo -e "${BLUE}Step 6: Verify individual part details${NC}"
 echo "Part 1:"
-curl -s "http://localhost:8080/api/parts/$PART1_ID" | jq '.'
+curl -s "http://10.66.1.76:8080/api/parts/$PART1_ID" | jq '.'
 echo ""
 echo "Part 2:"
-curl -s "http://localhost:8080/api/parts/$PART2_ID" | jq '.'
+curl -s "http://10.66.1.76:8080/api/parts/$PART2_ID" | jq '.'
 echo -e "${GREEN}✓ Part details verified${NC}"
 echo ""
 
 # Step 7: List all events
 echo -e "${BLUE}Step 7: List all events${NC}"
-curl -s "http://localhost:8080/api/events" | jq '.'
+curl -s "http://10.66.1.76:8080/api/events" | jq '.'
 echo -e "${GREEN}✓ All events listed${NC}"
 echo ""
 

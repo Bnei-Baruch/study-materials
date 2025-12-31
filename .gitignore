@@ -19,8 +19,17 @@ vendor/
 # Go workspace file
 go.work
 
-# Configuration files
-config.toml
+# Environment files (contain secrets)
+.env
+.env.local
+.env.*.local
+
+# Keep these for reference
+!.env.example
+!.env.production
+
+# Configuration defaults (keep for reference)
+!config.toml.example
 
 # IDE
 .idea/

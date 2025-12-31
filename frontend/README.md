@@ -4,7 +4,7 @@ Next.js frontend for creating lesson parts with source selection.
 
 ## Getting Started
 
-1. Make sure the backend is running on `http://localhost:8080`
+1. Make sure the backend is running on `http://10.66.1.76:8080`
 
 2. Start the development server:
 

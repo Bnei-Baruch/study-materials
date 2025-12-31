@@ -22360,7 +22360,7 @@ var StudyMaterialsWidgetBundle = (() => {
   function EmbeddedLessonSidebar({
     eventId,
     language = "he",
-    apiBaseUrl = "http://localhost:8080",
+    apiBaseUrl = "http://10.66.1.76:8080",
     onBack
   }) {
     var _a, _b;
@@ -22720,7 +22720,7 @@ ${partsText}`;
   function StudyMaterialsWidget({
     eventId,
     language = "he",
-    apiBaseUrl = "http://localhost:8080",
+    apiBaseUrl = "http://10.66.1.76:8080",
     limit = 10
   }) {
     const [view, setView] = (0, import_react5.useState)(eventId ? "detail" : "list");
@@ -22781,7 +22781,7 @@ ${partsText}`;
         {
           eventId: config.eventId,
           language: config.language || "he",
-          apiBaseUrl: config.apiBaseUrl || "http://localhost:8080",
+          apiBaseUrl: config.apiBaseUrl || "http://10.66.1.76:8080",
           limit: config.limit || 10
         }
       ) })

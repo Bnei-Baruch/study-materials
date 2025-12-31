@@ -1,0 +1,40 @@
+# Use Go 1.25 (latest stable)
+FROM golang:1.25-alpine AS builder
+
+RUN apk add --no-cache git
+
+WORKDIR /app
+
+# 1. Copy module files
+COPY go.mod go.sum ./
+RUN go mod download
+
+# 2. Copy source code
+COPY . .
+
+# 3. Build the application (auto-detect architecture)
+# TARGETARCH is automatically set by Docker buildx to match the target platform
+ARG TARGETARCH
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH:-amd64} go build -o /app/server .
+
+# 4. Final production stage
+FROM alpine:latest
+WORKDIR /app
+
+RUN apk add --no-cache ca-certificates
+
+# Copy files from builder
+COPY --from=builder /app/server /usr/local/bin/study-server
+COPY --from=builder /app/config.toml ./config.toml
+COPY --from=builder /app/templates.json ./templates.json
+
+# Ensure execution permission
+RUN chmod +x /usr/local/bin/study-server
+
+# Create data directories
+RUN mkdir -p data/events data/parts
+
+EXPOSE 8080
+
+# Run with "server" subcommand (required by cobra)
+CMD ["/usr/local/bin/study-server", "server"]

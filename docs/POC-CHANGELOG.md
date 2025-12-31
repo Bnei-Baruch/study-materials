@@ -29,9 +29,9 @@
 ### 🧪 Testing
 ```bash
 # Test search
-curl "http://localhost:8080/api/sources/search?q=zohar"
-curl "http://localhost:8080/api/sources/search?q=shamati"
-curl "http://localhost:8080/api/sources/search?q=preface"
+curl "http://10.66.1.76:8080/api/sources/search?q=zohar"
+curl "http://10.66.1.76:8080/api/sources/search?q=shamati"
+curl "http://10.66.1.76:8080/api/sources/search?q=preface"
 ```
 
 ---

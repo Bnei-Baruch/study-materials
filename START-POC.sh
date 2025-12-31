@@ -4,7 +4,7 @@ echo "Starting Lesson Parts POC..."
 echo ""
 
 # Start backend
-echo "Starting backend on http://localhost:8080..."
+echo "Starting backend on http://10.66.1.76:8080..."
 cd /Users/alexm/Projects/study-material-service
 ./study-material-service-poc server > backend.log 2>&1 &
 BACKEND_PID=$!
@@ -12,7 +12,7 @@ BACKEND_PID=$!
 sleep 2
 
 # Check if backend is running
-if curl -s http://localhost:8080/health > /dev/null; then
+if curl -s http://10.66.1.76:8080/health > /dev/null; then
     echo "✅ Backend started successfully (PID: $BACKEND_PID)"
 else
     echo "❌ Backend failed to start"
@@ -32,7 +32,7 @@ echo "POC is running!"
 echo "================================================================"
 echo ""
 echo "Frontend: http://localhost:3000"
-echo "Backend:  http://localhost:8080"
+echo "Backend:  http://10.66.1.76:8080"
 echo ""
 echo "To stop servers, run: ./STOP-SERVERS.sh"
 echo ""

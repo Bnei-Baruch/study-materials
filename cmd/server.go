@@ -73,14 +73,14 @@ func serverFn(cmd *cobra.Command, args []string) {
 		log.Printf("Initialized JSON storage at: %s", dataDir)
 	}
 
-	// Initialize kabbalahmedia client for POC
+	// Initialize kabbalahmedia client
 	kabbalahmediaURL := viper.GetString("kabbalahmedia.sqdata_url")
 	if kabbalahmediaURL == "" {
-		kabbalahmediaURL = "https://kabbalahmedia.info/backend/sqdata" // Default
+		kabbalahmediaURL = "https://kabbalahmedia.info/backend/sqdata"
 	}
 	timeout := viper.GetDuration("kabbalahmedia.timeout")
 	if timeout == 0 {
-		timeout = 120 * time.Second // Increased timeout for large sqdata file
+		timeout = 120 * time.Second
 	}
 	kabbalahmediaClient := kabbalahmedia.NewClient(kabbalahmediaURL, timeout)
 	log.Printf("Initialized kabbalahmedia client: %s (timeout: %v)", kabbalahmediaURL, timeout)
@@ -88,7 +88,7 @@ func serverFn(cmd *cobra.Command, args []string) {
 	// Load templates configuration
 	templatesPath := viper.GetString("templates.path")
 	if templatesPath == "" {
-		templatesPath = "./templates.json" // Default
+		templatesPath = "./templates.json"
 	}
 	templateConfig, err := storage.LoadTemplates(templatesPath)
 	if err != nil {
@@ -96,18 +96,7 @@ func serverFn(cmd *cobra.Command, args []string) {
 	}
 	log.Printf("Loaded %d templates in %d languages", len(templateConfig.Templates), len(templateConfig.Languages))
 
-	// Pre-fetch sources in background to warm up cache
-	go func() {
-		log.Println("Pre-fetching sources from kabbalahmedia...")
-		if _, err := kabbalahmediaClient.SearchSources("test"); err != nil {
-			log.Printf("Warning: Failed to pre-fetch sources: %v", err)
-		} else {
-			log.Println("✓ Sources cache warmed up successfully")
-		}
-	}()
-
 	// Start API server with dependencies
 	app := api.NewApp(partStore, eventStore, kabbalahmediaClient, templateConfig)
 	app.Init()
 }
-

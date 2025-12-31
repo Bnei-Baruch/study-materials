@@ -34,7 +34,7 @@ go build -o study-material-service-poc
 ./study-material-service-poc server
 ```
 
-Backend runs on: **http://localhost:8080**
+Backend runs on: **http://10.66.1.76:8080**
 
 ### 2. Start the Frontend
 
@@ -87,13 +87,13 @@ study-material-service/
 
 ```bash
 # Health check
-curl http://localhost:8080/health
+curl http://10.66.1.76:8080/health
 
 # Search sources
-curl "http://localhost:8080/api/sources/search?q=zohar"
+curl "http://10.66.1.76:8080/api/sources/search?q=zohar"
 
 # Create lesson part
-curl -X POST http://localhost:8080/api/parts \
+curl -X POST http://10.66.1.76:8080/api/parts \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Evening Lesson - Dec 22, 2025",
@@ -107,7 +107,7 @@ curl -X POST http://localhost:8080/api/parts \
   }'
 
 # List all parts
-curl http://localhost:8080/api/parts
+curl http://10.66.1.76:8080/api/parts
 ```
 
 ## 📝 Example JSON Data
@@ -190,7 +190,7 @@ After POC validation, expand to:
 
 **POC Status:** ✅ Complete and Working!
 
-Backend running on: http://localhost:8080
+Backend running on: http://10.66.1.76:8080
 Frontend running on: http://localhost:3000
 
 

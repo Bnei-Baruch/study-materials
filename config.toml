@@ -1,0 +1,31 @@
+[server]
+bind-address = ":8080"
+
+[app]
+# Password for Google Apps Script to authenticate sync requests
+app-script-pass = "test-password-123"
+
+# Maximum number of lessons to keep per language
+max-lessons-per-language = 5
+
+[storage]
+# Storage type: "json" or "mongodb"
+# Use "mongodb" for production (requires MongoDB Atlas or local MongoDB)
+# Use "json" for development/testing (stores data in ./data folder)
+type = "mongodb"
+
+# JSON storage (if type = "json")
+data_dir = "./data"
+
+# MongoDB storage (if type = "mongodb")
+[mongodb]
+# Local MongoDB (if installed)
+# uri = "mongodb://localhost:27017"
+
+# MongoDB Atlas (cloud)
+uri = "mongodb://mongo:27017/study_materials_db"
+database = "study_materials_db"
+
+[kabbalahmedia]
+sqdata_url = "https://kabbalahmedia.info/backend/sqdata"
+timeout = "120s"

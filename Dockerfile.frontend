@@ -1,0 +1,39 @@
+# -----------------------------------------------------------------------------
+# Dockerfile for Study Materials Frontend (Next.js)
+# -----------------------------------------------------------------------------
+
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Accept build arguments for Next.js public environment variables
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
+# Copy package files from frontend directory
+COPY frontend/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy frontend source code
+COPY frontend/ ./
+
+# Build the Next.js app with environment variables baked in
+RUN npm run build
+
+# Production stage
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy built files from builder
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/public ./public
+
+EXPOSE 3000
+
+# Start the production server
+CMD ["npm", "start"]

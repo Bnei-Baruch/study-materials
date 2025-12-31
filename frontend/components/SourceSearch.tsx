@@ -48,7 +48,7 @@ export function SourceSearch({ onSelect }: SourceSearchProps) {
       setLoading(true)
       try {
         const response = await fetch(
-          `http://localhost:8080/api/sources/search?q=${encodeURIComponent(query)}`
+          `http://10.66.1.76:8080/api/sources/search?q=${encodeURIComponent(query)}`
         )
         const data = await response.json()
         setResults(data.sources || [])

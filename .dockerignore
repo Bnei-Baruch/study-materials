@@ -1,0 +1,12 @@
+**/node_modules
+**/dist
+**/.next
+**/build
+.git
+.gitignore
+.DS_Store
+*.log
+data/
+Dockerfile*
+docker-compose.yml
+legacy-google-service/

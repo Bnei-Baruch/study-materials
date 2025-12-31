@@ -62,12 +62,12 @@ cd frontend && npm run dev
 
 1. **Backend API:**
    ```bash
-   curl http://localhost:8080/api/sources/search?q=zohar
+   curl http://10.66.1.76:8080/api/sources/search?q=zohar
    ```
 
 2. **Create Part:**
    ```bash
-   curl -X POST http://localhost:8080/api/parts \
+   curl -X POST http://10.66.1.76:8080/api/parts \
      -H "Content-Type: application/json" \
      -d '{"title":"Test Lesson","sources":[]}'
    ```

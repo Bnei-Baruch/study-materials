@@ -123,7 +123,7 @@ Best for: Dynamic loading or single-page applications
 // Load events list (no event ID)
 StudyMaterialsWidget.load(null, 'he', {
   position: 'inline',
-  apiUrl: 'http://localhost:8080',
+  apiUrl: 'http://10.66.1.76:8080',
   limit: 10,
   width: '320px',
   target: document.getElementById('my-container')
@@ -140,7 +140,7 @@ StudyMaterialsWidget.load(null, 'he', {
 // Load specific event
 StudyMaterialsWidget.load('df2b081d-884f-40ac', 'he', {
   position: 'inline',
-  apiUrl: 'http://localhost:8080',
+  apiUrl: 'http://10.66.1.76:8080',
   width: '320px',
   target: document.getElementById('my-container')
 });
@@ -154,7 +154,7 @@ Best for: Users who want to inject widget on any page
 Create a browser bookmark with this URL:
 
 ```javascript
-javascript:(function(){const s=document.createElement('script');s.src='http://localhost:3000/widget/widget.js';s.setAttribute('data-auto-inject','true');s.setAttribute('data-language','he');s.setAttribute('data-limit','10');s.setAttribute('data-api-url','http://localhost:8080');document.head.appendChild(s);})();
+javascript:(function(){const s=document.createElement('script');s.src='http://localhost:3000/widget/widget.js';s.setAttribute('data-auto-inject','true');s.setAttribute('data-language','he');s.setAttribute('data-limit','10');s.setAttribute('data-api-url','http://10.66.1.76:8080');document.head.appendChild(s);})();
 ```
 
 Users click the bookmark to inject the events list widget on any page!
@@ -165,7 +165,7 @@ Users click the bookmark to inject the events list widget on any page!
 |--------|--------|---------|-------------|
 | `data-event-id` | string | **optional** | If provided, shows this event directly. If omitted, shows events list |
 | `data-language` | he, en, ru, es, de, it, fr, uk | `he` | UI language |
-| `data-api-url` | URL | `http://localhost:8080` | Backend API endpoint |
+| `data-api-url` | URL | `http://10.66.1.76:8080` | Backend API endpoint |
 | `data-limit` | number | `10` | Number of events to show in list mode |
 | `data-position` | inline, fixed-right, fixed-left | `inline` | Widget positioning |
 | `data-width` | CSS width | `320px` | Widget width |
@@ -397,20 +397,20 @@ For production, set the API URL:
 **Check 2**: Verify event ID is correct
 ```javascript
 // Test in console
-fetch('http://localhost:8080/api/events/YOUR_EVENT_ID')
+fetch('http://10.66.1.76:8080/api/events/YOUR_EVENT_ID')
   .then(r => r.json())
   .then(console.log)
 ```
 
 **Check 3**: Ensure backend is running
 ```bash
-curl http://localhost:8080/health
+curl http://10.66.1.76:8080/health
 # Should return: OK
 ```
 
 **Check 4**: Check CORS headers
 ```bash
-curl -I http://localhost:8080/api/events/YOUR_EVENT_ID
+curl -I http://10.66.1.76:8080/api/events/YOUR_EVENT_ID
 # Should include: Access-Control-Allow-Origin: *
 ```
 

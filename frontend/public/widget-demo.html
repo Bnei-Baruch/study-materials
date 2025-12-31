@@ -105,7 +105,7 @@
           data-studymaterials-widget
           data-language="he"
           data-limit="10"
-          data-api-url="http://localhost:8080"
+          data-api-url="http://10.66.1.76:8080"
           style="height: 600px;"
         ></div>
       </div>
@@ -134,7 +134,7 @@
           data-language="he"
           data-position="inline"
           data-width="320px"
-          data-api-url="http://localhost:8080"
+          data-api-url="http://10.66.1.76:8080"
         ></div>
       </div>
     </div>
@@ -182,7 +182,7 @@
 // Load events list (no eventId)
 StudyMaterialsWidget.load(null, 'he', {
   position: 'inline',
-  apiUrl: 'http://localhost:8080',
+  apiUrl: 'http://10.66.1.76:8080',
   limit: 10,
   target: document.getElementById('widget-container')
 });
@@ -198,7 +198,7 @@ StudyMaterialsWidget.load(null, 'he', {
 // Load specific event
 StudyMaterialsWidget.load('eventId', 'he', {
   position: 'inline',
-  apiUrl: 'http://localhost:8080',
+  apiUrl: 'http://10.66.1.76:8080',
   target: document.getElementById('widget-container')
 });
       </div>
@@ -222,7 +222,7 @@ StudyMaterialsWidget.load('eventId', 'he', {
           data-language="he"
           data-position="inline"
           data-width="100%"
-          data-api-url="http://localhost:8080"
+          data-api-url="http://10.66.1.76:8080"
           style="height: 600px;"
         ></div>
       </div>
@@ -232,7 +232,7 @@ StudyMaterialsWidget.load('eventId', 'he', {
     <div class="demo-section">
       <h2>📝 Instructions</h2>
       <ol style="color: #4b5563; line-height: 1.8;">
-        <li>Make sure your backend server is running on <code>http://localhost:8080</code></li>
+        <li>Make sure your backend server is running on <code>http://10.66.1.76:8080</code></li>
         <li>The widget now has TWO modes:
           <ul>
             <li><strong>Events List Mode</strong> (default): Shows recent events, no event ID needed</li>
@@ -266,7 +266,7 @@ StudyMaterialsWidget.load('eventId', 'he', {
       script.setAttribute('data-language', 'he');
       script.setAttribute('data-limit', '10');
       script.setAttribute('data-position', 'fixed-right');
-      script.setAttribute('data-api-url', 'http://localhost:8080');
+      script.setAttribute('data-api-url', 'http://10.66.1.76:8080');
       document.head.appendChild(script);
 
       alert('Events list loading as fixed sidebar... Check the right side of the page!');
@@ -286,7 +286,7 @@ StudyMaterialsWidget.load('eventId', 'he', {
       script.setAttribute('data-event-id', 'df2b081d-884f-40ac-b630-3fe17994eed7');
       script.setAttribute('data-language', 'he');
       script.setAttribute('data-position', 'fixed-right');
-      script.setAttribute('data-api-url', 'http://localhost:8080');
+      script.setAttribute('data-api-url', 'http://10.66.1.76:8080');
       document.head.appendChild(script);
 
       alert('Direct event loading as fixed sidebar... Check the right side of the page!');
@@ -299,7 +299,7 @@ StudyMaterialsWidget.load('eventId', 'he', {
       if (window.StudyMaterialsWidget && window.StudyMaterialsWidget.load) {
         window.StudyMaterialsWidget.load(null, 'he', {
           position: 'inline',
-          apiUrl: 'http://localhost:8080',
+          apiUrl: 'http://10.66.1.76:8080',
           limit: 10,
           width: '320px',
           target: container
@@ -316,7 +316,7 @@ StudyMaterialsWidget.load('eventId', 'he', {
       if (window.StudyMaterialsWidget && window.StudyMaterialsWidget.load) {
         window.StudyMaterialsWidget.load('df2b081d-884f-40ac-b630-3fe17994eed7', 'he', {
           position: 'inline',
-          apiUrl: 'http://localhost:8080',
+          apiUrl: 'http://10.66.1.76:8080',
           width: '320px',
           target: container
         });
