@@ -462,7 +462,7 @@ export function EmbeddedLessonSidebar({
   const eventTitle = event.titles?.[language] || event.titles?.['he'] || 'Lesson'
 
   return (
-    <div className="h-full w-full overflow-y-auto bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Compact Header */}
       <div className="bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative">
         <h3 className="text-blue-900 text-[15px] sm:text-[17px] font-bold" style={{ lineHeight: '1.2' }}>

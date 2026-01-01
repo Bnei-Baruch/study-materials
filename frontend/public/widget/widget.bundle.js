@@ -22133,7 +22133,7 @@ var StudyMaterialsWidgetBundle = (() => {
     if (error) {
       return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-red-600 text-center p-2 sm:p-4 text-[12px] sm:text-[13px]", children: error }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "h-full w-full overflow-y-auto bg-white", dir: isRTL ? "rtl" : "ltr", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200", dir: isRTL ? "rtl" : "ltr", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-blue-900 text-[14px] sm:text-[15px] font-bold", children: t.studyMaterials }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-gray-600 text-[9px] sm:text-[10px] mt-0.5", children: t.selectLesson }),
@@ -22545,7 +22545,7 @@ ${partsText}`;
       return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "13px" }, children: error || t.error }) });
     }
     const eventTitle = ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || "Lesson";
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "h-full w-full overflow-y-auto bg-white", dir: isRTL ? "rtl" : "ltr", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200", dir: isRTL ? "rtl" : "ltr", children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative", children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { className: "text-blue-900 text-[15px] sm:text-[17px] font-bold", style: { lineHeight: "1.2" }, children: eventTitle }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { className: "text-gray-600 text-[11px] sm:text-[13px] mt-0.5", children: [

@@ -192,7 +192,7 @@ export function EmbeddedEventsList({
   }
 
   return (
-    <div className="h-full w-full overflow-y-auto bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Sidebar Header */}
       <div className="bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative">
         <h3 className="text-blue-900 text-[14px] sm:text-[15px] font-bold">
