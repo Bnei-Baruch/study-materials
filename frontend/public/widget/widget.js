@@ -93,8 +93,9 @@
         box-shadow: 2px 0 10px rgba(0,0,0,0.1);
       `;
     } else {
+      // Inline mode - let container fill its parent width (responsive)
       container.style.cssText = `
-        width: ${width};
+        width: 100%;
         height: 100%;
         min-height: 400px;
       `;

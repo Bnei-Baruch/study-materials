@@ -173,8 +173,8 @@ export function EmbeddedEventsList({
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="text-gray-600" style={{ fontSize: '13px' }}>
+      <div className="h-full w-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="text-gray-600 text-[12px] sm:text-[13px]">
           {t.loading}
         </div>
       </div>
@@ -183,8 +183,8 @@ export function EmbeddedEventsList({
 
   if (error) {
     return (
-      <div className="h-full flex items-center justify-center bg-white" style={{ width: '350px' }} dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="text-red-600 text-center p-4" style={{ fontSize: '13px' }}>
+      <div className="h-full w-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="text-red-600 text-center p-2 sm:p-4 text-[12px] sm:text-[13px]">
           {error}
         </div>
       </div>
@@ -192,23 +192,22 @@ export function EmbeddedEventsList({
   }
 
   return (
-    <div className="h-full overflow-y-auto" style={{ width: '350px' }} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="h-full w-full overflow-y-auto bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Sidebar Header */}
-      <div className="bg-blue-50 p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative">
-        <h3 className="text-blue-900" style={{ fontSize: '15px' }}>
+      <div className="bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative">
+        <h3 className="text-blue-900 text-[14px] sm:text-[15px] font-bold">
           {t.studyMaterials}
         </h3>
-        <p className="text-gray-600" style={{ fontSize: '10px' }}>
+        <p className="text-gray-600 text-[9px] sm:text-[10px] mt-0.5">
           {t.selectLesson}
         </p>
         
         {/* Language Selector - Left Corner */}
-        <div className={`absolute ${isLTR ? 'right-3' : 'left-3'} top-3`}>
+        <div className={`absolute ${isLTR ? 'right-2 sm:right-3' : 'left-2 sm:left-3'} top-2 sm:top-3`}>
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className="bg-white border border-blue-300 rounded-md px-2 py-1 text-blue-900 cursor-pointer hover:border-blue-500 transition-colors"
-            style={{ fontSize: '10px' }}
+            className="bg-white border border-blue-300 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-blue-900 cursor-pointer hover:border-blue-500 transition-colors text-[9px] sm:text-[10px]"
           >
             <option value="he">עברית</option>
             <option value="en">English</option>
@@ -224,29 +223,29 @@ export function EmbeddedEventsList({
 
       {/* Events List */}
       {events.length === 0 ? (
-        <div className="p-4 text-center text-gray-500" style={{ fontSize: '13px' }}>
+        <div className="p-2 sm:p-4 text-center text-gray-500 text-[12px] sm:text-[13px]">
           {t.noEventsAvailable}
         </div>
       ) : (
-        <div className="p-2 space-y-2">
+        <div className="p-1 sm:p-2 space-y-1 sm:space-y-2">
           {events.map((event) => (
             <button
               key={event.id}
               onClick={() => onSelectEvent(event.id)}
-              className={`w-full bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl hover:border-blue-400 transition-all p-2.5 ${isRTL ? 'text-right' : 'text-left'}`}
+              className={`w-full bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl hover:border-blue-400 transition-all p-1.5 sm:p-2.5 ${isRTL ? 'text-right' : 'text-left'}`}
             >
-              <h4 className="text-blue-900 mb-1" style={{ fontSize: '13px' }}>
+              <h4 className="text-blue-900 mb-0.5 sm:mb-1 text-[12px] sm:text-[13px] font-bold break-words">
                 {getEventTitle(event)}
               </h4>
-              <div className="flex flex-col gap-0.5 text-gray-500" style={{ fontSize: '10px' }}>
+              <div className="flex flex-col gap-0.5 text-gray-500 text-[9px] sm:text-[10px]">
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  <span>{formatEventDayOfWeek(event.date)}, {formatEventDate(event.date)}</span>
+                  <Calendar className="w-3 h-3 flex-shrink-0" />
+                  <span className="truncate">{formatEventDayOfWeek(event.date)}, {formatEventDate(event.date)}</span>
                 </div>
                 {event.start_time && event.end_time && (
                   <div className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    <span>{event.end_time} - {event.start_time}</span>
+                    <Clock className="w-3 h-3 flex-shrink-0" />
+                    <span className="truncate">{event.end_time} - {event.start_time}</span>
                   </div>
                 )}
               </div>
@@ -256,17 +255,17 @@ export function EmbeddedEventsList({
       )}
 
       {/* Footer Link */}
-      <div className="p-4">
+      <div className="p-2 sm:p-4">
         <a
           href="https://stmat.kab.info"
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-3 transition-all"
+          className="block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-2 sm:p-3 transition-all"
         >
-          <div className="text-blue-700 font-medium" style={{ fontSize: '14px' }}>
+          <div className="text-blue-700 font-medium text-[13px] sm:text-[14px]">
             {t.viewAllMaterials}
           </div>
-          <div className="text-blue-600 mt-1" style={{ fontSize: '11px' }}>
+          <div className="text-blue-600 mt-0.5 sm:mt-1 text-[10px] sm:text-[11px]">
             stmat.kab.info
           </div>
         </a>
