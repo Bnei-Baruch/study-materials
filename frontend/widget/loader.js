@@ -16,7 +16,13 @@
   const WIDGET_VERSION = '1.0.0';
   const currentScript = document.currentScript || document.querySelector('script[src*="widget.js"]');
   const scriptSrc = currentScript ? currentScript.src : '';
-  const baseUrl = scriptSrc.replace(/widget\.js.*$/, '');
+  
+  // Calculate base URL - convert relative to absolute
+  let baseUrl = scriptSrc.replace(/widget\.js.*$/, '');
+  if (baseUrl && !baseUrl.startsWith('http')) {
+    // Convert relative to absolute URL
+    baseUrl = new URL(baseUrl, window.location.href).href;
+  }
   
   // Prevent duplicate loading
   if (window.__STUDYMATERIALS_WIDGET_LOADED__) {
@@ -25,14 +31,10 @@
   }
   window.__STUDYMATERIALS_WIDGET_LOADED__ = true;
 
-  // Load CSS
+  // Load CSS - DISABLED FOR TESTING
   function loadCSS() {
-    if (document.querySelector('link[href*="widget.css"]')) return;
-    
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = baseUrl + 'widget.css?v=' + WIDGET_VERSION;
-    document.head.appendChild(link);
+    // CSS loading temporarily disabled to test if CSS is causing button style conflicts
+    return;
   }
 
   // Load widget bundle
@@ -111,6 +113,7 @@
           language: language,
           apiBaseUrl: apiUrl,
           limit: limit,
+          cssBaseUrl: baseUrl,
         });
         
         return instanceId;
@@ -162,7 +165,16 @@
 
     // Find existing containers
     const containers = document.querySelectorAll('[data-studymaterials-widget]');
-    containers.forEach(initWidgetInContainer);
+    containers.forEach(container => {
+      if (!container.dataset.initialized) {
+        initWidgetInContainer(container).then(instanceId => {
+          if (instanceId) {
+            container.dataset.initialized = 'true';
+            container.dataset.widgetInstanceId = instanceId;
+          }
+        });
+      }
+    });
 
     // Check for auto-inject
     handleAutoInject();
@@ -178,6 +190,8 @@
   // Expose manual initialization function
   window.StudyMaterialsWidget = window.StudyMaterialsWidget || {};
   window.StudyMaterialsWidget.version = WIDGET_VERSION;
+  
+  // Main load function - returns widget instance with destroy method
   window.StudyMaterialsWidget.load = function(eventId, language, options) {
     options = options || {};
     const container = document.createElement('div');
@@ -206,9 +220,41 @@
     }
 
     loadCSS();
-    initWidgetInContainer(container);
     
-    return container;
+    // Store instance reference for returning
+    let widgetInstance = {
+      container: container,
+      id: null,
+      destroy: function() {
+        if (this.id && window.StudyMaterialsWidget && window.StudyMaterialsWidget.destroyWidget) {
+          window.StudyMaterialsWidget.destroyWidget(this.id);
+        } else if (this.container && this.container.parentNode) {
+          // Fallback cleanup
+          this.container.innerHTML = '';
+          this.container.parentNode.removeChild(this.container);
+        }
+      }
+    };
+    
+    // Initialize widget and store instance ID
+    initWidgetInContainer(container).then(instanceId => {
+      if (instanceId) {
+        widgetInstance.id = instanceId;
+        container.dataset.widgetInstanceId = instanceId;
+      }
+    });
+    
+    return widgetInstance;
+  };
+  
+  // Expose destroy function for standalone use
+  window.StudyMaterialsWidget.destroy = function(widgetInstance) {
+    if (widgetInstance && widgetInstance.destroy) {
+      widgetInstance.destroy();
+    } else if (typeof widgetInstance === 'string') {
+      // Support direct instance ID
+      window.StudyMaterialsWidget.destroyWidget(widgetInstance);
+    }
   };
 })();
 

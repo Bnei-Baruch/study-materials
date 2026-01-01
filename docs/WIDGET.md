@@ -159,6 +159,154 @@ javascript:(function(){const s=document.createElement('script');s.src='http://lo
 
 Users click the bookmark to inject the events list widget on any page!
 
+## Widget Lifecycle & Cleanup
+
+### Overview
+
+The widget provides proper lifecycle management with `destroy()` methods to prevent memory leaks and enable clean unmounting in dynamic applications (SPAs, React apps, etc.).
+
+### Creating a Widget
+
+```javascript
+// Load widget - returns widget instance
+const widget = StudyMaterialsWidget.load(
+  null,        // eventId (null = events list)
+  'he',        // language
+  {
+    apiUrl: 'http://localhost:8080',
+    limit: 10,
+    target: document.getElementById('container')
+  }
+);
+```
+
+### Destroying a Widget
+
+```javascript
+// Method 1: Using instance destroy()
+widget.destroy();
+
+// Method 2: Using global destroy function
+StudyMaterialsWidget.destroy(widget);
+
+// Method 3: By instance ID (if you stored it)
+StudyMaterialsWidget.destroyWidget(instanceId);
+```
+
+### React Integration Example
+
+```jsx
+import React, { useEffect, useRef } from 'react';
+
+function StudyMaterialsContainer() {
+  const containerRef = useRef(null);
+  const widgetRef = useRef(null);
+  
+  useEffect(() => {
+    // Load widget script
+    const script = document.createElement('script');
+    script.src = 'http://localhost:3000/widget/widget.js';
+    script.onload = () => {
+      // Create widget
+      const widget = window.StudyMaterialsWidget.load(null, 'he', {
+        apiUrl: 'http://localhost:8080',
+        target: containerRef.current
+      });
+      widgetRef.current = widget;
+    };
+    document.head.appendChild(script);
+    
+    // Cleanup on unmount
+    return () => {
+      if (widgetRef.current) {
+        widgetRef.current.destroy();
+      }
+    };
+  }, []);
+  
+  return <div ref={containerRef} />;
+}
+```
+
+### galaxy3 Integration Example
+
+```javascript
+// galaxy3/src/apps/VirtualApp/components/StudyMaterialsWidget.js
+const StudyMaterialsWidget = ({language, apiUrl}) => {
+  const containerRef = React.useRef(null);
+  const widgetInstanceRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const loadScript = () => {
+      return new Promise((resolve) => {
+        const existingScript = document.querySelector('script[src*="widget.js"]');
+        if (existingScript) {
+          resolve();
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'http://localhost:3000/widget/widget.js';
+        script.onload = () => resolve();
+        document.head.appendChild(script);
+      });
+    };
+
+    const initWidget = async () => {
+      await loadScript();
+      
+      if (containerRef.current && window.StudyMaterialsWidget) {
+        // Create widget
+        const widgetInstance = window.StudyMaterialsWidget.load(
+          null,
+          language,
+          { 
+            apiUrl: apiUrl,
+            limit: 10,
+            target: containerRef.current
+          }
+        );
+        
+        // Store for cleanup
+        widgetInstanceRef.current = widgetInstance;
+      }
+    };
+
+    initWidget();
+
+    // Proper cleanup
+    return () => {
+      if (widgetInstanceRef.current) {
+        widgetInstanceRef.current.destroy();
+        widgetInstanceRef.current = null;
+      }
+    };
+  }, [language, apiUrl]);
+
+  return <div ref={containerRef} style={{height: '100%', width: '100%'}} />;
+};
+```
+
+### Why Use destroy()?
+
+**Without destroy():**
+- React components remain mounted ❌
+- Event listeners stay active ❌
+- Memory leaks on repeated mount/unmount ❌
+- Console warnings about unmounted components ❌
+
+**With destroy():**
+- React properly unmounted ✅
+- All event listeners removed ✅
+- DOM cleaned up ✅
+- No memory leaks ✅
+
+### Cleanup Best Practices
+
+1. **Always call destroy()** when removing widget
+2. **Store widget instance** in a ref or variable
+3. **Call destroy() in cleanup** (useEffect return, componentWillUnmount)
+4. **Don't use innerHTML = ''** - use destroy() instead
+
 ## Configuration Options
 
 | Option | Values | Default | Description |

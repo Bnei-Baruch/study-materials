@@ -21776,6 +21776,8 @@ var StudyMaterialsWidgetBundle = (() => {
   // widget/index.tsx
   var index_exports = {};
   __export(index_exports, {
+    destroyAllWidgets: () => destroyAllWidgets,
+    destroyWidget: () => destroyWidget,
     initWidget: () => initWidget
   });
   var import_react6 = __toESM(require_react());
@@ -22773,8 +22775,31 @@ ${partsText}`;
 
   // widget/index.tsx
   var import_jsx_runtime4 = __toESM(require_jsx_runtime());
+  var widgetInstances = /* @__PURE__ */ new Map();
+  function generateInstanceId() {
+    return `widget-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  }
   function initWidget(container, config) {
-    const root = (0, import_client.createRoot)(container);
+    const instanceId = generateInstanceId();
+    const cssBaseUrl = config.cssBaseUrl || "/widget/";
+    const shadowHost = document.createElement("div");
+    shadowHost.setAttribute("data-studymaterials-widget-shadow", instanceId);
+    shadowHost.style.width = "100%";
+    shadowHost.style.height = "100%";
+    container.appendChild(shadowHost);
+    const shadowRoot = shadowHost.attachShadow({ mode: "open" });
+    const wrapper = document.createElement("div");
+    wrapper.setAttribute("data-studymaterials-widget", "");
+    wrapper.style.width = "100%";
+    wrapper.style.height = "100%";
+    shadowRoot.appendChild(wrapper);
+    const linkElement = document.createElement("link");
+    linkElement.rel = "stylesheet";
+    const cssUrl = cssBaseUrl + "widget.css?v=1.0.0";
+    console.log("\u{1F517} Widget CSS URL:", cssUrl, "baseUrl:", cssBaseUrl);
+    linkElement.href = cssUrl;
+    shadowRoot.appendChild(linkElement);
+    const root = (0, import_client.createRoot)(wrapper);
     root.render(
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         StudyMaterialsWidget,
@@ -22786,10 +22811,44 @@ ${partsText}`;
         }
       ) })
     );
-    return () => root.unmount();
+    widgetInstances.set(instanceId, {
+      id: instanceId,
+      root,
+      container: shadowHost,
+      // Store the shadow host
+      unmount: () => root.unmount()
+    });
+    return instanceId;
+  }
+  function destroyWidget(instanceId) {
+    const instance = widgetInstances.get(instanceId);
+    if (!instance) {
+      console.warn(`Widget instance ${instanceId} not found`);
+      return false;
+    }
+    try {
+      instance.unmount();
+      if (instance.container && instance.container.parentNode) {
+        instance.container.parentNode.removeChild(instance.container);
+      }
+      widgetInstances.delete(instanceId);
+      return true;
+    } catch (error) {
+      console.error("Error destroying widget:", error);
+      return false;
+    }
+  }
+  function destroyAllWidgets() {
+    const instanceIds = Array.from(widgetInstances.keys());
+    instanceIds.forEach((id) => destroyWidget(id));
   }
   if (typeof window !== "undefined") {
-    window.StudyMaterialsWidget = { initWidget };
+    window.StudyMaterialsWidget = __spreadProps(__spreadValues({}, window.StudyMaterialsWidget), {
+      // Preserve existing properties from loader.js
+      initWidget,
+      destroyWidget,
+      destroyAllWidgets
+    });
   }
   return __toCommonJS(index_exports);
 })();

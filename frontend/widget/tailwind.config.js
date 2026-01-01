@@ -10,8 +10,8 @@ module.exports = {
     extend: {},
   },
   plugins: [],
-  // Prefix all classes to avoid conflicts
-  prefix: '',
+  // All CSS is scoped to [data-studymaterials-widget] containers via input.css
+  // The important selector ensures widget styles take precedence
   important: '[data-studymaterials-widget]',
 }
 
