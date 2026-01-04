@@ -101,6 +101,19 @@
         "fr": "Étudier avec des amis",
         "uk": "Навчання з друзями"
       }
+    },
+    {
+      "id": "article_reading_ten",
+      "translations": {
+        "he": "קריאת מאמר בעשירייה",
+        "en": "Reading of the Article in the Ten",
+        "ru": "Чтение статьи в десятке",
+        "es": "Lectura del artículo en la decena",
+        "de": "Lesung des Artikels in der Zehnergruppe",
+        "it": "Lettura dell'articolo nel gruppo di dieci",
+        "fr": "Lecture de l'article dans le groupe de dix",
+        "uk": "Читання статті в десятці"
+      }
     }
   ]
 }

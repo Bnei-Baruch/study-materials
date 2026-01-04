@@ -253,7 +253,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       // Format date as YYYY-MM-DD (extract only date part from ISO string)
       const dateOnly = new Date(eventDate).toISOString().split('T')[0]
       
-      const response = await fetch(getApiUrl('/parts'),
+      const response = await fetch(getApiUrl('/parts'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

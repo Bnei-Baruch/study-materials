@@ -175,7 +175,7 @@ export default function EventDetailPage() {
     if (!editedPart) return
 
     try {
-      const response = await fetch(`${getApiUrl(`/parts/${editedPart.id}`)}` {
+      const response = await fetch(`${getApiUrl(`/parts/${editedPart.id}`)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -218,7 +218,7 @@ export default function EventDetailPage() {
     }
 
     try {
-      const response = await fetch(`${getApiUrl(`/parts/${partId}`)}` {
+      const response = await fetch(`${getApiUrl(`/parts/${partId}`)}`, {
         method: 'DELETE',
       })
 
@@ -241,7 +241,7 @@ export default function EventDetailPage() {
     }
 
     try {
-      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}` {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}`, {
         method: 'DELETE',
       })
 
@@ -263,7 +263,7 @@ export default function EventDetailPage() {
     if (!newDateStr) return
 
     try {
-      const response = await fetch(`${getApiUrl(`/events/${eventId}/duplicate`)}` {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}/duplicate`)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -290,7 +290,7 @@ export default function EventDetailPage() {
     if (!event) return
 
     try {
-      const response = await fetch(`${getApiUrl(`/events/${eventId}/toggle-public`)}` {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}/toggle-public`)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -401,7 +401,7 @@ export default function EventDetailPage() {
     if (!event) return
 
     try {
-      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}` {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -433,7 +433,7 @@ export default function EventDetailPage() {
     if (!event) return
 
     try {
-      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}` {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -466,7 +466,7 @@ export default function EventDetailPage() {
     if (!event) return
 
     try {
-      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}` {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

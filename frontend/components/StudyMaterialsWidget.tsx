@@ -14,7 +14,7 @@ interface StudyMaterialsWidgetProps {
 export function StudyMaterialsWidget({
   eventId,
   language = 'he',
-  apiBaseUrl,
+  apiBaseUrl = '',
   limit = 10,
 }: StudyMaterialsWidgetProps) {
   const [view, setView] = useState<'list' | 'detail'>(eventId ? 'detail' : 'list')

@@ -138,7 +138,7 @@ export default function CreateEventPage() {
         requestBody.titles = customTitles
       }
 
-      const response = await fetch(getApiUrl('/events'),
+      const response = await fetch(getApiUrl('/events'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
