@@ -448,3 +448,4 @@ services:
 - [Docker Guide](./DOCKER.md) - Deployment instructions
 - [API Documentation](./API.md) - Backend API reference
 - [Widget Integration](./WIDGET.md) - Embedding the widget
+

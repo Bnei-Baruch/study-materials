@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
+import { getApiUrl } from '@/lib/api'
 import Link from 'next/link'
 import EventTypeBadge from '@/components/EventTypeBadge'
 import PartForm from '@/components/PartForm'
@@ -96,7 +97,7 @@ export default function EventDetailPage() {
   const fetchEventAndParts = async () => {
     try {
       // Fetch event
-      const eventRes = await fetch(`http://10.66.1.76:8080/api/events/${eventId}`)
+      const eventRes = await fetch(`${getApiUrl(`/events/${eventId}`)}`)
       if (!eventRes.ok) {
         throw new Error('Event not found')
       }
@@ -104,7 +105,7 @@ export default function EventDetailPage() {
       setEvent(eventData)
 
       // Fetch parts for this event with language filter
-      const partsRes = await fetch(`http://10.66.1.76:8080/api/events/${eventId}/parts?language=${selectedLanguage}`)
+      const partsRes = await fetch(`${getApiUrl(`/events/${eventId}/parts?language=${selectedLanguage}`)}`)
       if (partsRes.ok) {
         const partsData = await partsRes.json()
         setParts(partsData.parts || [])
@@ -139,7 +140,7 @@ export default function EventDetailPage() {
     try {
       // Fetch the source title in the part's language
       const response = await fetch(
-        `http://10.66.1.76:8080/api/sources/title?id=${source.source_id}&language=${editedPart.language}`
+        `${getApiUrl(`/sources/title?id=${source.source_id}&language=${editedPart.language}`)}`
       )
       const data = await response.json()
 
@@ -174,7 +175,7 @@ export default function EventDetailPage() {
     if (!editedPart) return
 
     try {
-      const response = await fetch(`http://10.66.1.76:8080/api/parts/${editedPart.id}`, {
+      const response = await fetch(`${getApiUrl(`/parts/${editedPart.id}`)}` {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -217,7 +218,7 @@ export default function EventDetailPage() {
     }
 
     try {
-      const response = await fetch(`http://10.66.1.76:8080/api/parts/${partId}`, {
+      const response = await fetch(`${getApiUrl(`/parts/${partId}`)}` {
         method: 'DELETE',
       })
 
@@ -240,7 +241,7 @@ export default function EventDetailPage() {
     }
 
     try {
-      const response = await fetch(`http://10.66.1.76:8080/api/events/${eventId}`, {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}` {
         method: 'DELETE',
       })
 
@@ -262,7 +263,7 @@ export default function EventDetailPage() {
     if (!newDateStr) return
 
     try {
-      const response = await fetch(`http://10.66.1.76:8080/api/events/${eventId}/duplicate`, {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}/duplicate`)}` {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -289,7 +290,7 @@ export default function EventDetailPage() {
     if (!event) return
 
     try {
-      const response = await fetch(`http://10.66.1.76:8080/api/events/${eventId}/toggle-public`, {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}/toggle-public`)}` {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -400,7 +401,7 @@ export default function EventDetailPage() {
     if (!event) return
 
     try {
-      const response = await fetch(`http://10.66.1.76:8080/api/events/${eventId}`, {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}` {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -432,7 +433,7 @@ export default function EventDetailPage() {
     if (!event) return
 
     try {
-      const response = await fetch(`http://10.66.1.76:8080/api/events/${eventId}`, {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}` {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -465,7 +466,7 @@ export default function EventDetailPage() {
     if (!event) return
 
     try {
-      const response = await fetch(`http://10.66.1.76:8080/api/events/${eventId}`, {
+      const response = await fetch(`${getApiUrl(`/events/${eventId}`)}` {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -19,11 +19,20 @@ Complete guide for running Study Material Service with Docker.
 - Docker Compose v2.0+
 - Minimum 2GB RAM allocated to Docker
 
+# Install Docker Compose v2
+mkdir -p /usr/local/lib/docker/cli-plugins
+curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/lib/docker/cli-plugins/docker-compose
+chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
 **Version Check:**
 ```bash
 docker --version          # Should be 20.10+
 docker compose version    # Should be 2.0+
 ```
+# Install buildx
+mkdir -p ~/.docker/cli-plugins
+wget https://github.com/docker/buildx/releases/download/v0.17.0/buildx-v0.17.0.linux-amd64 -O ~/.docker/cli-plugins/docker-buildx
+chmod +x ~/.docker/cli-plugins/docker-buildx
 
 ---
 
@@ -132,6 +141,23 @@ docker compose -f docker-compose.local.yml up --build backend
 
 # Execute command in running container
 docker exec -it study-backend-local /bin/sh
+
+
+
+# Start Docker
+systemctl start docker
+
+# Stop Docker
+systemctl stop docker
+
+# Restart Docker
+systemctl restart docker
+
+# Check status
+systemctl status docker
+
+# View logs
+journalctl -u docker -n 50 -f
 ```
 
 ### Development Workflow
@@ -498,3 +524,4 @@ docker compose down -v
 docker system prune -a
 # Then rebuild from scratch
 ```
+

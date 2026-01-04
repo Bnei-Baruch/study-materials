@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { getApiUrl } from '@/lib/api'
 import { SourceSearch } from './SourceSearch'
 
 interface Source {
@@ -195,7 +196,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
     // Fetch the source title in the current language
     try {
       const response = await fetch(
-        `http://10.66.1.76:8080/api/sources/title?id=${source.source_id}&language=${language}`
+        `${getApiUrl(`/sources/title?id=${source.source_id}&language=${language}`)}`
       )
       if (response.ok) {
         const data = await response.json()
@@ -252,7 +253,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       // Format date as YYYY-MM-DD (extract only date part from ISO string)
       const dateOnly = new Date(eventDate).toISOString().split('T')[0]
       
-      const response = await fetch('http://10.66.1.76:8080/api/parts', {
+      const response = await fetch(getApiUrl('/parts'),
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

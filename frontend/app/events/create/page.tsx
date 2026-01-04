@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { getApiUrl } from '@/lib/api'
 import Link from 'next/link'
 
 // Helper function to get default title for an event type in a specific language
@@ -137,7 +138,7 @@ export default function CreateEventPage() {
         requestBody.titles = customTitles
       }
 
-      const response = await fetch('http://10.66.1.76:8080/api/events', {
+      const response = await fetch(getApiUrl('/events'),
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

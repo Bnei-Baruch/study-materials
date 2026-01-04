@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { getApiUrl } from '@/lib/api'
 import {
   BookOpen,
   Video,
@@ -394,7 +395,7 @@ export default function PublicPage() {
       if (startDate) params.append('from_date', startDate)
       if (endDate) params.append('to_date', endDate)
       
-      const response = await fetch(`http://10.66.1.76:8080/api/events?${params}`)
+      const response = await fetch(`${getApiUrl('/events?${params}')}`)
       const data = await response.json()
       setEvents(data.events || [])
       setTotalEvents(data.total || 0)
@@ -417,7 +418,7 @@ export default function PublicPage() {
       if (startDate) params.append('from_date', startDate)
       if (endDate) params.append('to_date', endDate)
       
-      const response = await fetch(`http://10.66.1.76:8080/api/events?${params}`)
+      const response = await fetch(`${getApiUrl('/events?${params}')}`)
       const data = await response.json()
       setEvents([...events, ...(data.events || [])])
       setTotalEvents(data.total || 0)
@@ -435,7 +436,7 @@ export default function PublicPage() {
 
   const fetchParts = async (eventId: string) => {
     try {
-      const response = await fetch(`http://10.66.1.76:8080/api/events/${eventId}/parts?language=${language}`)
+      const response = await fetch(`${getApiUrl('/events/${eventId}/parts?language=${language}')}`)
       const data = await response.json()
       setParts((data.parts || []).sort((a: Part, b: Part) => a.order - b.order))
     } catch (error) {

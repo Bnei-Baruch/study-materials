@@ -64,12 +64,17 @@
   function initWidgetInContainer(container) {
     const eventId = container.getAttribute('data-event-id');  // Optional now
     const language = container.getAttribute('data-language') || 'he';
-    const apiUrl = container.getAttribute('data-api-url') || 'http://10.66.1.76:8080';
+    const apiUrl = container.getAttribute('data-api-url');  // REQUIRED - no fallback
     const limit = parseInt(container.getAttribute('data-limit') || '10');
     const position = container.getAttribute('data-position') || 'inline';
     const width = container.getAttribute('data-width') || '320px';
 
-    // eventId is now optional - if not provided, shows events list
+    // Validate required attributes
+    if (!apiUrl) {
+      console.error('Widget Error: data-api-url attribute is required');
+      container.innerHTML = '<div style="color: red; padding: 10px;">Error: Missing data-api-url attribute</div>';
+      return Promise.reject(new Error('Missing data-api-url'));
+    }
 
     // Apply positioning styles
     if (position === 'fixed-right') {
@@ -137,12 +142,16 @@
 
     const eventId = currentScript.getAttribute('data-event-id');  // Optional now
     const language = currentScript.getAttribute('data-language') || 'he';
-    const apiUrl = currentScript.getAttribute('data-api-url') || 'http://10.66.1.76:8080';
+    const apiUrl = currentScript.getAttribute('data-api-url');  // REQUIRED - no fallback
     const limit = parseInt(currentScript.getAttribute('data-limit') || '10');
     const position = currentScript.getAttribute('data-position') || 'fixed-right';
     const width = currentScript.getAttribute('data-width') || '320px';
 
-    // eventId is now optional - if not provided, shows events list
+    // Validate required attributes
+    if (!apiUrl) {
+      console.error('Widget Error: data-api-url attribute is required for auto-inject');
+      return;
+    }
 
     // Create container
     const container = document.createElement('div');

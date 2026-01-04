@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { getApiUrl } from '@/lib/api'
 
 interface Source {
   source_id: string
@@ -48,7 +49,7 @@ export function SourceSearch({ onSelect }: SourceSearchProps) {
       setLoading(true)
       try {
         const response = await fetch(
-          `http://10.66.1.76:8080/api/sources/search?q=${encodeURIComponent(query)}`
+          `${getApiUrl(`/sources/search?q=${encodeURIComponent(query)}`)}`
         )
         const data = await response.json()
         setResults(data.sources || [])

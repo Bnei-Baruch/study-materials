@@ -60,7 +60,7 @@ function initWidget(container: HTMLElement, config: {
       <StudyMaterialsWidget
         eventId={config.eventId}
         language={config.language || 'he'}
-        apiBaseUrl={config.apiBaseUrl || 'http://10.66.1.76:8080'}
+        apiBaseUrl={config.apiBaseUrl}  // REQUIRED - no fallback
         limit={config.limit || 10}
       />
     </React.StrictMode>

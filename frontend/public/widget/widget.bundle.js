@@ -22361,7 +22361,8 @@ var StudyMaterialsWidgetBundle = (() => {
   function EmbeddedLessonSidebar({
     eventId,
     language = "he",
-    apiBaseUrl = "http://10.66.1.76:8080",
+    apiBaseUrl,
+    // REQUIRED - no fallback
     onBack
   }) {
     var _a, _b;
@@ -22814,7 +22815,7 @@ ${partsText}`;
         {
           eventId: config.eventId,
           language: config.language || "he",
-          apiBaseUrl: config.apiBaseUrl || "http://10.66.1.76:8080",
+          apiBaseUrl: config.apiBaseUrl,
           limit: config.limit || 10
         }
       ) })

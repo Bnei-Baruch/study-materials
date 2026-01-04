@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { getApiUrl } from '@/lib/api'
 import Link from 'next/link'
 import {
   DndContext,
@@ -225,7 +226,7 @@ export default function EventsPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('http://10.66.1.76:8080/api/events')
+      const response = await fetch(getApiUrl('/events'))
       if (!response.ok) {
         throw new Error('Failed to fetch events')
       }
@@ -255,7 +256,7 @@ export default function EventsPage() {
         // Update all affected events with their new order
         for (let i = 0; i < newEvents.length; i++) {
           const eventToUpdate = newEvents[i]
-          await fetch(`http://10.66.1.76:8080/api/events/${eventToUpdate.id}`, {
+          await fetch(`${getApiUrl(`/events/${eventToUpdate.id}`)}` {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',

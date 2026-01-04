@@ -182,3 +182,4 @@ If you encounter issues:
 2. Verify widget script loads: `http://10.66.1.76:3000/widget/widget.js`
 3. Ensure study-material-service backend is running
 4. Rebuild widget if needed: `cd study-material-service/frontend && npm run build:widget`
+

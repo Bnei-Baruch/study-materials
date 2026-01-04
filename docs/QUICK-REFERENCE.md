@@ -401,3 +401,4 @@ Widget:    http://10.66.1.76:3000/widget/widget.js
 4. Check `.env` configuration
 5. Try rebuild: `docker compose up --build -d`
 6. Try fresh start: `docker compose down -v && docker compose up --build -d`
+

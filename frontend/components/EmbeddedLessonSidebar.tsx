@@ -240,7 +240,7 @@ interface EmbeddedLessonSidebarProps {
 export function EmbeddedLessonSidebar({
   eventId,
   language = 'he',
-  apiBaseUrl = 'http://10.66.1.76:8080',
+  apiBaseUrl,  // REQUIRED - no fallback
   onBack,
 }: EmbeddedLessonSidebarProps) {
   const [event, setEvent] = useState<Event | null>(null)
