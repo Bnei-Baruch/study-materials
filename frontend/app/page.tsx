@@ -480,8 +480,9 @@ export default function PublicPage() {
     const eventDate = formatDate(event.date)
     const isPreparation = part.order === 0
     const partTitle = isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
+    const separator = language === 'he' ? '‮━━━━━━━━━━' : '━━━━━━━━━━'
     
-    let message = `*${eventTitle}*\n${eventDate}\n\n━━━━━━━━━━\n\n`
+    let message = `*${eventTitle}*\n${eventDate}\n\n${separator}\n\n`
     
     message += `*${partTitle}*\n`
     
@@ -498,7 +499,8 @@ export default function PublicPage() {
       message += `\n◆ *${t('sources')}:*\n`
       part.sources.forEach(source => {
         const sourceUrl = addLanguageToUrl(source.source_url)
-        message += `◆ ${t('readSource')}: ${sourceUrl}\n`
+        message += `◆ ${t('readSource')}\n`
+        message += `${sourceUrl}\n`
         if (source.page_number) {
           message += `   ${t('page')} ${source.page_number}\n`
         }
@@ -507,7 +509,7 @@ export default function PublicPage() {
     }
     
     // Links
-    const links = []
+    const links: { label: string; url: string }[] = []
     
     if (isPreparation) {
       if (part.reading_before_sleep_link) {
@@ -538,7 +540,87 @@ export default function PublicPage() {
     if (links.length > 0) {
       message += `\n◆ *${t('links')}:*\n`
       links.forEach(link => {
-        message += `◆ ${link.label}: ${link.url}\n\n`
+        message += `◆ ${link.label}\n`
+        message += `${link.url}\n\n`
+      })
+    }
+    
+    return message
+  }
+
+  const generateEventMessage = (event: Event) => {
+    const eventTitle = getEventTitle(event)
+    const eventDate = formatDate(event.date)
+    const separator = language === 'he' ? '‮━━━━━━━━━━' : '━━━━━━━━━━'
+    
+    let message = `*${eventTitle}*\n${eventDate}\n\n`
+    
+    // Include all parts information
+    if (parts && parts.length > 0) {
+      parts.forEach(part => {
+        const isPreparation = part.order === 0
+        const partTitle = isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
+        
+        message += `${separator}\n\n*${partTitle}*\n`
+        
+        if (part.description) {
+          message += `${part.description}\n`
+        }
+        
+        if (part.recorded_lesson_date) {
+          message += `${t('originalDate')}${new Date(part.recorded_lesson_date).toLocaleDateString()}\n`
+        }
+        
+        // Sources
+        if (part.sources && part.sources.length > 0) {
+          message += `\n◆ *${t('sources')}:*\n`
+          part.sources.forEach(source => {
+            const sourceUrl = addLanguageToUrl(source.source_url)
+            message += `◆ ${t('readSource')}\n`
+            message += `${sourceUrl}\n`
+            if (source.page_number) {
+              message += `   ${t('page')} ${source.page_number}\n`
+            }
+            message += `\n`
+          })
+        }
+        
+        // Links
+        const links: { label: string; url: string }[] = []
+        
+        if (isPreparation) {
+          if (part.reading_before_sleep_link) {
+            links.push({ label: t('readingBeforeSleep'), url: addLanguageToUrl(part.reading_before_sleep_link) })
+          }
+          if (part.lesson_preparation_link) {
+            links.push({ label: t('lessonPreparation'), url: addLanguageToUrl(part.lesson_preparation_link) })
+          }
+        } else {
+          if (part.lesson_link) {
+            links.push({ label: t('watchLesson'), url: addLanguageToUrl(part.lesson_link) })
+          }
+          if (part.transcript_link) {
+            links.push({ label: t('lessonTranscript'), url: addLanguageToUrl(part.transcript_link) })
+          }
+          if (part.excerpts_link) {
+            links.push({ label: t('selectedExcerpts'), url: addLanguageToUrl(part.excerpts_link) })
+          }
+        }
+        
+        // Custom links
+        if (part.custom_links && part.custom_links.length > 0) {
+          part.custom_links.forEach(link => {
+            links.push({ label: link.title, url: addLanguageToUrl(link.url) })
+          })
+        }
+        
+        if (links.length > 0) {
+          message += `\n◆ *${t('links')}:*\n`
+          links.forEach(link => {
+            message += `◆ ${link.label}\n`
+            message += `${link.url}\n\n`
+          })
+        }
       })
     }
     
@@ -584,22 +666,22 @@ export default function PublicPage() {
       // Preparation
       return {
         border: 'border-amber-500',
-        bg: 'bg-amber-50',
-        bgHover: 'hover:bg-amber-100',
+        bg: 'bg-amber-300/10',
+        bgHover: 'hover:bg-amber-400/20',
         text: 'text-amber-900',
         icon: 'text-amber-600',
       }
     }
     
     const colorSchemes = [
-      { border: 'border-blue-500', bg: 'bg-blue-50', bgHover: 'hover:bg-blue-100', text: 'text-blue-900', icon: 'text-blue-600' },
-      { border: 'border-orange-500', bg: 'bg-orange-50', bgHover: 'hover:bg-orange-100', text: 'text-orange-900', icon: 'text-orange-600' },
-      { border: 'border-green-500', bg: 'bg-green-50', bgHover: 'hover:bg-green-100', text: 'text-green-900', icon: 'text-green-600' },
-      { border: 'border-indigo-500', bg: 'bg-indigo-50', bgHover: 'hover:bg-indigo-100', text: 'text-indigo-900', icon: 'text-indigo-600' },
-      { border: 'border-teal-500', bg: 'bg-teal-50', bgHover: 'hover:bg-teal-100', text: 'text-teal-900', icon: 'text-teal-600' },
-      { border: 'border-purple-500', bg: 'bg-purple-50', bgHover: 'hover:bg-purple-100', text: 'text-purple-900', icon: 'text-purple-600' },
-      { border: 'border-pink-500', bg: 'bg-pink-50', bgHover: 'hover:bg-pink-100', text: 'text-pink-900', icon: 'text-pink-600' },
-      { border: 'border-rose-500', bg: 'bg-rose-50', bgHover: 'hover:bg-rose-100', text: 'text-rose-900', icon: 'text-rose-600' },
+      { border: 'border-blue-500', bg: 'bg-blue-300/10', bgHover: 'hover:bg-blue-400/20', text: 'text-blue-900', icon: 'text-blue-600' },
+      { border: 'border-orange-500', bg: 'bg-orange-300/10', bgHover: 'hover:bg-orange-400/20', text: 'text-orange-900', icon: 'text-orange-600' },
+      { border: 'border-green-500', bg: 'bg-green-300/10', bgHover: 'hover:bg-green-400/20', text: 'text-green-900', icon: 'text-green-600' },
+      { border: 'border-indigo-500', bg: 'bg-indigo-300/10', bgHover: 'hover:bg-indigo-400/20', text: 'text-indigo-900', icon: 'text-indigo-600' },
+      { border: 'border-teal-500', bg: 'bg-teal-300/10', bgHover: 'hover:bg-teal-400/20', text: 'text-teal-900', icon: 'text-teal-600' },
+      { border: 'border-purple-500', bg: 'bg-purple-300/10', bgHover: 'hover:bg-purple-400/20', text: 'text-purple-900', icon: 'text-purple-600' },
+      { border: 'border-pink-500', bg: 'bg-pink-300/10', bgHover: 'hover:bg-pink-400/20', text: 'text-pink-900', icon: 'text-pink-600' },
+      { border: 'border-rose-500', bg: 'bg-rose-300/10', bgHover: 'hover:bg-rose-400/20', text: 'text-rose-900', icon: 'text-rose-600' },
     ]
     
     return colorSchemes[(order - 1) % colorSchemes.length]
@@ -636,7 +718,7 @@ export default function PublicPage() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50"
+      className="min-h-screen bg-cyan-50"
       dir={isRTL ? 'rtl' : 'ltr'}
     >
       <div className="max-w-4xl mx-auto px-6 py-8">
@@ -804,14 +886,59 @@ export default function PublicPage() {
             </button>
             
             {/* Event Title Header */}
-            <div className="mb-8 text-center">
+            <div className="mb-8 bg-blue-50 rounded-xl shadow-sm p-5 border border-blue-200 relative">
               <h1 className="text-3xl font-bold text-blue-900 mb-2">
                 {getEventTitle(selectedEvent)}
               </h1>
               <p className="text-gray-600 text-lg">
                 {formatDate(selectedEvent.date)}
-          </p>
-        </div>
+              </p>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setOpenShareDropdown(openShareDropdown === 'event' ? null : 'event')
+                }}
+                className={`absolute top-5 ${isRTL ? 'left-5' : 'right-5'} bg-white text-green-500 border border-green-500 rounded-full p-2 hover:bg-green-50 transition-all flex-shrink-0 z-10`}
+                data-share-button
+                title={t('share')}
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
+              
+              {/* Share Dropdown */}
+              {openShareDropdown === 'event' && (
+                <div data-share-dropdown className={`absolute ${isRTL ? 'left-5' : 'right-5'} top-16 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[160px] z-20`}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      const message = generateEventMessage(selectedEvent)
+                      const encodedMessage = encodeURIComponent(message)
+                      const whatsappUrl = `https://wa.me/?text=${encodedMessage}`
+                      window.open(whatsappUrl, '_blank')
+                      setOpenShareDropdown(null)
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                  >
+                    <MessageCircle className="w-5 h-5 text-green-600" />
+                    <span>{t('whatsapp')}</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      const message = generateEventMessage(selectedEvent)
+                      const encodedMessage = encodeURIComponent(message)
+                      const telegramUrl = `https://t.me/share/url?url=&text=${encodedMessage}`
+                      window.open(telegramUrl, '_blank')
+                      setOpenShareDropdown(null)
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                  >
+                    <Send className="w-5 h-5 text-blue-600" />
+                    <span>{t('telegram')}</span>
+                  </button>
+                </div>
+              )}
+            </div>
 
             <div className="space-y-6">
               {parts.map((part) => {
@@ -822,30 +949,44 @@ export default function PublicPage() {
             return (
               <div
                 key={part.id}
-                className="bg-white rounded-2xl shadow-lg p-8 mb-6"
+                className="bg-white rounded-2xl shadow-lg p-4 mb-6 border border-gray-100"
               >
                 {/* Part Header */}
                 <div
-                  className={`${isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4'} ${colors.border} mb-6 cursor-pointer relative`}
+                  className={`${isRTL ? 'border-r-4 pr-3' : 'border-l-4 pl-3'} ${colors.border} mb-6 cursor-pointer relative`}
                   onClick={() => togglePart(part.id)}
                 >
-                  {/* Share button with dropdown */}
-                  <div className={`absolute top-0 ${isRTL ? 'left-0' : 'right-0'} z-10`}>
+                  {/* Action buttons - Toggle and Share */}
+                  <div className={`flex gap-2 absolute top-4 ${isRTL ? 'left-4' : 'right-4'}`}>
                     <button
-                      data-share-button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        togglePart(part.id)
+                      }}
+                      className="bg-white text-blue-500 border border-blue-500 rounded-full p-2 hover:bg-blue-50 transition-all flex-shrink-0"
+                    >
+                      {isExpanded ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </button>
+
+                    <button
                       onClick={(e) => {
                         e.stopPropagation()
                         setOpenShareDropdown(openShareDropdown === part.id ? null : part.id)
                       }}
-                      className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors shadow-md"
+                      className="bg-white text-green-500 border border-green-500 rounded-full p-2 hover:bg-green-50 transition-all flex-shrink-0"
+                      data-share-button
                       title={t('share')}
                     >
                       <Share2 className="w-4 h-4" />
                     </button>
                     
-                    {/* Dropdown menu */}
+                    {/* Share Dropdown for Part */}
                     {openShareDropdown === part.id && (
-                      <div data-share-dropdown className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[160px]`}>
+                      <div data-share-dropdown className={`absolute ${isRTL ? 'left-12' : 'right-12'} mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[160px] z-20`}>
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
@@ -872,7 +1013,7 @@ export default function PublicPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between pe-12">
                     <div className="flex-1">
                       <h2 className={`text-2xl font-bold ${colors.text} mb-2`}>
                         {part.order === 0 ? part.title : `${t('part')} ${part.order}: ${part.title}`}
@@ -887,11 +1028,6 @@ export default function PublicPage() {
                         </p>
                       )}
                     </div>
-                    {isExpanded ? (
-                      <ChevronUp className={`w-6 h-6 ${colors.icon}`} />
-                    ) : (
-                      <ChevronDown className={`w-6 h-6 ${colors.icon}`} />
-                    )}
                   </div>
                 </div>
 
@@ -905,7 +1041,7 @@ export default function PublicPage() {
                           href={source.source_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
+                          className={`flex items-center gap-3 ${colors.bg.replace(/bg-\w+-50/, `bg-${colors.bg.match(/\w+(?=-50)/)?.[0]}-300/10`)} transition-all rounded-xl p-4 flex-1`}
                         >
                           <BookOpen className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
                           <div className="flex-1">
@@ -919,7 +1055,8 @@ export default function PublicPage() {
                         </a>
                         <button
                           onClick={(e) => copyToClipboard(source.source_url, e)}
-                          className={`${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4`}
+                          className={`transition-all rounded-xl p-4 hover:bg-opacity-50`}
+                          style={{ backgroundColor: colors.bg.includes('50') ? colors.bg.replace('-50', '-300/10') : colors.bg }}
                           title={t('copyLink')}
                         >
                           {copiedUrl === source.source_url ? (
