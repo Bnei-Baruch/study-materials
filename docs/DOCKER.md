@@ -227,8 +227,9 @@ journalctl -u docker -n 50 -f
 rsync -avz \
   --exclude 'node_modules' \
   --exclude '.next' \
+  --exclude '.env' \
   /Users/alexm/Projects/study-material-service/ \
-  root@10.66.1.76:/root/study-material-service/
+  root@10.77.1.73:/root/study-material-service/
 
 # On server
 cd /root/study-material-service
