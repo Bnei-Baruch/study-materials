@@ -22731,7 +22731,7 @@ ${partsText}`;
   function StudyMaterialsWidget({
     eventId,
     language = "he",
-    apiBaseUrl = "http://10.66.1.76:8080",
+    apiBaseUrl = "",
     limit = 10
   }) {
     const [view, setView] = (0, import_react5.useState)(eventId ? "detail" : "list");

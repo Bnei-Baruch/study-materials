@@ -91,12 +91,11 @@ func (s *MongoDBStore) SavePart(part *LessonPart) error {
 		part.CreatedAt = time.Now()
 	}
 
-	// Use upsert to insert or update
+	// Use ReplaceOne for atomic document replacement
 	filter := bson.M{"_id": part.ID}
-	update := bson.M{"$set": part}
-	opts := options.Update().SetUpsert(true)
+	opts := options.Replace().SetUpsert(true)
 
-	_, err := s.collection.UpdateOne(ctx, filter, update, opts)
+	_, err := s.collection.ReplaceOne(ctx, filter, part, opts)
 	if err != nil {
 		return fmt.Errorf("failed to save part: %w", err)
 	}
@@ -171,5 +170,3 @@ func (s *MongoDBStore) Close() error {
 	defer cancel()
 	return s.client.Disconnect(ctx)
 }
-
-

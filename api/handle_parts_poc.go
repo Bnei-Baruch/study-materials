@@ -212,6 +212,7 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 	// Update all editable fields
 	existingPart.Title = req.Title
 	existingPart.Description = req.Description
+	existingPart.Order = req.Order
 	existingPart.Sources = req.Sources
 	existingPart.ExcerptsLink = req.ExcerptsLink
 	existingPart.TranscriptLink = req.TranscriptLink
@@ -230,7 +231,7 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Don't change: ID, language, event_id, order, created_at
+	// Don't change: ID, language, event_id, created_at
 
 	if err := a.store.SavePart(existingPart); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to update part: %v", err), http.StatusInternalServerError)

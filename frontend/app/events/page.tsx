@@ -256,7 +256,7 @@ export default function EventsPage() {
         // Update all affected events with their new order
         for (let i = 0; i < newEvents.length; i++) {
           const eventToUpdate = newEvents[i]
-          await fetch(`${getApiUrl(`/events/${eventToUpdate.id}`)}`, {
+          await fetch(getApiUrl(`/events/${eventToUpdate.id}`), {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
