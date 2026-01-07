@@ -16,6 +16,13 @@ services:
       - KABBALAHMEDIA_URL=${KABBALAHMEDIA_URL}
       - KABBALAHMEDIA_TIMEOUT=${KABBALAHMEDIA_TIMEOUT}
       - APP_SCRIPT_PASSWORD=${APP_SCRIPT_PASSWORD}
+      - EMAIL_SMTP_HOST=${EMAIL_SMTP_HOST}
+      - EMAIL_SMTP_PORT=${EMAIL_SMTP_PORT}
+      - EMAIL_USERNAME=${EMAIL_USERNAME}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - EMAIL_FROM=${EMAIL_FROM}
+      - EMAIL_TO=${EMAIL_TO}
+      - FRONTEND_URL=${FRONTEND_URL}
     depends_on:
       - mongo
     networks:
@@ -53,4 +60,6 @@ volumes:
 networks:
   study-net:
     driver: bridge
+
+
 

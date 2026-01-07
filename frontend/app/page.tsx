@@ -384,6 +384,19 @@ export default function PublicPage() {
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
 
+  // Detect event from URL parameter and auto-select
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const eventId = urlParams.get('event')
+
+    if (eventId && events.length > 0) {
+      const event = events.find(e => e.id === eventId)
+      if (event) {
+        setSelectedEvent(event)
+      }
+    }
+  }, [events])
+
   const fetchEvents = async () => {
     try {
       setLoading(true)

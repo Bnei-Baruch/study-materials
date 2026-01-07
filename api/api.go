@@ -19,6 +19,7 @@ type App struct {
 	eventStore          storage.EventStore
 	kabbalahmediaClient *kabbalahmedia.Client
 	templateConfig      *storage.TemplateConfig
+	emailService        *EmailService
 }
 
 // NewApp creates a new App instance with dependencies
@@ -28,6 +29,7 @@ func NewApp(partStore storage.PartStore, eventStore storage.EventStore, kabbalah
 		eventStore:          eventStore,
 		kabbalahmediaClient: kabbalahmediaClient,
 		templateConfig:      templateConfig,
+		emailService:        NewEmailService(),
 	}
 }
 
@@ -79,6 +81,7 @@ func (a *App) initRouters() {
 	a.router.HandleFunc("/api/events/{id}", a.HandleDeleteEvent).Methods(http.MethodDelete, http.MethodOptions)
 	a.router.HandleFunc("/api/events/{id}/duplicate", a.HandleDuplicateEvent).Methods(http.MethodPost, http.MethodOptions)
 	a.router.HandleFunc("/api/events/{id}/toggle-public", a.HandleToggleEventPublic).Methods(http.MethodPut, http.MethodOptions)
+	a.router.HandleFunc("/api/events/{id}/send-email", a.HandleSendEventEmail).Methods(http.MethodPost, http.MethodOptions)
 	a.router.HandleFunc("/api/events/{event_id}/parts", a.HandleGetEventParts).Methods(http.MethodGet, http.MethodOptions)
 
 	// Template endpoints

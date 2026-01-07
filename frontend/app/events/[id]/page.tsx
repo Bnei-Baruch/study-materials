@@ -7,6 +7,7 @@ import Link from 'next/link'
 import EventTypeBadge from '@/components/EventTypeBadge'
 import PartForm from '@/components/PartForm'
 import { SourceSearch } from '@/components/SourceSearch'
+import { Mail } from 'lucide-react'
 
 interface Event {
   id: string
@@ -78,6 +79,7 @@ export default function EventDetailPage() {
   const [editingTimes, setEditingTimes] = useState(false)
   const [newStartTime, setNewStartTime] = useState('')
   const [newEndTime, setNewEndTime] = useState('')
+  const [emailSentAt, setEmailSentAt] = useState<string | null>(null)
 
   const languageNames: { [key: string]: string } = {
     he: '🇮🇱 עברית',
@@ -103,6 +105,11 @@ export default function EventDetailPage() {
       }
       const eventData = await eventRes.json()
       setEvent(eventData)
+
+      // Set email status if available
+      if (eventData.email_sent_at) {
+        setEmailSentAt(eventData.email_sent_at)
+      }
 
       // Fetch parts for this event with language filter
       const partsRes = await fetch(getApiUrl(`/events/${eventId}/parts?language=${selectedLanguage}`))
@@ -493,6 +500,37 @@ export default function EventDetailPage() {
     }
   }
 
+  const sendEventEmail = async (isUpdate: boolean = false) => {
+    if (!event) return
+
+    try {
+      const response = await fetch(getApiUrl(`/events/${event.id}/send-email`), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ is_update: isUpdate }),
+      })
+
+      const data = await response.json()
+
+      if (data.already_sent && !isUpdate) {
+        setEmailSentAt(data.sent_at)
+        alert('Email already sent on: ' + new Date(data.sent_at).toLocaleString())
+      } else if (data.success) {
+        setEmailSentAt(data.sent_at)
+        if (isUpdate) {
+          alert('Update email sent successfully!')
+        } else {
+          alert('Email sent successfully!')
+          await fetchEventAndParts() // Refresh to get updated email_sent_at
+        }
+      }
+    } catch (err) {
+      alert('Failed to send email: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
+  }
+
   const handlePartCreated = () => {
     setShowPartForm(false)
     fetchEventAndParts() // Refresh the parts list
@@ -582,6 +620,28 @@ export default function EventDetailPage() {
                 📋 Duplicate
               </button>
               <button
+                onClick={() => sendEventEmail(false)}
+                disabled={!!emailSentAt}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  emailSentAt
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-purple-100 hover:bg-purple-200 text-purple-700'
+                }`}
+                title={emailSentAt ? 'Email already sent' : 'Send email to Google Group'}
+              >
+                <Mail className="w-4 h-4" />
+                {emailSentAt ? '✓ Email Sent' : '📧 Email Group'}
+              </button>
+              {emailSentAt && (
+                <button
+                  onClick={() => sendEventEmail(true)}
+                  className="px-4 py-2 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded-lg text-sm font-medium transition"
+                  title="Send update email (for changes after initial send)"
+                >
+                  📧 Send Update
+                </button>
+              )}
+              <button
                 onClick={deleteEvent}
                 className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-medium transition"
               >
@@ -591,6 +651,12 @@ export default function EventDetailPage() {
           </div>
           <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
             <span>Event ID: {event.id}</span>
+            {emailSentAt && (
+              <>
+                <span className="text-gray-300">|</span>
+                <span className="text-green-600">Email sent: {new Date(emailSentAt).toLocaleString()}</span>
+              </>
+            )}
             <span className="text-gray-300">|</span>
             {editingOrder ? (
               <div className="flex items-center gap-2">

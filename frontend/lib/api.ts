@@ -25,3 +25,5 @@ export const getApiUrl = (endpoint: string): string => {
   // Different origin - use full URL
   return `${baseUrl}/api${endpoint}`;
 };
+
+

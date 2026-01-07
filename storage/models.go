@@ -61,16 +61,17 @@ type CreatePartRequest struct {
 
 // Event represents a study event (morning lesson, noon lesson, evening lesson, meal, convention, etc.)
 type Event struct {
-	ID        string            `json:"id" bson:"_id"`
-	Date      time.Time         `json:"date" bson:"date"`                                 // Event date
-	StartTime string            `json:"start_time,omitempty" bson:"start_time,omitempty"` // Optional: start time in HH:MM format
-	EndTime   string            `json:"end_time,omitempty" bson:"end_time,omitempty"`     // Optional: end time in HH:MM format
-	Type      string            `json:"type" bson:"type"`                                 // "morning_lesson", "noon_lesson", "evening_lesson", "meal", "convention", "lecture", "other"
-	Number    int               `json:"number" bson:"number"`                             // Event number for same day (1, 2, ...)
-	Order     int               `json:"order" bson:"order"`                               // Display order (lower numbers appear first)
-	Titles    map[string]string `json:"titles,omitempty" bson:"titles,omitempty"`         // Multi-language titles (he, en, ru, es, de, it, fr, uk)
-	Public    bool              `json:"public" bson:"public"`                             // Whether event is public
-	CreatedAt time.Time         `json:"created_at" bson:"created_at"`
+	ID          string            `json:"id" bson:"_id"`
+	Date        time.Time         `json:"date" bson:"date"`                                 // Event date
+	StartTime   string            `json:"start_time,omitempty" bson:"start_time,omitempty"` // Optional: start time in HH:MM format
+	EndTime     string            `json:"end_time,omitempty" bson:"end_time,omitempty"`     // Optional: end time in HH:MM format
+	Type        string            `json:"type" bson:"type"`                                 // "morning_lesson", "noon_lesson", "evening_lesson", "meal", "convention", "lecture", "other"
+	Number      int               `json:"number" bson:"number"`                             // Event number for same day (1, 2, ...)
+	Order       int               `json:"order" bson:"order"`                               // Display order (lower numbers appear first)
+	Titles      map[string]string `json:"titles,omitempty" bson:"titles,omitempty"`         // Multi-language titles (he, en, ru, es, de, it, fr, uk)
+	Public      bool              `json:"public" bson:"public"`                             // Whether event is public
+	EmailSentAt *time.Time        `json:"email_sent_at,omitempty" bson:"email_sent_at,omitempty"` // Track when email was sent to Google Group
+	CreatedAt   time.Time         `json:"created_at" bson:"created_at"`
 }
 
 // CreateEventRequest is the request body for creating an event

@@ -183,3 +183,5 @@ If you encounter issues:
 3. Ensure study-material-service backend is running
 4. Rebuild widget if needed: `cd study-material-service/frontend && npm run build:widget`
 
+
+
