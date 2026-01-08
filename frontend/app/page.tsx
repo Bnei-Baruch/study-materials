@@ -509,7 +509,6 @@ export default function PublicPage() {
     
     // Sources
     if (part.sources && part.sources.length > 0) {
-      message += `\n◆ *${t('sources')}:*\n`
       part.sources.forEach(source => {
         const sourceUrl = addLanguageToUrl(source.source_url)
         message += `◆ ${t('readSource')}\n`
@@ -551,7 +550,6 @@ export default function PublicPage() {
     }
     
     if (links.length > 0) {
-      message += `\n◆ *${t('links')}:*\n`
       links.forEach(link => {
         message += `◆ ${link.label}\n`
         message += `${link.url}\n\n`
@@ -586,7 +584,6 @@ export default function PublicPage() {
         
         // Sources
         if (part.sources && part.sources.length > 0) {
-          message += `\n◆ *${t('sources')}:*\n`
           part.sources.forEach(source => {
             const sourceUrl = addLanguageToUrl(source.source_url)
             message += `◆ ${t('readSource')}\n`
@@ -628,7 +625,6 @@ export default function PublicPage() {
         }
         
         if (links.length > 0) {
-          message += `\n◆ *${t('links')}:*\n`
           links.forEach(link => {
             message += `◆ ${link.label}\n`
             message += `${link.url}\n\n`
@@ -711,12 +707,16 @@ export default function PublicPage() {
     setSelectedEvent(event)
     setParts([])
     setExpandedParts(new Set())
+    // Update URL to include event parameter
+    window.history.pushState(null, '', `/?event=${event.id}`)
   }
 
   const handleBackToEvents = () => {
     setSelectedEvent(null)
     setParts([])
     setExpandedParts(new Set())
+    // Reset URL to remove event parameter
+    window.history.pushState(null, '', '/')
   }
 
   const isRTL = language === 'he'
@@ -833,7 +833,7 @@ export default function PublicPage() {
                   <div className="p-5">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <h3 className={`text-xl font-semibold text-blue-900 group-hover:text-blue-700 mb-2 transition-colors ${isRTL ? 'text-right' : 'text-left'}`}>
+                        <h3 className={`text-blue-900 group-hover:text-blue-700 mb-2 transition-colors font-semibold ${isRTL ? 'text-right' : 'text-left'}`} style={{ fontSize: '18px' }}>
                           {getEventTitle(event)}
                         </h3>
                         <div className="flex items-center gap-4 text-gray-500" style={{ fontSize: '13px' }}>
@@ -900,11 +900,14 @@ export default function PublicPage() {
             
             {/* Event Title Header */}
             <div className="mb-8 bg-blue-50 rounded-xl shadow-sm p-5 border border-blue-200 relative">
-              <h1 className="text-3xl font-bold text-blue-900 mb-2">
+              <h2 className="text-blue-900 mb-3 font-semibold" style={{ fontSize: '20px' }}>
                 {getEventTitle(selectedEvent)}
-              </h1>
-              <p className="text-gray-600 text-lg">
+              </h2>
+              <p className="text-gray-600" style={{ fontSize: '14px' }}>
                 {formatDate(selectedEvent.date)}
+                {selectedEvent.start_time && selectedEvent.end_time && (
+                  <span> • {selectedEvent.start_time} - {selectedEvent.end_time}</span>
+                )}
               </p>
               <button
                 onClick={(e) => {
@@ -962,14 +965,27 @@ export default function PublicPage() {
             return (
               <div
                 key={part.id}
-                className="bg-white rounded-2xl shadow-lg p-4 mb-6 border border-gray-100"
+                className={`bg-white rounded-xl shadow-lg ${isRTL ? 'border-r-4' : 'border-l-4'} ${colors.border} relative mb-6`}
               >
                 {/* Part Header */}
-                <div
-                  className={`${isRTL ? 'border-r-4 pr-3' : 'border-l-4 pl-3'} ${colors.border} mb-6 cursor-pointer relative`}
-                  onClick={() => togglePart(part.id)}
-                >
-                  {/* Action buttons - Toggle and Share */}
+                <div className="p-4 flex items-start gap-3">
+                  <div className={`flex-1 ${isRTL ? 'border-r-4 pr-3' : 'border-l-4 pl-3'} ${colors.border}`}>
+                    <h3 className={`${colors.text} font-bold mb-1`} style={{ fontSize: '16px' }}>
+                      {part.order === 0 ? part.title : `${t('part')} ${part.order}: ${part.title}`}
+                    </h3>
+                    {part.description && (
+                      <p className="text-gray-700 leading-relaxed" style={{ fontSize: '13px' }}>
+                        {part.description}
+                      </p>
+                    )}
+                    {part.recorded_lesson_date && (
+                      <p className="text-gray-600 mt-2" style={{ fontSize: '12px' }}>
+                        {t('originalDate')} {new Date(part.recorded_lesson_date).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Action buttons - positioned on the left/right side */}
                   <div className={`flex gap-2 absolute top-4 ${isRTL ? 'left-4' : 'right-4'}`}>
                     <button
                       onClick={(e) => {
@@ -1025,57 +1041,38 @@ export default function PublicPage() {
                       </div>
                     )}
                   </div>
-
-                  <div className="flex items-center justify-between pe-12">
-                    <div className="flex-1">
-                      <h2 className={`text-2xl font-bold ${colors.text} mb-2`}>
-                        {part.order === 0 ? part.title : `${t('part')} ${part.order}: ${part.title}`}
-                      </h2>
-                      {part.description && (
-                        <p className="text-gray-600">{part.description}</p>
-                      )}
-                      {part.recorded_lesson_date && (
-                        <p className="text-gray-600 mt-1">
-                          {t('originalDate')}
-                          {new Date(part.recorded_lesson_date).toLocaleDateString()}
-                        </p>
-                      )}
-                    </div>
-                  </div>
                 </div>
 
                 {/* Part Content (Expanded) */}
                 {isExpanded && (
-                  <div className="space-y-3">
+                  <div className="px-4 pb-4 pt-2 space-y-2">
                     {/* Sources */}
                     {part.sources && part.sources.length > 0 && part.sources.map((source, idx) => (
-                      <div key={idx} className="flex items-center gap-2">
+                      <div key={idx} className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
+                        <BookOpen className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
                         <a
                           href={source.source_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`flex items-center gap-3 ${colors.bg.replace(/bg-\w+-50/, `bg-${colors.bg.match(/\w+(?=-50)/)?.[0]}-300/10`)} transition-all rounded-xl p-4 flex-1`}
+                          className={`flex-1 ${colors.text}`}
+                          style={{ fontSize: '14px' }}
                         >
-                          <BookOpen className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
-                          <div className="flex-1">
-                            <span className={colors.text}>{t('readSource')}</span>
-                            {source.page_number && (
-                              <span className="text-gray-600 text-sm ml-2">
-                                {` ${t('page')} ${source.page_number}`}
-                              </span>
-                            )}
-                          </div>
+                          {t('readSource')}
+                          {source.page_number && (
+                            <span className="text-gray-600 ml-2">
+                              {` ${t('page')} ${source.page_number}`}
+                            </span>
+                          )}
                         </a>
                         <button
                           onClick={(e) => copyToClipboard(source.source_url, e)}
-                          className={`transition-all rounded-xl p-4 hover:bg-opacity-50`}
-                          style={{ backgroundColor: colors.bg.includes('50') ? colors.bg.replace('-50', '-300/10') : colors.bg }}
+                          className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
                           title={t('copyLink')}
                         >
                           {copiedUrl === source.source_url ? (
-                            <Check className={`w-5 h-5 ${colors.icon}`} />
+                            <Check className="w-4 h-4 text-green-600" />
                           ) : (
-                            <Copy className={`w-5 h-5 ${colors.icon}`} />
+                            <Copy className="w-4 h-4" />
                           )}
                         </button>
                       </div>
@@ -1083,52 +1080,50 @@ export default function PublicPage() {
 
                     {/* Preparation Links */}
                     {isPreparation && part.reading_before_sleep_link && (
-                      <div className="flex items-center gap-2">
+                      <div className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
+                        <Shield className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
                         <a
                           href={part.reading_before_sleep_link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
+                          className={`flex-1 ${colors.text}`}
+                          style={{ fontSize: '14px' }}
                         >
-                          <Shield className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
-                          <span className={colors.text}>
-                            {t('readingBeforeSleep')}
-                          </span>
+                          {t('readingBeforeSleep')}
                         </a>
                         <button
                           onClick={(e) => copyToClipboard(part.reading_before_sleep_link!, e)}
-                          className={`${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4`}
+                          className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
                         >
                           {copiedUrl === part.reading_before_sleep_link ? (
-                            <Check className={`w-5 h-5 ${colors.icon}`} />
+                            <Check className="w-4 h-4 text-green-600" />
                           ) : (
-                            <Copy className={`w-5 h-5 ${colors.icon}`} />
+                            <Copy className="w-4 h-4" />
                           )}
                         </button>
                       </div>
                     )}
 
                     {isPreparation && part.lesson_preparation_link && (
-                      <div className="flex items-center gap-2">
+                      <div className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
+                        <FileText className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
                         <a
                           href={part.lesson_preparation_link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
+                          className={`flex-1 ${colors.text}`}
+                          style={{ fontSize: '14px' }}
                         >
-                          <FileText className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
-                          <span className={colors.text}>
-                            {t('lessonPreparation')}
-                          </span>
+                          {t('lessonPreparation')}
                         </a>
                         <button
                           onClick={(e) => copyToClipboard(part.lesson_preparation_link!, e)}
-                          className={`${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4`}
+                          className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
                         >
                           {copiedUrl === part.lesson_preparation_link ? (
-                            <Check className={`w-5 h-5 ${colors.icon}`} />
+                            <Check className="w-4 h-4 text-green-600" />
                           ) : (
-                            <Copy className={`w-5 h-5 ${colors.icon}`} />
+                            <Copy className="w-4 h-4" />
                           )}
                         </button>
                       </div>
@@ -1136,26 +1131,25 @@ export default function PublicPage() {
 
                     {/* Lesson Link */}
                     {part.lesson_link && (
-                      <div className="flex items-center gap-2">
+                      <div className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
+                        <Video className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
                         <a
                           href={part.lesson_link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
+                          className={`flex-1 ${colors.text}`}
+                          style={{ fontSize: '14px' }}
                         >
-                          <Video className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
-                          <span className={colors.text}>
-                            {t('watchLesson')}
-                          </span>
+                          {t('watchLesson')}
                         </a>
                         <button
                           onClick={(e) => copyToClipboard(part.lesson_link!, e)}
-                          className={`${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4`}
+                          className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
                         >
                           {copiedUrl === part.lesson_link ? (
-                            <Check className={`w-5 h-5 ${colors.icon}`} />
+                            <Check className="w-4 h-4 text-green-600" />
                           ) : (
-                            <Copy className={`w-5 h-5 ${colors.icon}`} />
+                            <Copy className="w-4 h-4" />
                           )}
                         </button>
                       </div>
@@ -1163,26 +1157,25 @@ export default function PublicPage() {
 
                     {/* Transcript Link */}
                     {part.transcript_link && (
-                      <div className="flex items-center gap-2">
+                      <div className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
+                        <FileText className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
                         <a
                           href={part.transcript_link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
+                          className={`flex-1 ${colors.text}`}
+                          style={{ fontSize: '14px' }}
                         >
-                          <FileText className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
-                          <span className={colors.text}>
-                            {t('lessonTranscript')}
-                          </span>
+                          {t('lessonTranscript')}
                         </a>
                         <button
                           onClick={(e) => copyToClipboard(part.transcript_link!, e)}
-                          className={`${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4`}
+                          className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
                         >
                           {copiedUrl === part.transcript_link ? (
-                            <Check className={`w-5 h-5 ${colors.icon}`} />
+                            <Check className="w-4 h-4 text-green-600" />
                           ) : (
-                            <Copy className={`w-5 h-5 ${colors.icon}`} />
+                            <Copy className="w-4 h-4" />
                           )}
                         </button>
                       </div>
@@ -1190,26 +1183,25 @@ export default function PublicPage() {
 
                     {/* Excerpts Link */}
                     {part.excerpts_link && (
-                      <div className="flex items-center gap-2">
+                      <div className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
+                        <BookOpen className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
                         <a
                           href={part.excerpts_link}
-            target="_blank"
-            rel="noopener noreferrer"
-                          className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`flex-1 ${colors.text}`}
+                          style={{ fontSize: '14px' }}
                         >
-                          <FileText className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
-                          <span className={colors.text}>
-                            {t('selectedExcerpts')}
-                          </span>
+                          {t('selectedExcerpts')}
                         </a>
                         <button
                           onClick={(e) => copyToClipboard(part.excerpts_link!, e)}
-                          className={`${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4`}
+                          className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
                         >
                           {copiedUrl === part.excerpts_link ? (
-                            <Check className={`w-5 h-5 ${colors.icon}`} />
+                            <Check className="w-4 h-4 text-green-600" />
                           ) : (
-                            <Copy className={`w-5 h-5 ${colors.icon}`} />
+                            <Copy className="w-4 h-4" />
                           )}
                         </button>
                       </div>
@@ -1217,24 +1209,25 @@ export default function PublicPage() {
 
                     {/* Custom Links */}
                     {part.custom_links && part.custom_links.length > 0 && part.custom_links.map((link, idx) => (
-                      <div key={idx} className="flex items-center gap-2">
+                      <div key={idx} className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
+                        <FileText className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
                         <a
                           href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-                          className={`flex items-center gap-3 ${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4 flex-1`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`flex-1 ${colors.text}`}
+                          style={{ fontSize: '14px' }}
                         >
-                          <FileText className={`w-5 h-5 ${colors.icon} flex-shrink-0`} />
-                          <span className={colors.text}>{link.title}</span>
+                          {link.title}
                         </a>
                         <button
                           onClick={(e) => copyToClipboard(link.url, e)}
-                          className={`${colors.bg} ${colors.bgHover} transition-all rounded-xl p-4`}
+                          className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
                         >
                           {copiedUrl === link.url ? (
-                            <Check className={`w-5 h-5 ${colors.icon}`} />
+                            <Check className="w-4 h-4 text-green-600" />
                           ) : (
-                            <Copy className={`w-5 h-5 ${colors.icon}`} />
+                            <Copy className="w-4 h-4" />
                           )}
                         </button>
                       </div>

@@ -158,6 +158,11 @@ systemctl status docker
 
 # View logs
 journalctl -u docker -n 50 -f
+
+
+# Remove ALL unused images, containers, volumes, and networks (aggressive)
+docker system prune -f
+
 ```
 
 ### Development Workflow

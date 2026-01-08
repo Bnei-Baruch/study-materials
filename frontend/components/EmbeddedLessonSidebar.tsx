@@ -588,7 +588,7 @@ export function EmbeddedLessonSidebar({
                             e.preventDefault()
                             copyToClipboard(link.url)
                           }}
-                          className={`${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all opacity-0 group-hover:opacity-100 flex-shrink-0`}
+                          className={`${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all flex-shrink-0`}
                           title={t.copyLink}
                         >
                           {copiedUrl === link.url ? (
