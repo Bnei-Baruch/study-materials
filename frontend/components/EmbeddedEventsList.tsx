@@ -174,7 +174,7 @@ export function EmbeddedEventsList({
   if (loading) {
     return (
       <div className="h-full w-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="text-gray-600 text-[12px] sm:text-[13px]">
+        <div className="text-gray-600 text-[14px] sm:text-[14px]">
           {t.loading}
         </div>
       </div>
@@ -184,7 +184,7 @@ export function EmbeddedEventsList({
   if (error) {
     return (
       <div className="h-full w-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="text-red-600 text-center p-2 sm:p-4 text-[12px] sm:text-[13px]">
+        <div className="text-red-600 text-center p-2 sm:p-4 text-[14px] sm:text-[14px]">
           {error}
         </div>
       </div>
@@ -195,10 +195,10 @@ export function EmbeddedEventsList({
     <div className="h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Sidebar Header */}
       <div className="bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative">
-        <h3 className="text-blue-900 text-[14px] sm:text-[15px] font-bold">
+        <h3 className="text-blue-900 text-[18px] sm:text-[18px] font-semibold">
           {t.studyMaterials}
         </h3>
-        <p className="text-gray-600 text-[9px] sm:text-[10px] mt-0.5">
+        <p className="text-gray-600 text-[13px] sm:text-[13px] mt-0.5">
           {t.selectLesson}
         </p>
         
@@ -207,7 +207,7 @@ export function EmbeddedEventsList({
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className="bg-white border border-blue-300 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-blue-900 cursor-pointer hover:border-blue-500 transition-colors text-[9px] sm:text-[10px]"
+            className="bg-white border border-blue-300 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-blue-900 cursor-pointer hover:border-blue-500 transition-colors text-[12px] sm:text-[12px]"
           >
             <option value="he">עברית</option>
             <option value="en">English</option>
@@ -223,7 +223,7 @@ export function EmbeddedEventsList({
 
       {/* Events List */}
       {events.length === 0 ? (
-        <div className="p-2 sm:p-4 text-center text-gray-500 text-[12px] sm:text-[13px]">
+        <div className="p-2 sm:p-4 text-center text-gray-500 text-[14px] sm:text-[14px]">
           {t.noEventsAvailable}
         </div>
       ) : (
@@ -234,10 +234,10 @@ export function EmbeddedEventsList({
               onClick={() => onSelectEvent(event.id)}
               className={`w-full bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl hover:border-blue-400 transition-all p-1.5 sm:p-2.5 ${isRTL ? 'text-right' : 'text-left'}`}
             >
-              <h4 className="text-blue-900 mb-0.5 sm:mb-1 text-[12px] sm:text-[13px] font-bold break-words">
+              <h4 className="text-blue-900 mb-0.5 sm:mb-1 text-[18px] sm:text-[18px] font-semibold break-words">
                 {getEventTitle(event)}
               </h4>
-              <div className="flex flex-col gap-0.5 text-gray-500 text-[9px] sm:text-[10px]">
+              <div className="flex flex-col gap-0.5 text-gray-500 text-[13px] sm:text-[13px]">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-3 h-3 flex-shrink-0" />
                   <span className="truncate">{formatEventDayOfWeek(event.date)}, {formatEventDate(event.date)}</span>
@@ -262,10 +262,10 @@ export function EmbeddedEventsList({
           rel="noopener noreferrer"
           className="block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-2 sm:p-3 transition-all"
         >
-          <div className="text-blue-700 font-medium text-[13px] sm:text-[14px]">
+          <div className="text-blue-700 font-medium text-[14px] sm:text-[14px]">
             {t.viewAllMaterials}
           </div>
-          <div className="text-blue-600 mt-0.5 sm:mt-1 text-[10px] sm:text-[11px]">
+          <div className="text-blue-600 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]">
             stmat.kab.info
           </div>
         </a>
