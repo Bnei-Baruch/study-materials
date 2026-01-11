@@ -118,3 +118,6 @@ func getDefaultTitle(eventType, lang string) string {
 	return titles[lang]
 }
 
+
+
+

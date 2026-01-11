@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { getApiUrl } from '@/lib/api'
 import Link from 'next/link'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import { useAuth } from '@/contexts/AuthContext'
 import {
   DndContext,
   closestCenter,
@@ -209,9 +211,18 @@ function SortableEventItem({ event }: { event: Event }) {
 }
 
 export default function EventsPage() {
+  return (
+    <ProtectedRoute>
+      <EventsPageContent />
+    </ProtectedRoute>
+  )
+}
+
+function EventsPageContent() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const { user, logout } = useAuth()
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -296,12 +307,23 @@ export default function EventsPage() {
               Daily lessons, meals, conventions, and more
             </p>
           </div>
-          <Link
-            href="/events/create"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
-          >
-            Create Event
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/events/create"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+            >
+              Create Event
+            </Link>
+            <div className="flex flex-col items-end gap-2">
+              {user?.name && <span className="text-sm text-gray-600">{user.name}</span>}
+              <button
+                onClick={logout}
+                className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-lg transition duration-200"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
 
         {error && (
@@ -342,5 +364,3 @@ export default function EventsPage() {
     </div>
   )
 }
-
-

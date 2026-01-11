@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
 // UpdateEventRequest represents the request to update an event
 type UpdateEventRequest struct {
+	Date      *string           `json:"date,omitempty"`       // Optional: update date (YYYY-MM-DD)
 	Titles    map[string]string `json:"titles,omitempty"`     // Optional: update titles
 	StartTime *string           `json:"start_time,omitempty"` // Optional: update start time (HH:MM)
 	EndTime   *string           `json:"end_time,omitempty"`   // Optional: update end time (HH:MM)
@@ -49,6 +51,16 @@ func (a *App) HandleUpdateEvent(w http.ResponseWriter, r *http.Request) {
 				event.Titles[lang] = title
 			}
 		}
+	}
+
+	// Update date if provided
+	if req.Date != nil {
+		parsedDate, err := time.Parse("2006-01-02", *req.Date)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Invalid date format: %v", err), http.StatusBadRequest)
+			return
+		}
+		event.Date = parsedDate
 	}
 
 	// Update start time if provided

@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
 import Link from 'next/link'
+import ProtectedRoute from '@/components/ProtectedRoute'
+import { useAuth } from '@/contexts/AuthContext'
 
 // Helper function to get default title for an event type in a specific language
 function getDefaultTitle(eventType: string, lang: string): string {
@@ -84,7 +86,16 @@ function getDefaultTitle(eventType: string, lang: string): string {
 }
 
 export default function CreateEventPage() {
+  return (
+    <ProtectedRoute>
+      <CreateEventPageContent />
+    </ProtectedRoute>
+  )
+}
+
+function CreateEventPageContent() {
   const router = useRouter()
+  const { user, logout } = useAuth()
   const [date, setDate] = useState(() => {
     const today = new Date()
     return today.toISOString().split('T')[0]
@@ -164,10 +175,19 @@ export default function CreateEventPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       <div className="max-w-2xl mx-auto">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <Link href="/events" className="text-blue-600 hover:text-blue-700 text-sm">
             ← Back to Events
           </Link>
+          <div className="flex items-center gap-2">
+            {user?.name && <span className="text-sm text-gray-600">{user.name}</span>}
+            <button
+              onClick={logout}
+              className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-medium rounded transition duration-200"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-8">
@@ -313,5 +333,3 @@ export default function CreateEventPage() {
     </div>
   )
 }
-
-

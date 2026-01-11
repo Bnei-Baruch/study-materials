@@ -18,3 +18,6 @@ const outputPath = path.join(__dirname, '..', 'public', 'widget-simple.html');
 fs.writeFileSync(outputPath, html);
 
 console.log(`✓ Generated widget-simple.html with API URL: ${apiUrl}`);
+
+
+

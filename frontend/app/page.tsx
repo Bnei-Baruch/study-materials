@@ -86,6 +86,26 @@ const LANGUAGES = {
   uk: '🇺🇦 Українська',
 }
 
+// Format date based on language locale
+const formatDateByLanguage = (dateString: string, language: string) => {
+  const date = new Date(dateString)
+  
+  // Language-specific locale codes
+  const localeMap: { [key: string]: string } = {
+    he: 'he-IL',      // Hebrew - Israel
+    en: 'en-US',      // English - United States
+    ru: 'ru-RU',      // Russian - Russia
+    es: 'es-ES',      // Spanish - Spain
+    de: 'de-DE',      // German - Germany
+    it: 'it-IT',      // Italian - Italy
+    fr: 'fr-FR',      // French - France
+    uk: 'uk-UA',      // Ukrainian - Ukraine
+  }
+  
+  const locale = localeMap[language] || 'en-US'
+  return date.toLocaleDateString(locale)
+}
+
 const TRANSLATIONS = {
   he: {
     noEvents: 'אין אירועים זמינים',
@@ -504,7 +524,7 @@ export default function PublicPage() {
     }
     
     if (part.recorded_lesson_date) {
-      message += `${t('originalDate')}${new Date(part.recorded_lesson_date).toLocaleDateString()}\n`
+      message += `${t('originalDate')}${formatDateByLanguage(part.recorded_lesson_date, language)}\n`
     }
     
     // Sources
@@ -579,7 +599,7 @@ export default function PublicPage() {
         }
         
         if (part.recorded_lesson_date) {
-          message += `${t('originalDate')}${new Date(part.recorded_lesson_date).toLocaleDateString()}\n`
+          message += `${t('originalDate')}${formatDateByLanguage(part.recorded_lesson_date, language)}\n`
         }
         
         // Sources
@@ -969,7 +989,7 @@ export default function PublicPage() {
               >
                 {/* Part Header */}
                 <div className="p-4 flex items-start gap-3">
-                  <div className={`flex-1 ${isRTL ? 'border-r-4 pr-3' : 'border-l-4 pl-3'} ${colors.border}`}>
+                  <div className={`flex-1 max-w-[65%] ${isRTL ? 'border-r-4 pr-3' : 'border-l-4 pl-3'} ${colors.border}`}>
                     <h3 className={`${colors.text} font-bold mb-1`} style={{ fontSize: '16px' }}>
                       {part.order === 0 ? part.title : `${t('part')} ${part.order}: ${part.title}`}
                     </h3>
@@ -980,7 +1000,7 @@ export default function PublicPage() {
                     )}
                     {part.recorded_lesson_date && (
                       <p className="text-gray-600 mt-2" style={{ fontSize: '12px' }}>
-                        {t('originalDate')} {new Date(part.recorded_lesson_date).toLocaleDateString()}
+                        {t('originalDate')} {formatDateByLanguage(part.recorded_lesson_date, language)}
                       </p>
                     )}
                   </div>

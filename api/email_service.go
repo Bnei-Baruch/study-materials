@@ -80,3 +80,6 @@ func (s *EmailService) formatEmail(from, to, subject, body string) []byte {
 	return buf.Bytes()
 }
 
+
+
+
