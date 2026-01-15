@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node -r dotenv/config node_modules/.bin/next dev",
-    "build": "node -r dotenv/config node_modules/.bin/next build && npm run build:widget && npm run build:widget-html",
+    "dev": "next dev",
+    "build": "build": "next build && npm run build:widget && npm run build:widget-html",
     "build:widget": "node -r dotenv/config widget/build.js",
     "build:widget-html": "node -r dotenv/config scripts/build-widget-html.js",
-    "start": "node -r dotenv/config node_modules/.bin/next start",
+    "start": "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
