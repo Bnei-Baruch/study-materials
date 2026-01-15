@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "build": "next build && npm run build:widget && npm run build:widget-html",
+    "build": "next build && npm run build:widget && npm run build:widget-html",
     "build:widget": "node -r dotenv/config widget/build.js",
     "build:widget-html": "node -r dotenv/config scripts/build-widget-html.js",
     "start": "start": "next start",
