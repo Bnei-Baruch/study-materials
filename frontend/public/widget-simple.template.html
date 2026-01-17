@@ -10,12 +10,16 @@
     data-studymaterials-widget
     data-language="he"
     data-limit="10"
-    data-api-url="{{API_URL}}"
+    id="widget-container"
   ></div>
 
+  <script>
+    // Dynamically set API URL to current domain
+    document.getElementById('widget-container').setAttribute(
+      'data-api-url', 
+      window.location.origin
+    );
+  </script>
   <script src="/widget/widget.js"></script>
 </body>
 </html>
-
-
-

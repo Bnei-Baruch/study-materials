@@ -417,6 +417,30 @@ export default function PublicPage() {
     }
   }, [events])
 
+  // Listen for browser back/forward button
+  useEffect(() => {
+    const handlePopState = () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      const eventId = urlParams.get('event')
+      
+      if (!eventId) {
+        // No event in URL - go back to list
+        setSelectedEvent(null)
+        setParts([])
+        setExpandedParts(new Set())
+      } else if (events.length > 0) {
+        // Event in URL - select it
+        const event = events.find(e => e.id === eventId)
+        if (event) {
+          setSelectedEvent(event)
+        }
+      }
+    }
+    
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [events])
+
   const fetchEvents = async () => {
     try {
       setLoading(true)

@@ -11,6 +11,8 @@ const initOptions = {
   checkLoginIframe: false,
   flow: 'standard' as const,
   pkceMethod: 'S256' as const,
+  // Fix redirect loop - explicitly set where to redirect after auth
+  redirectUri: typeof window !== 'undefined' ? window.location.href : undefined,
 }
 
 let keycloakInstance: Keycloak | null = null

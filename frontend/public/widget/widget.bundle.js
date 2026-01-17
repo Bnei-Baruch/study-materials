@@ -22128,21 +22128,21 @@ var StudyMaterialsWidgetBundle = (() => {
       }
     };
     if (loading) {
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-gray-600 text-[12px] sm:text-[13px]", children: t.loading }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-gray-600 text-[14px] sm:text-[14px]", children: t.loading }) });
     }
     if (error) {
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-red-600 text-center p-2 sm:p-4 text-[12px] sm:text-[13px]", children: error }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-red-600 text-center p-2 sm:p-4 text-[14px] sm:text-[14px]", children: error }) });
     }
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200", dir: isRTL ? "rtl" : "ltr", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-blue-900 text-[14px] sm:text-[15px] font-bold", children: t.studyMaterials }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-gray-600 text-[9px] sm:text-[10px] mt-0.5", children: t.selectLesson }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-blue-900 text-[18px] sm:text-[18px] font-semibold", children: t.studyMaterials }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-gray-600 text-[13px] sm:text-[13px] mt-0.5", children: t.selectLesson }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `absolute ${isLTR ? "right-2 sm:right-3" : "left-2 sm:left-3"} top-2 sm:top-3`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
           "select",
           {
             value: language,
             onChange: (e) => handleLanguageChange(e.target.value),
-            className: "bg-white border border-blue-300 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-blue-900 cursor-pointer hover:border-blue-500 transition-colors text-[9px] sm:text-[10px]",
+            className: "bg-white border border-blue-300 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-blue-900 cursor-pointer hover:border-blue-500 transition-colors text-[12px] sm:text-[12px]",
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "he", children: "\u05E2\u05D1\u05E8\u05D9\u05EA" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "en", children: "English" }),
@@ -22156,14 +22156,14 @@ var StudyMaterialsWidgetBundle = (() => {
           }
         ) })
       ] }),
-      events.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 sm:p-4 text-center text-gray-500 text-[12px] sm:text-[13px]", children: t.noEventsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-1 sm:p-2 space-y-1 sm:space-y-2", children: events.map((event) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+      events.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 sm:p-4 text-center text-gray-500 text-[14px] sm:text-[14px]", children: t.noEventsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-1 sm:p-2 space-y-1 sm:space-y-2", children: events.map((event) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
         "button",
         {
           onClick: () => onSelectEvent(event.id),
           className: `w-full bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl hover:border-blue-400 transition-all p-1.5 sm:p-2.5 ${isRTL ? "text-right" : "text-left"}`,
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", { className: "text-blue-900 mb-0.5 sm:mb-1 text-[12px] sm:text-[13px] font-bold break-words", children: getEventTitle(event) }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex flex-col gap-0.5 text-gray-500 text-[9px] sm:text-[10px]", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", { className: "text-blue-900 mb-0.5 sm:mb-1 text-[18px] sm:text-[18px] font-semibold break-words", children: getEventTitle(event) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex flex-col gap-0.5 text-gray-500 text-[13px] sm:text-[13px]", children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calendar, { className: "w-3 h-3 flex-shrink-0" }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "truncate", children: [
@@ -22193,8 +22193,8 @@ var StudyMaterialsWidgetBundle = (() => {
           rel: "noopener noreferrer",
           className: "block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-2 sm:p-3 transition-all",
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-700 font-medium text-[13px] sm:text-[14px]", children: t.viewAllMaterials }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-600 mt-0.5 sm:mt-1 text-[10px] sm:text-[11px]", children: "stmat.kab.info" })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-700 font-medium text-[14px] sm:text-[14px]", children: t.viewAllMaterials }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-600 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]", children: "stmat.kab.info" })
           ]
         }
       ) })
@@ -22540,15 +22540,15 @@ ${partsText}`;
       }).format(date);
     };
     if (loading) {
-      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-gray-600", style: { fontSize: "13px" }, children: t.loading }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-gray-600", style: { fontSize: "14px" }, children: t.loading }) });
     }
     if (error || !event) {
-      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "13px" }, children: error || t.error }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "14px" }, children: error || t.error }) });
     }
     const eventTitle = ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || "Lesson";
     return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200", dir: isRTL ? "rtl" : "ltr", children: [
       /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { className: "text-blue-900 text-[15px] sm:text-[17px] font-bold", style: { lineHeight: "1.2" }, children: eventTitle }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { className: "text-blue-900 text-[18px] sm:text-[18px] font-semibold", style: { lineHeight: "1.2" }, children: eventTitle }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { className: "text-gray-600 text-[11px] sm:text-[13px] mt-0.5", children: [
           formatEventDate(event.date),
           event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { children: [
@@ -22600,8 +22600,8 @@ ${partsText}`;
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "p-1.5 sm:p-2.5 flex items-start gap-1 sm:gap-2", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: `flex-1 ${isRTL ? "pr-1 sm:pr-2" : "pl-1 sm:pl-2"}`, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: `${colors.text} text-[13px] sm:text-[14px] font-bold break-words`, children: partTitle }),
-                  part.description && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-gray-600 leading-snug mt-0.5 text-[11px] sm:text-[12px] line-clamp-2", children: part.description })
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: `${colors.text} text-[16px] sm:text-[16px] font-bold break-words`, children: partTitle }),
+                  part.description && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-gray-600 leading-snug mt-0.5 text-[13px] sm:text-[13px] line-clamp-2", children: part.description })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex gap-0.5 sm:gap-1 flex-shrink-0", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
@@ -22633,12 +22633,12 @@ ${partsText}`;
                       "a",
                       {
                         href: link.url,
-                        className: `flex-1 ${colors.text} hover:underline truncate text-[12px] sm:text-[13px]`,
+                        className: `flex-1 ${colors.text} hover:underline truncate text-[14px] sm:text-[14px]`,
                         target: "_blank",
                         rel: "noopener noreferrer",
                         children: [
                           link.text,
-                          link.page && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "text-gray-500 text-[10px] sm:text-[11px]", children: [
+                          link.page && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "text-gray-500 text-[12px] sm:text-[12px]", children: [
                             " (p. ",
                             link.page,
                             ")"
@@ -22653,7 +22653,7 @@ ${partsText}`;
                           e.preventDefault();
                           copyToClipboard(link.url);
                         },
-                        className: `${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all opacity-0 group-hover:opacity-100 flex-shrink-0`,
+                        className: `${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all flex-shrink-0`,
                         title: t.copyLink,
                         children: copiedUrl === link.url ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Copy, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" })
                       }
@@ -22679,7 +22679,7 @@ ${partsText}`;
               onClick: (e) => e.stopPropagation(),
               dir: isRTL ? "rtl" : "ltr",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: "text-gray-900 font-bold mb-2 sm:mb-3 text-[15px] sm:text-[16px]", children: t.shareLesson }),
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: "text-gray-900 font-bold mb-2 sm:mb-3 text-[16px] sm:text-[16px]", children: t.shareLesson }),
                 /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "space-y-2", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
                     "button",
@@ -22691,7 +22691,7 @@ ${partsText}`;
                       className: "w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all",
                       children: [
                         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("svg", { className: "w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0", fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("path", { d: "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" }) }),
-                        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "text-[13px] sm:text-[14px]", children: "WhatsApp" })
+                        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "text-[14px] sm:text-[14px]", children: "WhatsApp" })
                       ]
                     }
                   ),
@@ -22705,7 +22705,7 @@ ${partsText}`;
                       className: "w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all",
                       children: [
                         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("svg", { className: "w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0", fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("path", { d: "M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" }) }),
-                        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "text-[13px] sm:text-[14px]", children: "Telegram" })
+                        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "text-[14px] sm:text-[14px]", children: "Telegram" })
                       ]
                     }
                   )
@@ -22714,7 +22714,7 @@ ${partsText}`;
                   "button",
                   {
                     onClick: () => setShowShareMenu(null),
-                    className: "w-full mt-2 sm:mt-3 p-2 text-gray-600 hover:text-gray-800 transition-colors text-[13px] sm:text-[14px]",
+                    className: "w-full mt-2 sm:mt-3 p-2 text-gray-600 hover:text-gray-800 transition-colors text-[14px] sm:text-[14px]",
                     children: language === "he" ? "\u05D1\u05D9\u05D8\u05D5\u05DC" : "Cancel"
                   }
                 )

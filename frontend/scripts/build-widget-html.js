@@ -17,7 +17,6 @@ html = html.replace('{{API_URL}}', apiUrl);
 const outputPath = path.join(__dirname, '..', 'public', 'widget-simple.html');
 fs.writeFileSync(outputPath, html);
 
-console.log(`✓ Generated widget-simple.html with API URL: ${apiUrl}`);
-
+console.log(`✓ Generated widget-simple.html (API URL set dynamically at runtime)`);
 
 

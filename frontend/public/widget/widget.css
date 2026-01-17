@@ -1001,10 +1001,6 @@ video {
   text-align: right;
 }
 
-[data-studymaterials-widget] :is(.text-\[10px\]) {
-  font-size: 10px;
-}
-
 [data-studymaterials-widget] :is(.text-\[11px\]) {
   font-size: 11px;
 }
@@ -1021,12 +1017,12 @@ video {
   font-size: 14px;
 }
 
-[data-studymaterials-widget] :is(.text-\[15px\]) {
-  font-size: 15px;
+[data-studymaterials-widget] :is(.text-\[16px\]) {
+  font-size: 16px;
 }
 
-[data-studymaterials-widget] :is(.text-\[9px\]) {
-  font-size: 9px;
+[data-studymaterials-widget] :is(.text-\[18px\]) {
+  font-size: 18px;
 }
 
 [data-studymaterials-widget] :is(.font-bold) {
@@ -1035,6 +1031,10 @@ video {
 
 [data-studymaterials-widget] :is(.font-medium) {
   font-weight: 500;
+}
+
+[data-studymaterials-widget] :is(.font-semibold) {
+  font-weight: 600;
 }
 
 [data-studymaterials-widget] :is(.leading-snug) {
@@ -1109,10 +1109,6 @@ video {
 [data-studymaterials-widget] :is(.text-white) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-[data-studymaterials-widget] :is(.opacity-0) {
-  opacity: 0;
 }
 
 [data-studymaterials-widget] :is(.shadow) {
@@ -1281,10 +1277,6 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-[data-studymaterials-widget] :is(.group:hover .group-hover\:opacity-100) {
-  opacity: 1;
-}
-
 @media (min-width: 640px) {
   [data-studymaterials-widget] :is(.sm\:left-3) {
     left: 0.75rem;
@@ -1441,14 +1433,6 @@ video {
     padding-right: 0.625rem;
   }
 
-  [data-studymaterials-widget] :is(.sm\:text-\[10px\]) {
-    font-size: 10px;
-  }
-
-  [data-studymaterials-widget] :is(.sm\:text-\[11px\]) {
-    font-size: 11px;
-  }
-
   [data-studymaterials-widget] :is(.sm\:text-\[12px\]) {
     font-size: 12px;
   }
@@ -1461,16 +1445,12 @@ video {
     font-size: 14px;
   }
 
-  [data-studymaterials-widget] :is(.sm\:text-\[15px\]) {
-    font-size: 15px;
-  }
-
   [data-studymaterials-widget] :is(.sm\:text-\[16px\]) {
     font-size: 16px;
   }
 
-  [data-studymaterials-widget] :is(.sm\:text-\[17px\]) {
-    font-size: 17px;
+  [data-studymaterials-widget] :is(.sm\:text-\[18px\]) {
+    font-size: 18px;
   }
 }
 
