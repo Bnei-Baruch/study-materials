@@ -7,29 +7,27 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: 135.125.213.41
-          username: root
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /root/study-material-service
-            
-            # Pull latest code
-            git pull origin main
-            
-            # Write .env file
-            cat > .env << 'EOF'
-            ${{ secrets.DOCKER_COMPOSE_ENV }}
-            EOF
-            
-            # Build and restart containers
-            docker compose build
-            docker compose up -d
-            
-            # Show status
-            docker compose ps
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Build and Deploy
+        run: |
+          cd /root/study-material-service
+          
+          # Pull latest code
+          git pull origin main
+          
+          # Write .env file
+          cat > .env << 'EOF'
+          ${{ secrets.DOCKER_COMPOSE_ENV }}
+          EOF
+          
+          # Build and restart containers
+          docker compose build
+          docker compose up -d
+          
+          # Show status
+          docker compose ps
