@@ -13,12 +13,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Build and Deploy
+      - name: Deploy to VM
         run: |
           cd /root/study-material-service
           
-          # Pull latest code
-          git pull origin main
+          # Fetch latest from remote
+          git fetch origin
+          
+          # Reset to exact remote version (discards local changes)
+          git reset --hard origin/main
+          
+          # Clean untracked files (respects .gitignore)
+          git clean -fd
           
           # Write .env file
           cat > .env << 'EOF'
