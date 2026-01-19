@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -83,7 +82,7 @@ func (s *MongoDBStore) SavePart(part *LessonPart) error {
 
 	// Generate ID if not set
 	if part.ID == "" {
-		part.ID = uuid.New().String()
+		part.ID = generateShortID()
 	}
 
 	// Set created time if not set

@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 // Store manages JSON file-based storage for lesson parts
@@ -37,7 +35,7 @@ func (s *Store) SavePart(part *LessonPart) error {
 
 	// Generate ID if not set
 	if part.ID == "" {
-		part.ID = uuid.New().String()
+		part.ID = generateShortID()
 	}
 
 	// Set created time if not set

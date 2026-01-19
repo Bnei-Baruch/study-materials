@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -64,7 +63,7 @@ func (s *MongoDBEventStore) SaveEvent(event *Event) error {
 	defer cancel()
 
 	if event.ID == "" {
-		event.ID = uuid.New().String()
+		event.ID = generateShortID()
 	}
 	if event.CreatedAt.IsZero() {
 		event.CreatedAt = time.Now()

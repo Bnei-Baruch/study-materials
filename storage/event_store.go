@@ -5,14 +5,12 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 // SaveEvent saves an event to a JSON file
 func (s *Store) SaveEvent(event *Event) error {
 	if event.ID == "" {
-		event.ID = uuid.New().String()
+		event.ID = generateShortID()
 	}
 	if event.CreatedAt.IsZero() {
 		event.CreatedAt = time.Now()
