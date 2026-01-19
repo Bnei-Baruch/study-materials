@@ -47,6 +47,8 @@ interface Source {
   source_title: string
   source_url: string
   page_number?: string
+  start_point?: string
+  end_point?: string
 }
 
 interface CustomLink {
@@ -134,6 +136,8 @@ const TRANSLATIONS = {
     watchLesson: 'צפייה בשיעור',
     lessonTranscript: 'תמליל השיעור',
     selectedExcerpts: 'קטעים נבחרים',
+    startPoint: 'החל מ:',
+    endPoint: 'עד:',
   },
   en: {
     noEvents: 'No events available',
@@ -162,6 +166,8 @@ const TRANSLATIONS = {
     watchLesson: 'Watch Lesson',
     lessonTranscript: 'Lesson Transcript',
     selectedExcerpts: 'Selected Excerpts',
+    startPoint: 'From:',
+    endPoint: 'To:',
   },
   ru: {
     noEvents: 'Нет доступных событий',
@@ -190,6 +196,8 @@ const TRANSLATIONS = {
     watchLesson: 'Смотреть урок',
     lessonTranscript: 'Транскрипт урока',
     selectedExcerpts: 'Избранные отрывки',
+    startPoint: 'От:',
+    endPoint: 'До:',
   },
   es: {
     noEvents: 'No hay eventos disponibles',
@@ -218,6 +226,8 @@ const TRANSLATIONS = {
     watchLesson: 'Ver lección',
     lessonTranscript: 'Transcripción de la lección',
     selectedExcerpts: 'Extractos seleccionados',
+    startPoint: 'De:',
+    endPoint: 'Hasta:',
   },
   de: {
     noEvents: 'Keine Veranstaltungen verfügbar',
@@ -246,6 +256,8 @@ const TRANSLATIONS = {
     watchLesson: 'Lektion ansehen',
     lessonTranscript: 'Lektionstranskript',
     selectedExcerpts: 'Ausgewählte Auszüge',
+    startPoint: 'Von:',
+    endPoint: 'Bis:',
   },
   it: {
     noEvents: 'Nessun evento disponibile',
@@ -274,6 +286,8 @@ const TRANSLATIONS = {
     watchLesson: 'Guarda la lezione',
     lessonTranscript: 'Trascrizione della lezione',
     selectedExcerpts: 'Estratti selezionati',
+    startPoint: 'Da:',
+    endPoint: 'A:',
   },
   fr: {
     noEvents: 'Aucun événement disponible',
@@ -302,6 +316,8 @@ const TRANSLATIONS = {
     watchLesson: 'Regarder la leçon',
     lessonTranscript: 'Transcription de la leçon',
     selectedExcerpts: 'Extraits sélectionnés',
+    startPoint: 'De:',
+    endPoint: 'À:',
   },
   uk: {
     noEvents: 'Немає доступних подій',
@@ -330,6 +346,8 @@ const TRANSLATIONS = {
     watchLesson: 'Дивитися урок',
     lessonTranscript: 'Транскрипт уроку',
     selectedExcerpts: 'Вибрані уривки',
+    startPoint: 'Від:',
+    endPoint: 'До:',
   },
 }
 
@@ -1092,33 +1110,45 @@ export default function PublicPage() {
                   <div className="px-4 pb-4 pt-2 space-y-2">
                     {/* Sources */}
                     {part.sources && part.sources.length > 0 && part.sources.map((source, idx) => (
-                      <div key={idx} className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
-                        <BookOpen className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
-                        <a
-                          href={source.source_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`flex-1 ${colors.text}`}
-                          style={{ fontSize: '14px' }}
-                        >
-                          {t('readSource')}
-                          {source.page_number && (
-                            <span className="text-gray-600 ml-2">
-                              {` ${t('page')} ${source.page_number}`}
-                            </span>
-                          )}
-                        </a>
-                        <button
-                          onClick={(e) => copyToClipboard(source.source_url, e)}
-                          className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
-                          title={t('copyLink')}
-                        >
-                          {copiedUrl === source.source_url ? (
-                            <Check className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </button>
+                      <div key={idx} className={`flex flex-col gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
+                        <div className="flex items-center gap-2">
+                          <BookOpen className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
+                          <a
+                            href={source.source_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`flex-1 ${colors.text}`}
+                            style={{ fontSize: '14px' }}
+                          >
+                            {t('readSource')}
+                            {source.page_number && (
+                              <span className="text-gray-600 ml-2">
+                                {` ${t('page')} ${source.page_number}`}
+                              </span>
+                            )}
+                          </a>
+                          <button
+                            onClick={(e) => copyToClipboard(source.source_url, e)}
+                            className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
+                            title={t('copyLink')}
+                          >
+                            {copiedUrl === source.source_url ? (
+                              <Check className="w-4 h-4 text-green-600" />
+                            ) : (
+                              <Copy className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
+                        {(source.start_point || source.end_point) && (
+                          <div className="text-xs text-gray-600 ml-6 space-y-1">
+                            {source.start_point && (
+                              <div><strong>{t('startPoint')}</strong> {source.start_point}</div>
+                            )}
+                            {source.end_point && (
+                              <div><strong>{t('endPoint')}</strong> {source.end_point}</div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     ))}
 

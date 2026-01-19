@@ -196,6 +196,8 @@ interface Source {
   source_title: string
   source_url: string
   page_number?: string
+  start_point?: string
+  end_point?: string
 }
 
 interface CustomLink {

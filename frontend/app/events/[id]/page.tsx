@@ -66,6 +66,8 @@ interface Source {
   source_title: string
   source_url: string
   page_number?: string
+  start_point?: string
+  end_point?: string
 }
 
 interface CustomLink {
@@ -1373,13 +1375,38 @@ function EventDetailPageContent() {
                                       <p className="text-sm text-gray-800 block truncate">
                                         {source.source_title}
                                       </p>
-                                      <input
-                                        type="url"
-                                        value={source.source_url || ''}
-                                        onChange={(e) => handleUpdateSourceInEdit(idx, 'source_url', e.target.value)}
-                                        className="w-full mt-1 border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
-                                        placeholder="Source link (https://...)"
-                                      />
+                                      <div className="mt-2 space-y-2">
+                                        <input
+                                          type="url"
+                                          value={source.source_url || ''}
+                                          onChange={(e) => handleUpdateSourceInEdit(idx, 'source_url', e.target.value)}
+                                          className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                          placeholder="Source link (https://...)"
+                                        />
+                                        <input
+                                          type="text"
+                                          value={source.page_number || ''}
+                                          onChange={(e) => handleUpdateSourceInEdit(idx, 'page_number', e.target.value)}
+                                          className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                          placeholder="Page number (e.g., 42 or 15-17)"
+                                        />
+                                        <div className="grid grid-cols-2 gap-2">
+                                          <input
+                                            type="text"
+                                            value={source.start_point || ''}
+                                            onChange={(e) => handleUpdateSourceInEdit(idx, 'start_point', e.target.value)}
+                                            className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                            placeholder="Start From"
+                                          />
+                                          <input
+                                            type="text"
+                                            value={source.end_point || ''}
+                                            onChange={(e) => handleUpdateSourceInEdit(idx, 'end_point', e.target.value)}
+                                            className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                            placeholder="End Point"
+                                          />
+                                        </div>
+                                      </div>
                                     </div>
                                     <a 
                                       href={source.source_url} 

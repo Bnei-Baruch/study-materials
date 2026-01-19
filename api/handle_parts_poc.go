@@ -139,6 +139,8 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 					SourceTitle: sourceTitle,
 					SourceURL:   originalURL, // Always use original kabbalahmedia URL
 					PageNumber:  source.PageNumber,
+					StartPoint:  source.StartPoint, // Copy start point
+					EndPoint:    source.EndPoint,   // Copy end point
 				}
 			}
 		}

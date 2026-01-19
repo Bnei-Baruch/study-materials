@@ -29,7 +29,9 @@ type Source struct {
 	SourceID    string `json:"source_id" bson:"source_id"`
 	SourceTitle string `json:"source_title" bson:"source_title"`
 	SourceURL   string `json:"source_url" bson:"source_url"`
-	PageNumber  string `json:"page_number,omitempty" bson:"page_number,omitempty"` // Optional: page in source (e.g., "42", "15-17")
+	PageNumber  string `json:"page_number,omitempty" bson:"page_number,omitempty"`   // Optional: page in source (e.g., "42", "15-17")
+	StartPoint  string `json:"start_point,omitempty" bson:"start_point,omitempty"`   // Optional: paragraph text marking the start of relevant section
+	EndPoint    string `json:"end_point,omitempty" bson:"end_point,omitempty"`       // Optional: paragraph text marking the end of relevant section
 }
 
 // CustomLink represents a custom link with a custom title (language-specific)
