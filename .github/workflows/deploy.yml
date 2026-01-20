@@ -37,3 +37,5 @@ jobs:
           
           # Show status
           docker compose ps
+          # Clean up unused Docker resources after deployment
+          docker system prune -f
