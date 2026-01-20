@@ -209,15 +209,6 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Store old shared links to detect changes
-	oldExcerptsLink := existingPart.ExcerptsLink
-	oldTranscriptLink := existingPart.TranscriptLink
-	oldLessonLink := existingPart.LessonLink
-	oldProgramLink := existingPart.ProgramLink
-	oldReadingBeforeSleepLink := existingPart.ReadingBeforeSleepLink
-	oldLessonPreparationLink := existingPart.LessonPreparationLink
-	oldRecordedLessonDate := existingPart.RecordedLessonDate
-
 	// Update all editable fields
 	existingPart.Title = req.Title
 	existingPart.Description = req.Description
@@ -245,41 +236,6 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 	if err := a.store.SavePart(existingPart); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to update part: %v", err), http.StatusInternalServerError)
 		return
-	}
-
-	// If any shared links changed, update them in all language versions of the same part
-	if existingPart.EventID != "" && (
-		oldExcerptsLink != req.ExcerptsLink ||
-		oldTranscriptLink != req.TranscriptLink ||
-		oldLessonLink != req.LessonLink ||
-		oldProgramLink != req.ProgramLink ||
-		oldReadingBeforeSleepLink != req.ReadingBeforeSleepLink ||
-		oldLessonPreparationLink != req.LessonPreparationLink ||
-		oldRecordedLessonDate != req.RecordedLessonDate) {
-
-		// Get all parts for this event
-		allParts, err := a.store.ListParts()
-		if err == nil {
-			for _, part := range allParts {
-				// Find other language versions of the same part (same event_id and order)
-				if part.EventID == existingPart.EventID &&
-					part.Order == existingPart.Order &&
-					part.Language != existingPart.Language {
-					// Update shared links in other languages
-					part.ExcerptsLink = req.ExcerptsLink
-					part.TranscriptLink = req.TranscriptLink
-					part.LessonLink = req.LessonLink
-					part.ProgramLink = req.ProgramLink
-					part.ReadingBeforeSleepLink = req.ReadingBeforeSleepLink
-					part.LessonPreparationLink = req.LessonPreparationLink
-					part.RecordedLessonDate = req.RecordedLessonDate
-
-					if err := a.store.SavePart(part); err != nil {
-						fmt.Printf("Warning: Failed to update %s translation: %v\n", part.Language, err)
-					}
-				}
-			}
-		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
