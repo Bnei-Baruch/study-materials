@@ -6,6 +6,9 @@ import { AuthProvider } from "@/contexts/AuthContext";
 export const metadata: Metadata = {
   title: "Study Material Service",
   description: "Create and manage lesson parts with sources",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
