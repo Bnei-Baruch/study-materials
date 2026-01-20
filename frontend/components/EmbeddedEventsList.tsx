@@ -257,7 +257,7 @@ export function EmbeddedEventsList({
       {/* Footer Link */}
       <div className="p-2 sm:p-4">
         <a
-          href="https://stmat.kab.info"
+          href="https://stmat.kli.one"
           target="_blank"
           rel="noopener noreferrer"
           className="block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-2 sm:p-3 transition-all"

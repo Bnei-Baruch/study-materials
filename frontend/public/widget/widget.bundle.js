@@ -22188,7 +22188,7 @@ var StudyMaterialsWidgetBundle = (() => {
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 sm:p-4", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
         "a",
         {
-          href: "https://stmat.kab.info",
+          href: "https://stmat.kli.one",
           target: "_blank",
           rel: "noopener noreferrer",
           className: "block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-2 sm:p-3 transition-all",
