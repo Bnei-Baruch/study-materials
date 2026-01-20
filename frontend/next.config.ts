@@ -1,7 +1,17 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/api/:path*',
+          destination: 'http://backend:8080/api/:path*'
+        }
+      ]
+    }
+  }
+  // ... any other config you have
+}
 
-export default nextConfig;
+export default nextConfig
