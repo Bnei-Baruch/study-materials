@@ -266,7 +266,7 @@ export function EmbeddedEventsList({
             {t.viewAllMaterials}
           </div>
           <div className="text-blue-600 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]">
-            stmat.kab.info
+            stmat.kli.one
           </div>
         </a>
       </div>
