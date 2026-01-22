@@ -53,4 +53,4 @@ echo "🧹 Cleaning up local build file..."
 rm $BUILD_FILE
 
 echo "✅ Deployment complete!"
-echo "🌐 Visit: https://stmat.kli.one"
+echo "🌐 Visit: https://study.kli.one"

@@ -257,7 +257,7 @@ export function EmbeddedEventsList({
       {/* Footer Link */}
       <div className="p-2 sm:p-4">
         <a
-          href="https://stmat.kli.one"
+          href="https://study.kli.one"
           target="_blank"
           rel="noopener noreferrer"
           className="block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-2 sm:p-3 transition-all"
@@ -266,7 +266,7 @@ export function EmbeddedEventsList({
             {t.viewAllMaterials}
           </div>
           <div className="text-blue-600 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]">
-            stmat.kli.one
+            study.kli.one
           </div>
         </a>
       </div>

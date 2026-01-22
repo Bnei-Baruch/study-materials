@@ -22188,13 +22188,13 @@ var StudyMaterialsWidgetBundle = (() => {
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 sm:p-4", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
         "a",
         {
-          href: "https://stmat.kli.one",
+          href: "https://study.kli.one",
           target: "_blank",
           rel: "noopener noreferrer",
           className: "block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-2 sm:p-3 transition-all",
           children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-700 font-medium text-[14px] sm:text-[14px]", children: t.viewAllMaterials }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-600 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]", children: "stmat.kab.info" })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-600 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]", children: "study.kab.info" })
           ]
         }
       ) })
