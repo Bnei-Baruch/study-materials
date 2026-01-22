@@ -159,6 +159,35 @@ function AdminEventDetailPageContent() {
 
 
   useEffect(() => {
+    // Check URL query parameter first for language
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search)
+      const urlLang = searchParams.get('lang')
+      
+      if (urlLang && ['he', 'en', 'ru', 'es', 'de', 'it', 'fr', 'uk'].includes(urlLang)) {
+        setSelectedLanguage(urlLang)
+      } else {
+        // Fall back to localStorage
+        const saved = localStorage.getItem('language')
+        if (saved && ['he', 'en', 'ru', 'es', 'de', 'it', 'fr', 'uk'].includes(saved)) {
+          setSelectedLanguage(saved)
+        }
+      }
+    }
+
+    // Listen for language changes from Navigation component
+    const handleLanguageChange = () => {
+      const newLang = localStorage.getItem('language')
+      if (newLang && ['he', 'en', 'ru', 'es', 'de', 'it', 'fr', 'uk'].includes(newLang)) {
+        setSelectedLanguage(newLang)
+      }
+    }
+
+    window.addEventListener('languageChange', handleLanguageChange)
+    return () => window.removeEventListener('languageChange', handleLanguageChange)
+  }, [])
+
+  useEffect(() => {
     fetchEventAndParts()
   }, [eventId, selectedLanguage])
 
@@ -671,7 +700,7 @@ function AdminEventDetailPageContent() {
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             {error || 'Event not found'}
           </div>
-          <Link href="/admin" className="inline-block mt-4 text-blue-600 hover:text-blue-700">
+          <Link href={`/admin?lang=${selectedLanguage}`} className="inline-block mt-4 text-blue-600 hover:text-blue-700">
             ← Back to Events
           </Link>
         </div>
@@ -712,7 +741,7 @@ function AdminEventDetailPageContent() {
         {/* Back Button */}
         <button className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-4 transition-colors" style={{ fontSize: '14px' }}>
           <ChevronLeft className="w-4 h-4" />
-          <Link href="/admin" className="flex items-center gap-2">
+          <Link href={`/admin?lang=${selectedLanguage}`} className="flex items-center gap-2">
             ← Back to Events
           </Link>
         </button>

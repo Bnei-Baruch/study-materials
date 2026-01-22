@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
 import Link from 'next/link'
@@ -96,6 +96,7 @@ export default function CreateEventPage() {
 function CreateEventPageContent() {
   const router = useRouter()
   const { user, logout } = useAuth()
+  const [selectedLanguage, setSelectedLanguage] = useState('he')
   const [date, setDate] = useState(() => {
     const today = new Date()
     return today.toISOString().split('T')[0]
@@ -108,6 +109,35 @@ function CreateEventPageContent() {
   const [customTitles, setCustomTitles] = useState<{ [key: string]: string }>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    // Check URL query parameter first for language
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search)
+      const urlLang = searchParams.get('lang')
+      
+      if (urlLang && ['he', 'en', 'ru', 'es', 'de', 'it', 'fr', 'uk'].includes(urlLang)) {
+        setSelectedLanguage(urlLang)
+      } else {
+        // Fall back to localStorage
+        const saved = localStorage.getItem('language')
+        if (saved && ['he', 'en', 'ru', 'es', 'de', 'it', 'fr', 'uk'].includes(saved)) {
+          setSelectedLanguage(saved)
+        }
+      }
+    }
+
+    // Listen for language changes from Navigation component
+    const handleLanguageChange = () => {
+      const newLang = localStorage.getItem('language')
+      if (newLang && ['he', 'en', 'ru', 'es', 'de', 'it', 'fr', 'uk'].includes(newLang)) {
+        setSelectedLanguage(newLang)
+      }
+    }
+
+    window.addEventListener('languageChange', handleLanguageChange)
+    return () => window.removeEventListener('languageChange', handleLanguageChange)
+  }, [])
 
   const languages = [
     { code: 'he', name: 'Hebrew (עברית)' },
@@ -163,8 +193,8 @@ function CreateEventPageContent() {
       }
 
       const event = await response.json()
-      // Redirect to event detail page
-      router.push(`/admin/${event.id}`)
+      // Redirect to event detail page with language parameter
+      router.push(`/admin/${event.id}?lang=${selectedLanguage}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -176,7 +206,7 @@ function CreateEventPageContent() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6 flex justify-between items-center">
-          <Link href="/admin" className="text-blue-600 hover:text-blue-700 text-sm">
+          <Link href={`/admin?lang=${selectedLanguage}`} className="text-blue-600 hover:text-blue-700 text-sm">
             ← Back to Events
           </Link>
           <div className="flex items-center gap-2">

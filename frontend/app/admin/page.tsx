@@ -198,7 +198,7 @@ function SortableEventItem({ event, language }: { event: Event; language: string
 
             {/* Date and title - clickable to navigate */}
             <Link
-              href={`/admin/${event.id}`}
+              href={`/admin/${event.id}?lang=${language}`}
               className="flex items-center gap-4 flex-1"
             >
               <div className="text-sm text-gray-500 w-40">
@@ -213,7 +213,7 @@ function SortableEventItem({ event, language }: { event: Event; language: string
             </Link>
           </div>
           <Link
-            href={`/admin/${event.id}`}
+            href={`/admin/${event.id}?lang=${language}`}
             className="text-sm text-gray-400 hover:text-gray-600"
           >
             →
@@ -343,7 +343,7 @@ function AdminPageContent() {
           </div>
           <div className="flex items-center gap-4">
             <Link
-              href="/admin/create"
+              href={`/admin/create?lang=${language}`}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
             >
               Create Event
@@ -370,7 +370,7 @@ function AdminPageContent() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <div className="text-gray-500 mb-4">No events yet</div>
             <Link
-              href="/admin/create"
+              href={`/admin/create?lang=${language}`}
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
             >
               Create Your First Event
