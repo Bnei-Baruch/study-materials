@@ -93,15 +93,15 @@ interface Part {
   custom_links?: CustomLink[]
 }
 
-export default function EventDetailPage() {
+export default function AdminEventDetailPage() {
   return (
     <ProtectedRoute>
-      <EventDetailPageContent />
+      <AdminEventDetailPageContent />
     </ProtectedRoute>
   )
 }
 
-function EventDetailPageContent() {
+function AdminEventDetailPageContent() {
   const params = useParams()
   const eventId = params.id as string
   const { user, logout } = useAuth()
