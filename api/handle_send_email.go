@@ -43,7 +43,7 @@ func (a *App) HandleSendEventEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get event titles
+	// Get event titles for all supported languages
 	titleHe := event.Titles["he"]
 	if titleHe == "" {
 		titleHe = getDefaultTitle(event.Type, "he")
@@ -54,8 +54,18 @@ func (a *App) HandleSendEventEmail(w http.ResponseWriter, r *http.Request) {
 		titleEn = getDefaultTitle(event.Type, "en")
 	}
 
+	titleEs := event.Titles["es"]
+	if titleEs == "" {
+		titleEs = getDefaultTitle(event.Type, "es")
+	}
+
+	titleRu := event.Titles["ru"]
+	if titleRu == "" {
+		titleRu = getDefaultTitle(event.Type, "ru")
+	}
+
 	// Send email
-	err = a.emailService.SendEventEmail(eventID, titleHe, titleEn, event.Date, req.IsUpdate)
+	err = a.emailService.SendEventEmail(eventID, titleHe, titleEn, titleEs, titleRu, event.Date, event.StartTime, event.EndTime, req.IsUpdate)
 	if err != nil {
 		log.Printf("Failed to send email for event %s: %v", eventID, err)
 		http.Error(w, fmt.Sprintf("Failed to send email: %v", err), http.StatusInternalServerError)
@@ -89,26 +99,38 @@ func getDefaultTitle(eventType, lang string) string {
 		"morning_lesson": {
 			"he": "שיעור בוקר",
 			"en": "Morning Lesson",
+			"es": "Lección Matutina",
+			"ru": "Утренний Урок",
 		},
 		"noon_lesson": {
 			"he": "שיעור צהריים",
 			"en": "Noon Lesson",
+			"es": "Lección del Mediodía",
+			"ru": "Полуденный Урок",
 		},
 		"evening_lesson": {
 			"he": "שיעור ערב",
 			"en": "Evening Lesson",
+			"es": "Lección Vespertina",
+			"ru": "Вечерний Урок",
 		},
 		"meal": {
 			"he": "ארוחה",
 			"en": "Meal",
+			"es": "Comida",
+			"ru": "Трапеза",
 		},
 		"convention": {
 			"he": "קונוונציה",
 			"en": "Convention",
+			"es": "Convención",
+			"ru": "Конвенция",
 		},
 		"lecture": {
 			"he": "הרצאה",
 			"en": "Lecture",
+			"es": "Conferencia",
+			"ru": "Лекция",
 		},
 	}
 	titles, ok := defaults[eventType]
