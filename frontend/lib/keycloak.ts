@@ -38,7 +38,11 @@ export const initKeycloak = async (): Promise<boolean> => {
   try {
     const authenticated = await kc.init(initOptions)
     return authenticated
-  } catch (err) {
+  } catch (err: any) {
+    // login_required is not an error - it just means user needs to log in
+    if (err?.error === 'login_required') {
+      return false // Not authenticated, but not an error
+    }
     console.error('Keycloak init failed:', err)
     return false
   }
