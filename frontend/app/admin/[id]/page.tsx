@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
+import { formatEventDate, formatDateTimeInIsraelTimezone, formatDateForInput } from '@/lib/dateUtils'
 import Link from 'next/link'
 import EventTypeBadge from '@/components/EventTypeBadge'
 import PartForm from '@/components/PartForm'
@@ -614,7 +615,7 @@ function AdminEventDetailPageContent() {
 
       if (data.already_sent && !isUpdate) {
         setEmailSentAt(data.sent_at)
-        alert('Email already sent on: ' + new Date(data.sent_at).toLocaleString())
+        alert('Email already sent on: ' + formatDateTimeInIsraelTimezone(data.sent_at))
       } else if (data.success) {
         setEmailSentAt(data.sent_at)
         if (isUpdate) {
@@ -637,19 +638,12 @@ function AdminEventDetailPageContent() {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Jerusalem',
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     }).format(date)
-  }
-
-  const formatDateForInput = (dateString: string) => {
-    const date = new Date(dateString)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
   }
 
   if (loading) {

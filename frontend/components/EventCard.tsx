@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import EventTypeBadge from './EventTypeBadge'
+import { formatEventDate } from '@/lib/dateUtils'
 
 interface Event {
   id: string
@@ -15,13 +16,7 @@ interface EventCardProps {
 
 export default function EventCard({ event }: EventCardProps) {
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(date)
+    return formatEventDate(dateString, 'en').replace(', ', ' ')  // Remove comma after weekday
   }
 
   return (

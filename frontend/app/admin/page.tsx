@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { getApiUrl } from '@/lib/api'
+import { formatEventDate } from '@/lib/dateUtils'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
@@ -149,14 +150,7 @@ function SortableEventItem({ event, language }: { event: Event; language: string
   }
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    const locale = localeMap[language] || 'en-US'
-    return new Intl.DateTimeFormat(locale, {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(date)
+    return formatEventDate(dateString, language)
   }
 
   // Get title in selected language or fallback

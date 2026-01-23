@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { getApiUrl } from '@/lib/api'
+import { formatEventDate, formatDateTimeInIsraelTimezone } from '@/lib/dateUtils'
 import {
   BookOpen,
   Video,
@@ -90,22 +91,7 @@ const LANGUAGES = {
 
 // Format date based on language locale
 const formatDateByLanguage = (dateString: string, language: string) => {
-  const date = new Date(dateString)
-  
-  // Language-specific locale codes
-  const localeMap: { [key: string]: string } = {
-    he: 'he-IL',      // Hebrew - Israel
-    en: 'en-US',      // English - United States
-    ru: 'ru-RU',      // Russian - Russia
-    es: 'es-ES',      // Spanish - Spain
-    de: 'de-DE',      // German - Germany
-    it: 'it-IT',      // Italian - Italy
-    fr: 'fr-FR',      // French - France
-    uk: 'uk-UA',      // Ukrainian - Ukraine
-  }
-  
-  const locale = localeMap[language] || 'en-US'
-  return date.toLocaleDateString(locale)
+  return formatDateTimeInIsraelTimezone(dateString, language)
 }
 
 const TRANSLATIONS = {
@@ -725,6 +711,7 @@ export default function PublicPage() {
       uk: 'uk-UA',
     }
     return new Intl.DateTimeFormat(localeMap[language] || 'en-US', {
+      timeZone: 'Asia/Jerusalem',
       weekday: 'long',
       year: 'numeric',
       month: 'long',

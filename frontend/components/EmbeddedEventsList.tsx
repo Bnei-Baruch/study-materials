@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { Calendar, Clock, ChevronDown } from 'lucide-react'
+import { formatDateTimeInIsraelTimezone } from '@/lib/dateUtils'
 
 // Translation type
 interface ListTranslations {
@@ -148,6 +149,7 @@ export function EmbeddedEventsList({
   const formatEventDayOfWeek = (dateString: string) => {
     const date = new Date(dateString)
     return new Intl.DateTimeFormat(language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'de' ? 'de-DE' : 'en-US', {
+      timeZone: 'Asia/Jerusalem',
       weekday: 'long',
     }).format(date)
   }
@@ -155,6 +157,7 @@ export function EmbeddedEventsList({
   const formatEventDate = (dateString: string) => {
     const date = new Date(dateString)
     return new Intl.DateTimeFormat(language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'de' ? 'de-DE' : 'en-US', {
+      timeZone: 'Asia/Jerusalem',
       year: 'numeric',
       month: 'long',
       day: 'numeric',

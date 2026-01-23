@@ -452,6 +452,7 @@ export function EmbeddedLessonSidebar({
     const locale = localeMap[language] || 'en-US'
     
     return new Intl.DateTimeFormat(locale, {
+      timeZone: 'Asia/Jerusalem',
       weekday: 'long',
       year: 'numeric',
       month: 'long',
