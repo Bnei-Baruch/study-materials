@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { getApiUrl } from '@/lib/api'
-import { formatEventDate, formatDateTimeInIsraelTimezone } from '@/lib/dateUtils'
+import { formatEventDate, formatDateOnly } from '@/lib/dateUtils'
 import {
   BookOpen,
   Video,
@@ -89,9 +89,9 @@ const LANGUAGES = {
   uk: '🇺🇦 Українська',
 }
 
-// Format date based on language locale
+// Format date based on language locale (date only, no time)
 const formatDateByLanguage = (dateString: string, language: string) => {
-  return formatDateTimeInIsraelTimezone(dateString, language)
+  return formatDateOnly(dateString, language)
 }
 
 const TRANSLATIONS = {
