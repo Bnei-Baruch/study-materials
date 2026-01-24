@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Calendar, Clock, ChevronDown } from 'lucide-react'
+import { Calendar, Clock, ChevronDown, ChevronRight, ChevronLeft } from 'lucide-react'
 import { formatDateTimeInIsraelTimezone } from '@/lib/dateUtils'
+import { groupEventsByDate, getDateGroupColorClasses } from '@/lib/eventGrouping'
 
 // Translation type
 interface ListTranslations {
@@ -146,24 +147,6 @@ export function EmbeddedEventsList({
     fetchEvents()
   }, [apiBaseUrl, limit, t.error])
 
-  const formatEventDayOfWeek = (dateString: string) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat(language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'de' ? 'de-DE' : 'en-US', {
-      timeZone: 'Asia/Jerusalem',
-      weekday: 'long',
-    }).format(date)
-  }
-
-  const formatEventDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat(language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'de' ? 'de-DE' : 'en-US', {
-      timeZone: 'Asia/Jerusalem',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(date)
-  }
-
   const getEventTitle = (event: Event) => {
     return event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'
   }
@@ -224,36 +207,70 @@ export function EmbeddedEventsList({
         </div>
       </div>
 
-      {/* Events List */}
+      {/* Events List Grouped by Date */}
       {events.length === 0 ? (
         <div className="p-2 sm:p-4 text-center text-gray-500 text-[14px] sm:text-[14px]">
           {t.noEventsAvailable}
         </div>
       ) : (
-        <div className="p-1 sm:p-2 space-y-1 sm:space-y-2">
-          {events.map((event) => (
-            <button
-              key={event.id}
-              onClick={() => onSelectEvent(event.id)}
-              className={`w-full bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl hover:border-blue-400 transition-all p-1.5 sm:p-2.5 ${isRTL ? 'text-right' : 'text-left'}`}
-            >
-              <h4 className="text-blue-900 mb-0.5 sm:mb-1 text-[18px] sm:text-[18px] font-semibold break-words">
-                {getEventTitle(event)}
-              </h4>
-              <div className="flex flex-col gap-0.5 text-gray-500 text-[13px] sm:text-[13px]">
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3 flex-shrink-0" />
-                  <span className="truncate">{formatEventDayOfWeek(event.date)}, {formatEventDate(event.date)}</span>
-                </div>
-                {event.start_time && event.end_time && (
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 flex-shrink-0" />
-                    <span className="truncate">{event.end_time} - {event.start_time}</span>
+        <div className="p-1 sm:p-2 space-y-2 sm:space-y-3">
+          {groupEventsByDate(events).map((dateGroup) => {
+            const colors = getDateGroupColorClasses(dateGroup.borderColor)
+            
+            return (
+              <div
+                key={dateGroup.date}
+                className={`rounded-lg shadow-md border-l-4 ${colors.border} bg-white overflow-hidden`}
+              >
+                {/* Date Header */}
+                <div className={`${colors.bg} px-3 sm:px-4 py-2.5 sm:py-3 border-b-2 ${colors.border}`}>
+                  <div className={`flex items-baseline gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <h4 className={`${colors.text} font-bold text-[15px] sm:text-[16px]`}>
+                      {dateGroup.dayOfWeek}
+                    </h4>
+                    <p className={`${colors.text} text-[12px] sm:text-[13px] font-semibold opacity-90`}>
+                      📅 {new Intl.DateTimeFormat(language === 'he' ? 'he-IL' : language === 'ru' ? 'ru-RU' : language === 'es' ? 'es-ES' : language === 'de' ? 'de-DE' : 'en-US', {
+                        timeZone: 'Asia/Jerusalem',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      }).format(new Date(dateGroup.date + 'T00:00:00Z'))}
+                    </p>
                   </div>
-                )}
+                </div>
+                
+                {/* Events for this date */}
+                <div className="divide-y divide-gray-100">
+                  {dateGroup.events.map((event) => (
+                    <button
+                      key={event.id}
+                      onClick={() => onSelectEvent(event.id)}
+                      className={`w-full text-left px-3 sm:px-4 py-3 sm:py-3.5 hover:bg-gray-50 transition-colors group ${isRTL ? 'text-right' : 'text-left'}`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h5 className={`${colors.text} group-hover:opacity-70 transition-opacity font-semibold text-[15px] sm:text-[16px] break-words mb-0.5`}>
+                            {event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'}
+                          </h5>
+                          {event.start_time && event.end_time && (
+                            <div className={`flex items-center gap-1.5 text-gray-600 text-[12px] sm:text-[13px] ${isRTL ? 'flex-row-reverse' : ''}`}>
+                              <Clock className="w-3 h-3 flex-shrink-0" />
+                              <span className="truncate">{event.start_time} - {event.end_time}</span>
+                            </div>
+                          )}
+                        </div>
+                        {isRTL ? (
+                          <ChevronLeft className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:translate-x-[-3px] transition-all flex-shrink-0`} />
+                        ) : (
+                          <ChevronRight className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all flex-shrink-0`} />
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </button>
-          ))}
+            )
+          })}
         </div>
       )}
 

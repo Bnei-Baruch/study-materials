@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { getApiUrl } from '@/lib/api'
 import { formatEventDate, formatDateOnly } from '@/lib/dateUtils'
+import { groupEventsByDate, getDateGroupColorClasses } from '@/lib/eventGrouping'
 import {
   BookOpen,
   Video,
@@ -866,47 +867,70 @@ export default function PublicPage() {
               )}
             </div>
 
-            {/* Events List */}
+            {/* Events List Grouped by Date */}
             <div className="space-y-4">
             {events.length === 0 ? (
               <div className="text-center text-gray-600 py-12">
                 {t('noEvents')}
               </div>
             ) : (
-              events.map((event) => (
-                <button
-                  key={event.id}
-                  onClick={() => handleEventClick(event)}
-                  className="w-full block bg-white rounded-xl shadow-md hover:shadow-lg transition-all border-2 border-transparent hover:border-blue-500 group"
-                >
-                  <div className="p-5">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <h3 className={`text-blue-900 group-hover:text-blue-700 mb-2 transition-colors font-semibold ${isRTL ? 'text-right' : 'text-left'}`} style={{ fontSize: '18px' }}>
-                          {getEventTitle(event)}
+              groupEventsByDate(events).map((dateGroup, groupIndex) => {
+                const colors = getDateGroupColorClasses(dateGroup.borderColor)
+                
+                return (
+                  <div
+                    key={dateGroup.date}
+                    className={`rounded-xl shadow-md border-l-4 ${colors.border} bg-white overflow-hidden`}
+                  >
+                    {/* Date Header */}
+                    <div className={`${colors.bg} px-6 py-4 border-b-2 ${colors.border}`}>
+                      <div className={`flex items-baseline gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <h3 className={`${colors.text} font-bold text-xl`}>
+                          {dateGroup.dayOfWeek}
                         </h3>
-                        <div className="flex items-center gap-4 text-gray-500" style={{ fontSize: '13px' }}>
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>{formatDate(event.date)}</span>
-                          </div>
-                          {event.start_time && event.end_time && (
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              <span>{event.start_time} - {event.end_time}</span>
-                            </div>
-                          )}
-                        </div>
+                        <p className={`${colors.text} text-sm font-semibold opacity-90`}>
+                          📅 {new Intl.DateTimeFormat(language === 'he' ? 'he-IL' : 'en-US', {
+                            timeZone: 'Asia/Jerusalem',
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          }).format(new Date(dateGroup.date + 'T00:00:00Z'))}
+                        </p>
                       </div>
-                      {isRTL ? (
-                        <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0 mt-1" />
-                      ) : (
-                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
-                      )}
+                    </div>
+                    
+                    {/* Events for this date */}
+                    <div className="divide-y divide-gray-100">
+                      {dateGroup.events.map((event, idx) => (
+                        <button
+                          key={event.id}
+                          onClick={() => handleEventClick(event)}
+                          className={`w-full text-left px-6 py-4 hover:bg-gray-50 transition-colors group ${isRTL ? 'text-right' : 'text-left'}`}
+                        >
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                              <h4 className={`${colors.text} group-hover:opacity-70 transition-opacity font-semibold mb-1`} style={{ fontSize: '16px' }}>
+                                {getEventTitle(event)}
+                              </h4>
+                              {event.start_time && event.end_time && (
+                                <div className={`flex items-center gap-2 text-gray-600 ${isRTL ? 'flex-row-reverse' : ''}`} style={{ fontSize: '14px' }}>
+                                  <Clock className="w-4 h-4 flex-shrink-0" />
+                                  <span>{event.start_time} - {event.end_time}</span>
+                                </div>
+                              )}
+                            </div>
+                            {isRTL ? (
+                              <ChevronLeft className={`w-5 h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:translate-x-[-4px] transition-all flex-shrink-0`} />
+                            ) : (
+                              <ChevronRight className={`w-5 h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all flex-shrink-0`} />
+                            )}
+                          </div>
+                        </button>
+                      ))}
                     </div>
                   </div>
-                </button>
-              ))
+                )
+              })
             )}
 
             {/* Load More Button */}
