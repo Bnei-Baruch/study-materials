@@ -22004,19 +22004,19 @@ var StudyMaterialsWidgetBundle = (() => {
 
   // lib/eventGrouping.ts
   var DAY_COLORS = [
-    { border: "border-r-4 border-r-rose-400", borderLTR: "border-l-4 border-l-rose-400", bg: "bg-rose-50" },
+    { border: "border-r-4 border-rose-400", borderLTR: "border-l-4 border-rose-400", bg: "bg-rose-50" },
     // Sunday
-    { border: "border-r-4 border-r-amber-400", borderLTR: "border-l-4 border-l-amber-400", bg: "bg-amber-50" },
+    { border: "border-r-4 border-amber-400", borderLTR: "border-l-4 border-amber-400", bg: "bg-amber-50" },
     // Monday
-    { border: "border-r-4 border-r-emerald-400", borderLTR: "border-l-4 border-l-emerald-400", bg: "bg-emerald-50" },
+    { border: "border-r-4 border-emerald-400", borderLTR: "border-l-4 border-emerald-400", bg: "bg-emerald-50" },
     // Tuesday
-    { border: "border-r-4 border-r-blue-400", borderLTR: "border-l-4 border-l-blue-400", bg: "bg-blue-50" },
+    { border: "border-r-4 border-blue-400", borderLTR: "border-l-4 border-blue-400", bg: "bg-blue-50" },
     // Wednesday
-    { border: "border-r-4 border-r-purple-400", borderLTR: "border-l-4 border-l-purple-400", bg: "bg-purple-50" },
+    { border: "border-r-4 border-purple-400", borderLTR: "border-l-4 border-purple-400", bg: "bg-purple-50" },
     // Thursday
-    { border: "border-r-4 border-r-pink-400", borderLTR: "border-l-4 border-l-pink-400", bg: "bg-pink-50" },
+    { border: "border-r-4 border-pink-400", borderLTR: "border-l-4 border-pink-400", bg: "bg-pink-50" },
     // Friday
-    { border: "border-r-4 border-r-indigo-400", borderLTR: "border-l-4 border-l-indigo-400", bg: "bg-indigo-50" }
+    { border: "border-r-4 border-indigo-400", borderLTR: "border-l-4 border-indigo-400", bg: "bg-indigo-50" }
     // Saturday
   ];
   var groupEventsByDate = (events, locale = "en-US") => {
