@@ -749,6 +749,14 @@ video {
   align-items: center;
 }
 
+[data-studymaterials-widget] :is(.justify-start) {
+  justify-content: flex-start;
+}
+
+[data-studymaterials-widget] :is(.justify-end) {
+  justify-content: flex-end;
+}
+
 [data-studymaterials-widget] :is(.justify-center) {
   justify-content: center;
 }
@@ -860,6 +868,10 @@ video {
 
 [data-studymaterials-widget] :is(.border-b-2) {
   border-bottom-width: 2px;
+}
+
+[data-studymaterials-widget] :is(.border-l-4) {
+  border-left-width: 4px;
 }
 
 [data-studymaterials-widget] :is(.border-l-\[5px\]) {

@@ -220,7 +220,7 @@ export function EmbeddedEventsList({
             return (
               <div
                 key={dateGroup.date}
-                className={`rounded-lg shadow-md ${colors.border} border-r-4 bg-white overflow-hidden`}
+                className={`rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? `${colors.border} border-r-4` : `${colors.border.replace('border-r-', 'border-l-')} border-l-4`}`}
               >
                 {/* Date Header */}
                 <div className="p-3 sm:p-4 border-b border-gray-200">
@@ -238,14 +238,14 @@ export function EmbeddedEventsList({
                     <button
                       key={event.id}
                       onClick={() => onSelectEvent(event.id)}
-                      className={`w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group ${isRTL ? 'text-right' : 'text-left'} flex items-center justify-between`}
+                      className={`w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
                     >
                       <div className="flex-1 min-w-0">
                         <h5 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words">
                           {event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'}
                         </h5>
                         {event.start_time && event.end_time && (
-                          <div className="flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]">
+                          <div className={`flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] ${isRTL ? 'justify-end' : 'justify-start'}`}>
                             <Clock className="w-3 h-3 flex-shrink-0" />
                             <span className="truncate">{event.start_time} - {event.end_time}</span>
                           </div>
