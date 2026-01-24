@@ -22004,19 +22004,19 @@ var StudyMaterialsWidgetBundle = (() => {
 
   // lib/eventGrouping.ts
   var DAY_COLORS = [
-    { border: "border-r-4 border-rose-400", borderLTR: "border-l-4 border-rose-400", bg: "bg-rose-50" },
+    { border: "border-rose-500", borderLTR: "border-rose-500", bg: "bg-rose-50" },
     // Sunday
-    { border: "border-r-4 border-amber-400", borderLTR: "border-l-4 border-amber-400", bg: "bg-amber-50" },
+    { border: "border-amber-500", borderLTR: "border-amber-500", bg: "bg-amber-50" },
     // Monday
-    { border: "border-r-4 border-emerald-400", borderLTR: "border-l-4 border-emerald-400", bg: "bg-emerald-50" },
+    { border: "border-emerald-500", borderLTR: "border-emerald-500", bg: "bg-emerald-50" },
     // Tuesday
-    { border: "border-r-4 border-blue-400", borderLTR: "border-l-4 border-blue-400", bg: "bg-blue-50" },
+    { border: "border-blue-500", borderLTR: "border-blue-500", bg: "bg-blue-50" },
     // Wednesday
-    { border: "border-r-4 border-purple-400", borderLTR: "border-l-4 border-purple-400", bg: "bg-purple-50" },
+    { border: "border-purple-500", borderLTR: "border-purple-500", bg: "bg-purple-50" },
     // Thursday
-    { border: "border-r-4 border-pink-400", borderLTR: "border-l-4 border-pink-400", bg: "bg-pink-50" },
+    { border: "border-pink-500", borderLTR: "border-pink-500", bg: "bg-pink-50" },
     // Friday
-    { border: "border-r-4 border-indigo-400", borderLTR: "border-l-4 border-indigo-400", bg: "bg-indigo-50" }
+    { border: "border-indigo-500", borderLTR: "border-indigo-500", bg: "bg-indigo-50" }
     // Saturday
   ];
   var groupEventsByDate = (events, locale = "en-US") => {
@@ -22206,7 +22206,7 @@ var StudyMaterialsWidgetBundle = (() => {
         return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
           "div",
           {
-            className: `rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? colors.border : colors.borderLTR}`,
+            className: `rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? "border-r-4" : "border-l-4"} ${isRTL ? colors.border : colors.borderLTR}`,
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-3 sm:p-4 border-b border-gray-200", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-2 text-blue-900", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calendar, { className: "w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" }),

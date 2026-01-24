@@ -880,7 +880,7 @@ export default function PublicPage() {
                 return (
                   <div
                     key={dateGroup.date}
-                    className={`rounded-xl shadow-md bg-white overflow-hidden ${isRTL ? colors.border : colors.borderLTR}`}
+                    className={`rounded-xl shadow-md bg-white overflow-hidden ${isRTL ? 'border-r-4' : 'border-l-4'} ${isRTL ? colors.border : colors.borderLTR}`}
                   >
                     {/* Date Header */}
                     <div className="p-4 border-b border-gray-200">
