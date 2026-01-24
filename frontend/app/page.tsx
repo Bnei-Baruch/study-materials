@@ -880,11 +880,11 @@ export default function PublicPage() {
                 return (
                   <div
                     key={dateGroup.date}
-                    className={`rounded-xl shadow-md bg-white overflow-hidden ${isRTL ? colors.borderR : colors.borderL}`}
+                    className={`rounded-xl shadow-md bg-white overflow-hidden ${isRTL ? colors.border : colors.borderLTR}`}
                   >
                     {/* Date Header */}
                     <div className="p-4 border-b border-gray-200">
-                      <div className={`flex items-center gap-2 text-blue-900 ${isRTL ? '' : 'flex-row'}`}>
+                      <div className="flex items-center gap-2 text-blue-900">
                         <Calendar className="w-5 h-5" />
                         <h3 style={{ fontSize: '18px', fontWeight: 'bold' }}>
                           {dateGroup.dayOfWeek}, {dateGroup.displayDate}
@@ -898,23 +898,38 @@ export default function PublicPage() {
                         <button
                           key={event.id}
                           onClick={() => handleEventClick(event)}
-                          className={`w-full p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}
+                          className={`w-full p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
                         >
-                          <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
-                            <h4 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1" style={{ fontSize: '16px' }}>
-                              {getEventTitle(event)}
-                            </h4>
-                            {event.start_time && event.end_time && (
-                              <div className={`flex items-center gap-2 text-gray-600 ${isRTL ? 'flex-row-reverse justify-end' : ''}`} style={{ fontSize: '13px' }}>
-                                <Clock className="w-4 h-4" />
-                                <span>{event.start_time} - {event.end_time}</span>
-                              </div>
-                            )}
-                          </div>
                           {isRTL ? (
-                            <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0" />
+                            <>
+                              <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0" />
+                              <div className="flex-1 text-right">
+                                <h4 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1" style={{ fontSize: '16px' }}>
+                                  {getEventTitle(event)}
+                                </h4>
+                                {event.start_time && event.end_time && (
+                                  <div className="flex items-center gap-2 text-gray-600 justify-end" style={{ fontSize: '13px' }}>
+                                    <span>{event.start_time} - {event.end_time}</span>
+                                    <Clock className="w-4 h-4" />
+                                  </div>
+                                )}
+                              </div>
+                            </>
                           ) : (
-                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                            <>
+                              <div className="flex-1 text-left">
+                                <h4 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1" style={{ fontSize: '16px' }}>
+                                  {getEventTitle(event)}
+                                </h4>
+                                {event.start_time && event.end_time && (
+                                  <div className="flex items-center gap-2 text-gray-600" style={{ fontSize: '13px' }}>
+                                    <Clock className="w-4 h-4" />
+                                    <span>{event.start_time} - {event.end_time}</span>
+                                  </div>
+                                )}
+                              </div>
+                              <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" />
+                            </>
                           )}
                         </button>
                       ))}

@@ -220,7 +220,7 @@ export function EmbeddedEventsList({
             return (
               <div
                 key={dateGroup.date}
-                className={`rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? colors.borderR : colors.borderL}`}
+                className={`rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? colors.border : colors.borderLTR}`}
               >
                 {/* Date Header */}
                 <div className="p-3 sm:p-4 border-b border-gray-200">
@@ -238,23 +238,38 @@ export function EmbeddedEventsList({
                     <button
                       key={event.id}
                       onClick={() => onSelectEvent(event.id)}
-                      className={`w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}
+                      className={`w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
                     >
-                      <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : 'text-left'}`}>
-                        <h5 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words">
-                          {event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'}
-                        </h5>
-                        {event.start_time && event.end_time && (
-                          <div className={`flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
-                            <Clock className="w-3 h-3 flex-shrink-0" />
-                            <span className="truncate">{event.start_time} - {event.end_time}</span>
-                          </div>
-                        )}
-                      </div>
                       {isRTL ? (
-                        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" />
+                        <>
+                          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" />
+                          <div className="flex-1 min-w-0 text-right">
+                            <h5 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words">
+                              {event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'}
+                            </h5>
+                            {event.start_time && event.end_time && (
+                              <div className="flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] justify-end">
+                                <span className="truncate">{event.start_time} - {event.end_time}</span>
+                                <Clock className="w-3 h-3 flex-shrink-0" />
+                              </div>
+                            )}
+                          </div>
+                        </>
                       ) : (
-                        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                        <>
+                          <div className="flex-1 min-w-0 text-left">
+                            <h5 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words">
+                              {event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'}
+                            </h5>
+                            {event.start_time && event.end_time && (
+                              <div className="flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]">
+                                <Clock className="w-3 h-3 flex-shrink-0" />
+                                <span className="truncate">{event.start_time} - {event.end_time}</span>
+                              </div>
+                            )}
+                          </div>
+                          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" />
+                        </>
                       )}
                     </button>
                   ))}

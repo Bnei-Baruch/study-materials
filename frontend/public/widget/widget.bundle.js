@@ -21922,30 +21922,26 @@ var StudyMaterialsWidgetBundle = (() => {
   var __iconNode5 = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
   var ChevronLeft = createLucideIcon("chevron-left", __iconNode5);
 
-  // node_modules/lucide-react/dist/esm/icons/chevron-right.js
-  var __iconNode6 = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-  var ChevronRight = createLucideIcon("chevron-right", __iconNode6);
-
   // node_modules/lucide-react/dist/esm/icons/chevron-up.js
-  var __iconNode7 = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
-  var ChevronUp = createLucideIcon("chevron-up", __iconNode7);
+  var __iconNode6 = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
+  var ChevronUp = createLucideIcon("chevron-up", __iconNode6);
 
   // node_modules/lucide-react/dist/esm/icons/clock.js
-  var __iconNode8 = [
+  var __iconNode7 = [
     ["path", { d: "M12 6v6l4 2", key: "mmk7yg" }],
     ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]
   ];
-  var Clock = createLucideIcon("clock", __iconNode8);
+  var Clock = createLucideIcon("clock", __iconNode7);
 
   // node_modules/lucide-react/dist/esm/icons/copy.js
-  var __iconNode9 = [
+  var __iconNode8 = [
     ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
     ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
   ];
-  var Copy = createLucideIcon("copy", __iconNode9);
+  var Copy = createLucideIcon("copy", __iconNode8);
 
   // node_modules/lucide-react/dist/esm/icons/file-text.js
-  var __iconNode10 = [
+  var __iconNode9 = [
     [
       "path",
       {
@@ -21958,10 +21954,10 @@ var StudyMaterialsWidgetBundle = (() => {
     ["path", { d: "M16 13H8", key: "t4e002" }],
     ["path", { d: "M16 17H8", key: "z1uh3a" }]
   ];
-  var FileText = createLucideIcon("file-text", __iconNode10);
+  var FileText = createLucideIcon("file-text", __iconNode9);
 
   // node_modules/lucide-react/dist/esm/icons/headphones.js
-  var __iconNode11 = [
+  var __iconNode10 = [
     [
       "path",
       {
@@ -21970,10 +21966,10 @@ var StudyMaterialsWidgetBundle = (() => {
       }
     ]
   ];
-  var Headphones = createLucideIcon("headphones", __iconNode11);
+  var Headphones = createLucideIcon("headphones", __iconNode10);
 
   // node_modules/lucide-react/dist/esm/icons/list.js
-  var __iconNode12 = [
+  var __iconNode11 = [
     ["path", { d: "M3 5h.01", key: "18ugdj" }],
     ["path", { d: "M3 12h.01", key: "nlz23k" }],
     ["path", { d: "M3 19h.01", key: "noohij" }],
@@ -21981,20 +21977,20 @@ var StudyMaterialsWidgetBundle = (() => {
     ["path", { d: "M8 12h13", key: "1za7za" }],
     ["path", { d: "M8 19h13", key: "m83p4d" }]
   ];
-  var List = createLucideIcon("list", __iconNode12);
+  var List = createLucideIcon("list", __iconNode11);
 
   // node_modules/lucide-react/dist/esm/icons/share-2.js
-  var __iconNode13 = [
+  var __iconNode12 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode13);
+  var Share2 = createLucideIcon("share-2", __iconNode12);
 
   // node_modules/lucide-react/dist/esm/icons/video.js
-  var __iconNode14 = [
+  var __iconNode13 = [
     [
       "path",
       {
@@ -22004,23 +22000,23 @@ var StudyMaterialsWidgetBundle = (() => {
     ],
     ["rect", { x: "2", y: "6", width: "14", height: "12", rx: "2", key: "158x01" }]
   ];
-  var Video = createLucideIcon("video", __iconNode14);
+  var Video = createLucideIcon("video", __iconNode13);
 
   // lib/eventGrouping.ts
   var DAY_COLORS = [
-    { borderR: "border-r-4 border-r-rose-400", borderL: "border-l-4 border-l-rose-400", bg: "bg-rose-50" },
+    { border: "border-r-4 border-r-rose-400", borderLTR: "border-l-4 border-l-rose-400", bg: "bg-rose-50" },
     // Sunday
-    { borderR: "border-r-4 border-r-amber-400", borderL: "border-l-4 border-l-amber-400", bg: "bg-amber-50" },
+    { border: "border-r-4 border-r-amber-400", borderLTR: "border-l-4 border-l-amber-400", bg: "bg-amber-50" },
     // Monday
-    { borderR: "border-r-4 border-r-emerald-400", borderL: "border-l-4 border-l-emerald-400", bg: "bg-emerald-50" },
+    { border: "border-r-4 border-r-emerald-400", borderLTR: "border-l-4 border-l-emerald-400", bg: "bg-emerald-50" },
     // Tuesday
-    { borderR: "border-r-4 border-r-blue-400", borderL: "border-l-4 border-l-blue-400", bg: "bg-blue-50" },
+    { border: "border-r-4 border-r-blue-400", borderLTR: "border-l-4 border-l-blue-400", bg: "bg-blue-50" },
     // Wednesday
-    { borderR: "border-r-4 border-r-purple-400", borderL: "border-l-4 border-l-purple-400", bg: "bg-purple-50" },
+    { border: "border-r-4 border-r-purple-400", borderLTR: "border-l-4 border-l-purple-400", bg: "bg-purple-50" },
     // Thursday
-    { borderR: "border-r-4 border-r-pink-400", borderL: "border-l-4 border-l-pink-400", bg: "bg-pink-50" },
+    { border: "border-r-4 border-r-pink-400", borderLTR: "border-l-4 border-l-pink-400", bg: "bg-pink-50" },
     // Friday
-    { borderR: "border-r-4 border-r-indigo-400", borderL: "border-l-4 border-l-indigo-400", bg: "bg-indigo-50" }
+    { border: "border-r-4 border-r-indigo-400", borderLTR: "border-l-4 border-l-indigo-400", bg: "bg-indigo-50" }
     // Saturday
   ];
   var groupEventsByDate = (events, locale = "en-US") => {
@@ -22210,7 +22206,7 @@ var StudyMaterialsWidgetBundle = (() => {
         return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
           "div",
           {
-            className: `rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? colors.borderR : colors.borderL}`,
+            className: `rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? colors.border : colors.borderLTR}`,
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-3 sm:p-4 border-b border-gray-200", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-2 text-blue-900", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calendar, { className: "w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" }),
@@ -22221,16 +22217,29 @@ var StudyMaterialsWidgetBundle = (() => {
                 ] })
               ] }) }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "divide-y divide-gray-200", children: dateGroup.events.map((event) => {
-                var _a, _b, _c;
-                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+                var _a, _b, _c, _d, _e, _f;
+                return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                   "button",
                   {
                     onClick: () => onSelectEvent(event.id),
-                    className: `w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? "flex-row-reverse" : ""}`,
-                    children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex-1 min-w-0 ${isRTL ? "text-right" : "text-left"}`, children: [
+                    className: `w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? "text-right" : "text-left"}`,
+                    children: isRTL ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex-1 min-w-0 text-right", children: [
                         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: "text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words", children: ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson" }),
-                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] ${isRTL ? "flex-row-reverse justify-end" : ""}`, children: [
+                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] justify-end", children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "truncate", children: [
+                            event.start_time,
+                            " - ",
+                            event.end_time
+                          ] }),
+                          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3 h-3 flex-shrink-0" })
+                        ] })
+                      ] })
+                    ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex-1 min-w-0 text-left", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: "text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words", children: ((_d = event.titles) == null ? void 0 : _d[language]) || ((_e = event.titles) == null ? void 0 : _e["he"]) || ((_f = event.titles) == null ? void 0 : _f["en"]) || "Lesson" }),
+                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]", children: [
                           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3 h-3 flex-shrink-0" }),
                           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "truncate", children: [
                             event.start_time,
@@ -22239,8 +22248,8 @@ var StudyMaterialsWidgetBundle = (() => {
                           ] })
                         ] })
                       ] }),
-                      isRTL ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronRight, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0" })
-                    ]
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" })
+                    ] })
                   },
                   event.id
                 );
@@ -23085,14 +23094,6 @@ lucide-react/dist/esm/icons/chevron-down.js:
    *)
 
 lucide-react/dist/esm/icons/chevron-left.js:
-  (**
-   * @license lucide-react v0.562.0 - ISC
-   *
-   * This source code is licensed under the ISC license.
-   * See the LICENSE file in the root directory of this source tree.
-   *)
-
-lucide-react/dist/esm/icons/chevron-right.js:
   (**
    * @license lucide-react v0.562.0 - ISC
    *

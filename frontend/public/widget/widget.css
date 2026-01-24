@@ -733,12 +733,13 @@ video {
   flex-shrink: 0;
 }
 
-[data-studymaterials-widget] :is(.cursor-pointer) {
-  cursor: pointer;
+[data-studymaterials-widget] :is(.rotate-180) {
+  --tw-rotate: 180deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-[data-studymaterials-widget] :is(.flex-row-reverse) {
-  flex-direction: row-reverse;
+[data-studymaterials-widget] :is(.cursor-pointer) {
+  cursor: pointer;
 }
 
 [data-studymaterials-widget] :is(.flex-col) {
