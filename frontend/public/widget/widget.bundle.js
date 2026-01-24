@@ -21901,42 +21901,51 @@ var StudyMaterialsWidgetBundle = (() => {
   ];
   var BookOpen = createLucideIcon("book-open", __iconNode);
 
+  // node_modules/lucide-react/dist/esm/icons/calendar.js
+  var __iconNode2 = [
+    ["path", { d: "M8 2v4", key: "1cmpym" }],
+    ["path", { d: "M16 2v4", key: "4m81vk" }],
+    ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
+    ["path", { d: "M3 10h18", key: "8toen8" }]
+  ];
+  var Calendar = createLucideIcon("calendar", __iconNode2);
+
   // node_modules/lucide-react/dist/esm/icons/check.js
-  var __iconNode2 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-  var Check = createLucideIcon("check", __iconNode2);
+  var __iconNode3 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+  var Check = createLucideIcon("check", __iconNode3);
 
   // node_modules/lucide-react/dist/esm/icons/chevron-down.js
-  var __iconNode3 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-  var ChevronDown = createLucideIcon("chevron-down", __iconNode3);
+  var __iconNode4 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+  var ChevronDown = createLucideIcon("chevron-down", __iconNode4);
 
   // node_modules/lucide-react/dist/esm/icons/chevron-left.js
-  var __iconNode4 = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
-  var ChevronLeft = createLucideIcon("chevron-left", __iconNode4);
+  var __iconNode5 = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
+  var ChevronLeft = createLucideIcon("chevron-left", __iconNode5);
 
   // node_modules/lucide-react/dist/esm/icons/chevron-right.js
-  var __iconNode5 = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-  var ChevronRight = createLucideIcon("chevron-right", __iconNode5);
+  var __iconNode6 = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+  var ChevronRight = createLucideIcon("chevron-right", __iconNode6);
 
   // node_modules/lucide-react/dist/esm/icons/chevron-up.js
-  var __iconNode6 = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
-  var ChevronUp = createLucideIcon("chevron-up", __iconNode6);
+  var __iconNode7 = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
+  var ChevronUp = createLucideIcon("chevron-up", __iconNode7);
 
   // node_modules/lucide-react/dist/esm/icons/clock.js
-  var __iconNode7 = [
+  var __iconNode8 = [
     ["path", { d: "M12 6v6l4 2", key: "mmk7yg" }],
     ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]
   ];
-  var Clock = createLucideIcon("clock", __iconNode7);
+  var Clock = createLucideIcon("clock", __iconNode8);
 
   // node_modules/lucide-react/dist/esm/icons/copy.js
-  var __iconNode8 = [
+  var __iconNode9 = [
     ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
     ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
   ];
-  var Copy = createLucideIcon("copy", __iconNode8);
+  var Copy = createLucideIcon("copy", __iconNode9);
 
   // node_modules/lucide-react/dist/esm/icons/file-text.js
-  var __iconNode9 = [
+  var __iconNode10 = [
     [
       "path",
       {
@@ -21949,10 +21958,10 @@ var StudyMaterialsWidgetBundle = (() => {
     ["path", { d: "M16 13H8", key: "t4e002" }],
     ["path", { d: "M16 17H8", key: "z1uh3a" }]
   ];
-  var FileText = createLucideIcon("file-text", __iconNode9);
+  var FileText = createLucideIcon("file-text", __iconNode10);
 
   // node_modules/lucide-react/dist/esm/icons/headphones.js
-  var __iconNode10 = [
+  var __iconNode11 = [
     [
       "path",
       {
@@ -21961,10 +21970,10 @@ var StudyMaterialsWidgetBundle = (() => {
       }
     ]
   ];
-  var Headphones = createLucideIcon("headphones", __iconNode10);
+  var Headphones = createLucideIcon("headphones", __iconNode11);
 
   // node_modules/lucide-react/dist/esm/icons/list.js
-  var __iconNode11 = [
+  var __iconNode12 = [
     ["path", { d: "M3 5h.01", key: "18ugdj" }],
     ["path", { d: "M3 12h.01", key: "nlz23k" }],
     ["path", { d: "M3 19h.01", key: "noohij" }],
@@ -21972,20 +21981,20 @@ var StudyMaterialsWidgetBundle = (() => {
     ["path", { d: "M8 12h13", key: "1za7za" }],
     ["path", { d: "M8 19h13", key: "m83p4d" }]
   ];
-  var List = createLucideIcon("list", __iconNode11);
+  var List = createLucideIcon("list", __iconNode12);
 
   // node_modules/lucide-react/dist/esm/icons/share-2.js
-  var __iconNode12 = [
+  var __iconNode13 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode12);
+  var Share2 = createLucideIcon("share-2", __iconNode13);
 
   // node_modules/lucide-react/dist/esm/icons/video.js
-  var __iconNode13 = [
+  var __iconNode14 = [
     [
       "path",
       {
@@ -21995,23 +22004,23 @@ var StudyMaterialsWidgetBundle = (() => {
     ],
     ["rect", { x: "2", y: "6", width: "14", height: "12", rx: "2", key: "158x01" }]
   ];
-  var Video = createLucideIcon("video", __iconNode13);
+  var Video = createLucideIcon("video", __iconNode14);
 
   // lib/eventGrouping.ts
   var DAY_COLORS = [
-    { border: "border-r-rose-400", bg: "bg-rose-50", text: "text-rose-900", emoji: "\u2600\uFE0F" },
+    { border: "border-r-rose-400", bg: "bg-rose-50" },
     // Sunday
-    { border: "border-r-amber-400", bg: "bg-amber-50", text: "text-amber-900", emoji: "\u{1F319}" },
+    { border: "border-r-amber-400", bg: "bg-amber-50" },
     // Monday
-    { border: "border-r-emerald-400", bg: "bg-emerald-50", text: "text-emerald-900", emoji: "\u2B50" },
+    { border: "border-r-emerald-400", bg: "bg-emerald-50" },
     // Tuesday
-    { border: "border-r-blue-400", bg: "bg-blue-50", text: "text-blue-900", emoji: "\u{1F31F}" },
+    { border: "border-r-blue-400", bg: "bg-blue-50" },
     // Wednesday
-    { border: "border-r-purple-400", bg: "bg-purple-50", text: "text-purple-900", emoji: "\u{1F4AB}" },
+    { border: "border-r-purple-400", bg: "bg-purple-50" },
     // Thursday
-    { border: "border-r-pink-400", bg: "bg-pink-50", text: "text-pink-900", emoji: "\u{1F56F}\uFE0F" },
+    { border: "border-r-pink-400", bg: "bg-pink-50" },
     // Friday
-    { border: "border-r-indigo-400", bg: "bg-indigo-50", text: "text-indigo-900", emoji: "\u2728" }
+    { border: "border-r-indigo-400", bg: "bg-indigo-50" }
     // Saturday
   ];
   var groupEventsByDate = (events, locale = "en-US") => {
@@ -22203,24 +22212,25 @@ var StudyMaterialsWidgetBundle = (() => {
           {
             className: `rounded-lg shadow-md ${colors.border} border-r-4 bg-white overflow-hidden`,
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `${colors.bg} px-3 sm:px-4 py-2.5 sm:py-3 border-b border-gray-200`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-xl", children: colors.emoji }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-w-0", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", { className: `${colors.text} font-bold text-[14px] sm:text-[15px] leading-tight`, children: dateGroup.dayOfWeek }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: `${colors.text} text-[11px] sm:text-[12px] opacity-90 font-medium`, children: dateGroup.displayDate })
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-3 sm:p-4 border-b border-gray-200", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-2 text-blue-900", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calendar, { className: "w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h4", { className: "text-[14px] sm:text-[16px] font-bold truncate", children: [
+                  dateGroup.dayOfWeek,
+                  ", ",
+                  dateGroup.displayDate
                 ] })
               ] }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "divide-y divide-gray-100", children: dateGroup.events.map((event) => {
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "divide-y divide-gray-200", children: dateGroup.events.map((event) => {
                 var _a, _b, _c;
-                return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
                   "button",
                   {
                     onClick: () => onSelectEvent(event.id),
-                    className: `w-full text-left px-3 sm:px-4 py-3 hover:${colors.bg} transition-colors group`,
-                    children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center justify-between gap-2", children: [
+                    className: `w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group ${isRTL ? "text-right" : "text-left"} flex items-center justify-between`,
+                    children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex-1 min-w-0", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: `${colors.text} group-hover:opacity-70 transition-opacity font-semibold text-[14px] sm:text-[15px] break-words mb-0.5`, children: ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson" }),
-                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]`, children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: "text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words", children: ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson" }),
+                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]", children: [
                           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3 h-3 flex-shrink-0" }),
                           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "truncate", children: [
                             event.start_time,
@@ -22229,8 +22239,8 @@ var StudyMaterialsWidgetBundle = (() => {
                           ] })
                         ] })
                       ] }),
-                      isRTL ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: `w-4 h-4 sm:w-5 sm:h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:-translate-x-1 transition-all flex-shrink-0` }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronRight, { className: `w-4 h-4 sm:w-5 sm:h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all flex-shrink-0` })
-                    ] })
+                      isRTL ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronRight, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0" })
+                    ]
                   },
                   event.id
                 );
@@ -23043,6 +23053,14 @@ lucide-react/dist/esm/createLucideIcon.js:
    *)
 
 lucide-react/dist/esm/icons/book-open.js:
+  (**
+   * @license lucide-react v0.562.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/calendar.js:
   (**
    * @license lucide-react v0.562.0 - ISC
    *

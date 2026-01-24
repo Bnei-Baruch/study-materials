@@ -13,13 +13,13 @@ export interface DateGroup {
 
 // Day of week colors (Sunday through Saturday)
 const DAY_COLORS = [
-  { border: 'border-r-rose-400', bg: 'bg-rose-50', text: 'text-rose-900', emoji: '☀️' },      // Sunday
-  { border: 'border-r-amber-400', bg: 'bg-amber-50', text: 'text-amber-900', emoji: '🌙' },  // Monday
-  { border: 'border-r-emerald-400', bg: 'bg-emerald-50', text: 'text-emerald-900', emoji: '⭐' }, // Tuesday
-  { border: 'border-r-blue-400', bg: 'bg-blue-50', text: 'text-blue-900', emoji: '🌟' },    // Wednesday
-  { border: 'border-r-purple-400', bg: 'bg-purple-50', text: 'text-purple-900', emoji: '💫' }, // Thursday
-  { border: 'border-r-pink-400', bg: 'bg-pink-50', text: 'text-pink-900', emoji: '🕯️' },    // Friday
-  { border: 'border-r-indigo-400', bg: 'bg-indigo-50', text: 'text-indigo-900', emoji: '✨' } // Saturday
+  { border: 'border-r-rose-400', bg: 'bg-rose-50' },      // Sunday
+  { border: 'border-r-amber-400', bg: 'bg-amber-50' },    // Monday
+  { border: 'border-r-emerald-400', bg: 'bg-emerald-50' }, // Tuesday
+  { border: 'border-r-blue-400', bg: 'bg-blue-50' },      // Wednesday
+  { border: 'border-r-purple-400', bg: 'bg-purple-50' },  // Thursday
+  { border: 'border-r-pink-400', bg: 'bg-pink-50' },      // Friday
+  { border: 'border-r-indigo-400', bg: 'bg-indigo-50' }   // Saturday
 ]
 
 /**
@@ -73,11 +73,4 @@ export const groupEventsByDate = (events: any[], locale: string = 'en-US'): Date
  */
 export const getDateGroupColorClasses = (dayIndex: number) => {
   return DAY_COLORS[dayIndex % 7]
-}
-
-/**
- * Get emoji for day of week
- */
-export const getDayEmoji = (dayIndex: number) => {
-  return DAY_COLORS[dayIndex % 7].emoji
 }

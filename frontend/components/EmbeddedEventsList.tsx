@@ -223,46 +223,39 @@ export function EmbeddedEventsList({
                 className={`rounded-lg shadow-md ${colors.border} border-r-4 bg-white overflow-hidden`}
               >
                 {/* Date Header */}
-                <div className={`${colors.bg} px-3 sm:px-4 py-2.5 sm:py-3 border-b border-gray-200`}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">{colors.emoji}</span>
-                    <div className="min-w-0">
-                      <h4 className={`${colors.text} font-bold text-[14px] sm:text-[15px] leading-tight`}>
-                        {dateGroup.dayOfWeek}
-                      </h4>
-                      <p className={`${colors.text} text-[11px] sm:text-[12px] opacity-90 font-medium`}>
-                        {dateGroup.displayDate}
-                      </p>
-                    </div>
+                <div className="p-3 sm:p-4 border-b border-gray-200">
+                  <div className="flex items-center gap-2 text-blue-900">
+                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                    <h4 className="text-[14px] sm:text-[16px] font-bold truncate">
+                      {dateGroup.dayOfWeek}, {dateGroup.displayDate}
+                    </h4>
                   </div>
                 </div>
                 
                 {/* Events for this date */}
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-gray-200">
                   {dateGroup.events.map((event) => (
                     <button
                       key={event.id}
                       onClick={() => onSelectEvent(event.id)}
-                      className={`w-full text-left px-3 sm:px-4 py-3 hover:${colors.bg} transition-colors group`}
+                      className={`w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group ${isRTL ? 'text-right' : 'text-left'} flex items-center justify-between`}
                     >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <h5 className={`${colors.text} group-hover:opacity-70 transition-opacity font-semibold text-[14px] sm:text-[15px] break-words mb-0.5`}>
-                            {event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'}
-                          </h5>
-                          {event.start_time && event.end_time && (
-                            <div className={`flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]`}>
-                              <Clock className="w-3 h-3 flex-shrink-0" />
-                              <span className="truncate">{event.start_time} - {event.end_time}</span>
-                            </div>
-                          )}
-                        </div>
-                        {isRTL ? (
-                          <ChevronLeft className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:-translate-x-1 transition-all flex-shrink-0`} />
-                        ) : (
-                          <ChevronRight className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all flex-shrink-0`} />
+                      <div className="flex-1 min-w-0">
+                        <h5 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words">
+                          {event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'}
+                        </h5>
+                        {event.start_time && event.end_time && (
+                          <div className="flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]">
+                            <Clock className="w-3 h-3 flex-shrink-0" />
+                            <span className="truncate">{event.start_time} - {event.end_time}</span>
+                          </div>
                         )}
                       </div>
+                      {isRTL ? (
+                        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                      )}
                     </button>
                   ))}
                 </div>
