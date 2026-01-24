@@ -506,10 +506,10 @@ export function EmbeddedLessonSidebar({
           )}
           <button
             onClick={shareLesson}
-            className="bg-green-500 text-white rounded-full p-0.5 sm:p-1 hover:bg-green-600 transition-all"
+            className="bg-green-500 text-white rounded-lg p-1.5 sm:p-2 hover:bg-green-600 transition-all"
             title={t.shareLesson}
           >
-            {sharedLesson ? <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> : <Share2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />}
+            {sharedLesson ? <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> : <Share2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
           </button>
         </div>
       </div>
