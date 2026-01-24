@@ -737,6 +737,10 @@ video {
   cursor: pointer;
 }
 
+[data-studymaterials-widget] :is(.flex-row-reverse) {
+  flex-direction: row-reverse;
+}
+
 [data-studymaterials-widget] :is(.flex-col) {
   flex-direction: column;
 }
@@ -747,10 +751,6 @@ video {
 
 [data-studymaterials-widget] :is(.items-center) {
   align-items: center;
-}
-
-[data-studymaterials-widget] :is(.justify-start) {
-  justify-content: flex-start;
 }
 
 [data-studymaterials-widget] :is(.justify-end) {
@@ -870,16 +870,8 @@ video {
   border-bottom-width: 2px;
 }
 
-[data-studymaterials-widget] :is(.border-l-4) {
-  border-left-width: 4px;
-}
-
 [data-studymaterials-widget] :is(.border-l-\[5px\]) {
   border-left-width: 5px;
-}
-
-[data-studymaterials-widget] :is(.border-r-4) {
-  border-right-width: 4px;
 }
 
 [data-studymaterials-widget] :is(.border-r-\[5px\]) {

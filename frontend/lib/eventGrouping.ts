@@ -13,13 +13,13 @@ export interface DateGroup {
 
 // Day of week colors (Sunday through Saturday)
 const DAY_COLORS = [
-  { border: 'border-r-rose-400', bg: 'bg-rose-50' },      // Sunday
-  { border: 'border-r-amber-400', bg: 'bg-amber-50' },    // Monday
-  { border: 'border-r-emerald-400', bg: 'bg-emerald-50' }, // Tuesday
-  { border: 'border-r-blue-400', bg: 'bg-blue-50' },      // Wednesday
-  { border: 'border-r-purple-400', bg: 'bg-purple-50' },  // Thursday
-  { border: 'border-r-pink-400', bg: 'bg-pink-50' },      // Friday
-  { border: 'border-r-indigo-400', bg: 'bg-indigo-50' }   // Saturday
+  { borderR: 'border-r-4 border-r-rose-400', borderL: 'border-l-4 border-l-rose-400', bg: 'bg-rose-50' },      // Sunday
+  { borderR: 'border-r-4 border-r-amber-400', borderL: 'border-l-4 border-l-amber-400', bg: 'bg-amber-50' },    // Monday
+  { borderR: 'border-r-4 border-r-emerald-400', borderL: 'border-l-4 border-l-emerald-400', bg: 'bg-emerald-50' }, // Tuesday
+  { borderR: 'border-r-4 border-r-blue-400', borderL: 'border-l-4 border-l-blue-400', bg: 'bg-blue-50' },      // Wednesday
+  { borderR: 'border-r-4 border-r-purple-400', borderL: 'border-l-4 border-l-purple-400', bg: 'bg-purple-50' },  // Thursday
+  { borderR: 'border-r-4 border-r-pink-400', borderL: 'border-l-4 border-l-pink-400', bg: 'bg-pink-50' },      // Friday
+  { borderR: 'border-r-4 border-r-indigo-400', borderL: 'border-l-4 border-l-indigo-400', bg: 'bg-indigo-50' }   // Saturday
 ]
 
 /**

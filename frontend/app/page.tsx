@@ -880,7 +880,7 @@ export default function PublicPage() {
                 return (
                   <div
                     key={dateGroup.date}
-                    className={`rounded-xl shadow-md bg-white overflow-hidden ${isRTL ? `${colors.border} border-r-4` : `${colors.border.replace('border-r-', 'border-l-')} border-l-4`}`}
+                    className={`rounded-xl shadow-md bg-white overflow-hidden ${isRTL ? colors.borderR : colors.borderL}`}
                   >
                     {/* Date Header */}
                     <div className="p-4 border-b border-gray-200">
@@ -898,14 +898,14 @@ export default function PublicPage() {
                         <button
                           key={event.id}
                           onClick={() => handleEventClick(event)}
-                          className={`w-full p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
+                          className={`w-full p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}
                         >
-                          <div className="flex-1">
+                          <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
                             <h4 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1" style={{ fontSize: '16px' }}>
                               {getEventTitle(event)}
                             </h4>
                             {event.start_time && event.end_time && (
-                              <div className={`flex items-center gap-2 text-gray-600 ${isRTL ? 'justify-end' : 'justify-start'}`} style={{ fontSize: '13px' }}>
+                              <div className={`flex items-center gap-2 text-gray-600 ${isRTL ? 'flex-row-reverse justify-end' : ''}`} style={{ fontSize: '13px' }}>
                                 <Clock className="w-4 h-4" />
                                 <span>{event.start_time} - {event.end_time}</span>
                               </div>

@@ -22008,19 +22008,19 @@ var StudyMaterialsWidgetBundle = (() => {
 
   // lib/eventGrouping.ts
   var DAY_COLORS = [
-    { border: "border-r-rose-400", bg: "bg-rose-50" },
+    { borderR: "border-r-4 border-r-rose-400", borderL: "border-l-4 border-l-rose-400", bg: "bg-rose-50" },
     // Sunday
-    { border: "border-r-amber-400", bg: "bg-amber-50" },
+    { borderR: "border-r-4 border-r-amber-400", borderL: "border-l-4 border-l-amber-400", bg: "bg-amber-50" },
     // Monday
-    { border: "border-r-emerald-400", bg: "bg-emerald-50" },
+    { borderR: "border-r-4 border-r-emerald-400", borderL: "border-l-4 border-l-emerald-400", bg: "bg-emerald-50" },
     // Tuesday
-    { border: "border-r-blue-400", bg: "bg-blue-50" },
+    { borderR: "border-r-4 border-r-blue-400", borderL: "border-l-4 border-l-blue-400", bg: "bg-blue-50" },
     // Wednesday
-    { border: "border-r-purple-400", bg: "bg-purple-50" },
+    { borderR: "border-r-4 border-r-purple-400", borderL: "border-l-4 border-l-purple-400", bg: "bg-purple-50" },
     // Thursday
-    { border: "border-r-pink-400", bg: "bg-pink-50" },
+    { borderR: "border-r-4 border-r-pink-400", borderL: "border-l-4 border-l-pink-400", bg: "bg-pink-50" },
     // Friday
-    { border: "border-r-indigo-400", bg: "bg-indigo-50" }
+    { borderR: "border-r-4 border-r-indigo-400", borderL: "border-l-4 border-l-indigo-400", bg: "bg-indigo-50" }
     // Saturday
   ];
   var groupEventsByDate = (events, locale = "en-US") => {
@@ -22210,7 +22210,7 @@ var StudyMaterialsWidgetBundle = (() => {
         return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
           "div",
           {
-            className: `rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? `${colors.border} border-r-4` : `${colors.border.replace("border-r-", "border-l-")} border-l-4`}`,
+            className: `rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? colors.borderR : colors.borderL}`,
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-3 sm:p-4 border-b border-gray-200", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-2 text-blue-900", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calendar, { className: "w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" }),
@@ -22226,11 +22226,11 @@ var StudyMaterialsWidgetBundle = (() => {
                   "button",
                   {
                     onClick: () => onSelectEvent(event.id),
-                    className: `w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? "text-right" : "text-left"}`,
+                    className: `w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? "flex-row-reverse" : ""}`,
                     children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex-1 min-w-0", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex-1 min-w-0 ${isRTL ? "text-right" : "text-left"}`, children: [
                         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: "text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words", children: ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson" }),
-                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] ${isRTL ? "justify-end" : "justify-start"}`, children: [
+                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] ${isRTL ? "flex-row-reverse justify-end" : ""}`, children: [
                           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3 h-3 flex-shrink-0" }),
                           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "truncate", children: [
                             event.start_time,
