@@ -485,7 +485,7 @@ export function EmbeddedLessonSidebar({
             <span> • {event.start_time} - {event.end_time}</span>
           )}
         </p>
-        <div className={`absolute ${isRTL ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} top-2 sm:top-3 flex gap-0.5 sm:gap-1`}>
+        <div className={`absolute ${isRTL ? 'left-3 sm:left-4' : 'right-3 sm:right-4'} top-3 sm:top-4 flex gap-2 sm:gap-2`}>
           {onBack && (
             <button
               onClick={onBack}
