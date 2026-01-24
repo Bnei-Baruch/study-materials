@@ -33,8 +33,6 @@ interface Translations {
   loading: string
   error: string
   noPartsAvailable: string
-  startPoint: string
-  endPoint: string
 }
 
 // Translation object for all supported languages
@@ -57,8 +55,6 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'טוען...',
     error: 'שגיאה בטעינת הנתונים',
     noPartsAvailable: 'אין חלקים זמינים',
-    startPoint: 'החל מ',
-    endPoint: 'עד',
   },
   en: {
     preparation: 'Lesson Preparation',
@@ -78,8 +74,6 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Loading...',
     error: 'Error loading data',
     noPartsAvailable: 'No parts available',
-    startPoint: 'From',
-    endPoint: 'To',
   },
   ru: {
     preparation: 'Подготовка к уроку',
@@ -99,8 +93,6 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Загрузка...',
     error: 'Ошибка загрузки данных',
     noPartsAvailable: 'Нет доступных частей',
-    startPoint: 'От',
-    endPoint: 'До',
   },
   es: {
     preparation: 'Preparación de la lección',
@@ -120,8 +112,6 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Cargando...',
     error: 'Error al cargar datos',
     noPartsAvailable: 'No hay partes disponibles',
-    startPoint: 'De',
-    endPoint: 'Hasta',
   },
   de: {
     preparation: 'Lektionsvorbereitung',
@@ -141,8 +131,6 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Lädt...',
     error: 'Fehler beim Laden der Daten',
     noPartsAvailable: 'Keine Teile verfügbar',
-    startPoint: 'Von',
-    endPoint: 'Bis',
   },
   it: {
     preparation: 'Preparazione della lezione',
@@ -162,8 +150,6 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Caricamento...',
     error: 'Errore nel caricamento dei dati',
     noPartsAvailable: 'Nessuna parte disponibile',
-    startPoint: 'Da',
-    endPoint: 'A',
   },
   fr: {
     preparation: 'Préparation de la leçon',
@@ -183,8 +169,6 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Chargement...',
     error: 'Erreur de chargement des données',
     noPartsAvailable: 'Aucune partie disponible',
-    startPoint: 'De',
-    endPoint: 'À',
   },
   uk: {
     preparation: 'Підготовка до уроку',
@@ -204,8 +188,6 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Завантаження...',
     error: 'Помилка завантаження даних',
     noPartsAvailable: 'Немає доступних частин',
-    startPoint: 'Від',
-    endPoint: 'До',
   },
 }
 
@@ -214,8 +196,6 @@ interface Source {
   source_title: string
   source_url: string
   page_number?: string
-  start_point?: string
-  end_point?: string
 }
 
 interface CustomLink {
@@ -452,7 +432,6 @@ export function EmbeddedLessonSidebar({
     const locale = localeMap[language] || 'en-US'
     
     return new Intl.DateTimeFormat(locale, {
-      timeZone: 'Asia/Jerusalem',
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -528,7 +507,7 @@ export function EmbeddedLessonSidebar({
 
             // Collect all links for this part
             const allLinks = [
-              ...(part.sources?.map(s => ({ type: 'source' as const, text: t.readSource, url: s.source_url, page: s.page_number, start_point: s.start_point, end_point: s.end_point })) || []),
+              ...(part.sources?.map(s => ({ type: 'source' as const, text: t.readSource, url: s.source_url, page: s.page_number })) || []),
               part.excerpts_link && { type: 'document' as const, text: t.viewExcerpts, url: part.excerpts_link },
               part.transcript_link && { type: 'document' as const, text: t.viewTranscript, url: part.transcript_link },
               part.lesson_link && { type: 'video' as const, text: t.watchLesson, url: part.lesson_link },
@@ -536,7 +515,7 @@ export function EmbeddedLessonSidebar({
               part.reading_before_sleep_link && { type: 'document' as const, text: t.readingBeforeSleep, url: part.reading_before_sleep_link },
               part.lesson_preparation_link && { type: 'document' as const, text: t.lessonPreparation, url: part.lesson_preparation_link },
               ...(part.custom_links?.map(l => ({ type: 'document' as const, text: l.title, url: l.url })) || []),
-            ].filter(Boolean) as Array<{ type: 'source' | 'video' | 'document' | 'audio', text: string, url: string, page?: string, start_point?: string, end_point?: string }>
+            ].filter(Boolean) as Array<{ type: 'source' | 'video' | 'document' | 'audio', text: string, url: string, page?: string }>
 
             return (
               <div
@@ -588,49 +567,36 @@ export function EmbeddedLessonSidebar({
                     {allLinks.map((link, linkIdx) => (
                       <div
                         key={linkIdx}
-                        className={`flex flex-col gap-1 sm:gap-1.5 ${colors.bg} rounded-md p-1 sm:p-2 hover:opacity-80 transition-all group`}
+                        className={`flex items-center gap-1 sm:gap-2 ${colors.bg} rounded-md p-1 sm:p-2 hover:opacity-80 transition-all group`}
                       >
-                        <div className="flex items-center gap-1 sm:gap-2">
-                          <span className={`${colors.text} flex-shrink-0`}>
-                            {getLinkIcon(link.url, link.type)}
-                          </span>
+                        <span className={`${colors.text} flex-shrink-0`}>
+                          {getLinkIcon(link.url, link.type)}
+                        </span>
 
-                          <a
-                            href={link.url}
-                            className={`flex-1 ${colors.text} hover:underline truncate text-[14px] sm:text-[14px]`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {link.text}
-                            {link.page && <span className="text-gray-500 text-[12px] sm:text-[12px]"> (p. {link.page})</span>}
-                          </a>
+                        <a
+                          href={link.url}
+                          className={`flex-1 ${colors.text} hover:underline truncate text-[14px] sm:text-[14px]`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {link.text}
+                          {link.page && <span className="text-gray-500 text-[12px] sm:text-[12px]"> (p. {link.page})</span>}
+                        </a>
 
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault()
-                              copyToClipboard(link.url)
-                            }}
-                            className={`${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all flex-shrink-0`}
-                            title={t.copyLink}
-                          >
-                            {copiedUrl === link.url ? (
-                              <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" />
-                            ) : (
-                              <Copy className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                            )}
-                          </button>
-                        </div>
-
-                        {(link.start_point || link.end_point) && (
-                          <div className="text-[12px] sm:text-[12px] text-gray-600 space-y-0.5 pl-6 sm:pl-7">
-                            {link.start_point && (
-                              <div><strong>{t.startPoint}:</strong> {link.start_point}</div>
-                            )}
-                            {link.end_point && (
-                              <div><strong>{t.endPoint}:</strong> {link.end_point}</div>
-                            )}
-                          </div>
-                        )}
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            copyToClipboard(link.url)
+                          }}
+                          className={`${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all flex-shrink-0`}
+                          title={t.copyLink}
+                        >
+                          {copiedUrl === link.url ? (
+                            <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" />
+                          ) : (
+                            <Copy className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                          )}
+                        </button>
                       </div>
                     ))}
                   </div>

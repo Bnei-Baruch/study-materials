@@ -902,18 +902,18 @@ export default function PublicPage() {
                         >
                           {isRTL ? (
                             <>
-                              <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0" />
                               <div className="flex-1 text-right">
                                 <h4 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1" style={{ fontSize: '16px' }}>
                                   {getEventTitle(event)}
                                 </h4>
                                 {event.start_time && event.end_time && (
-                                  <div className="flex items-center gap-2 text-gray-600 justify-end" style={{ fontSize: '13px' }}>
-                                    <span>{event.start_time} - {event.end_time}</span>
+                                  <div className="flex items-center gap-2 text-gray-600 justify-start" style={{ fontSize: '13px' }}>
                                     <Clock className="w-4 h-4" />
+                                    <span>{event.start_time} - {event.end_time}</span>
                                   </div>
                                 )}
                               </div>
+                              <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0" />
                             </>
                           ) : (
                             <>

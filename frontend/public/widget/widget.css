@@ -1308,6 +1308,12 @@ video {
   font-family: inherit;
 }
 
+/* Allow divide-y borders to show on buttons */
+
+[data-studymaterials-widget] .divide-y > button {
+  border-top-style: solid;
+}
+
 /* Ensure widget is isolated from parent styles */
 
 [data-studymaterials-widget] {

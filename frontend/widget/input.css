@@ -36,6 +36,18 @@
   font-family: inherit;
 }
 
+/* Allow divide-y borders to show on buttons */
+[data-studymaterials-widget] .divide-y > button {
+  border-top-style: solid;
+  border-bottom-style: none;
+  border-left: none;
+  border-right: none;
+}
+
+/* Remove border from first button to avoid double border with header */
+[data-studymaterials-widget] .divide-y > button:first-child {
+  border-top: none;
+}
 /* Ensure widget is isolated from parent styles */
 [data-studymaterials-widget] {
   line-height: 1.5;

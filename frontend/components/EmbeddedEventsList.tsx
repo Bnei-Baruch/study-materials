@@ -242,18 +242,18 @@ export function EmbeddedEventsList({
                     >
                       {isRTL ? (
                         <>
-                          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" />
                           <div className="flex-1 min-w-0 text-right">
                             <h5 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words">
                               {event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'}
                             </h5>
                             {event.start_time && event.end_time && (
-                              <div className="flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] justify-end">
-                                <span className="truncate">{event.start_time} - {event.end_time}</span>
+                              <div className="flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] justify-start">
                                 <Clock className="w-3 h-3 flex-shrink-0" />
+                                <span className="truncate">{event.start_time} - {event.end_time}</span>
                               </div>
                             )}
                           </div>
+                          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" />
                         </>
                       ) : (
                         <>
