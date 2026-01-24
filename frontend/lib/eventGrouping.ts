@@ -1,18 +1,31 @@
 /**
  * Utility functions for grouping and displaying events by date
+ * Color scheme is based on day of week (Sunday-Saturday)
  */
 
 export interface DateGroup {
   date: string
   dayOfWeek: string
+  displayDate: string
   events: any[]
-  borderColor: 'purple' | 'blue' | 'green'
+  dayIndex: number // 0=Sunday, 1=Monday, etc.
 }
 
+// Day of week colors (Sunday through Saturday)
+const DAY_COLORS = [
+  { border: 'border-r-rose-400', bg: 'bg-rose-50', text: 'text-rose-900', emoji: '☀️' },      // Sunday
+  { border: 'border-r-amber-400', bg: 'bg-amber-50', text: 'text-amber-900', emoji: '🌙' },  // Monday
+  { border: 'border-r-emerald-400', bg: 'bg-emerald-50', text: 'text-emerald-900', emoji: '⭐' }, // Tuesday
+  { border: 'border-r-blue-400', bg: 'bg-blue-50', text: 'text-blue-900', emoji: '🌟' },    // Wednesday
+  { border: 'border-r-purple-400', bg: 'bg-purple-50', text: 'text-purple-900', emoji: '💫' }, // Thursday
+  { border: 'border-r-pink-400', bg: 'bg-pink-50', text: 'text-pink-900', emoji: '🕯️' },    // Friday
+  { border: 'border-r-indigo-400', bg: 'bg-indigo-50', text: 'text-indigo-900', emoji: '✨' } // Saturday
+]
+
 /**
- * Group events by date and assign alternating border colors
+ * Group events by date and assign colors based on day of week
  */
-export const groupEventsByDate = (events: any[]): DateGroup[] => {
+export const groupEventsByDate = (events: any[], locale: string = 'en-US'): DateGroup[] => {
   const groupMap = new Map<string, any[]>()
   
   // Group events by date (date only, no time)
@@ -24,51 +37,47 @@ export const groupEventsByDate = (events: any[]): DateGroup[] => {
     groupMap.get(dateOnly)!.push(event)
   })
   
-  // Convert to array and sort by date
-  const sortedDates = Array.from(groupMap.keys()).sort()
+  // Convert to array and sort by date DESCENDING (newest first)
+  const sortedDates = Array.from(groupMap.keys()).sort((a, b) => 
+    new Date(b).getTime() - new Date(a).getTime()
+  )
   
-  // Assign alternating colors: purple, blue, green
-  const colors: Array<'purple' | 'blue' | 'green'> = ['purple', 'blue', 'green']
-  
-  return sortedDates.map((dateStr, index) => {
+  return sortedDates.map((dateStr) => {
     const date = new Date(dateStr + 'T00:00:00Z')
-    const dayOfWeek = new Intl.DateTimeFormat('en-US', {
+    const dayIndex = date.getUTCDay() // 0=Sunday, 1=Monday, etc.
+    
+    const dayOfWeek = new Intl.DateTimeFormat(locale === 'he' ? 'he-IL' : locale, {
       timeZone: 'Asia/Jerusalem',
       weekday: 'long',
+    }).format(date)
+    
+    const displayDate = new Intl.DateTimeFormat(locale === 'he' ? 'he-IL' : locale, {
+      timeZone: 'Asia/Jerusalem',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     }).format(date)
     
     return {
       date: dateStr,
       dayOfWeek,
+      displayDate,
       events: groupMap.get(dateStr)!,
-      borderColor: colors[index % colors.length],
+      dayIndex,
     }
   })
 }
 
 /**
- * Get border and styling classes based on color
+ * Get styling classes based on day of week
  */
-export const getDateGroupColorClasses = (color: 'purple' | 'blue' | 'green') => {
-  const colorMap = {
-    purple: {
-      border: 'border-purple-500',
-      bg: 'bg-purple-100',
-      text: 'text-purple-900',
-      header: 'bg-purple-100',
-    },
-    blue: {
-      border: 'border-blue-500',
-      bg: 'bg-blue-100',
-      text: 'text-blue-900',
-      header: 'bg-blue-100',
-    },
-    green: {
-      border: 'border-green-500',
-      bg: 'bg-green-100',
-      text: 'text-green-900',
-      header: 'bg-green-100',
-    },
-  }
-  return colorMap[color]
+export const getDateGroupColorClasses = (dayIndex: number) => {
+  return DAY_COLORS[dayIndex % 7]
+}
+
+/**
+ * Get emoji for day of week
+ */
+export const getDayEmoji = (dayIndex: number) => {
+  return DAY_COLORS[dayIndex % 7].emoji
 }

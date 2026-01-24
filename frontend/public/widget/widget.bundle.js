@@ -21998,7 +21998,23 @@ var StudyMaterialsWidgetBundle = (() => {
   var Video = createLucideIcon("video", __iconNode13);
 
   // lib/eventGrouping.ts
-  var groupEventsByDate = (events) => {
+  var DAY_COLORS = [
+    { border: "border-r-rose-400", bg: "bg-rose-50", text: "text-rose-900", emoji: "\u2600\uFE0F" },
+    // Sunday
+    { border: "border-r-amber-400", bg: "bg-amber-50", text: "text-amber-900", emoji: "\u{1F319}" },
+    // Monday
+    { border: "border-r-emerald-400", bg: "bg-emerald-50", text: "text-emerald-900", emoji: "\u2B50" },
+    // Tuesday
+    { border: "border-r-blue-400", bg: "bg-blue-50", text: "text-blue-900", emoji: "\u{1F31F}" },
+    // Wednesday
+    { border: "border-r-purple-400", bg: "bg-purple-50", text: "text-purple-900", emoji: "\u{1F4AB}" },
+    // Thursday
+    { border: "border-r-pink-400", bg: "bg-pink-50", text: "text-pink-900", emoji: "\u{1F56F}\uFE0F" },
+    // Friday
+    { border: "border-r-indigo-400", bg: "bg-indigo-50", text: "text-indigo-900", emoji: "\u2728" }
+    // Saturday
+  ];
+  var groupEventsByDate = (events, locale = "en-US") => {
     const groupMap = /* @__PURE__ */ new Map();
     events.forEach((event) => {
       const dateOnly = event.date.split("T")[0];
@@ -22007,44 +22023,33 @@ var StudyMaterialsWidgetBundle = (() => {
       }
       groupMap.get(dateOnly).push(event);
     });
-    const sortedDates = Array.from(groupMap.keys()).sort();
-    const colors = ["purple", "blue", "green"];
-    return sortedDates.map((dateStr, index) => {
+    const sortedDates = Array.from(groupMap.keys()).sort(
+      (a, b) => new Date(b).getTime() - new Date(a).getTime()
+    );
+    return sortedDates.map((dateStr) => {
       const date = /* @__PURE__ */ new Date(dateStr + "T00:00:00Z");
-      const dayOfWeek = new Intl.DateTimeFormat("en-US", {
+      const dayIndex = date.getUTCDay();
+      const dayOfWeek = new Intl.DateTimeFormat(locale === "he" ? "he-IL" : locale, {
         timeZone: "Asia/Jerusalem",
         weekday: "long"
+      }).format(date);
+      const displayDate = new Intl.DateTimeFormat(locale === "he" ? "he-IL" : locale, {
+        timeZone: "Asia/Jerusalem",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
       }).format(date);
       return {
         date: dateStr,
         dayOfWeek,
+        displayDate,
         events: groupMap.get(dateStr),
-        borderColor: colors[index % colors.length]
+        dayIndex
       };
     });
   };
-  var getDateGroupColorClasses = (color) => {
-    const colorMap = {
-      purple: {
-        border: "border-purple-500",
-        bg: "bg-purple-100",
-        text: "text-purple-900",
-        header: "bg-purple-100"
-      },
-      blue: {
-        border: "border-blue-500",
-        bg: "bg-blue-100",
-        text: "text-blue-900",
-        header: "bg-blue-100"
-      },
-      green: {
-        border: "border-green-500",
-        bg: "bg-green-100",
-        text: "text-green-900",
-        header: "bg-green-100"
-      }
-    };
-    return colorMap[color];
+  var getDateGroupColorClasses = (dayIndex) => {
+    return DAY_COLORS[dayIndex % 7];
   };
 
   // components/EmbeddedEventsList.tsx
@@ -22191,23 +22196,18 @@ var StudyMaterialsWidgetBundle = (() => {
           }
         ) })
       ] }),
-      events.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 sm:p-4 text-center text-gray-500 text-[14px] sm:text-[14px]", children: t.noEventsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-1 sm:p-2 space-y-2 sm:space-y-3", children: groupEventsByDate(events).map((dateGroup) => {
-        const colors = getDateGroupColorClasses(dateGroup.borderColor);
+      events.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 sm:p-4 text-center text-gray-500 text-[14px] sm:text-[14px]", children: t.noEventsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-1 sm:p-2 space-y-2", children: groupEventsByDate(events, language === "he" ? "he-IL" : language).map((dateGroup) => {
+        const colors = getDateGroupColorClasses(dateGroup.dayIndex);
         return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
           "div",
           {
-            className: `rounded-lg shadow-md border-l-4 ${colors.border} bg-white overflow-hidden`,
+            className: `rounded-lg shadow-md ${colors.border} border-r-4 bg-white overflow-hidden`,
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `${colors.bg} px-3 sm:px-4 py-2.5 sm:py-3 border-b-2 ${colors.border}`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-baseline gap-2 ${isRTL ? "flex-row-reverse" : ""}`, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", { className: `${colors.text} font-bold text-[15px] sm:text-[16px]`, children: dateGroup.dayOfWeek }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: `${colors.text} text-[12px] sm:text-[13px] font-semibold opacity-90`, children: [
-                  "\u{1F4C5} ",
-                  new Intl.DateTimeFormat(language === "he" ? "he-IL" : language === "ru" ? "ru-RU" : language === "es" ? "es-ES" : language === "de" ? "de-DE" : "en-US", {
-                    timeZone: "Asia/Jerusalem",
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric"
-                  }).format(/* @__PURE__ */ new Date(dateGroup.date + "T00:00:00Z"))
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `${colors.bg} px-3 sm:px-4 py-2.5 sm:py-3 border-b border-gray-200`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-xl", children: colors.emoji }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-w-0", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h4", { className: `${colors.text} font-bold text-[14px] sm:text-[15px] leading-tight`, children: dateGroup.dayOfWeek }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: `${colors.text} text-[11px] sm:text-[12px] opacity-90 font-medium`, children: dateGroup.displayDate })
                 ] })
               ] }) }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "divide-y divide-gray-100", children: dateGroup.events.map((event) => {
@@ -22216,11 +22216,11 @@ var StudyMaterialsWidgetBundle = (() => {
                   "button",
                   {
                     onClick: () => onSelectEvent(event.id),
-                    className: `w-full text-left px-3 sm:px-4 py-3 sm:py-3.5 hover:bg-gray-50 transition-colors group ${isRTL ? "text-right" : "text-left"}`,
+                    className: `w-full text-left px-3 sm:px-4 py-3 hover:${colors.bg} transition-colors group`,
                     children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center justify-between gap-2", children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex-1 min-w-0", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: `${colors.text} group-hover:opacity-70 transition-opacity font-semibold text-[15px] sm:text-[16px] break-words mb-0.5`, children: ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson" }),
-                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-center gap-1.5 text-gray-600 text-[12px] sm:text-[13px] ${isRTL ? "flex-row-reverse" : ""}`, children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: `${colors.text} group-hover:opacity-70 transition-opacity font-semibold text-[14px] sm:text-[15px] break-words mb-0.5`, children: ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson" }),
+                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]`, children: [
                           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3 h-3 flex-shrink-0" }),
                           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "truncate", children: [
                             event.start_time,
@@ -22229,7 +22229,7 @@ var StudyMaterialsWidgetBundle = (() => {
                           ] })
                         ] })
                       ] }),
-                      isRTL ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: `w-4 h-4 sm:w-5 sm:h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:translate-x-[-3px] transition-all flex-shrink-0` }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronRight, { className: `w-4 h-4 sm:w-5 sm:h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all flex-shrink-0` })
+                      isRTL ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: `w-4 h-4 sm:w-5 sm:h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:-translate-x-1 transition-all flex-shrink-0` }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronRight, { className: `w-4 h-4 sm:w-5 sm:h-5 ${colors.text} opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all flex-shrink-0` })
                     ] })
                   },
                   event.id
