@@ -12,6 +12,8 @@ import {
   ChevronDown,
   Share2,
   List,
+  ArrowLeft,
+  ArrowRight,
 } from 'lucide-react'
 
 // Translation type
@@ -33,6 +35,7 @@ interface Translations {
   loading: string
   error: string
   noPartsAvailable: string
+  back: string
 }
 
 // Translation object for all supported languages
@@ -55,6 +58,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'טוען...',
     error: 'שגיאה בטעינת הנתונים',
     noPartsAvailable: 'אין חלקים זמינים',
+    back: 'חזרה',
   },
   en: {
     preparation: 'Lesson Preparation',
@@ -74,6 +78,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Loading...',
     error: 'Error loading data',
     noPartsAvailable: 'No parts available',
+    back: 'Back',
   },
   ru: {
     preparation: 'Подготовка к уроку',
@@ -93,6 +98,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Загрузка...',
     error: 'Ошибка загрузки данных',
     noPartsAvailable: 'Нет доступных частей',
+    back: 'Назад',
   },
   es: {
     preparation: 'Preparación de la lección',
@@ -112,6 +118,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Cargando...',
     error: 'Error al cargar datos',
     noPartsAvailable: 'No hay partes disponibles',
+    back: 'Volver',
   },
   de: {
     preparation: 'Lektionsvorbereitung',
@@ -131,6 +138,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Lädt...',
     error: 'Fehler beim Laden der Daten',
     noPartsAvailable: 'Keine Teile verfügbar',
+    back: 'Zurück',
   },
   it: {
     preparation: 'Preparazione della lezione',
@@ -150,6 +158,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Caricamento...',
     error: 'Errore nel caricamento dei dati',
     noPartsAvailable: 'Nessuna parte disponibile',
+    back: 'Indietro',
   },
   fr: {
     preparation: 'Préparation de la leçon',
@@ -169,6 +178,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Chargement...',
     error: 'Erreur de chargement des données',
     noPartsAvailable: 'Aucune partie disponible',
+    back: 'Retour',
   },
   uk: {
     preparation: 'Підготовка до уроку',
@@ -188,6 +198,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     loading: 'Завантаження...',
     error: 'Помилка завантаження даних',
     noPartsAvailable: 'Немає доступних частин',
+    back: 'Назад',
   },
 }
 
@@ -475,6 +486,24 @@ export function EmbeddedLessonSidebar({
           )}
         </p>
         <div className={`absolute ${isRTL ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} top-2 sm:top-3 flex gap-0.5 sm:gap-1`}>
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="flex items-center gap-1 sm:gap-1.5 bg-blue-500 text-white rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 hover:bg-blue-600 transition-all text-[12px] sm:text-[13px]"
+            >
+              {isRTL ? (
+                <>
+                  <span>{t.back}</span>
+                  <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                </>
+              ) : (
+                <>
+                  <ArrowLeft className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  <span>{t.back}</span>
+                </>
+              )}
+            </button>
+          )}
           <button
             onClick={shareLesson}
             className="bg-green-500 text-white rounded-full p-0.5 sm:p-1 hover:bg-green-600 transition-all"
@@ -482,14 +511,6 @@ export function EmbeddedLessonSidebar({
           >
             {sharedLesson ? <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3" /> : <Share2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />}
           </button>
-          {onBack && (
-            <button
-              onClick={onBack}
-              className="bg-blue-500 text-white rounded-full p-1 sm:p-1.5 hover:bg-blue-600 transition-all"
-            >
-              <List className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-            </button>
-          )}
         </div>
       </div>
 
