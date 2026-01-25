@@ -108,6 +108,7 @@ const TRANSLATIONS = {
     share: 'שתף',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    copyAsText: 'העתק כטקסט',
     links: 'קישורים',
     sources: 'מקורות',
     studyMaterials: 'חומרי לימוד',
@@ -138,6 +139,7 @@ const TRANSLATIONS = {
     share: 'Share',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    copyAsText: 'Copy as text',
     links: 'Links',
     sources: 'Sources',
     studyMaterials: 'Study Materials',
@@ -168,6 +170,7 @@ const TRANSLATIONS = {
     share: 'Поделиться',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    copyAsText: 'Копировать как текст',
     links: 'Ссылки',
     sources: 'Источники',
     studyMaterials: 'Учебные материалы',
@@ -198,6 +201,7 @@ const TRANSLATIONS = {
     share: 'Compartir',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    copyAsText: 'Copiar como texto',
     links: 'Enlaces',
     sources: 'Fuentes',
     studyMaterials: 'Materiales de estudio',
@@ -228,6 +232,7 @@ const TRANSLATIONS = {
     share: 'Teilen',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    copyAsText: 'Als Text kopieren',
     links: 'Links',
     sources: 'Quellen',
     studyMaterials: 'Studienmaterialien',
@@ -258,6 +263,7 @@ const TRANSLATIONS = {
     share: 'Condividi',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    copyAsText: 'Copia come testo',
     links: 'Collegamenti',
     sources: 'Fonti',
     studyMaterials: 'Materiali di studio',
@@ -288,6 +294,7 @@ const TRANSLATIONS = {
     share: 'Partager',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    copyAsText: 'Copier en tant que texte',
     links: 'Liens',
     sources: 'Sources',
     studyMaterials: 'Matériaux d\'étude',
@@ -318,6 +325,7 @@ const TRANSLATIONS = {
     share: 'Поділитися',
     whatsapp: 'WhatsApp',
     telegram: 'Telegram',
+    copyAsText: 'Копіювати як текст',
     links: 'Посилання',
     sources: 'Джерела',
     studyMaterials: 'Навчальні матеріали',
@@ -345,6 +353,7 @@ export default function PublicPage() {
   const [parts, setParts] = useState<Part[]>([])
   const [loading, setLoading] = useState(true)
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
+  const [sharedPart, setSharedPart] = useState<string | null>(null)
   const [expandedParts, setExpandedParts] = useState<Set<string>>(new Set())
   const [openShareDropdown, setOpenShareDropdown] = useState<string | null>(null)
   const [showFilters, setShowFilters] = useState(false)
@@ -699,6 +708,17 @@ export default function PublicPage() {
     window.open(telegramUrl, '_blank')
   }
 
+  const copyPartAsText = async (part: Part, event: Event) => {
+    try {
+      const message = generatePartMessage(part, event)
+      await navigator.clipboard.writeText(message)
+      setSharedPart(part.id)
+      setTimeout(() => setSharedPart(null), 2000)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
+  }
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     const localeMap: { [key: string]: string } = {
@@ -1031,6 +1051,24 @@ export default function PublicPage() {
                     <Send className="w-5 h-5 text-blue-600" />
                     <span>{t('telegram')}</span>
                   </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      const message = generateEventMessage(selectedEvent)
+                      navigator.clipboard.writeText(message)
+                      setSharedPart(selectedEvent.id)
+                      setTimeout(() => setSharedPart(null), 2000)
+                      setOpenShareDropdown(null)
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                  >
+                    {sharedPart === selectedEvent.id ? (
+                      <Check className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <Copy className="w-5 h-5 text-gray-600" />
+                    )}
+                    <span>{t('copyAsText')}</span>
+                  </button>
                 </div>
               )}
             </div>
@@ -1116,6 +1154,21 @@ export default function PublicPage() {
                         >
                           <Send className="w-5 h-5 text-blue-600" />
                           <span>{t('telegram')}</span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            copyPartAsText(part, selectedEvent)
+                            setOpenShareDropdown(null)
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                        >
+                          {sharedPart === part.id ? (
+                            <Check className="w-5 h-5 text-green-600" />
+                          ) : (
+                            <Copy className="w-5 h-5 text-gray-600" />
+                          )}
+                          <span>{t('copyAsText')}</span>
                         </button>
                       </div>
                     )}

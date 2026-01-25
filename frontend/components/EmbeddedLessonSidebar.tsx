@@ -36,6 +36,7 @@ interface Translations {
   error: string
   noPartsAvailable: string
   back: string
+  copyAsText: string
 }
 
 // Translation object for all supported languages
@@ -59,6 +60,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     error: 'שגיאה בטעינת הנתונים',
     noPartsAvailable: 'אין חלקים זמינים',
     back: 'חזרה',
+    copyAsText: 'העתק כטקסט',
   },
   en: {
     preparation: 'Lesson Preparation',
@@ -79,6 +81,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     error: 'Error loading data',
     noPartsAvailable: 'No parts available',
     back: 'Back',
+    copyAsText: 'Copy as text',
   },
   ru: {
     preparation: 'Подготовка к уроку',
@@ -99,6 +102,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     error: 'Ошибка загрузки данных',
     noPartsAvailable: 'Нет доступных частей',
     back: 'Назад',
+    copyAsText: 'Копировать как текст',
   },
   es: {
     preparation: 'Preparación de la lección',
@@ -119,6 +123,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     error: 'Error al cargar datos',
     noPartsAvailable: 'No hay partes disponibles',
     back: 'Volver',
+    copyAsText: 'Copiar como texto',
   },
   de: {
     preparation: 'Lektionsvorbereitung',
@@ -139,6 +144,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     error: 'Fehler beim Laden der Daten',
     noPartsAvailable: 'Keine Teile verfügbar',
     back: 'Zurück',
+    copyAsText: 'Als Text kopieren',
   },
   it: {
     preparation: 'Preparazione della lezione',
@@ -159,6 +165,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     error: 'Errore nel caricamento dei dati',
     noPartsAvailable: 'Nessuna parte disponibile',
     back: 'Indietro',
+    copyAsText: 'Copia come testo',
   },
   fr: {
     preparation: 'Préparation de la leçon',
@@ -179,6 +186,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     error: 'Erreur de chargement des données',
     noPartsAvailable: 'Aucune partie disponible',
     back: 'Retour',
+    copyAsText: 'Copier en tant que texte',
   },
   uk: {
     preparation: 'Підготовка до уроку',
@@ -199,6 +207,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     error: 'Помилка завантаження даних',
     noPartsAvailable: 'Немає доступних частин',
     back: 'Назад',
+    copyAsText: 'Копіювати як текст',
   },
 }
 
@@ -335,6 +344,17 @@ export function EmbeddedLessonSidebar({
     const url = `https://t.me/share/url?text=${encodeURIComponent(text)}`
     window.open(url, '_blank')
     setShowShareMenu(null)
+  }
+
+  const copyLessonAsText = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setSharedLesson(true)
+      setTimeout(() => setSharedLesson(false), 2000)
+      setShowShareMenu(null)
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
   }
 
   const getSectionShareText = (part: Part) => {
@@ -674,6 +694,24 @@ export function EmbeddedLessonSidebar({
                   <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
                 </svg>
                 <span className="text-[14px] sm:text-[14px]">Telegram</span>
+              </button>
+              <button
+                onClick={() => {
+                  const text = showShareMenu === 'lesson' 
+                    ? getLessonShareText() 
+                    : shareMenuSection !== null 
+                      ? getSectionShareText(parts[shareMenuSection])
+                      : ''
+                  copyLessonAsText(text)
+                }}
+                className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all"
+              >
+                {sharedLesson ? (
+                  <Check className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                ) : (
+                  <Copy className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                )}
+                <span className="text-[14px] sm:text-[14px]">{t.copyAsText}</span>
               </button>
             </div>
             <button
