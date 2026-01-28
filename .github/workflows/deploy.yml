@@ -21,7 +21,7 @@ jobs:
           git fetch origin
           
           # Reset to exact remote version (discards local changes)
-          git reset --hard origin/main
+          git reset --hard origin/${{ github.ref_name }}
           
           # Clean untracked files (respects .gitignore)
           git clean -fd
