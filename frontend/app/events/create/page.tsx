@@ -1,7 +1,5 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
@@ -166,7 +164,7 @@ function CreateEventPageContent() {
 
       const event = await response.json()
       // Redirect to event detail page
-      router.push(`/admin/${event.id}`)
+      router.push(`/events/${event.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -178,7 +176,7 @@ function CreateEventPageContent() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6 flex justify-between items-center">
-          <Link href="/admin" className="text-blue-600 hover:text-blue-700 text-sm">
+          <Link href="/events" className="text-blue-600 hover:text-blue-700 text-sm">
             ← Back to Events
           </Link>
           <div className="flex items-center gap-2">

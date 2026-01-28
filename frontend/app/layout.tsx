@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
 import { AuthProvider } from "@/contexts/AuthContext";
+import Navigation from "@/components/Navigation";
+import { LanguageUpdater } from "./LanguageUpdater";
 
 export const metadata: Metadata = {
   title: "Study Material Service",
@@ -17,8 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="he">
       <body>
+        <LanguageUpdater />
         <AuthProvider>
           <Navigation />
           {children}

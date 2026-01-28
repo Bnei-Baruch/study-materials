@@ -1,7 +1,5 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
@@ -68,8 +66,6 @@ interface Source {
   source_title: string
   source_url: string
   page_number?: string
-  start_point?: string
-  end_point?: string
 }
 
 interface CustomLink {
@@ -95,15 +91,15 @@ interface Part {
   custom_links?: CustomLink[]
 }
 
-export default function AdminEventDetailPage() {
+export default function EventDetailPage() {
   return (
     <ProtectedRoute>
-      <AdminEventDetailPageContent />
+      <EventDetailPageContent />
     </ProtectedRoute>
   )
 }
 
-function AdminEventDetailPageContent() {
+function EventDetailPageContent() {
   const params = useParams()
   const eventId = params.id as string
   const { user, logout } = useAuth()
@@ -337,7 +333,7 @@ function AdminEventDetailPageContent() {
       }
 
       // Redirect to events list
-      window.location.href = '/admin'
+      window.location.href = '/events'
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to delete event')
     }
@@ -367,7 +363,7 @@ function AdminEventDetailPageContent() {
       const newEvent = await response.json()
       
       // Redirect to the new event
-      window.location.href = `/admin/${newEvent.id}`
+      window.location.href = `/events/${newEvent.id}`
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to duplicate event')
     }
@@ -673,7 +669,7 @@ function AdminEventDetailPageContent() {
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             {error || 'Event not found'}
           </div>
-          <Link href="/admin" className="inline-block mt-4 text-blue-600 hover:text-blue-700">
+          <Link href="/events" className="inline-block mt-4 text-blue-600 hover:text-blue-700">
             ← Back to Events
           </Link>
         </div>
@@ -714,7 +710,7 @@ function AdminEventDetailPageContent() {
         {/* Back Button */}
         <button className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-4 transition-colors" style={{ fontSize: '14px' }}>
           <ChevronLeft className="w-4 h-4" />
-          <Link href="/admin" className="flex items-center gap-2">
+          <Link href="/events" className="flex items-center gap-2">
             ← Back to Events
           </Link>
         </button>
@@ -1377,38 +1373,13 @@ function AdminEventDetailPageContent() {
                                       <p className="text-sm text-gray-800 block truncate">
                                         {source.source_title}
                                       </p>
-                                      <div className="mt-2 space-y-2">
-                                        <input
-                                          type="url"
-                                          value={source.source_url || ''}
-                                          onChange={(e) => handleUpdateSourceInEdit(idx, 'source_url', e.target.value)}
-                                          className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
-                                          placeholder="Source link (https://...)"
-                                        />
-                                        <input
-                                          type="text"
-                                          value={source.page_number || ''}
-                                          onChange={(e) => handleUpdateSourceInEdit(idx, 'page_number', e.target.value)}
-                                          className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
-                                          placeholder="Page number (e.g., 42 or 15-17)"
-                                        />
-                                        <div className="grid grid-cols-2 gap-2">
-                                          <input
-                                            type="text"
-                                            value={source.start_point || ''}
-                                            onChange={(e) => handleUpdateSourceInEdit(idx, 'start_point', e.target.value)}
-                                            className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
-                                            placeholder="Start From"
-                                          />
-                                          <input
-                                            type="text"
-                                            value={source.end_point || ''}
-                                            onChange={(e) => handleUpdateSourceInEdit(idx, 'end_point', e.target.value)}
-                                            className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
-                                            placeholder="End Point"
-                                          />
-                                        </div>
-                                      </div>
+                                      <input
+                                        type="url"
+                                        value={source.source_url || ''}
+                                        onChange={(e) => handleUpdateSourceInEdit(idx, 'source_url', e.target.value)}
+                                        className="w-full mt-1 border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                        placeholder="Source link (https://...)"
+                                      />
                                     </div>
                                     <a 
                                       href={source.source_url} 

@@ -1,10 +1,7 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-
 import { useState, useEffect } from 'react'
 import { getApiUrl } from '@/lib/api'
-import { formatEventDate } from '@/lib/dateUtils'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
@@ -124,7 +121,7 @@ function getDefaultTitle(eventType: string, lang: string): string {
 }
 
 // Sortable event item component
-function SortableEventItem({ event, language }: { event: Event; language: string }) {
+function SortableEventItem({ event }: { event: Event }) {
   const {
     attributes,
     listeners,
@@ -140,25 +137,18 @@ function SortableEventItem({ event, language }: { event: Event; language: string
     opacity: isDragging ? 0.5 : 1,
   }
 
-  const localeMap: { [key: string]: string } = {
-    he: 'he-IL',
-    en: 'en-US',
-    ru: 'ru-RU',
-    es: 'es-ES',
-    de: 'de-DE',
-    it: 'it-IT',
-    fr: 'fr-FR',
-    uk: 'uk-UA',
-  }
-
   const formatDate = (dateString: string) => {
-    return formatEventDate(dateString, language)
+    const date = new Date(dateString)
+    return new Intl.DateTimeFormat('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(date)
   }
 
-  // Get title in selected language or fallback
-  const eventTitle = event.titles?.[language as keyof typeof event.titles] || 
-                     event.titles?.he || 
-                     getDefaultTitle(event.type, language)
+  // Get title in Hebrew (default) or fallback to generated title
+  const eventTitle = event.titles?.he || getDefaultTitle(event.type, 'he')
 
   return (
     <div
@@ -194,7 +184,7 @@ function SortableEventItem({ event, language }: { event: Event; language: string
 
             {/* Date and title - clickable to navigate */}
             <Link
-              href={`/admin/${event.id}`}
+              href={`/events/${event.id}`}
               className="flex items-center gap-4 flex-1"
             >
               <div className="text-sm text-gray-500 w-40">
@@ -209,7 +199,7 @@ function SortableEventItem({ event, language }: { event: Event; language: string
             </Link>
           </div>
           <Link
-            href={`/admin/${event.id}`}
+            href={`/events/${event.id}`}
             className="text-sm text-gray-400 hover:text-gray-600"
           >
             →
@@ -220,19 +210,18 @@ function SortableEventItem({ event, language }: { event: Event; language: string
   )
 }
 
-export default function AdminPage() {
+export default function EventsPage() {
   return (
     <ProtectedRoute>
-      <AdminPageContent />
+      <EventsPageContent />
     </ProtectedRoute>
   )
 }
 
-function AdminPageContent() {
+function EventsPageContent() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [language, setLanguage] = useState('he')
   const { user, logout } = useAuth()
 
   const sensors = useSensors(
@@ -241,25 +230,6 @@ function AdminPageContent() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   )
-
-  useEffect(() => {
-    // Load language from localStorage
-    const saved = localStorage.getItem('studymaterials-language')
-    if (saved) {
-      setLanguage(saved)
-    }
-
-    // Listen for language changes from Navigation component
-    const handleLanguageChange = () => {
-      const newLang = localStorage.getItem('studymaterials-language')
-      if (newLang) {
-        setLanguage(newLang)
-      }
-    }
-
-    window.addEventListener('languageChange', handleLanguageChange)
-    return () => window.removeEventListener('languageChange', handleLanguageChange)
-  }, [])
 
   useEffect(() => {
     fetchEvents()
@@ -339,7 +309,7 @@ function AdminPageContent() {
           </div>
           <div className="flex items-center gap-4">
             <Link
-              href="/admin/create"
+              href="/events/create"
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
             >
               Create Event
@@ -366,7 +336,7 @@ function AdminPageContent() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <div className="text-gray-500 mb-4">No events yet</div>
             <Link
-              href="/admin/create"
+              href="/events/create"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
             >
               Create Your First Event
@@ -384,7 +354,7 @@ function AdminPageContent() {
                 strategy={verticalListSortingStrategy}
               >
                 {events.map((event) => (
-                  <SortableEventItem key={event.id} event={event} language={language} />
+                  <SortableEventItem key={event.id} event={event} />
                 ))}
               </SortableContext>
             </DndContext>

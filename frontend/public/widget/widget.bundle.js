@@ -21888,8 +21888,22 @@ var StudyMaterialsWidgetBundle = (() => {
     return Component;
   };
 
-  // node_modules/lucide-react/dist/esm/icons/book-open.js
+  // node_modules/lucide-react/dist/esm/icons/arrow-left.js
   var __iconNode = [
+    ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
+    ["path", { d: "M19 12H5", key: "x3x0zl" }]
+  ];
+  var ArrowLeft = createLucideIcon("arrow-left", __iconNode);
+
+  // node_modules/lucide-react/dist/esm/icons/arrow-right.js
+  var __iconNode2 = [
+    ["path", { d: "M5 12h14", key: "1ays0h" }],
+    ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }]
+  ];
+  var ArrowRight = createLucideIcon("arrow-right", __iconNode2);
+
+  // node_modules/lucide-react/dist/esm/icons/book-open.js
+  var __iconNode3 = [
     ["path", { d: "M12 7v14", key: "1akyts" }],
     [
       "path",
@@ -21899,49 +21913,49 @@ var StudyMaterialsWidgetBundle = (() => {
       }
     ]
   ];
-  var BookOpen = createLucideIcon("book-open", __iconNode);
+  var BookOpen = createLucideIcon("book-open", __iconNode3);
 
   // node_modules/lucide-react/dist/esm/icons/calendar.js
-  var __iconNode2 = [
+  var __iconNode4 = [
     ["path", { d: "M8 2v4", key: "1cmpym" }],
     ["path", { d: "M16 2v4", key: "4m81vk" }],
     ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
     ["path", { d: "M3 10h18", key: "8toen8" }]
   ];
-  var Calendar = createLucideIcon("calendar", __iconNode2);
+  var Calendar = createLucideIcon("calendar", __iconNode4);
 
   // node_modules/lucide-react/dist/esm/icons/check.js
-  var __iconNode3 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-  var Check = createLucideIcon("check", __iconNode3);
+  var __iconNode5 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+  var Check = createLucideIcon("check", __iconNode5);
 
   // node_modules/lucide-react/dist/esm/icons/chevron-down.js
-  var __iconNode4 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-  var ChevronDown = createLucideIcon("chevron-down", __iconNode4);
+  var __iconNode6 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+  var ChevronDown = createLucideIcon("chevron-down", __iconNode6);
 
   // node_modules/lucide-react/dist/esm/icons/chevron-left.js
-  var __iconNode5 = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
-  var ChevronLeft = createLucideIcon("chevron-left", __iconNode5);
+  var __iconNode7 = [["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]];
+  var ChevronLeft = createLucideIcon("chevron-left", __iconNode7);
 
   // node_modules/lucide-react/dist/esm/icons/chevron-up.js
-  var __iconNode6 = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
-  var ChevronUp = createLucideIcon("chevron-up", __iconNode6);
+  var __iconNode8 = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
+  var ChevronUp = createLucideIcon("chevron-up", __iconNode8);
 
   // node_modules/lucide-react/dist/esm/icons/clock.js
-  var __iconNode7 = [
+  var __iconNode9 = [
     ["path", { d: "M12 6v6l4 2", key: "mmk7yg" }],
     ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]
   ];
-  var Clock = createLucideIcon("clock", __iconNode7);
+  var Clock = createLucideIcon("clock", __iconNode9);
 
   // node_modules/lucide-react/dist/esm/icons/copy.js
-  var __iconNode8 = [
+  var __iconNode10 = [
     ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
     ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
   ];
-  var Copy = createLucideIcon("copy", __iconNode8);
+  var Copy = createLucideIcon("copy", __iconNode10);
 
   // node_modules/lucide-react/dist/esm/icons/file-text.js
-  var __iconNode9 = [
+  var __iconNode11 = [
     [
       "path",
       {
@@ -21954,10 +21968,10 @@ var StudyMaterialsWidgetBundle = (() => {
     ["path", { d: "M16 13H8", key: "t4e002" }],
     ["path", { d: "M16 17H8", key: "z1uh3a" }]
   ];
-  var FileText = createLucideIcon("file-text", __iconNode9);
+  var FileText = createLucideIcon("file-text", __iconNode11);
 
   // node_modules/lucide-react/dist/esm/icons/headphones.js
-  var __iconNode10 = [
+  var __iconNode12 = [
     [
       "path",
       {
@@ -21966,31 +21980,20 @@ var StudyMaterialsWidgetBundle = (() => {
       }
     ]
   ];
-  var Headphones = createLucideIcon("headphones", __iconNode10);
-
-  // node_modules/lucide-react/dist/esm/icons/list.js
-  var __iconNode11 = [
-    ["path", { d: "M3 5h.01", key: "18ugdj" }],
-    ["path", { d: "M3 12h.01", key: "nlz23k" }],
-    ["path", { d: "M3 19h.01", key: "noohij" }],
-    ["path", { d: "M8 5h13", key: "1pao27" }],
-    ["path", { d: "M8 12h13", key: "1za7za" }],
-    ["path", { d: "M8 19h13", key: "m83p4d" }]
-  ];
-  var List = createLucideIcon("list", __iconNode11);
+  var Headphones = createLucideIcon("headphones", __iconNode12);
 
   // node_modules/lucide-react/dist/esm/icons/share-2.js
-  var __iconNode12 = [
+  var __iconNode13 = [
     ["circle", { cx: "18", cy: "5", r: "3", key: "gq8acd" }],
     ["circle", { cx: "6", cy: "12", r: "3", key: "w7nqdw" }],
     ["circle", { cx: "18", cy: "19", r: "3", key: "1xt0gg" }],
     ["line", { x1: "8.59", x2: "15.42", y1: "13.51", y2: "17.49", key: "47mynk" }],
     ["line", { x1: "15.41", x2: "8.59", y1: "6.51", y2: "10.49", key: "1n3mei" }]
   ];
-  var Share2 = createLucideIcon("share-2", __iconNode12);
+  var Share2 = createLucideIcon("share-2", __iconNode13);
 
   // node_modules/lucide-react/dist/esm/icons/video.js
-  var __iconNode13 = [
+  var __iconNode14 = [
     [
       "path",
       {
@@ -22000,7 +22003,7 @@ var StudyMaterialsWidgetBundle = (() => {
     ],
     ["rect", { x: "2", y: "6", width: "14", height: "12", rx: "2", key: "158x01" }]
   ];
-  var Video = createLucideIcon("video", __iconNode13);
+  var Video = createLucideIcon("video", __iconNode14);
 
   // lib/eventGrouping.ts
   var DAY_COLORS = [
@@ -22224,18 +22227,18 @@ var StudyMaterialsWidgetBundle = (() => {
                     onClick: () => onSelectEvent(event.id),
                     className: `w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? "text-right" : "text-left"}`,
                     children: isRTL ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" }),
                       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex-1 min-w-0 text-right", children: [
                         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: "text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words", children: ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson" }),
-                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] justify-end", children: [
+                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] justify-start", children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3 h-3 flex-shrink-0" }),
                           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "truncate", children: [
                             event.start_time,
                             " - ",
                             event.end_time
-                          ] }),
-                          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3 h-3 flex-shrink-0" })
+                          ] })
                         ] })
-                      ] })
+                      ] }),
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" })
                     ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex-1 min-w-0 text-left", children: [
                         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: "text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words", children: ((_d = event.titles) == null ? void 0 : _d[language]) || ((_e = event.titles) == null ? void 0 : _e["he"]) || ((_f = event.titles) == null ? void 0 : _f["en"]) || "Lesson" }),
@@ -22297,8 +22300,8 @@ var StudyMaterialsWidgetBundle = (() => {
       loading: "\u05D8\u05D5\u05E2\u05DF...",
       error: "\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05D8\u05E2\u05D9\u05E0\u05EA \u05D4\u05E0\u05EA\u05D5\u05E0\u05D9\u05DD",
       noPartsAvailable: "\u05D0\u05D9\u05DF \u05D7\u05DC\u05E7\u05D9\u05DD \u05D6\u05DE\u05D9\u05E0\u05D9\u05DD",
-      startPoint: "\u05D4\u05D7\u05DC \u05DE",
-      endPoint: "\u05E2\u05D3"
+      back: "\u05D7\u05D6\u05E8\u05D4",
+      copyAsText: "\u05D4\u05E2\u05EA\u05E7 \u05DB\u05D8\u05E7\u05E1\u05D8"
     },
     en: {
       preparation: "Lesson Preparation",
@@ -22318,8 +22321,8 @@ var StudyMaterialsWidgetBundle = (() => {
       loading: "Loading...",
       error: "Error loading data",
       noPartsAvailable: "No parts available",
-      startPoint: "From",
-      endPoint: "To"
+      back: "Back",
+      copyAsText: "Copy as text"
     },
     ru: {
       preparation: "\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u043A \u0443\u0440\u043E\u043A\u0443",
@@ -22339,8 +22342,8 @@ var StudyMaterialsWidgetBundle = (() => {
       loading: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430...",
       error: "\u041E\u0448\u0438\u0431\u043A\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438 \u0434\u0430\u043D\u043D\u044B\u0445",
       noPartsAvailable: "\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0447\u0430\u0441\u0442\u0435\u0439",
-      startPoint: "\u041E\u0442",
-      endPoint: "\u0414\u043E"
+      back: "\u041D\u0430\u0437\u0430\u0434",
+      copyAsText: "\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043A\u0430\u043A \u0442\u0435\u043A\u0441\u0442"
     },
     es: {
       preparation: "Preparaci\xF3n de la lecci\xF3n",
@@ -22360,8 +22363,8 @@ var StudyMaterialsWidgetBundle = (() => {
       loading: "Cargando...",
       error: "Error al cargar datos",
       noPartsAvailable: "No hay partes disponibles",
-      startPoint: "De",
-      endPoint: "Hasta"
+      back: "Volver",
+      copyAsText: "Copiar como texto"
     },
     de: {
       preparation: "Lektionsvorbereitung",
@@ -22381,8 +22384,8 @@ var StudyMaterialsWidgetBundle = (() => {
       loading: "L\xE4dt...",
       error: "Fehler beim Laden der Daten",
       noPartsAvailable: "Keine Teile verf\xFCgbar",
-      startPoint: "Von",
-      endPoint: "Bis"
+      back: "Zur\xFCck",
+      copyAsText: "Als Text kopieren"
     },
     it: {
       preparation: "Preparazione della lezione",
@@ -22402,8 +22405,8 @@ var StudyMaterialsWidgetBundle = (() => {
       loading: "Caricamento...",
       error: "Errore nel caricamento dei dati",
       noPartsAvailable: "Nessuna parte disponibile",
-      startPoint: "Da",
-      endPoint: "A"
+      back: "Indietro",
+      copyAsText: "Copia come testo"
     },
     fr: {
       preparation: "Pr\xE9paration de la le\xE7on",
@@ -22423,8 +22426,8 @@ var StudyMaterialsWidgetBundle = (() => {
       loading: "Chargement...",
       error: "Erreur de chargement des donn\xE9es",
       noPartsAvailable: "Aucune partie disponible",
-      startPoint: "De",
-      endPoint: "\xC0"
+      back: "Retour",
+      copyAsText: "Copier en tant que texte"
     },
     uk: {
       preparation: "\u041F\u0456\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0434\u043E \u0443\u0440\u043E\u043A\u0443",
@@ -22444,8 +22447,8 @@ var StudyMaterialsWidgetBundle = (() => {
       loading: "\u0417\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F...",
       error: "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
       noPartsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0447\u0430\u0441\u0442\u0438\u043D",
-      startPoint: "\u0412\u0456\u0434",
-      endPoint: "\u0414\u043E"
+      back: "\u041D\u0430\u0437\u0430\u0434",
+      copyAsText: "\u041A\u043E\u043F\u0456\u044E\u0432\u0430\u0442\u0438 \u044F\u043A \u0442\u0435\u043A\u0441\u0442"
     }
   };
   function EmbeddedLessonSidebar({
@@ -22523,6 +22526,16 @@ var StudyMaterialsWidgetBundle = (() => {
       window.open(url, "_blank");
       setShowShareMenu(null);
     };
+    const copyLessonAsText = (text) => __async(this, null, function* () {
+      try {
+        yield navigator.clipboard.writeText(text);
+        setSharedLesson(true);
+        setTimeout(() => setSharedLesson(false), 2e3);
+        setShowShareMenu(null);
+      } catch (err) {
+        console.error("Failed to copy:", err);
+      }
+    });
     const getSectionShareText = (part) => {
       var _a2, _b2;
       const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`;
@@ -22623,7 +22636,6 @@ ${partsText}`;
       };
       const locale = localeMap[language] || "en-US";
       return new Intl.DateTimeFormat(locale, {
-        timeZone: "Asia/Jerusalem",
         weekday: "long",
         year: "numeric",
         month: "long",
@@ -22649,22 +22661,28 @@ ${partsText}`;
             event.end_time
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: `absolute ${isRTL ? "left-2 sm:left-3" : "right-2 sm:right-3"} top-2 sm:top-3 flex gap-0.5 sm:gap-1`, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-            "button",
-            {
-              onClick: shareLesson,
-              className: "bg-green-500 text-white rounded-full p-0.5 sm:p-1 hover:bg-green-600 transition-all",
-              title: t.shareLesson,
-              children: sharedLesson ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Share2, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" })
-            }
-          ),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: `absolute ${isRTL ? "left-3 sm:left-4" : "right-3 sm:right-4"} top-3 sm:top-4 flex gap-2 sm:gap-2`, children: [
           onBack && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
             "button",
             {
               onClick: onBack,
-              className: "bg-blue-500 text-white rounded-full p-1 sm:p-1.5 hover:bg-blue-600 transition-all",
-              children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(List, { className: "w-3 h-3 sm:w-3.5 sm:h-3.5" })
+              className: "flex items-center gap-1 sm:gap-1.5 bg-blue-500 text-white rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 hover:bg-blue-600 transition-all text-[12px] sm:text-[13px]",
+              children: isRTL ? /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: t.back }),
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ArrowRight, { className: "w-3 h-3 sm:w-3.5 sm:h-3.5" })
+              ] }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_jsx_runtime2.Fragment, { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ArrowLeft, { className: "w-3 h-3 sm:w-3.5 sm:h-3.5" }),
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { children: t.back })
+              ] })
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+            "button",
+            {
+              onClick: shareLesson,
+              className: "bg-green-500 text-white rounded-lg p-1.5 sm:p-2 hover:bg-green-600 transition-all",
+              title: t.shareLesson,
+              children: sharedLesson ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-3 h-3 sm:w-3.5 sm:h-3.5" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Share2, { className: "w-3 h-3 sm:w-3.5 sm:h-3.5" })
             }
           )
         ] })
@@ -22675,7 +22693,7 @@ ${partsText}`;
         const colors = getSectionColor(part.order);
         const partTitle = part.order === 0 ? t.preparation : `${t.part} ${part.order}: ${part.title}`;
         const allLinks = [
-          ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => ({ type: "source", text: t.readSource, url: s.source_url, page: s.page_number, start_point: s.start_point, end_point: s.end_point }))) || [],
+          ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => ({ type: "source", text: t.readSource, url: s.source_url, page: s.page_number }))) || [],
           part.excerpts_link && { type: "document", text: t.viewExcerpts, url: part.excerpts_link },
           part.transcript_link && { type: "document", text: t.viewTranscript, url: part.transcript_link },
           part.lesson_link && { type: "video", text: t.watchLesson, url: part.lesson_link },
@@ -22717,58 +22735,38 @@ ${partsText}`;
               isExpanded && allLinks.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: `space-y-1 sm:space-y-1.5 ${isRTL ? "pr-1.5 sm:pr-2.5 pl-1.5 sm:pl-2.5" : "px-1.5 sm:px-2.5"} pb-1.5 sm:pb-2.5`, children: allLinks.map((link, linkIdx) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
                 "div",
                 {
-                  className: `flex flex-col gap-1 sm:gap-1.5 ${colors.bg} rounded-md p-1 sm:p-2 hover:opacity-80 transition-all group`,
+                  className: `flex items-center gap-1 sm:gap-2 ${colors.bg} rounded-md p-1 sm:p-2 hover:opacity-80 transition-all group`,
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex items-center gap-1 sm:gap-2", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `${colors.text} flex-shrink-0`, children: getLinkIcon(link.url, link.type) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-                        "a",
-                        {
-                          href: link.url,
-                          className: `flex-1 ${colors.text} hover:underline truncate text-[14px] sm:text-[14px]`,
-                          target: "_blank",
-                          rel: "noopener noreferrer",
-                          children: [
-                            link.text,
-                            link.page && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "text-gray-500 text-[12px] sm:text-[12px]", children: [
-                              " (p. ",
-                              link.page,
-                              ")"
-                            ] })
-                          ]
-                        }
-                      ),
-                      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                        "button",
-                        {
-                          onClick: (e) => {
-                            e.preventDefault();
-                            copyToClipboard(link.url);
-                          },
-                          className: `${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all flex-shrink-0`,
-                          title: t.copyLink,
-                          children: copiedUrl === link.url ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Copy, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" })
-                        }
-                      )
-                    ] }),
-                    (link.start_point || link.end_point) && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "text-[12px] sm:text-[12px] text-gray-600 space-y-0.5 pl-6 sm:pl-7", children: [
-                      link.start_point && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("strong", { children: [
-                          t.startPoint,
-                          ":"
-                        ] }),
-                        " ",
-                        link.start_point
-                      ] }),
-                      link.end_point && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("strong", { children: [
-                          t.endPoint,
-                          ":"
-                        ] }),
-                        " ",
-                        link.end_point
-                      ] })
-                    ] })
+                    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `${colors.text} flex-shrink-0`, children: getLinkIcon(link.url, link.type) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+                      "a",
+                      {
+                        href: link.url,
+                        className: `flex-1 ${colors.text} hover:underline truncate text-[14px] sm:text-[14px]`,
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                        children: [
+                          link.text,
+                          link.page && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "text-gray-500 text-[12px] sm:text-[12px]", children: [
+                            " (p. ",
+                            link.page,
+                            ")"
+                          ] })
+                        ]
+                      }
+                    ),
+                    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                      "button",
+                      {
+                        onClick: (e) => {
+                          e.preventDefault();
+                          copyToClipboard(link.url);
+                        },
+                        className: `${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all flex-shrink-0`,
+                        title: t.copyLink,
+                        children: copiedUrl === link.url ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Copy, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" })
+                      }
+                    )
                   ]
                 },
                 linkIdx
@@ -22817,6 +22815,20 @@ ${partsText}`;
                       children: [
                         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("svg", { className: "w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0", fill: "currentColor", viewBox: "0 0 24 24", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("path", { d: "M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" }) }),
                         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "text-[14px] sm:text-[14px]", children: "Telegram" })
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+                    "button",
+                    {
+                      onClick: () => {
+                        const text = showShareMenu === "lesson" ? getLessonShareText() : shareMenuSection !== null ? getSectionShareText(parts[shareMenuSection]) : "";
+                        copyLessonAsText(text);
+                      },
+                      className: "w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all",
+                      children: [
+                        sharedLesson ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Copy, { className: "w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" }),
+                        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: "text-[14px] sm:text-[14px]", children: t.copyAsText })
                       ]
                     }
                   )
@@ -23061,6 +23073,22 @@ lucide-react/dist/esm/createLucideIcon.js:
    * See the LICENSE file in the root directory of this source tree.
    *)
 
+lucide-react/dist/esm/icons/arrow-left.js:
+  (**
+   * @license lucide-react v0.562.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/arrow-right.js:
+  (**
+   * @license lucide-react v0.562.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
 lucide-react/dist/esm/icons/book-open.js:
   (**
    * @license lucide-react v0.562.0 - ISC
@@ -23134,14 +23162,6 @@ lucide-react/dist/esm/icons/file-text.js:
    *)
 
 lucide-react/dist/esm/icons/headphones.js:
-  (**
-   * @license lucide-react v0.562.0 - ISC
-   *
-   * This source code is licensed under the ISC license.
-   * See the LICENSE file in the root directory of this source tree.
-   *)
-
-lucide-react/dist/esm/icons/list.js:
   (**
    * @license lucide-react v0.562.0 - ISC
    *
