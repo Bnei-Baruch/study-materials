@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.svg",
   },
+  other: {
+    "og:locale": "he_IL",
+  }
 };
 
 export default function RootLayout({
@@ -17,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="he" className="notranslate">
       <body>
         <AuthProvider>
           <Navigation />

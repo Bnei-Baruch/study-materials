@@ -801,7 +801,7 @@ export default function PublicPage() {
 
   return (
     <div
-      className="min-h-screen bg-cyan-50"
+      className="notranslate min-h-screen bg-cyan-50"
       dir={isRTL ? 'rtl' : 'ltr'}
     >
       <div className="max-w-4xl mx-auto px-6 py-8">
