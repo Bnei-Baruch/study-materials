@@ -13,6 +13,7 @@ import (
 // MongoDBEventStore manages MongoDB-based storage for events
 type MongoDBEventStore struct {
 	collection *mongo.Collection
+	database   *mongo.Database
 }
 
 // NewMongoDBEventStore creates a new MongoDB event store
@@ -29,6 +30,7 @@ func NewMongoDBEventStore(database *mongo.Database) (*MongoDBEventStore, error) 
 
 	return &MongoDBEventStore{
 		collection: collection,
+		database:   database,
 	}, nil
 }
 
@@ -175,4 +177,8 @@ func (s *MongoDBEventStore) DeleteEvent(id string) error {
 	return nil
 }
 
+// GetDatabase returns the MongoDB database instance
+func (s *MongoDBEventStore) GetDatabase() *mongo.Database {
+	return s.database
+}
 
