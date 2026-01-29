@@ -1,9 +1,17 @@
 name: Deploy to Production
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - main
+          - develop
+          - staging
 
 jobs:
   deploy:
@@ -20,8 +28,8 @@ jobs:
           # Fetch latest from remote
           git fetch origin
           
-          # Reset to exact remote version (discards local changes)
-          git reset --hard origin/main
+          # Reset to exact remote version of selected branch (discards local changes)
+          git reset --hard origin/${{ github.event.inputs.branch || 'main' }}
           
           # Clean untracked files (respects .gitignore)
           git clean -fd
