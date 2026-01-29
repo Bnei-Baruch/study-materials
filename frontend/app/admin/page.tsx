@@ -6,6 +6,7 @@ import { formatEventDate } from '@/lib/dateUtils'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
+import TemplateManager from '@/components/TemplateManager'
 import {
   DndContext,
   closestCenter,
@@ -231,6 +232,7 @@ function AdminPageContent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [language, setLanguage] = useState('he')
+  const [activeTab, setActiveTab] = useState<'events' | 'templates'>('events')
   const { user, logout } = useAuth()
 
   const sensors = useSensors(
@@ -330,18 +332,24 @@ function AdminPageContent() {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">Events</h1>
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+              {activeTab === 'events' ? 'Events' : 'Templates'}
+            </h1>
             <p className="text-gray-600">
-              Daily lessons, meals, conventions, and more
+              {activeTab === 'events'
+                ? 'Daily lessons, meals, conventions, and more'
+                : 'Manage lesson part templates and their translations'}
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <Link
-              href="/admin/create"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
-            >
-              Create Event
-            </Link>
+            {activeTab === 'events' && (
+              <Link
+                href="/admin/create"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+              >
+                Create Event
+              </Link>
+            )}
             <div className="flex flex-col items-end gap-2">
               {user?.name && <span className="text-sm text-gray-600">{user.name}</span>}
               <button
@@ -354,12 +362,39 @@ function AdminPageContent() {
           </div>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="mb-8 flex gap-2 border-b border-gray-300">
+          <button
+            onClick={() => setActiveTab('events')}
+            className={`px-4 py-2 font-medium transition-colors ${
+              activeTab === 'events'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Events
+          </button>
+          <button
+            onClick={() => setActiveTab('templates')}
+            className={`px-4 py-2 font-medium transition-colors ${
+              activeTab === 'templates'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Templates
+          </button>
+        </div>
+
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
             {error}
           </div>
         )}
 
+        {/* Events Tab */}
+        {activeTab === 'events' && (
+          <>
         {events.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <div className="text-gray-500 mb-4">No events yet</div>
@@ -387,6 +422,13 @@ function AdminPageContent() {
               </SortableContext>
             </DndContext>
           </div>
+        )}
+          </>
+        )}
+
+        {/* Templates Tab */}
+        {activeTab === 'templates' && (
+          <TemplateManager />
         )}
       </div>
     </div>

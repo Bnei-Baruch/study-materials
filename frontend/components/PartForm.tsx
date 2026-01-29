@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { getApiUrl } from '@/lib/api'
 import { SourceSearch } from './SourceSearch'
 
@@ -34,113 +34,11 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
     uk: 'Підготовка до уроку',
   }
 
-  // Pre-made title templates with translations
-  const titleTemplates = [
-    {
-      id: 'recorded',
-      translations: {
-        he: 'שיעור מוקלט',
-        en: 'Recorded Lesson',
-        ru: 'Урок в записи',
-        es: 'Lección grabada',
-        de: 'Aufgezeichnete Lektion',
-        it: 'Lezione registrata',
-        fr: 'Leçon enregistrée',
-        uk: 'Записаний урок',
-      }
-    },
-    {
-      id: 'live',
-      translations: {
-        he: 'שיעור חי בהשתתפות הרב',
-        en: 'Live Broadcast With Rav',
-        ru: 'Прямая трансляция с участием Рава',
-        es: 'Transmisión en vivo con Rav',
-        de: 'Live-Übertragung mit Rav',
-        it: 'Trasmissione in diretta con Rav',
-        fr: 'Diffusion en direct avec Rav',
-        uk: 'Пряма трансляція з Равом',
-      }
-    },
-    {
-      id: 'tes',
-      translations: {
-        he: 'שיעור תע"ס עם הרב"ש',
-        en: 'TES Lesson With RABASH',
-        ru: 'Урок ТЭС с Рабашем',
-        es: 'Lección TES con RABASH',
-        de: 'TES-Lektion mit RABASH',
-        it: 'Lezione TES con RABASH',
-        fr: 'Leçon TES avec RABASH',
-        uk: 'Урок ТЕС з РАБАШем',
-      }
-    },
-    {
-      id: 'zohar',
-      translations: {
-        he: 'קוראים בזוהר',
-        en: 'Zohar Reading',
-        ru: 'Читаем Зоар',
-        es: 'Lectura del Zohar',
-        de: 'Sohar-Lesung',
-        it: 'Lettura dello Zohar',
-        fr: 'Lecture du Zohar',
-        uk: 'Читаємо Зоар',
-      }
-    },
-    {
-      id: 'society',
-      translations: {
-        he: 'בונים חברה רוחנית',
-        en: 'Building a Spiritual Society',
-        ru: 'Строим духовное общество',
-        es: 'Construyendo una sociedad espiritual',
-        de: 'Wir bauen eine spirituelle Gesellschaft',
-        it: 'Costruiamo una società spirituale',
-        fr: 'Construire une société spirituelle',
-        uk: 'Будуємо духовне суспільство',
-      }
-    },
-    {
-      id: 'conversations',
-      translations: {
-        he: 'שיחות על הדרך',
-        en: 'Conversations on the Way',
-        ru: 'Беседы в пути',
-        es: 'Conversaciones en el camino',
-        de: 'Gespräche unterwegs',
-        it: 'Conversazioni lungo la strada',
-        fr: 'Conversations en chemin',
-        uk: 'Бесіди на шляху',
-      }
-    },
-    {
-      id: 'studying_friends',
-      translations: {
-        he: 'לימוד בין חברים',
-        en: 'Studying with Friends',
-        ru: 'Учеба в кругу друзей',
-        es: 'Estudio entre amigos',
-        de: 'Lernen mit Freunden',
-        it: 'Studio tra amici',
-        fr: 'Étudier avec des amis',
-        uk: 'Навчання з друзями',
-      }
-    },
-    {
-      id: 'article_reading_ten',
-      translations: {
-        he: 'קריאת מאמר בעשירייה',
-        en: 'Reading of the Article in the Ten',
-        ru: 'Чтение статьи в десятке',
-        es: 'Lectura del artículo en la decena',
-        de: 'Lesung des Artikels in der Zehnergruppe',
-        it: 'Lettura dell\'articolo nel gruppo di dieci',
-        fr: 'Lecture de l\'article dans le groupe de dix',
-        uk: 'Читання статті в десятці',
-      }
-    },
-  ]
+  interface TemplateDefinition {
+    id: string
+    translations: { [key: string]: string }
+    visible: boolean
+  }
 
   // Calculate next order number based on existing parts
   const calculateInitialOrder = () => {
@@ -170,6 +68,27 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showOptionalFields, setShowOptionalFields] = useState(false)
+  const [titleTemplates, setTitleTemplates] = useState<TemplateDefinition[]>([])
+
+  // Fetch templates from API on mount
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const res = await fetch(getApiUrl('/templates'))
+        if (res.ok) {
+          const config = await res.json()
+          // Filter to only visible templates
+          const visibleTemplates = config.templates.filter((t: TemplateDefinition) => t.visible)
+          setTitleTemplates(visibleTemplates)
+        }
+      } catch (err) {
+        console.error('Failed to fetch templates:', err)
+        // Fall back to empty array if fetch fails
+        setTitleTemplates([])
+      }
+    }
+    fetchTemplates()
+  }, [])
 
   // Handle template selection
   const handleTemplateSelect = (templateId: string) => {

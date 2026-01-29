@@ -124,7 +124,7 @@ const TRANSLATIONS = {
     watchLesson: 'צפייה בשיעור',
     lessonTranscript: 'תמליל השיעור',
     selectedExcerpts: 'קטעים נבחרים',
-    startPoint: 'החל מ:',
+    startPoint: 'דבר המתחיל:',
     endPoint: 'עד:',
   },
   en: {
