@@ -65,13 +65,31 @@ func serverFn(cmd *cobra.Command, args []string) {
 	if templatesPath == "" {
 		templatesPath = "./templates.json"
 	}
-	templateConfig, err := storage.LoadTemplates(templatesPath)
+	jsonTemplateConfig, err := storage.LoadTemplates(templatesPath)
 	if err != nil {
-		log.Fatalf("Failed to load templates: %v", err)
+		log.Fatalf("Failed to load templates from JSON: %v", err)
 	}
-	log.Printf("Loaded %d templates in %d languages", len(templateConfig.Templates), len(templateConfig.Languages))
+	log.Printf("Loaded %d templates in %d languages from JSON", len(jsonTemplateConfig.Templates), len(jsonTemplateConfig.Languages))
+
+	// Initialize template store
+	mongoTemplateStore, err := storage.NewMongoDBTemplateStore(mongoEventStore.GetDatabase())
+	if err != nil {
+		log.Fatalf("Failed to initialize MongoDB template store: %v", err)
+	}
+
+	// Initialize MongoDB with JSON data on first run (if not already initialized)
+	if err := mongoTemplateStore.InitializeFromJSON(jsonTemplateConfig); err != nil {
+		log.Fatalf("Failed to initialize templates in MongoDB: %v", err)
+	}
+
+	// Load templates from MongoDB
+	templateConfig, err := mongoTemplateStore.GetConfig()
+	if err != nil {
+		log.Fatalf("Failed to load templates from MongoDB: %v", err)
+	}
+	log.Printf("Loaded %d templates from MongoDB", len(templateConfig.Templates))
 
 	// Start API server with dependencies
-	app := api.NewApp(partStore, eventStore, kabbalahmediaClient, templateConfig)
+	app := api.NewApp(partStore, eventStore, mongoTemplateStore, kabbalahmediaClient, templateConfig)
 	app.Init()
 }
