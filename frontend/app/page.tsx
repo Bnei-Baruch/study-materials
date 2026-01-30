@@ -903,7 +903,7 @@ export default function PublicPage() {
                     className={`rounded-xl shadow-md bg-white overflow-hidden ${isRTL ? 'border-r-4' : 'border-l-4'} ${isRTL ? colors.border : colors.borderLTR}`}
                   >
                     {/* Date Header */}
-                    <div className="p-4 border-b border-gray-200">
+                    <div className="p-4 border-b border-gray-200 bg-gray-100">
                       <div className="flex items-center gap-2 text-blue-900">
                         <Calendar className="w-5 h-5" />
                         <h3 style={{ fontSize: '18px', fontWeight: 'bold' }}>
