@@ -17,16 +17,18 @@ type App struct {
 	cors                *cors.Cors
 	store               storage.PartStore
 	eventStore          storage.EventStore
+	templateStore       storage.TemplateStore
 	kabbalahmediaClient *kabbalahmedia.Client
 	templateConfig      *storage.TemplateConfig
 	emailService        *EmailService
 }
 
 // NewApp creates a new App instance with dependencies
-func NewApp(partStore storage.PartStore, eventStore storage.EventStore, kabbalahmediaClient *kabbalahmedia.Client, templateConfig *storage.TemplateConfig) *App {
+func NewApp(partStore storage.PartStore, eventStore storage.EventStore, templateStore storage.TemplateStore, kabbalahmediaClient *kabbalahmedia.Client, templateConfig *storage.TemplateConfig) *App {
 	return &App{
 		store:               partStore,
 		eventStore:          eventStore,
+		templateStore:       templateStore,
 		kabbalahmediaClient: kabbalahmediaClient,
 		templateConfig:      templateConfig,
 		emailService:        NewEmailService(),
@@ -86,6 +88,9 @@ func (a *App) initRouters() {
 
 	// Template endpoints
 	a.router.HandleFunc("/api/templates", a.HandleGetTemplates).Methods(http.MethodGet, http.MethodOptions)
+	a.router.HandleFunc("/api/templates", a.HandleCreateTemplate).Methods(http.MethodPost, http.MethodOptions)
+	a.router.HandleFunc("/api/templates/{id}", a.HandleUpdateTemplate).Methods(http.MethodPut, http.MethodOptions)
+	a.router.HandleFunc("/api/templates/{id}", a.HandleDeleteTemplate).Methods(http.MethodDelete, http.MethodOptions)
 
 	// Health check
 	a.router.HandleFunc("/health", handleHealth).Methods(http.MethodGet, http.MethodOptions)

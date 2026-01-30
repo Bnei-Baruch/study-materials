@@ -129,6 +129,7 @@ function AdminEventDetailPageContent() {
   const [editEventEndTime, setEditEventEndTime] = useState('')
   const [editEventTitles, setEditEventTitles] = useState<{ [key: string]: string }>({})
   const [emailSentAt, setEmailSentAt] = useState<string | null>(null)
+  const [templates, setTemplates] = useState<Array<{ id: string; translations: { [key: string]: string }; visible: boolean }>>([])
 
   const languageNames: { [key: string]: string } = {
     he: '🇮🇱 עברית',
@@ -162,6 +163,22 @@ function AdminEventDetailPageContent() {
   useEffect(() => {
     fetchEventAndParts()
   }, [eventId, selectedLanguage])
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const res = await fetch(getApiUrl('/templates'))
+        if (res.ok) {
+          const config = await res.json()
+          const visibleTemplates = config.templates.filter((t: any) => t.visible)
+          setTemplates(visibleTemplates)
+        }
+      } catch (err) {
+        console.error('Failed to fetch templates:', err)
+      }
+    }
+    fetchTemplates()
+  }, [])
 
   const fetchEventAndParts = async () => {
     try {
@@ -1065,20 +1082,14 @@ function AdminEventDetailPageContent() {
                           <div>
                             <label className="block text-gray-700 font-medium mb-2 text-xs">Title *</label>
                             <div className="flex gap-2 mb-2 flex-wrap">
-                              {[
-                                { id: 'recorded', he: 'שיעור מוקלט' },
-                                { id: 'live', he: 'שיעור חי בהשתתפות הרב' },
-                                { id: 'tes', he: 'שיעור תע"ס עם הרב"ש' },
-                                { id: 'zohar', he: 'קוראים בזוהר' },
-                                { id: 'society', he: 'בונים חברה רוחנית' },
-                              ].map((template) => (
+                              {templates.map((template) => (
                                 <button
                                   key={template.id}
                                   type="button"
-                                  onClick={() => editedPart && updateEditedField('title', template.he)}
+                                  onClick={() => editedPart && updateEditedField('title', template.translations[editedPart.language] || template.translations.en)}
                                   className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-xs border border-blue-200"
                                 >
-                                  {template.he}
+                                  {template.translations[editedPart?.language || selectedLanguage] || template.translations.en}
                                 </button>
                               ))}
                             </div>

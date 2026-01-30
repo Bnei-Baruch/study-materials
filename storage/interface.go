@@ -19,4 +19,10 @@ type EventStore interface {
 	DeleteEvent(id string) error
 }
 
+// TemplateStore defines the interface for template storage
+type TemplateStore interface {
+	SaveConfig(config *TemplateConfig) error
+	GetConfig() (*TemplateConfig, error)
+	InitializeFromJSON(config *TemplateConfig) error
+}
 

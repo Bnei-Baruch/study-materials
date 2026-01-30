@@ -1,8 +1,6 @@
 name: Deploy to Production
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -12,6 +10,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
       
       - name: Deploy to VM
         run: |
@@ -20,8 +20,8 @@ jobs:
           # Fetch latest from remote
           git fetch origin
           
-          # Reset to exact remote version (discards local changes)
-          git reset --hard origin/main
+          # Reset to exact remote version of current branch (discards local changes)
+          git reset --hard origin/${{ github.ref_name }}
           
           # Clean untracked files (respects .gitignore)
           git clean -fd

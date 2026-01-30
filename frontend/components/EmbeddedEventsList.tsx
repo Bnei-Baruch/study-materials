@@ -223,7 +223,7 @@ export function EmbeddedEventsList({
                 className={`rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? 'border-r-4' : 'border-l-4'} ${isRTL ? colors.border : colors.borderLTR}`}
               >
                 {/* Date Header */}
-                <div className="p-3 sm:p-4 border-b border-gray-200">
+                <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-100">
                   <div className="flex items-center gap-2 text-blue-900">
                     <Calendar className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                     <h4 className="text-[14px] sm:text-[16px] font-bold truncate">

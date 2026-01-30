@@ -13,6 +13,7 @@
   "templates": [
     {
       "id": "recorded",
+      "visible": true,
       "translations": {
         "he": "שיעור מוקלט",
         "en": "Recorded Lesson",
@@ -26,6 +27,7 @@
     },
     {
       "id": "live",
+      "visible": true,
       "translations": {
         "he": "שיעור חי בהשתתפות הרב",
         "en": "Live Broadcast With Rav",
@@ -39,6 +41,7 @@
     },
     {
       "id": "tes",
+      "visible": true,
       "translations": {
         "he": "שיעור תע\"ס עם הרב\"ש",
         "en": "TES Lesson With RABASH",
@@ -52,6 +55,7 @@
     },
     {
       "id": "zohar",
+      "visible": true,
       "translations": {
         "he": "קוראים בזוהר",
         "en": "Zohar Reading",
@@ -65,6 +69,7 @@
     },
     {
       "id": "society",
+      "visible": true,
       "translations": {
         "he": "בונים חברה רוחנית",
         "en": "Building a Spiritual Society",
@@ -78,6 +83,7 @@
     },
     {
       "id": "conversations",
+      "visible": true,
       "translations": {
         "he": "שיחות על הדרך",
         "en": "Conversations on the Way",
@@ -91,6 +97,7 @@
     },
     {
       "id": "studying_friends",
+      "visible": true,
       "translations": {
         "he": "לימוד בין חברים",
         "en": "Studying with Friends",
@@ -104,6 +111,7 @@
     },
     {
       "id": "article_reading_ten",
+      "visible": true,
       "translations": {
         "he": "קריאת מאמר בעשירייה",
         "en": "Reading of the Article in the Ten",

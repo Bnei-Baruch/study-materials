@@ -21,7 +21,7 @@ export default function EventCard({ event }: EventCardProps) {
 
   return (
     <Link href={`/events/${event.id}`}>
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition cursor-pointer">
+      <div className="bg-gray-100 rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition cursor-pointer">
         <div className="flex items-center justify-between mb-3">
           <EventTypeBadge type={event.type} />
           {event.number > 1 && (
