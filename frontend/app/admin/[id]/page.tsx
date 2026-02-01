@@ -130,6 +130,12 @@ function AdminEventDetailPageContent() {
   const [editEventTitles, setEditEventTitles] = useState<{ [key: string]: string }>({})
   const [emailSentAt, setEmailSentAt] = useState<string | null>(null)
   const [templates, setTemplates] = useState<Array<{ id: string; translations: { [key: string]: string }; visible: boolean }>>([])
+  const [editingPartOrder, setEditingPartOrder] = useState<number | null>(null)
+  const [editedParts, setEditedParts] = useState<{ [key: string]: Part }>({})
+  const [originalParts, setOriginalParts] = useState<{ [key: string]: Part }>({})
+  const [scrollToLangCode, setScrollToLangCode] = useState<string | null>(null)
+
+  const orderedLanguageCodes = ['he', 'en', 'ru', 'es', 'uk', 'de', 'it', 'fr']
 
   const languageNames: { [key: string]: string } = {
     he: '🇮🇱 עברית',
@@ -180,6 +186,17 @@ function AdminEventDetailPageContent() {
     fetchTemplates()
   }, [])
 
+  useEffect(() => {
+    // Scroll to the target language when editing opens
+    if (scrollToLangCode && editingPartOrder !== null) {
+      const element = document.getElementById(`edit-${scrollToLangCode}`)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        setScrollToLangCode(null) // Reset after scrolling
+      }
+    }
+  }, [scrollToLangCode, editingPartOrder])
+
   const fetchEventAndParts = async () => {
     try {
       // Fetch event
@@ -196,10 +213,14 @@ function AdminEventDetailPageContent() {
       }
 
       // Fetch parts for this event with language filter
-      const partsRes = await fetch(getApiUrl(`/events/${eventId}/parts?language=${selectedLanguage}`))
+      // If selectedLanguage is 'ALL', fetch without language filter (get all languages)
+      const languageParam = selectedLanguage === 'ALL' ? '' : `?language=${selectedLanguage}`
+      const partsRes = await fetch(getApiUrl(`/events/${eventId}/parts${languageParam}`))
       if (partsRes.ok) {
         const partsData = await partsRes.json()
-        setParts(partsData.parts || [])
+        const fetchedParts = partsData.parts || []
+        setParts(fetchedParts)
+        return fetchedParts
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
@@ -212,6 +233,13 @@ function AdminEventDetailPageContent() {
     setEditingPartId(part.id)
     setEditedPart({...part})
     setOriginalPart({...part})
+  }
+
+  const startEditAll = (part: Part) => {
+    // Start editing all languages of a part
+    setEditingPartOrder(part.order)
+    setEditedParts({ [part.language]: {...part} })
+    setOriginalParts({ [part.language]: {...part} })
   }
 
   const cancelEdit = () => {
@@ -262,6 +290,29 @@ function AdminEventDetailPageContent() {
     updateEditedField('sources', updatedSources)
   }
 
+  const handleAddSourceInEdit_All = async (source: { source_id: string; source_title: string }, langCode: string, editedPart: Part) => {
+    try {
+      // Fetch the source title in the part's language
+      const response = await fetch(
+        getApiUrl(`/sources/title?id=${source.source_id}&language=${langCode}`)
+      )
+      const data = await response.json()
+
+      const newSource: Source = {
+        source_id: source.source_id,
+        source_title: data.title,
+        source_url: data.url,
+        page_number: '',
+      }
+
+      const updated = {...editedPart, sources: [...editedPart.sources, newSource]}
+      setEditedParts({...editedParts, [langCode]: updated})
+    } catch (error) {
+      console.error('Failed to fetch source title:', error)
+      alert('Failed to add source')
+    }
+  }
+
   const handleUpdateSourceInEdit = (index: number, field: keyof Source, value: string) => {
     if (!editedPart) return
     const updatedSources = [...editedPart.sources]
@@ -310,6 +361,49 @@ function AdminEventDetailPageContent() {
     }
   }
 
+  const saveAllParts = async () => {
+    try {
+      for (const [_, part] of Object.entries(editedParts)) {
+        const response = await fetch(getApiUrl(`/parts/${part.id}`), {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: part.title,
+            description: part.description,
+            order: part.order,
+            sources: part.sources,
+            excerpts_link: part.excerpts_link || '',
+            transcript_link: part.transcript_link || '',
+            lesson_link: part.lesson_link || '',
+            program_link: part.program_link || '',
+            reading_before_sleep_link: part.reading_before_sleep_link || '',
+            lesson_preparation_link: part.lesson_preparation_link || '',
+            recorded_lesson_link: part.recorded_lesson_link || '',
+            recorded_lesson_date: part.recorded_lesson_date || '',
+            custom_links: part.custom_links || [],
+          }),
+        })
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          throw new Error(`Failed to update ${part.language} version: ${response.status} ${errorText}`)
+        }
+      }
+
+      // Clear edit state and refresh
+      setEditingPartOrder(null)
+      setEditedParts({})
+      setOriginalParts({})
+      await fetchEventAndParts()
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to save parts'
+      alert(errorMsg)
+      console.error('Save all parts error:', err)
+    }
+  }
+
   const deletePart = async (partId: string, partTitle: string, partLanguage: string) => {
     const isHebrew = partLanguage === 'he'
     const message = isHebrew 
@@ -333,6 +427,33 @@ function AdminEventDetailPageContent() {
       await fetchEventAndParts()
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Failed to delete part')
+    }
+  }
+
+  const deleteAllLanguagesOfPart = async (partOrder: number, partTitle: string) => {
+    if (!confirm(`Are you sure you want to delete ALL languages of "${partTitle}"?\n\nThis will delete this part in ALL languages.`)) {
+      return
+    }
+
+    try {
+      // Delete all parts with this order
+      for (const [_, part] of Object.entries(editedParts)) {
+        const response = await fetch(getApiUrl(`/parts/${part.id}`), {
+          method: 'DELETE',
+        })
+
+        if (!response.ok) {
+          throw new Error(`Failed to delete ${part.language} version`)
+        }
+      }
+
+      // Clear edit state and refresh
+      setEditingPartOrder(null)
+      setEditedParts({})
+      setOriginalParts({})
+      await fetchEventAndParts()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete parts')
     }
   }
 
@@ -647,9 +768,16 @@ function AdminEventDetailPageContent() {
     }
   }
 
-  const handlePartCreated = () => {
+  const handlePartCreated = async () => {
     setShowPartForm(false)
-    fetchEventAndParts() // Refresh the parts list
+    setSelectedLanguage('ALL') // Switch to ALL view to show edit form for all languages
+    const fetchedParts = await fetchEventAndParts() // Refresh the parts list and return fetched parts
+    
+    // Auto-open edit ALL view for the newly created part (highest order)
+    if (fetchedParts && fetchedParts.length > 0) {
+      const maxOrderPart = fetchedParts.reduce((max: Part, p: Part) => p.order > max.order ? p : max)
+      startEditAll(maxOrderPart)
+    }
   }
 
   const formatDate = (dateString: string) => {
@@ -880,6 +1008,16 @@ function AdminEventDetailPageContent() {
             <div className="pt-4 border-t border-gray-100">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-gray-600 text-xs font-medium mr-2">Select Language:</span>
+                <button
+                  onClick={() => setSelectedLanguage('ALL')}
+                  className={`px-2.5 py-1.5 rounded transition-all text-xs font-medium ${
+                    selectedLanguage === 'ALL'
+                      ? 'bg-purple-600 text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  ALL
+                </button>
                 {Object.entries(languageNames).map(([code, name]) => (
                   <button
                     key={code}
@@ -996,289 +1134,850 @@ function AdminEventDetailPageContent() {
             </div>
           )}
 
-          {/* Parts List */}
-          {parts.length === 0 && !showPartForm ? (
-            <div className="text-center py-12 bg-gray-50">
-              <p className="text-gray-500 mb-4">No parts yet for this event</p>
-              <button
-                onClick={() => setShowPartForm(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition"
-              >
-                Add First Part
-              </button>
-            </div>
-          ) : parts.length > 0 ? (
-            <div className="divide-y divide-gray-100">
-              {parts.map((part) => {
-                const isEditing = editingPartId === part.id
-                const colors = getColorClasses(part)
-
-                return (
-                  <div key={part.id}>
-                    {/* Header - Always visible */}
-                    <div className={`p-4 flex items-center gap-4 transition ${isEditing ? 'bg-blue-50 border-b-2 border-blue-500' : 'hover:bg-gray-50 border-b border-gray-100'}`}>
-                      {/* Drag Handle */}
-                      <button className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing">
-                        <GripVertical className="w-5 h-5" />
-                      </button>
-
-                      {/* Part Number Badge */}
-                      <div className={`w-10 h-10 rounded-lg ${colors.bg} text-white flex items-center justify-center flex-shrink-0 shadow-sm font-bold`}>
-                        {part.order}
-                      </div>
-
-                      {/* Content - clickable to open edit */}
-                      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => !isEditing && startEdit(part)}>
-                        <h4 className={`font-bold ${colors.text}`} style={{ fontSize: '15px' }}>
-                          {isEditing ? 'Editing...' : part.title}
-                        </h4>
-                        <p className="text-gray-500 text-xs">
-                          {part.sources.length} source{part.sources.length !== 1 ? 's' : ''} • {part.custom_links?.length || 0} custom link{(part.custom_links?.length || 0) !== 1 ? 's' : ''}
-                        </p>
-                      </div>
-
-                      {/* Actions - Delete always visible */}
-                      {!isEditing && (
-                        <button
-                          onClick={() => deletePart(part.id, part.title, part.language)}
-                          className="p-2 hover:bg-white rounded-lg transition-colors text-red-600"
-                        >
-                          <Trash2 className="w-4 h-4" />
+          {/* ALL Languages View */}
+          {selectedLanguage === 'ALL' ? (
+            parts.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50">
+                <p className="text-gray-500 mb-4">No parts yet for this event</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {/* Group parts by order */}
+                {Array.from(new Set(parts.map(p => p.order))).sort((a, b) => a - b).map((order) => {
+                  const partsForOrder = parts.filter(p => p.order === order)
+                  const firstPart = partsForOrder[0]
+                  const colors = getColorClasses(firstPart)
+                  const isEditingThisOrder = editingPartOrder === order
+                  
+                  return (
+                    <div key={`${order}-group`}>
+                      {/* Header - Always visible */}
+                      <div className={`p-4 flex items-center gap-4 transition ${isEditingThisOrder ? 'bg-blue-50 border-b-2 border-blue-500' : 'hover:bg-gray-50 border-b border-gray-100'}`}>
+                        {/* Drag Handle */}
+                        <button className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing">
+                          <GripVertical className="w-5 h-5" />
                         </button>
+
+                        {/* Part Number Badge */}
+                        <div className={`w-10 h-10 rounded-lg ${colors.bg} text-white flex items-center justify-center flex-shrink-0 shadow-sm font-bold`}>
+                          {order}
+                        </div>
+
+                        {/* Content - clickable to open edit */}
+                        <div className="flex-1 min-w-0 cursor-pointer" onClick={() => !isEditingThisOrder && startEditAll(firstPart)}>
+                          <h4 className={`font-bold ${colors.text}`} style={{ fontSize: '15px' }}>
+                            {isEditingThisOrder ? 'Editing ALL languages...' : firstPart.title}
+                          </h4>
+                          <p className="text-gray-500 text-xs">
+                            {partsForOrder.length} language{partsForOrder.length !== 1 ? 's' : ''} • {firstPart.sources.length} source{firstPart.sources.length !== 1 ? 's' : ''} • {firstPart.custom_links?.length || 0} custom link{(firstPart.custom_links?.length || 0) !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+
+                        {/* Actions */}
+                        {!isEditingThisOrder && (
+                          <button
+                            onClick={() => deleteAllLanguagesOfPart(order, firstPart.title)}
+                            className="p-2 hover:bg-white rounded-lg transition-colors text-red-600"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Preview - All Languages (when not editing) */}
+                      {!isEditingThisOrder && (
+                        <div className="p-6 bg-gray-50 space-y-6 border-b border-gray-100">
+                          {orderedLanguageCodes.map((langCode) => {
+                            const langPart = partsForOrder.find(p => p.language === langCode)
+                            if (!langPart) return null
+                            
+                            return (
+                              <div key={`${order}-${langCode}`} className="p-4 mb-4 border-2 border-gray-300 rounded-lg bg-white">
+                                <div className="flex items-start justify-between mb-2">
+                                  <h5 className="font-semibold text-gray-900" style={{ fontSize: '14px' }}>
+                                    {languageNames[langCode]}
+                                  </h5>
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() => {
+                                        setScrollToLangCode(langCode)
+                                        startEditAll(langPart)
+                                      }}
+                                      className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-blue-600"
+                                      title="Edit all languages"
+                                    >
+                                      <Edit3 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Title */}
+                                <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '13px' }}>
+                                  {langPart.title}
+                                </p>
+
+                                {/* Description */}
+                                {langPart.description && (
+                                  <p className="text-gray-600 mb-3" style={{ fontSize: '13px' }}>
+                                    {langPart.description}
+                                  </p>
+                                )}
+
+                                {/* Quick Links */}
+                                {order !== 0 && (
+                                  <div className="mb-3">
+                                    <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Quick Links:</p>
+                                    <div className="flex flex-wrap gap-2">
+                                      {langPart.excerpts_link && (
+                                        <a
+                                          href={langPart.excerpts_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs hover:bg-blue-200 transition"
+                                        >
+                                          <FileText className="w-3 h-3" />
+                                          Excerpts
+                                        </a>
+                                      )}
+                                      {langPart.transcript_link && (
+                                        <a
+                                          href={langPart.transcript_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs hover:bg-green-200 transition"
+                                        >
+                                          <FileText className="w-3 h-3" />
+                                          Transcript
+                                        </a>
+                                      )}
+                                      {langPart.lesson_link && (
+                                        <a
+                                          href={langPart.lesson_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs hover:bg-purple-200 transition"
+                                        >
+                                          <BookOpen className="w-3 h-3" />
+                                          Lesson
+                                        </a>
+                                      )}
+                                      {langPart.program_link && (
+                                        <a
+                                          href={langPart.program_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs hover:bg-orange-200 transition"
+                                        >
+                                          <BookOpen className="w-3 h-3" />
+                                          Program
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Preparation Links (order 0) */}
+                                {order === 0 && (
+                                  <div className="mb-3">
+                                    <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Quick Links:</p>
+                                    <div className="flex flex-wrap gap-2">
+                                      {langPart.reading_before_sleep_link && (
+                                        <a
+                                          href={langPart.reading_before_sleep_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs hover:bg-indigo-200 transition"
+                                        >
+                                          <FileText className="w-3 h-3" />
+                                          Reading Before Sleep
+                                        </a>
+                                      )}
+                                      {langPart.lesson_preparation_link && (
+                                        <a
+                                          href={langPart.lesson_preparation_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs hover:bg-teal-200 transition"
+                                        >
+                                          <BookOpen className="w-3 h-3" />
+                                          Lesson Preparation
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Sources */}
+                                {langPart.sources && langPart.sources.length > 0 && (
+                                  <div className="mb-3">
+                                    <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Sources:</p>
+                                    <div className="space-y-1">
+                                      {langPart.sources.map((source, idx) => (
+                                        <div key={idx} className="flex items-start gap-2 text-xs">
+                                          <BookOpen className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" />
+                                          <div className="flex-1">
+                                            <a
+                                              href={source.source_url}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="text-blue-600 hover:text-blue-800 hover:underline"
+                                            >
+                                              {source.source_title}
+                                            </a>
+                                            {source.page_number && <span className="text-gray-600"> • p. {source.page_number}</span>}
+                                            {source.start_point && <span className="text-gray-600"> • {source.start_point}</span>}
+                                            {source.end_point && <span className="text-gray-600"> → {source.end_point}</span>}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Custom Links */}
+                                {langPart.custom_links && langPart.custom_links.length > 0 && (
+                                  <div>
+                                    <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Custom Links:</p>
+                                    <div className="space-y-1">
+                                      {langPart.custom_links.map((link, idx) => (
+                                        <div key={idx} className="flex items-center gap-2 text-xs">
+                                          <LinkIcon className="w-3 h-3 text-gray-400" />
+                                          <a
+                                            href={link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-600 hover:text-blue-800 hover:underline"
+                                          >
+                                            {link.title}
+                                          </a>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+
+                      {/* Edit View - All Languages (when editing) */}
+                      {isEditingThisOrder && (
+                        <div className="p-6 bg-gray-50 border-b border-gray-100 space-y-8">
+                          {/* Edit fields for all languages */}
+                          {orderedLanguageCodes.map((langCode) => {
+                            const langPart = partsForOrder.find(p => p.language === langCode)
+                            if (!langPart) return null
+                            
+                            const editedPart = editedParts[langCode] || langPart
+                            
+                            return (
+                              <div key={`edit-${langCode}`} className="space-y-4 p-4 mb-4 border-2 border-gray-300 rounded-lg bg-white">
+                                <h5 className="font-semibold text-gray-900" style={{ fontSize: '14px' }}>
+                                  {languageNames[langCode]}
+                                </h5>
+
+                                {/* Title */}
+                                <div>
+                                  <label className="block text-gray-700 font-medium mb-2 text-xs">Title *</label>
+                                  <div className="flex gap-2 mb-2 flex-wrap">
+                                    {templates.map((template) => (
+                                      <button
+                                        key={template.id}
+                                        type="button"
+                                        onClick={() => {
+                                          const updated = {...editedPart, title: template.translations[langCode] || template.translations.en}
+                                          setEditedParts({...editedParts, [langCode]: updated})
+                                        }}
+                                        className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-xs border border-blue-200"
+                                      >
+                                        {template.translations[langCode] || template.translations.en}
+                                      </button>
+                                    ))}
+                                  </div>
+                                  <input
+                                    type="text"
+                                    value={editedPart.title}
+                                    onChange={(e) => {
+                                      const updated = {...editedPart, title: e.target.value}
+                                      setEditedParts({...editedParts, [langCode]: updated})
+                                    }}
+                                    className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                    placeholder="Or type custom title..."
+                                  />
+                                </div>
+
+                                {/* Description */}
+                                <div>
+                                  <label className="block text-gray-700 font-medium mb-2 text-xs">Description</label>
+                                  <textarea
+                                    value={editedPart.description}
+                                    onChange={(e) => {
+                                      const updated = {...editedPart, description: e.target.value}
+                                      setEditedParts({...editedParts, [langCode]: updated})
+                                    }}
+                                    rows={2}
+                                    className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-none"
+                                    placeholder="Brief description of the lesson part..."
+                                  />
+                                </div>
+
+                                {/* Recorded Lesson Date */}
+                                {order !== 0 && (
+                                  <div>
+                                    <label className="block text-gray-700 font-medium mb-2 text-xs">Original Lesson Date</label>
+                                    <input
+                                      type="date"
+                                      value={editedPart.recorded_lesson_date ? new Date(editedPart.recorded_lesson_date).toISOString().split('T')[0] : ''}
+                                      onChange={(e) => {
+                                        const updated = {...editedPart, recorded_lesson_date: e.target.value ? new Date(e.target.value).toISOString() : ''}
+                                        setEditedParts({...editedParts, [langCode]: updated})
+                                      }}
+                                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                    />
+                                    <p className="text-gray-400 text-xs mt-1">Format: M/D/YYYY (e.g., 1/5/2003)</p>
+                                  </div>
+                                )}
+
+                                {/* Quick Links for lesson parts (order !== 0) */}
+                                {order !== 0 && (
+                                  <div>
+                                    <label className="block text-gray-700 font-medium mb-3 text-xs">Quick Links</label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                      <div>
+                                        <label className="block text-gray-600 text-xs mb-1.5 font-medium">Excerpt Link</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="url"
+                                            value={editedPart.excerpts_link || ''}
+                                            onChange={(e) => {
+                                              const updated = {...editedPart, excerpts_link: e.target.value}
+                                              setEditedParts({...editedParts, [langCode]: updated})
+                                            }}
+                                            className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                            placeholder="https://..."
+                                          />
+                                          {editedPart.excerpts_link && (
+                                            <a
+                                              href={editedPart.excerpts_link}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                              title="Open link"
+                                            >
+                                              <ExternalLink className="w-4 h-4" />
+                                            </a>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <label className="block text-gray-600 text-xs mb-1.5 font-medium">Transcript Link</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="url"
+                                            value={editedPart.transcript_link || ''}
+                                            onChange={(e) => {
+                                              const updated = {...editedPart, transcript_link: e.target.value}
+                                              setEditedParts({...editedParts, [langCode]: updated})
+                                            }}
+                                            className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                            placeholder="https://..."
+                                          />
+                                          {editedPart.transcript_link && (
+                                            <a
+                                              href={editedPart.transcript_link}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                              title="Open link"
+                                            >
+                                              <ExternalLink className="w-4 h-4" />
+                                            </a>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lesson Link</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="url"
+                                            value={editedPart.lesson_link || ''}
+                                            onChange={(e) => {
+                                              const updated = {...editedPart, lesson_link: e.target.value}
+                                              setEditedParts({...editedParts, [langCode]: updated})
+                                            }}
+                                            className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                            placeholder="https://..."
+                                          />
+                                          {editedPart.lesson_link && (
+                                            <a
+                                              href={editedPart.lesson_link}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                              title="Open link"
+                                            >
+                                              <ExternalLink className="w-4 h-4" />
+                                            </a>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <label className="block text-gray-600 text-xs mb-1.5 font-medium">Program Link</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="url"
+                                            value={editedPart.program_link || ''}
+                                            onChange={(e) => {
+                                              const updated = {...editedPart, program_link: e.target.value}
+                                              setEditedParts({...editedParts, [langCode]: updated})
+                                            }}
+                                            className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                            placeholder="https://..."
+                                          />
+                                          {editedPart.program_link && (
+                                            <a
+                                              href={editedPart.program_link}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                              title="Open link"
+                                            >
+                                              <ExternalLink className="w-4 h-4" />
+                                            </a>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Custom Links */}
+                                {order !== 0 && (
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <label className="block text-gray-700 font-medium text-xs">Custom Links (Language-Specific)</label>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const updatedLinks = [...(editedPart.custom_links || []), { title: '', url: '' }]
+                                          const updated = {...editedPart, custom_links: updatedLinks}
+                                          setEditedParts({...editedParts, [langCode]: updated})
+                                        }}
+                                        className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors flex items-center gap-1"
+                                      >
+                                        <Plus className="w-3 h-3" />
+                                        Add Link
+                                      </button>
+                                    </div>
+                                    <div className="space-y-2">
+                                      {editedPart.custom_links && editedPart.custom_links.length > 0 && (
+                                        editedPart.custom_links.map((link, idx) => (
+                                          <div key={idx} className="flex items-center gap-2">
+                                            <input
+                                              type="text"
+                                              value={link.title}
+                                              onChange={(e) => {
+                                                const updatedLinks = [...(editedPart.custom_links || [])]
+                                                updatedLinks[idx] = { ...updatedLinks[idx], title: e.target.value }
+                                                const updated = {...editedPart, custom_links: updatedLinks}
+                                                setEditedParts({...editedParts, [langCode]: updated})
+                                              }}
+                                              className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                              placeholder="Link title"
+                                            />
+                                            <input
+                                              type="url"
+                                              value={link.url}
+                                              onChange={(e) => {
+                                                const updatedLinks = [...(editedPart.custom_links || [])]
+                                                updatedLinks[idx] = { ...updatedLinks[idx], url: e.target.value }
+                                                const updated = {...editedPart, custom_links: updatedLinks}
+                                                setEditedParts({...editedParts, [langCode]: updated})
+                                              }}
+                                              className="flex-[2] px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                              placeholder="https://..."
+                                            />
+                                            {link.url && (
+                                              <a
+                                                href={link.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                                title="Open link"
+                                              >
+                                                <ExternalLink className="w-4 h-4" />
+                                              </a>
+                                            )}
+                                            <button
+                                              onClick={() => {
+                                                const updatedLinks = editedPart.custom_links?.filter((_, i) => i !== idx) || []
+                                                const updated = {...editedPart, custom_links: updatedLinks}
+                                                setEditedParts({...editedParts, [langCode]: updated})
+                                              }}
+                                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                            >
+                                              <X className="w-4 h-4" />
+                                            </button>
+                                          </div>
+                                        ))
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Preparation part special links (order === 0) */}
+                                {order === 0 && (
+                                  <div>
+                                    <label className="block text-gray-700 font-medium mb-3 text-xs">Quick Links</label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                      <div>
+                                        <label className="block text-gray-600 text-xs mb-1.5 font-medium">Reading Before Sleep</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="url"
+                                            value={editedPart.reading_before_sleep_link || ''}
+                                            onChange={(e) => {
+                                              const updated = {...editedPart, reading_before_sleep_link: e.target.value}
+                                              setEditedParts({...editedParts, [langCode]: updated})
+                                            }}
+                                            className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                            placeholder="https://..."
+                                          />
+                                          {editedPart.reading_before_sleep_link && (
+                                            <a
+                                              href={editedPart.reading_before_sleep_link}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                              title="Open link"
+                                            >
+                                              <ExternalLink className="w-4 h-4" />
+                                            </a>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lesson Preparation</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="url"
+                                            value={editedPart.lesson_preparation_link || ''}
+                                            onChange={(e) => {
+                                              const updated = {...editedPart, lesson_preparation_link: e.target.value}
+                                              setEditedParts({...editedParts, [langCode]: updated})
+                                            }}
+                                            className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                            placeholder="https://..."
+                                          />
+                                          {editedPart.lesson_preparation_link && (
+                                            <a
+                                              href={editedPart.lesson_preparation_link}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                              title="Open link"
+                                            >
+                                              <ExternalLink className="w-4 h-4" />
+                                            </a>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Sources Management */}
+                                <div>
+                                  <label className="block text-gray-700 font-medium mb-2 text-xs">Sources</label>
+                                  
+                                  {langCode === 'he' && (
+                                    <div className="mb-3">
+                                      <SourceSearch onSelect={(source) => {
+                                        handleAddSourceInEdit_All(source, langCode, editedPart)
+                                      }} />
+                                    </div>
+                                  )}
+
+                                  {/* Existing sources */}
+                                  {editedPart.sources && editedPart.sources.length > 0 && (
+                                    <div className="space-y-2 mb-3">
+                                      {editedPart.sources.map((source, idx) => (
+                                        <div key={idx} className="flex items-start gap-2 p-3 bg-white border border-gray-200 rounded-lg">
+                                          <BookOpen className="w-4 h-4 text-gray-400 flex-shrink-0 mt-1" />
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-sm text-gray-800 block truncate">
+                                              {source.source_title}
+                                            </p>
+                                            <div className="mt-2 space-y-2">
+                                              <input
+                                                type="url"
+                                                value={source.source_url || ''}
+                                                onChange={(e) => {
+                                                  const updatedSources = [...editedPart.sources]
+                                                  updatedSources[idx] = { ...updatedSources[idx], source_url: e.target.value }
+                                                  const updated = {...editedPart, sources: updatedSources}
+                                                  setEditedParts({...editedParts, [langCode]: updated})
+                                                }}
+                                                className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                                placeholder="Source link (https://...)"
+                                              />
+                                              <input
+                                                type="text"
+                                                value={source.page_number || ''}
+                                                onChange={(e) => {
+                                                  const updatedSources = [...editedPart.sources]
+                                                  updatedSources[idx] = { ...updatedSources[idx], page_number: e.target.value }
+                                                  const updated = {...editedPart, sources: updatedSources}
+                                                  setEditedParts({...editedParts, [langCode]: updated})
+                                                }}
+                                                className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                                placeholder="Page number (e.g., 42 or 15-17)"
+                                              />
+                                              <div className="grid grid-cols-2 gap-2">
+                                                <input
+                                                  type="text"
+                                                  value={source.start_point || ''}
+                                                  onChange={(e) => {
+                                                    const updatedSources = [...editedPart.sources]
+                                                    updatedSources[idx] = { ...updatedSources[idx], start_point: e.target.value }
+                                                    const updated = {...editedPart, sources: updatedSources}
+                                                    setEditedParts({...editedParts, [langCode]: updated})
+                                                  }}
+                                                  className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                                  placeholder="Start From"
+                                                />
+                                                <input
+                                                  type="text"
+                                                  value={source.end_point || ''}
+                                                  onChange={(e) => {
+                                                    const updatedSources = [...editedPart.sources]
+                                                    updatedSources[idx] = { ...updatedSources[idx], end_point: e.target.value }
+                                                    const updated = {...editedPart, sources: updatedSources}
+                                                    setEditedParts({...editedParts, [langCode]: updated})
+                                                  }}
+                                                  className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                                  placeholder="End Point"
+                                                />
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <a 
+                                            href={source.source_url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                            title={source.source_url}
+                                          >
+                                            <ExternalLink className="w-4 h-4" />
+                                          </a>
+                                          <button
+                                            onClick={() => {
+                                              const updatedSources = editedPart.sources.filter((_, i) => i !== idx)
+                                              const updated = {...editedPart, sources: updatedSources}
+                                              setEditedParts({...editedParts, [langCode]: updated})
+                                            }}
+                                            className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors flex-shrink-0"
+                                          >
+                                            <X className="w-4 h-4" />
+                                          </button>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+
+                                  {/* Empty state */}
+                                  {!editedPart.sources || editedPart.sources.length === 0 ? (
+                                    <div className="p-4 bg-white border-2 border-dashed border-gray-300 rounded-lg text-center">
+                                      <BookOpen className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+                                      <p className="text-gray-500 text-xs">
+                                        {langCode === 'he' ? 'No sources added yet. Search above to add sources.' : 'No sources added yet.'}
+                                      </p>
+                                    </div>
+                                  ) : null}
+                                </div>
+                              </div>
+                            )
+                          })}
+
+                          {/* Save/Cancel buttons */}
+                          <div className="flex gap-3 pt-6 border-t border-gray-200">
+                            <button
+                              onClick={saveAllParts}
+                              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition"
+                            >
+                              Save All Languages
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingPartOrder(null)
+                                setEditedParts({})
+                                setOriginalParts({})
+                              }}
+                              className="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-medium transition"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </div>
+                  )
+                })}
+              </div>
+            )
+          ) : (
+            /* Single Language View */
+            parts.length === 0 && !showPartForm ? (
+              <div className="text-center py-12 bg-gray-50">
+                <p className="text-gray-500 mb-4">No parts yet for this event</p>
+                <button
+                  onClick={() => setShowPartForm(true)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+                >
+                  Add First Part
+                </button>
+              </div>
+            ) : parts.length > 0 ? (
+              <div className="divide-y divide-gray-100">
+                {parts.map((part) => {
+                  const isEditing = editingPartId === part.id
+                  const colors = getColorClasses(part)
 
-                    {/* Edit View - Only when editing */}
-                    {isEditing && (
-                      <div className="p-6 bg-gray-50 border-b border-gray-100">
-                        <div className="space-y-4">
-                          {/* Part Number & Part Type in 2-column grid */}
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-gray-700 font-medium mb-2 text-xs">Part Number *</label>
-                              <input
-                                type="number"
-                                min="0"
-                                value={editedPart ? editedPart.order : part.order}
-                                onChange={(e) => editedPart && updateEditedField('order', parseInt(e.target.value) || 0)}
-                                className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                              />
-                              <p className="text-gray-400 text-xs mt-1">0 = Preparation, 1+ = Lesson parts</p>
-                            </div>
-                            <div>
-                              <label className="block text-gray-700 font-medium mb-2 text-xs">Part Type</label>
-                              <select
-                                className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                              >
-                                <option>Live Lesson</option>
-                                <option>Reading Before Sleep</option>
-                                <option>TES Lesson</option>
-                                <option>Zohar Reading</option>
-                              </select>
-                            </div>
-                          </div>
+                  return (
+                    <div key={part.id}>
+                      {/* Header - Always visible */}
+                      <div className={`p-4 flex items-center gap-4 transition ${isEditing ? 'bg-blue-50 border-b-2 border-blue-500' : 'hover:bg-gray-50 border-b border-gray-100'}`}>
+                        {/* Drag Handle */}
+                        <button className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing">
+                          <GripVertical className="w-5 h-5" />
+                        </button>
 
-                          {/* Title */}
-                          <div>
-                            <label className="block text-gray-700 font-medium mb-2 text-xs">Title *</label>
-                            <div className="flex gap-2 mb-2 flex-wrap">
-                              {templates.map((template) => (
-                                <button
-                                  key={template.id}
-                                  type="button"
-                                  onClick={() => editedPart && updateEditedField('title', template.translations[editedPart.language] || template.translations.en)}
-                                  className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-xs border border-blue-200"
+                        {/* Part Number Badge */}
+                        <div className={`w-10 h-10 rounded-lg ${colors.bg} text-white flex items-center justify-center flex-shrink-0 shadow-sm font-bold`}>
+                          {part.order}
+                        </div>
+
+                        {/* Content - clickable to open edit */}
+                        <div className="flex-1 min-w-0 cursor-pointer" onClick={() => !isEditing && startEdit(part)}>
+                          <h4 className={`font-bold ${colors.text}`} style={{ fontSize: '15px' }}>
+                            {isEditing ? 'Editing...' : part.title}
+                          </h4>
+                          <p className="text-gray-500 text-xs">
+                            {part.sources.length} source{part.sources.length !== 1 ? 's' : ''} • {part.custom_links?.length || 0} custom link{(part.custom_links?.length || 0) !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+
+                        {/* Actions - Delete always visible */}
+                        {!isEditing && (
+                          <button
+                            onClick={() => deletePart(part.id, part.title, part.language)}
+                            className="p-2 hover:bg-white rounded-lg transition-colors text-red-600"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Edit View - Only when editing */}
+                      {isEditing && (
+                        <div className="p-6 bg-gray-50 border-b border-gray-100">
+                          <div className="space-y-4">
+                            {/* Part Number & Part Type in 2-column grid */}
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-gray-700 font-medium mb-2 text-xs">Part Number *</label>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={editedPart ? editedPart.order : part.order}
+                                  onChange={(e) => editedPart && updateEditedField('order', parseInt(e.target.value) || 0)}
+                                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                />
+                                <p className="text-gray-400 text-xs mt-1">0 = Preparation, 1+ = Lesson parts</p>
+                              </div>
+                              <div>
+                                <label className="block text-gray-700 font-medium mb-2 text-xs">Part Type</label>
+                                <select
+                                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
                                 >
-                                  {template.translations[editedPart?.language || selectedLanguage] || template.translations.en}
-                                </button>
-                              ))}
-                            </div>
-                            <input
-                              type="text"
-                              value={editedPart ? editedPart.title : part.title}
-                              onChange={(e) => editedPart && updateEditedField('title', e.target.value)}
-                              className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                              placeholder="Or type custom title..."
-                            />
-                          </div>
-
-                          {/* Description */}
-                          <div>
-                            <label className="block text-gray-700 font-medium mb-2 text-xs">Description</label>
-                            <textarea
-                              value={editedPart ? editedPart.description : part.description}
-                              onChange={(e) => editedPart && updateEditedField('description', e.target.value)}
-                              rows={2}
-                              className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-none"
-                              placeholder="Brief description of the lesson part..."
-                            />
-                          </div>
-
-                          {/* Recorded Lesson Date */}
-                          {(editedPart ? editedPart.order : part.order) !== 0 && (
-                            <div>
-                              <label className="block text-gray-700 font-medium mb-2 text-xs">Original Lesson Date</label>
-                              <input
-                                type="date"
-                                value={editedPart ? (editedPart.recorded_lesson_date ? new Date(editedPart.recorded_lesson_date).toISOString().split('T')[0] : '') : (part.recorded_lesson_date ? new Date(part.recorded_lesson_date).toISOString().split('T')[0] : '')}
-                                onChange={(e) => editedPart && updateEditedField('recorded_lesson_date', e.target.value ? new Date(e.target.value).toISOString() : '')}
-                                className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                              />
-                              <p className="text-gray-400 text-xs mt-1">Format: M/D/YYYY (e.g., 1/5/2003)</p>
-                            </div>
-                          )}
-
-                          {/* Quick Links - 2-column grid */}
-                          {(editedPart ? editedPart.order : part.order) !== 0 && (
-                            <div>
-                              <label className="block text-gray-700 font-medium mb-3 text-xs">Quick Links</label>
-                              <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                  <label className="block text-gray-600 text-xs mb-1.5 font-medium">Excerpt Link</label>
-                                  <div className="flex items-center gap-2">
-                                    <input
-                                      type="url"
-                                      value={editedPart ? editedPart.excerpts_link || '' : part.excerpts_link || ''}
-                                      onChange={(e) => editedPart && updateEditedField('excerpts_link', e.target.value)}
-                                      className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                      placeholder="https://..."
-                                      
-                                    />
-                                    {(editedPart ? editedPart.excerpts_link : part.excerpts_link) && (
-                                      <a
-                                        href={editedPart ? editedPart.excerpts_link : part.excerpts_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
-                                        title="Open link"
-                                      >
-                                        <ExternalLink className="w-4 h-4" />
-                                      </a>
-                                    )}
-                                  </div>
-                                </div>
-                                <div>
-                                  <label className="block text-gray-600 text-xs mb-1.5 font-medium">Transcript Link</label>
-                                  <div className="flex items-center gap-2">
-                                    <input
-                                      type="url"
-                                      value={editedPart ? editedPart.transcript_link || '' : part.transcript_link || ''}
-                                      onChange={(e) => editedPart && updateEditedField('transcript_link', e.target.value)}
-                                      className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                      placeholder="https://..."
-                                      
-                                    />
-                                    {(editedPart ? editedPart.transcript_link : part.transcript_link) && (
-                                      <a
-                                        href={editedPart ? editedPart.transcript_link : part.transcript_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
-                                        title="Open link"
-                                      >
-                                        <ExternalLink className="w-4 h-4" />
-                                      </a>
-                                    )}
-                                  </div>
-                                </div>
-                                <div>
-                                  <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lesson Link</label>
-                                  <div className="flex items-center gap-2">
-                                    <input
-                                      type="url"
-                                      value={editedPart ? editedPart.lesson_link || '' : part.lesson_link || ''}
-                                      onChange={(e) => editedPart && updateEditedField('lesson_link', e.target.value)}
-                                      className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                      placeholder="https://..."
-                                      
-                                    />
-                                    {(editedPart ? editedPart.lesson_link : part.lesson_link) && (
-                                      <a
-                                        href={editedPart ? editedPart.lesson_link : part.lesson_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
-                                        title="Open link"
-                                      >
-                                        <ExternalLink className="w-4 h-4" />
-                                      </a>
-                                    )}
-                                  </div>
-                                </div>
-                                <div>
-                                  <label className="block text-gray-600 text-xs mb-1.5 font-medium">Program Link</label>
-                                  <div className="flex items-center gap-2">
-                                    <input
-                                      type="url"
-                                      value={editedPart ? editedPart.program_link || '' : part.program_link || ''}
-                                      onChange={(e) => editedPart && updateEditedField('program_link', e.target.value)}
-                                      className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                      placeholder="https://..."
-                                      
-                                    />
-                                    {(editedPart ? editedPart.program_link : part.program_link) && (
-                                      <a
-                                        href={editedPart ? editedPart.program_link : part.program_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
-                                        title="Open link"
-                                      >
-                                        <ExternalLink className="w-4 h-4" />
-                                      </a>
-                                    )}
-                                  </div>
-                                </div>
+                                  <option>Live Lesson</option>
+                                  <option>Reading Before Sleep</option>
+                                  <option>TES Lesson</option>
+                                  <option>Zohar Reading</option>
+                                </select>
                               </div>
                             </div>
-                          )}
 
-                          {/* Custom Links */}
-                          {(editedPart ? editedPart.order : part.order) !== 0 && editingPartId === part.id && editedPart && (
+                            {/* Title */}
                             <div>
-                              <div className="flex items-center justify-between mb-2">
-                                <label className="block text-gray-700 font-medium text-xs">Custom Links (Language-Specific)</label>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const updatedLinks = [...(editedPart.custom_links || []), { title: '', url: '' }]
-                                    updateEditedField('custom_links', updatedLinks)
-                                  }}
-                                  className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors flex items-center gap-1"
-                                >
-                                  <Plus className="w-3 h-3" />
-                                  Add Link
-                                </button>
+                              <label className="block text-gray-700 font-medium mb-2 text-xs">Title *</label>
+                              <div className="flex gap-2 mb-2 flex-wrap">
+                                {templates.map((template) => (
+                                  <button
+                                    key={template.id}
+                                    type="button"
+                                    onClick={() => editedPart && updateEditedField('title', template.translations[editedPart.language] || template.translations.en)}
+                                    className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-xs border border-blue-200"
+                                  >
+                                    {template.translations[editedPart?.language || selectedLanguage] || template.translations.en}
+                                  </button>
+                                ))}
                               </div>
-                              <div className="space-y-2">
-                                {editedPart.custom_links && editedPart.custom_links.length > 0 && (
-                                  editedPart.custom_links.map((link, idx) => (
-                                    <div key={idx} className="flex items-center gap-2">
-                                      <input
-                                        type="text"
-                                        value={link.title}
-                                        onChange={(e) => {
-                                          const updatedLinks = [...(editedPart.custom_links || [])]
-                                          updatedLinks[idx] = { ...updatedLinks[idx], title: e.target.value }
-                                          updateEditedField('custom_links', updatedLinks)
-                                        }}
-                                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                                        placeholder="Link title"
-                                      />
+                              <input
+                                type="text"
+                                value={editedPart ? editedPart.title : part.title}
+                                onChange={(e) => editedPart && updateEditedField('title', e.target.value)}
+                                className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                placeholder="Or type custom title..."
+                              />
+                            </div>
+
+                            {/* Description */}
+                            <div>
+                              <label className="block text-gray-700 font-medium mb-2 text-xs">Description</label>
+                              <textarea
+                                value={editedPart ? editedPart.description : part.description}
+                                onChange={(e) => editedPart && updateEditedField('description', e.target.value)}
+                                rows={2}
+                                className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-none"
+                                placeholder="Brief description of the lesson part..."
+                              />
+                            </div>
+
+                            {/* Recorded Lesson Date */}
+                            {(editedPart ? editedPart.order : part.order) !== 0 && (
+                              <div>
+                                <label className="block text-gray-700 font-medium mb-2 text-xs">Original Lesson Date</label>
+                                <input
+                                  type="date"
+                                  value={editedPart ? (editedPart.recorded_lesson_date ? new Date(editedPart.recorded_lesson_date).toISOString().split('T')[0] : '') : (part.recorded_lesson_date ? new Date(part.recorded_lesson_date).toISOString().split('T')[0] : '')}
+                                  onChange={(e) => editedPart && updateEditedField('recorded_lesson_date', e.target.value ? new Date(e.target.value).toISOString() : '')}
+                                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                />
+                                <p className="text-gray-400 text-xs mt-1">Format: M/D/YYYY (e.g., 1/5/2003)</p>
+                              </div>
+                            )}
+
+                            {/* Quick Links - 2-column grid */}
+                            {(editedPart ? editedPart.order : part.order) !== 0 && (
+                              <div>
+                                <label className="block text-gray-700 font-medium mb-3 text-xs">Quick Links</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="block text-gray-600 text-xs mb-1.5 font-medium">Excerpt Link</label>
+                                    <div className="flex items-center gap-2">
                                       <input
                                         type="url"
-                                        value={link.url}
-                                        onChange={(e) => {
-                                          const updatedLinks = [...(editedPart.custom_links || [])]
-                                          updatedLinks[idx] = { ...updatedLinks[idx], url: e.target.value }
-                                          updateEditedField('custom_links', updatedLinks)
-                                        }}
-                                        className="flex-[2] px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                        value={editedPart ? editedPart.excerpts_link || '' : part.excerpts_link || ''}
+                                        onChange={(e) => editedPart && updateEditedField('excerpts_link', e.target.value)}
+                                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                                         placeholder="https://..."
+                                        
                                       />
-                                      {link.url && (
+                                      {(editedPart ? editedPart.excerpts_link : part.excerpts_link) && (
                                         <a
-                                          href={link.url}
+                                          href={editedPart ? editedPart.excerpts_link : part.excerpts_link}
                                           target="_blank"
                                           rel="noopener noreferrer"
                                           className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
@@ -1287,187 +1986,320 @@ function AdminEventDetailPageContent() {
                                           <ExternalLink className="w-4 h-4" />
                                         </a>
                                       )}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <label className="block text-gray-600 text-xs mb-1.5 font-medium">Transcript Link</label>
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="url"
+                                        value={editedPart ? editedPart.transcript_link || '' : part.transcript_link || ''}
+                                        onChange={(e) => editedPart && updateEditedField('transcript_link', e.target.value)}
+                                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                        placeholder="https://..."
+                                        
+                                      />
+                                      {(editedPart ? editedPart.transcript_link : part.transcript_link) && (
+                                        <a
+                                          href={editedPart ? editedPart.transcript_link : part.transcript_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                          title="Open link"
+                                        >
+                                          <ExternalLink className="w-4 h-4" />
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lesson Link</label>
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="url"
+                                        value={editedPart ? editedPart.lesson_link || '' : part.lesson_link || ''}
+                                        onChange={(e) => editedPart && updateEditedField('lesson_link', e.target.value)}
+                                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                        placeholder="https://..."
+                                        
+                                      />
+                                      {(editedPart ? editedPart.lesson_link : part.lesson_link) && (
+                                        <a
+                                          href={editedPart ? editedPart.lesson_link : part.lesson_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                          title="Open link"
+                                        >
+                                          <ExternalLink className="w-4 h-4" />
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <label className="block text-gray-600 text-xs mb-1.5 font-medium">Program Link</label>
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="url"
+                                        value={editedPart ? editedPart.program_link || '' : part.program_link || ''}
+                                        onChange={(e) => editedPart && updateEditedField('program_link', e.target.value)}
+                                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                        placeholder="https://..."
+                                        
+                                      />
+                                      {(editedPart ? editedPart.program_link : part.program_link) && (
+                                        <a
+                                          href={editedPart ? editedPart.program_link : part.program_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                          title="Open link"
+                                        >
+                                          <ExternalLink className="w-4 h-4" />
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Custom Links */}
+                            {(editedPart ? editedPart.order : part.order) !== 0 && editingPartId === part.id && editedPart && (
+                              <div>
+                                <div className="flex items-center justify-between mb-2">
+                                  <label className="block text-gray-700 font-medium text-xs">Custom Links (Language-Specific)</label>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updatedLinks = [...(editedPart.custom_links || []), { title: '', url: '' }]
+                                      updateEditedField('custom_links', updatedLinks)
+                                    }}
+                                    className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors flex items-center gap-1"
+                                  >
+                                    <Plus className="w-3 h-3" />
+                                    Add Link
+                                  </button>
+                                </div>
+                                <div className="space-y-2">
+                                  {editedPart.custom_links && editedPart.custom_links.length > 0 && (
+                                    editedPart.custom_links.map((link, idx) => (
+                                      <div key={idx} className="flex items-center gap-2">
+                                        <input
+                                          type="text"
+                                          value={link.title}
+                                          onChange={(e) => {
+                                            const updatedLinks = [...(editedPart.custom_links || [])]
+                                            updatedLinks[idx] = { ...updatedLinks[idx], title: e.target.value }
+                                            updateEditedField('custom_links', updatedLinks)
+                                          }}
+                                          className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                          placeholder="Link title"
+                                        />
+                                        <input
+                                          type="url"
+                                          value={link.url}
+                                          onChange={(e) => {
+                                            const updatedLinks = [...(editedPart.custom_links || [])]
+                                            updatedLinks[idx] = { ...updatedLinks[idx], url: e.target.value }
+                                            updateEditedField('custom_links', updatedLinks)
+                                          }}
+                                          className="flex-[2] px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                          placeholder="https://..."
+                                        />
+                                        {link.url && (
+                                          <a
+                                            href={link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                            title="Open link"
+                                          >
+                                            <ExternalLink className="w-4 h-4" />
+                                          </a>
+                                        )}
+                                        <button
+                                          onClick={() => {
+                                            const updatedLinks = editedPart.custom_links?.filter((_, i) => i !== idx) || []
+                                            updateEditedField('custom_links', updatedLinks)
+                                          }}
+                                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        >
+                                          <X className="w-4 h-4" />
+                                        </button>
+                                      </div>
+                                    ))
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Preparation part special links */}
+                            {(editedPart ? editedPart.order : part.order) === 0 && (
+                              <div>
+                                <label className="block text-gray-700 font-medium mb-3 text-xs">Quick Links</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="block text-gray-600 text-xs mb-1.5 font-medium">Reading Before Sleep</label>
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="url"
+                                        value={editedPart ? editedPart.reading_before_sleep_link || '' : part.reading_before_sleep_link || ''}
+                                        onChange={(e) => editedPart && updateEditedField('reading_before_sleep_link', e.target.value)}
+                                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                        placeholder="https://..."
+                                        
+                                      />
+                                      {(editedPart ? editedPart.reading_before_sleep_link : part.reading_before_sleep_link) && (
+                                        <a
+                                          href={editedPart ? editedPart.reading_before_sleep_link : part.reading_before_sleep_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                          title="Open link"
+                                        >
+                                          <ExternalLink className="w-4 h-4" />
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lesson Preparation</label>
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="url"
+                                        value={editedPart ? editedPart.lesson_preparation_link || '' : part.lesson_preparation_link || ''}
+                                        onChange={(e) => editedPart && updateEditedField('lesson_preparation_link', e.target.value)}
+                                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                        placeholder="https://..."
+                                        
+                                      />
+                                      {(editedPart ? editedPart.lesson_preparation_link : part.lesson_preparation_link) && (
+                                        <a
+                                          href={editedPart ? editedPart.lesson_preparation_link : part.lesson_preparation_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                          title="Open link"
+                                        >
+                                          <ExternalLink className="w-4 h-4" />
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Sources Management */}
+                            <div>
+                              <label className="block text-gray-700 font-medium mb-2 text-xs">Sources</label>
+                              
+                              {(editedPart ? editedPart.language : part.language) === 'he' && editingPartId === part.id && (
+                                <div className="mb-3">
+                                  <SourceSearch onSelect={handleAddSourceInEdit} />
+                                </div>
+                              )}
+
+                              {/* Existing sources */}
+                              {(editedPart ? editedPart.sources : part.sources) && (editedPart ? editedPart.sources : part.sources).length > 0 && (
+                                <div className="space-y-2 mb-3">
+                                  {(editedPart ? editedPart.sources : part.sources).map((source, idx) => (
+                                    <div key={idx} className="flex items-start gap-2 p-3 bg-white border border-gray-200 rounded-lg">
+                                      <BookOpen className="w-4 h-4 text-gray-400 flex-shrink-0 mt-1" />
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm text-gray-800 block truncate">
+                                          {source.source_title}
+                                        </p>
+                                        <div className="mt-2 space-y-2">
+                                          <input
+                                            type="url"
+                                            value={source.source_url || ''}
+                                            onChange={(e) => handleUpdateSourceInEdit(idx, 'source_url', e.target.value)}
+                                            className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                            placeholder="Source link (https://...)"
+                                          />
+                                          <input
+                                            type="text"
+                                            value={source.page_number || ''}
+                                            onChange={(e) => handleUpdateSourceInEdit(idx, 'page_number', e.target.value)}
+                                            className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                            placeholder="Page number (e.g., 42 or 15-17)"
+                                          />
+                                          <div className="grid grid-cols-2 gap-2">
+                                            <input
+                                              type="text"
+                                              value={source.start_point || ''}
+                                              onChange={(e) => handleUpdateSourceInEdit(idx, 'start_point', e.target.value)}
+                                              className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                              placeholder="Start From"
+                                            />
+                                            <input
+                                              type="text"
+                                              value={source.end_point || ''}
+                                              onChange={(e) => handleUpdateSourceInEdit(idx, 'end_point', e.target.value)}
+                                              className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+                                              placeholder="End Point"
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <a 
+                                        href={source.source_url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                        title={source.source_url}
+                                      >
+                                        <ExternalLink className="w-4 h-4" />
+                                      </a>
                                       <button
-                                        onClick={() => {
-                                          const updatedLinks = editedPart.custom_links?.filter((_, i) => i !== idx) || []
-                                          updateEditedField('custom_links', updatedLinks)
-                                        }}
-                                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        onClick={() => handleRemoveSourceInEdit(idx)}
+                                        className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors flex-shrink-0"
                                       >
                                         <X className="w-4 h-4" />
                                       </button>
                                     </div>
-                                  ))
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Preparation part special links */}
-                          {(editedPart ? editedPart.order : part.order) === 0 && (
-                            <div>
-                              <label className="block text-gray-700 font-medium mb-3 text-xs">Quick Links</label>
-                              <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                  <label className="block text-gray-600 text-xs mb-1.5 font-medium">Reading Before Sleep</label>
-                                  <div className="flex items-center gap-2">
-                                    <input
-                                      type="url"
-                                      value={editedPart ? editedPart.reading_before_sleep_link || '' : part.reading_before_sleep_link || ''}
-                                      onChange={(e) => editedPart && updateEditedField('reading_before_sleep_link', e.target.value)}
-                                      className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                      placeholder="https://..."
-                                      
-                                    />
-                                    {(editedPart ? editedPart.reading_before_sleep_link : part.reading_before_sleep_link) && (
-                                      <a
-                                        href={editedPart ? editedPart.reading_before_sleep_link : part.reading_before_sleep_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
-                                        title="Open link"
-                                      >
-                                        <ExternalLink className="w-4 h-4" />
-                                      </a>
-                                    )}
-                                  </div>
+                                  ))}
                                 </div>
-                                <div>
-                                  <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lesson Preparation</label>
-                                  <div className="flex items-center gap-2">
-                                    <input
-                                      type="url"
-                                      value={editedPart ? editedPart.lesson_preparation_link || '' : part.lesson_preparation_link || ''}
-                                      onChange={(e) => editedPart && updateEditedField('lesson_preparation_link', e.target.value)}
-                                      className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                      placeholder="https://..."
-                                      
-                                    />
-                                    {(editedPart ? editedPart.lesson_preparation_link : part.lesson_preparation_link) && (
-                                      <a
-                                        href={editedPart ? editedPart.lesson_preparation_link : part.lesson_preparation_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
-                                        title="Open link"
-                                      >
-                                        <ExternalLink className="w-4 h-4" />
-                                      </a>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                              )}
 
-                          {/* Sources Management */}
-                          <div>
-                            <label className="block text-gray-700 font-medium mb-2 text-xs">Sources</label>
+                              {/* Empty state */}
+                              {!(editedPart ? editedPart.sources : part.sources) || (editedPart ? editedPart.sources : part.sources).length === 0 ? (
+                                <div className="p-4 bg-white border-2 border-dashed border-gray-300 rounded-lg text-center">
+                                  <BookOpen className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+                                  <p className="text-gray-500 text-xs">
+                                    {(editedPart ? editedPart.language : part.language) === 'he' && editingPartId === part.id ? 'No sources added yet. Search above to add sources.' : 'No sources added yet.'}
+                                  </p>
+                                </div>
+                              ) : null}
+                            </div>
                             
-                            {(editedPart ? editedPart.language : part.language) === 'he' && editingPartId === part.id && (
-                              <div className="mb-3">
-                                <SourceSearch onSelect={handleAddSourceInEdit} />
-                              </div>
-                            )}
-
-                            {/* Existing sources */}
-                            {(editedPart ? editedPart.sources : part.sources) && (editedPart ? editedPart.sources : part.sources).length > 0 && (
-                              <div className="space-y-2 mb-3">
-                                {(editedPart ? editedPart.sources : part.sources).map((source, idx) => (
-                                  <div key={idx} className="flex items-start gap-2 p-3 bg-white border border-gray-200 rounded-lg">
-                                    <BookOpen className="w-4 h-4 text-gray-400 flex-shrink-0 mt-1" />
-                                    <div className="flex-1 min-w-0">
-                                      <p className="text-sm text-gray-800 block truncate">
-                                        {source.source_title}
-                                      </p>
-                                      <div className="mt-2 space-y-2">
-                                        <input
-                                          type="url"
-                                          value={source.source_url || ''}
-                                          onChange={(e) => handleUpdateSourceInEdit(idx, 'source_url', e.target.value)}
-                                          className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
-                                          placeholder="Source link (https://...)"
-                                        />
-                                        <input
-                                          type="text"
-                                          value={source.page_number || ''}
-                                          onChange={(e) => handleUpdateSourceInEdit(idx, 'page_number', e.target.value)}
-                                          className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
-                                          placeholder="Page number (e.g., 42 or 15-17)"
-                                        />
-                                        <div className="grid grid-cols-2 gap-2">
-                                          <input
-                                            type="text"
-                                            value={source.start_point || ''}
-                                            onChange={(e) => handleUpdateSourceInEdit(idx, 'start_point', e.target.value)}
-                                            className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
-                                            placeholder="Start From"
-                                          />
-                                          <input
-                                            type="text"
-                                            value={source.end_point || ''}
-                                            onChange={(e) => handleUpdateSourceInEdit(idx, 'end_point', e.target.value)}
-                                            className="w-full border border-gray-200 rounded px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
-                                            placeholder="End Point"
-                                          />
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <a 
-                                      href={source.source_url} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer" 
-                                      className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
-                                      title={source.source_url}
-                                    >
-                                      <ExternalLink className="w-4 h-4" />
-                                    </a>
-                                    <button
-                                      onClick={() => handleRemoveSourceInEdit(idx)}
-                                      className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors flex-shrink-0"
-                                    >
-                                      <X className="w-4 h-4" />
-                                    </button>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                            {/* Empty state */}
-                            {!(editedPart ? editedPart.sources : part.sources) || (editedPart ? editedPart.sources : part.sources).length === 0 ? (
-                              <div className="p-4 bg-white border-2 border-dashed border-gray-300 rounded-lg text-center">
-                                <BookOpen className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-                                <p className="text-gray-500 text-xs">
-                                  {(editedPart ? editedPart.language : part.language) === 'he' && editingPartId === part.id ? 'No sources added yet. Search above to add sources.' : 'No sources added yet.'}
-                                </p>
-                              </div>
-                            ) : null}
-                          </div>
-                          
-                          {/* Action buttons */}
-                          <div className="flex gap-3 pt-4 border-t border-gray-200">
-                            <button
-                              onClick={savePart}
-                              disabled={!hasChanges()}
-                              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition"
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={cancelEdit}
-                              className="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-medium transition"
-                            >
-                              Cancel
-                            </button>
+                            {/* Action buttons */}
+                            <div className="flex gap-3 pt-4 border-t border-gray-200">
+                              <button
+                                onClick={savePart}
+                                disabled={!hasChanges()}
+                                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={cancelEdit}
+                                className="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-medium transition"
+                              >
+                                Cancel
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          ) : null}
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            ) : null
+          )}
         </div>
       </div>
     </div>

@@ -489,11 +489,11 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
             )}
           </div>
 
-          {/* Recorded Lesson Date - only shown when "Recorded lesson" template is selected */}
-          {selectedTemplate === 'recorded' && (
+          {/* Recorded Lesson Date - only shown when "Recorded lesson" part type is selected */}
+          {partType === 'recorded_lesson' && (
             <div>
               <label htmlFor="recordedLessonDate" className="block text-sm font-medium text-gray-700 mb-2">
-                Recorded Lesson Date <span className="text-gray-500 text-xs">(required for recorded lessons)</span>
+                Original Lesson Date <span className="text-gray-500 text-xs">(when the lesson was originally recorded)</span>
               </label>
               <input
                 id="recordedLessonDate"
