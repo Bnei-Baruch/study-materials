@@ -19,13 +19,13 @@ ENV NEXT_PUBLIC_KEYCLOAK_REALM=${NEXT_PUBLIC_KEYCLOAK_REALM}
 ARG NEXT_PUBLIC_KEYCLOAK_CLIENT_ID
 ENV NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${NEXT_PUBLIC_KEYCLOAK_CLIENT_ID}
 
-# Copy package files from frontend directory
+# Copy only package files first (so this layer caches if dependencies don't change)
 COPY frontend/package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies in their own layer (caches if package.json hasn't changed)
+RUN npm install --production=false
 
-# Copy frontend source code
+# Copy the rest of the frontend source code
 COPY frontend/ ./
 
 # Build the Next.js app with environment variables baked in
