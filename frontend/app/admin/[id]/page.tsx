@@ -142,8 +142,8 @@ function AdminEventDetailPageContent() {
   // Initialize expanded parts when parts load
   useEffect(() => {
     if (parts.length > 0) {
-      const allOrders = Array.from(new Set(parts.map(p => p.order)))
-      setExpandedPartOrders(new Set(allOrders))
+      // Start with all parts collapsed (empty Set)
+      setExpandedPartOrders(new Set())
     }
   }, [parts.length])
 
@@ -1333,6 +1333,17 @@ const fetchEventAndParts = async () => {
                                           Program
                                         </a>
                                       )}
+                                      {langPart.lineup_for_hosts_link && (
+                                        <a
+                                          href={langPart.lineup_for_hosts_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs hover:bg-purple-200 transition"
+                                        >
+                                          <LinkIcon className="w-3 h-3" />
+                                          Lineup for Hosts
+                                        </a>
+                                      )}
                                     </div>
                                   </div>
                                 )}
@@ -1610,6 +1621,32 @@ const fetchEventAndParts = async () => {
                                           {editedPart.program_link && (
                                             <a
                                               href={editedPart.program_link}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                              title="Open link"
+                                            >
+                                              <ExternalLink className="w-4 h-4" />
+                                            </a>
+                                          )}
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lineup for the hosts</label>
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="url"
+                                            value={editedPart.lineup_for_hosts_link || ''}
+                                            onChange={(e) => {
+                                              const updated = {...editedPart, lineup_for_hosts_link: e.target.value}
+                                              setEditedParts({...editedParts, [langCode]: updated})
+                                            }}
+                                            className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                            placeholder="https://..."
+                                          />
+                                          {editedPart.lineup_for_hosts_link && (
+                                            <a
+                                              href={editedPart.lineup_for_hosts_link}
                                               target="_blank"
                                               rel="noopener noreferrer"
                                               className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
@@ -2320,6 +2357,30 @@ const fetchEventAndParts = async () => {
                                       {(editedPart ? editedPart.program_link : part.program_link) && (
                                         <a
                                           href={editedPart ? editedPart.program_link : part.program_link}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                                          title="Open link"
+                                        >
+                                          <ExternalLink className="w-4 h-4" />
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lineup for the hosts</label>
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="url"
+                                        value={editedPart ? editedPart.lineup_for_hosts_link || '' : part.lineup_for_hosts_link || ''}
+                                        onChange={(e) => editedPart && updateEditedField('lineup_for_hosts_link', e.target.value)}
+                                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                        placeholder="https://..."
+                                        
+                                      />
+                                      {(editedPart ? editedPart.lineup_for_hosts_link : part.lineup_for_hosts_link) && (
+                                        <a
+                                          href={editedPart ? editedPart.lineup_for_hosts_link : part.lineup_for_hosts_link}
                                           target="_blank"
                                           rel="noopener noreferrer"
                                           className="p-2 text-gray-400 hover:text-blue-600 transition-colors flex-shrink-0"
