@@ -112,7 +112,7 @@ function AdminEventDetailPageContent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showPartForm, setShowPartForm] = useState(false)
-  const [selectedLanguage, setSelectedLanguage] = useState('he')
+  const [selectedLanguage, setSelectedLanguage] = useState('ALL')
   const [editingPartId, setEditingPartId] = useState<string | null>(null)
   const [editedPart, setEditedPart] = useState<Part | null>(null)
   const [originalPart, setOriginalPart] = useState<Part | null>(null)
@@ -134,7 +134,16 @@ function AdminEventDetailPageContent() {
   const [editedParts, setEditedParts] = useState<{ [key: string]: Part }>({})
   const [originalParts, setOriginalParts] = useState<{ [key: string]: Part }>({})
   const [scrollToLangCode, setScrollToLangCode] = useState<string | null>(null)
+  const [expandedPartOrders, setExpandedPartOrders] = useState<Set<number>>(new Set())
   const orderedLanguageCodes = ['he', 'en', 'ru', 'es', 'uk', 'de', 'it', 'fr']
+
+  // Initialize expanded parts when parts load
+  useEffect(() => {
+    if (parts.length > 0) {
+      const allOrders = Array.from(new Set(parts.map(p => p.order)))
+      setExpandedPartOrders(new Set(allOrders))
+    }
+  }, [parts.length])
 
   useEffect(() => {
     // Scroll to the target language when editing opens
@@ -274,6 +283,16 @@ const fetchEventAndParts = async () => {
     setEditingPartId(null)
     setEditedPart(null)
     setOriginalPart(null)
+  }
+
+  const togglePartExpanded = (order: number) => {
+    const newExpanded = new Set(expandedPartOrders)
+    if (newExpanded.has(order)) {
+      newExpanded.delete(order)
+    } else {
+      newExpanded.add(order)
+    }
+    setExpandedPartOrders(newExpanded)
   }
 
   const hasChanges = () => {
@@ -1181,6 +1200,18 @@ const fetchEventAndParts = async () => {
                     <div key={`${order}-group`}>
                       {/* Header - Always visible */}
                       <div className={`p-4 flex items-center gap-4 transition ${isEditingThisOrder ? 'bg-blue-50 border-b-2 border-blue-500' : 'hover:bg-gray-50 border-b border-gray-100'}`}>
+                        {/* Collapse Button */}
+                        <button 
+                          onClick={() => togglePartExpanded(order)}
+                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                          {expandedPartOrders.has(order) ? (
+                            <ChevronUp className="w-5 h-5" />
+                          ) : (
+                            <ChevronDown className="w-5 h-5" />
+                          )}
+                        </button>
+
                         {/* Drag Handle */}
                         <button className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing">
                           <GripVertical className="w-5 h-5" />
@@ -1194,7 +1225,7 @@ const fetchEventAndParts = async () => {
                         {/* Content - clickable to open edit */}
                         <div className="flex-1 min-w-0 cursor-pointer" onClick={() => !isEditingThisOrder && startEditAll(firstPart)}>
                           <h4 className={`font-bold ${colors.text}`} style={{ fontSize: '15px' }}>
-                            {isEditingThisOrder ? 'Editing ALL languages...' : firstPart.title}
+                            {isEditingThisOrder ? 'Editing ALL languages...' : partsForOrder.find(p => p.language === 'he')?.title || firstPart.title}
                           </h4>
                           <p className="text-gray-500 text-xs">
                             {partsForOrder.length} language{partsForOrder.length !== 1 ? 's' : ''} • {firstPart.sources.length} source{firstPart.sources.length !== 1 ? 's' : ''} • {firstPart.custom_links?.length || 0} custom link{(firstPart.custom_links?.length || 0) !== 1 ? 's' : ''}
@@ -1213,7 +1244,7 @@ const fetchEventAndParts = async () => {
                       </div>
 
                       {/* Preview - All Languages (when not editing) */}
-                      {!isEditingThisOrder && (
+                      {!isEditingThisOrder && expandedPartOrders.has(order) && (
                         <div className="p-6 bg-gray-50 space-y-6 border-b border-gray-100">
                           {orderedLanguageCodes.map((langCode) => {
                             const langPart = partsForOrder.find(p => p.language === langCode)
@@ -1906,6 +1937,156 @@ const fetchEventAndParts = async () => {
                           </button>
                         )}
                       </div>
+
+                      {/* Preview View - Show all details when not editing */}
+                      {!isEditing && (
+                        <div className="p-4 mb-4 border-2 border-gray-300 rounded-lg bg-white m-4">
+                          {/* Title */}
+                          <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '13px' }}>
+                            {part.title}
+                          </p>
+
+                          {/* Description */}
+                          {part.description && (
+                            <p className="text-gray-600 mb-3" style={{ fontSize: '13px' }}>
+                              {part.description}
+                            </p>
+                          )}
+
+                          {/* Quick Links */}
+                          {part.order !== 0 && (
+                            <div className="mb-3">
+                              <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Quick Links:</p>
+                              <div className="flex flex-wrap gap-2">
+                                {part.excerpts_link && (
+                                  <a
+                                    href={part.excerpts_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs hover:bg-blue-200 transition"
+                                  >
+                                    <FileText className="w-3 h-3" />
+                                    Excerpts
+                                  </a>
+                                )}
+                                {part.transcript_link && (
+                                  <a
+                                    href={part.transcript_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs hover:bg-green-200 transition"
+                                  >
+                                    <FileText className="w-3 h-3" />
+                                    Transcript
+                                  </a>
+                                )}
+                                {part.lesson_link && (
+                                  <a
+                                    href={part.lesson_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs hover:bg-purple-200 transition"
+                                  >
+                                    <BookOpen className="w-3 h-3" />
+                                    Lesson
+                                  </a>
+                                )}
+                                {part.program_link && (
+                                  <a
+                                    href={part.program_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs hover:bg-orange-200 transition"
+                                  >
+                                    <BookOpen className="w-3 h-3" />
+                                    Program
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Preparation Links (order 0) */}
+                          {part.order === 0 && (
+                            <div className="mb-3">
+                              <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Quick Links:</p>
+                              <div className="flex flex-wrap gap-2">
+                                {part.reading_before_sleep_link && (
+                                  <a
+                                    href={part.reading_before_sleep_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs hover:bg-indigo-200 transition"
+                                  >
+                                    <FileText className="w-3 h-3" />
+                                    Reading Before Sleep
+                                  </a>
+                                )}
+                                {part.lesson_preparation_link && (
+                                  <a
+                                    href={part.lesson_preparation_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs hover:bg-teal-200 transition"
+                                  >
+                                    <BookOpen className="w-3 h-3" />
+                                    Lesson Preparation
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Sources */}
+                          {part.sources && part.sources.length > 0 && (
+                            <div className="mb-3">
+                              <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Sources:</p>
+                              <div className="space-y-1">
+                                {part.sources.map((source, idx) => (
+                                  <div key={idx} className="flex items-start gap-2 text-xs">
+                                    <BookOpen className="w-3 h-3 text-gray-400 flex-shrink-0 mt-0.5" />
+                                    <div className="flex-1">
+                                      <a
+                                        href={source.source_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                                      >
+                                        {source.source_title}
+                                      </a>
+                                      {source.page_number && <span className="text-gray-600"> • p. {source.page_number}</span>}
+                                      {source.start_point && <span className="text-gray-600"> • {source.start_point}</span>}
+                                      {source.end_point && <span className="text-gray-600"> → {source.end_point}</span>}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Custom Links */}
+                          {part.custom_links && part.custom_links.length > 0 && (
+                            <div>
+                              <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Custom Links:</p>
+                              <div className="space-y-1">
+                                {part.custom_links.map((link, idx) => (
+                                  <div key={idx} className="flex items-center gap-2 text-xs">
+                                    <LinkIcon className="w-3 h-3 text-gray-400" />
+                                    <a
+                                      href={link.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-blue-600 hover:text-blue-800 hover:underline"
+                                    >
+                                      {link.title}
+                                    </a>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {/* Edit View - Only when editing */}
                       {isEditing && (
