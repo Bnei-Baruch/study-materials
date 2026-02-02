@@ -134,8 +134,29 @@ function AdminEventDetailPageContent() {
   const [editedParts, setEditedParts] = useState<{ [key: string]: Part }>({})
   const [originalParts, setOriginalParts] = useState<{ [key: string]: Part }>({})
   const [scrollToLangCode, setScrollToLangCode] = useState<string | null>(null)
-
   const orderedLanguageCodes = ['he', 'en', 'ru', 'es', 'uk', 'de', 'it', 'fr']
+
+  useEffect(() => {
+    // Scroll to the target language when editing opens
+    if (scrollToLangCode && editingPartOrder !== null) {
+      console.log('🔄 Scroll effect triggered:', { scrollToLangCode, editingPartOrder })
+      // Add a delay to ensure DOM is rendered
+      setTimeout(() => {
+        const element = document.getElementById(`edit-${scrollToLangCode}`)
+        console.log(`📍 Looking for element: edit-${scrollToLangCode}`, element)
+        if (element) {
+          console.log('✅ Found element, scrolling...')
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else {
+          console.log('❌ Element not found!')
+          // Debug: log all elements with id starting with 'edit-'
+          const allEditElements = document.querySelectorAll('[id^="edit-"]')
+          console.log('Available edit elements:', Array.from(allEditElements).map(el => el.id))
+        }
+        setScrollToLangCode(null) // Reset after scrolling
+      }, 200)
+    }
+  }, [scrollToLangCode, editingPartOrder])
 
   const languageNames: { [key: string]: string } = {
     he: '🇮🇱 עברית',
@@ -186,18 +207,8 @@ function AdminEventDetailPageContent() {
     fetchTemplates()
   }, [])
 
-  useEffect(() => {
-    // Scroll to the target language when editing opens
-    if (scrollToLangCode && editingPartOrder !== null) {
-      const element = document.getElementById(`edit-${scrollToLangCode}`)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        setScrollToLangCode(null) // Reset after scrolling
-      }
-    }
-  }, [scrollToLangCode, editingPartOrder])
 
-  const fetchEventAndParts = async () => {
+const fetchEventAndParts = async () => {
     try {
       // Fetch event
       const eventRes = await fetch(getApiUrl(`/events/${eventId}`))
@@ -235,11 +246,28 @@ function AdminEventDetailPageContent() {
     setOriginalPart({...part})
   }
 
-  const startEditAll = (part: Part) => {
+  const startEditAll = (part: Part, scrollToLang?: string) => {
+    console.log('🚀 startEditAll called with:', { order: part.order, language: part.language, scrollToLang })
     // Start editing all languages of a part
+    const partsForOrder = parts.filter(p => p.order === part.order)
+    const edited: { [key: string]: Part } = {}
+    const original: { [key: string]: Part } = {}
+    
+    partsForOrder.forEach(p => {
+      edited[p.language] = {...p}
+      original[p.language] = {...p}
+    })
+    
+    console.log('📦 Setting editing state for order:', part.order, 'with languages:', Object.keys(edited))
     setEditingPartOrder(part.order)
-    setEditedParts({ [part.language]: {...part} })
-    setOriginalParts({ [part.language]: {...part} })
+    setEditedParts(edited)
+    setOriginalParts(original)
+    
+    // Set scroll target if provided
+    if (scrollToLang) {
+      console.log('🎯 Setting scroll target to:', scrollToLang)
+      setScrollToLangCode(scrollToLang)
+    }
   }
 
   const cancelEdit = () => {
@@ -1200,8 +1228,8 @@ function AdminEventDetailPageContent() {
                                   <div className="flex gap-2">
                                     <button
                                       onClick={() => {
-                                        setScrollToLangCode(langCode)
-                                        startEditAll(langPart)
+                                        console.log('🖱️ Edit button clicked for lang:', langCode, 'part:', langPart)
+                                        startEditAll(langPart, langCode)
                                       }}
                                       className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-blue-600"
                                       title="Edit all languages"
@@ -1372,7 +1400,7 @@ function AdminEventDetailPageContent() {
                             const editedPart = editedParts[langCode] || langPart
                             
                             return (
-                              <div key={`edit-${langCode}`} className="space-y-4 p-4 mb-4 border-2 border-gray-300 rounded-lg bg-white">
+                              <div id={`edit-${langCode}`} key={`edit-${langCode}`} className="space-y-4 p-4 mb-4 border-2 border-gray-300 rounded-lg bg-white">
                                 <h5 className="font-semibold text-gray-900" style={{ fontSize: '14px' }}>
                                   {languageNames[langCode]}
                                 </h5>
