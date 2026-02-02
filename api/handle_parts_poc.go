@@ -81,6 +81,7 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 		ProgramLink:            req.ProgramLink,
 		ReadingBeforeSleepLink: req.ReadingBeforeSleepLink,
 		LessonPreparationLink:  req.LessonPreparationLink,
+		LineupForHostsLink:     req.LineupForHostsLink,
 		RecordedLessonDate:     req.RecordedLessonDate,
 		Sources:                req.Sources,
 		CustomLinks:            req.CustomLinks,
@@ -143,25 +144,26 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		translationStub := &storage.LessonPart{
-			Title:       stubTitle,
-			Description: "", // Empty, to be filled by translator
-			Date:        part.Date,
-			PartType:    part.PartType,
-			Language:    lang,
-			EventID:     part.EventID,
-			Order:       part.Order,
-			// Copy shared links (same across languages)
-			ExcerptsLink:           part.ExcerptsLink,
-			TranscriptLink:         part.TranscriptLink,
-			LessonLink:             part.LessonLink,
-			ProgramLink:            part.ProgramLink,
-			ReadingBeforeSleepLink: part.ReadingBeforeSleepLink,
-			LessonPreparationLink:  part.LessonPreparationLink,
-			RecordedLessonDate:     part.RecordedLessonDate, // Copy recorded lesson date
-			// Use translated sources (same IDs, different titles)
-			Sources: translatedSources,
-		}
+	translationStub := &storage.LessonPart{
+		Title:       stubTitle,
+		Description: "", // Empty, to be filled by translator
+		Date:        part.Date,
+		PartType:    part.PartType,
+		Language:    lang,
+		EventID:     part.EventID,
+		Order:       part.Order,
+		// Copy shared links (same across languages)
+		ExcerptsLink:           part.ExcerptsLink,
+		TranscriptLink:         part.TranscriptLink,
+		LessonLink:             part.LessonLink,
+		ProgramLink:            part.ProgramLink,
+		ReadingBeforeSleepLink: part.ReadingBeforeSleepLink,
+		LessonPreparationLink:  part.LessonPreparationLink,
+		LineupForHostsLink:     part.LineupForHostsLink, // Copy lineup link to translations
+		RecordedLessonDate:     part.RecordedLessonDate,  // Copy recorded lesson date
+		// Use translated sources (same IDs, different titles)
+		Sources: translatedSources,
+	}
 
 		if err := a.store.SavePart(translationStub); err != nil {
 			// Log error but don't fail the request
@@ -220,6 +222,7 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 	existingPart.ProgramLink = req.ProgramLink
 	existingPart.ReadingBeforeSleepLink = req.ReadingBeforeSleepLink
 	existingPart.LessonPreparationLink = req.LessonPreparationLink
+	existingPart.LineupForHostsLink = req.LineupForHostsLink
 	existingPart.RecordedLessonDate = req.RecordedLessonDate
 	existingPart.CustomLinks = req.CustomLinks
 

@@ -18,6 +18,7 @@ type LessonPart struct {
 	ProgramLink            string       `json:"program_link,omitempty" bson:"program_link,omitempty"`                           // Optional: link to program
 	ReadingBeforeSleepLink string       `json:"reading_before_sleep_link,omitempty" bson:"reading_before_sleep_link,omitempty"` // Optional: for preparation parts (order=0)
 	LessonPreparationLink  string       `json:"lesson_preparation_link,omitempty" bson:"lesson_preparation_link,omitempty"`     // Optional: for preparation parts (order=0)
+	LineupForHostsLink     string       `json:"lineup_for_hosts_link,omitempty" bson:"lineup_for_hosts_link,omitempty"`         // Optional: lineup for hosts link
 	RecordedLessonDate     string       `json:"recorded_lesson_date,omitempty" bson:"recorded_lesson_date,omitempty"`           // Optional: date the recorded lesson was given (YYYY-MM-DD)
 	Sources                []Source     `json:"sources" bson:"sources"`
 	CustomLinks            []CustomLink `json:"custom_links,omitempty" bson:"custom_links,omitempty"` // Optional: custom links with titles (language-specific)
@@ -56,6 +57,7 @@ type CreatePartRequest struct {
 	ProgramLink            string       `json:"program_link,omitempty"`              // Optional: link to program
 	ReadingBeforeSleepLink string       `json:"reading_before_sleep_link,omitempty"` // Optional: for preparation parts (order=0)
 	LessonPreparationLink  string       `json:"lesson_preparation_link,omitempty"`   // Optional: for preparation parts (order=0)
+	LineupForHostsLink     string       `json:"lineup_for_hosts_link,omitempty"`     // Optional: lineup for hosts link
 	RecordedLessonDate     string       `json:"recorded_lesson_date,omitempty"`      // Optional: date the recorded lesson was given (YYYY-MM-DD)
 	Sources                []Source     `json:"sources"`
 	CustomLinks            []CustomLink `json:"custom_links,omitempty"` // Optional: custom links with titles (language-specific)

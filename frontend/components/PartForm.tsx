@@ -65,6 +65,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
   const [readingBeforeSleepLink, setReadingBeforeSleepLink] = useState('') // Start blank
   const [lessonPreparationLink, setLessonPreparationLink] = useState('') // Start blank
   const [recordedLessonDate, setRecordedLessonDate] = useState('') // Date the recorded lesson was given
+  const [lineupForHostsLink, setLineupForHostsLink] = useState('') // Lineup for hosts link (common for all languages)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showOptionalFields, setShowOptionalFields] = useState(false)
@@ -222,6 +223,8 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
           transcript_link: order !== 0 ? transcriptLink || undefined : undefined,
           lesson_link: order !== 0 ? lessonLink || undefined : undefined,
           program_link: order !== 0 ? programLink || undefined : undefined,
+          // Lineup for hosts (for Recorded Lesson and Lesson types)
+          lineup_for_hosts_link: (partType === 'recorded_lesson' || partType === 'live_lesson') ? lineupForHostsLink || undefined : undefined,
           // Custom links (language-specific)
           custom_links: order !== 0 ? customLinks.filter(link => link.title && link.url) : undefined,
           // Recorded lesson date (if provided)
@@ -250,6 +253,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       setReadingBeforeSleepLink('')
       setLessonPreparationLink('')
       setRecordedLessonDate('')
+      setLineupForHostsLink('')
       setShowOptionalFields(false)
 
       // Notify parent
@@ -521,6 +525,23 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
 
           {showOptionalFields && (
             <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+              <div>
+                <label htmlFor="lineupForHostsLink" className="block text-sm font-medium text-gray-700 mb-2">
+                  Lineup for the hosts
+                </label>
+                <input
+                  id="lineupForHostsLink"
+                  type="url"
+                  value={lineupForHostsLink}
+                  onChange={(e) => setLineupForHostsLink(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  placeholder="https://..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  This link will be copied to all language translations.
+                </p>
+              </div>
+
               <div>
                 <label htmlFor="excerptsLink" className="block text-sm font-medium text-gray-700 mb-2">
                   Excerpts Link
