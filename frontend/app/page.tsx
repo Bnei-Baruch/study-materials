@@ -99,7 +99,7 @@ const formatDateByLanguage = (dateString: string, language: string) => {
 const TRANSLATIONS = {
   he: {
     noEvents: 'אין אירועים זמינים',
-    backToEvents: 'חזרה לרשימת אירועים',
+    backToEvents: 'חזרה לרשימת השיעורים',
     noMaterials: 'אין חומרים זמינים',
     originalDate: 'תאריך השיעור המקורי: ',
     page: 'עמ\'',
@@ -113,13 +113,13 @@ const TRANSLATIONS = {
     links: 'קישורים',
     sources: 'מקורות',
     studyMaterials: 'חומרי לימוד',
-    studyMaterialsDescription: 'חומרי לימוד ומקורות לשיעורים, כנסים ואירועים של בני ברוך',
+    studyMaterialsDescription: 'חומרי לימוד ומקורות לשיעורים, כנסים ואירועים של ״בני ברוך - קבלה לעם״',
     filterByDate: 'סינון לפי תאריך',
     fromDate: 'מתאריך',
     toDate: 'עד תאריך',
     clearFilters: 'נקה סינון',
     eventsFound: 'שיעורים נמצאו',
-    loadMore: 'טען עוד שיעורים',
+    loadMore: 'לעוד שיעורים >>',
     readingBeforeSleep: 'קטע הכנה לשינה',
     lessonPreparation: 'מסמך הכנה לשיעור',
     watchLesson: 'צפייה בשיעור',
@@ -1369,7 +1369,7 @@ export default function PublicPage() {
                     {/* Lineup for Hosts Link */}
                     {part.lineup_for_hosts_link && (
                       <div className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
-                        <BookOpen className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
+                        <FileText className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
                         <a
                           href={part.lineup_for_hosts_link}
                           target="_blank"
