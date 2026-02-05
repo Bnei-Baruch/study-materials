@@ -73,6 +73,7 @@ interface Part {
   program_link?: string
   reading_before_sleep_link?: string
   lesson_preparation_link?: string
+  lineup_for_hosts_link?: string
   recorded_lesson_date?: string
   sources: Source[]
   custom_links?: CustomLink[]
@@ -124,6 +125,7 @@ const TRANSLATIONS = {
     watchLesson: 'צפייה בשיעור',
     lessonTranscript: 'תמליל השיעור',
     selectedExcerpts: 'קטעים נבחרים',
+    lineupForHosts: 'ליינאפ מנחים',
     startPoint: 'דבר המתחיל:',
     endPoint: 'עד:',
   },
@@ -155,6 +157,7 @@ const TRANSLATIONS = {
     watchLesson: 'Watch Lesson',
     lessonTranscript: 'Lesson Transcript',
     selectedExcerpts: 'Selected Excerpts',
+    lineupForHosts: 'Lineup for the hosts',
     startPoint: 'From:',
     endPoint: 'To:',
   },
@@ -186,6 +189,7 @@ const TRANSLATIONS = {
     watchLesson: 'Смотреть урок',
     lessonTranscript: 'Транскрипт урока',
     selectedExcerpts: 'Избранные отрывки',
+    lineupForHosts: 'Лайнап для ведущих',
     startPoint: 'От:',
     endPoint: 'До:',
   },
@@ -217,6 +221,7 @@ const TRANSLATIONS = {
     watchLesson: 'Ver lección',
     lessonTranscript: 'Transcripción de la lección',
     selectedExcerpts: 'Extractos seleccionados',
+    lineupForHosts: 'Lineup para los presentadores',
     startPoint: 'De:',
     endPoint: 'Hasta:',
   },
@@ -248,6 +253,7 @@ const TRANSLATIONS = {
     watchLesson: 'Lektion ansehen',
     lessonTranscript: 'Lektionstranskript',
     selectedExcerpts: 'Ausgewählte Auszüge',
+    lineupForHosts: 'Aufstellung für die Gastgeber',
     startPoint: 'Von:',
     endPoint: 'Bis:',
   },
@@ -279,6 +285,7 @@ const TRANSLATIONS = {
     watchLesson: 'Guarda la lezione',
     lessonTranscript: 'Trascrizione della lezione',
     selectedExcerpts: 'Estratti selezionati',
+    lineupForHosts: 'Lineup per i conduttori',
     startPoint: 'Da:',
     endPoint: 'A:',
   },
@@ -310,6 +317,7 @@ const TRANSLATIONS = {
     watchLesson: 'Regarder la leçon',
     lessonTranscript: 'Transcription de la leçon',
     selectedExcerpts: 'Extraits sélectionnés',
+    lineupForHosts: 'Lineup pour les présentateurs',
     startPoint: 'De:',
     endPoint: 'À:',
   },
@@ -341,6 +349,7 @@ const TRANSLATIONS = {
     watchLesson: 'Дивитися урок',
     lessonTranscript: 'Транскрипт уроку',
     selectedExcerpts: 'Вибрані уривки',
+    lineupForHosts: 'Програма для ведучих',
     startPoint: 'Від:',
     endPoint: 'До:',
   },
@@ -598,6 +607,9 @@ export default function PublicPage() {
       if (part.excerpts_link) {
         links.push({ label: t('selectedExcerpts'), url: addLanguageToUrl(part.excerpts_link) })
       }
+      if (part.lineup_for_hosts_link) {
+        links.push({ label: t('lineupForHosts'), url: addLanguageToUrl(part.lineup_for_hosts_link) })
+      }
     }
     
     // Custom links
@@ -672,6 +684,9 @@ export default function PublicPage() {
           }
           if (part.excerpts_link) {
             links.push({ label: t('selectedExcerpts'), url: addLanguageToUrl(part.excerpts_link) })
+          }
+          if (part.lineup_for_hosts_link) {
+            links.push({ label: t('lineupForHosts'), url: addLanguageToUrl(part.lineup_for_hosts_link) })
           }
         }
         
@@ -1343,6 +1358,32 @@ export default function PublicPage() {
                           className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
                         >
                           {copiedUrl === part.excerpts_link ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <Copy className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Lineup for Hosts Link */}
+                    {part.lineup_for_hosts_link && (
+                      <div className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
+                        <BookOpen className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
+                        <a
+                          href={part.lineup_for_hosts_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`flex-1 ${colors.text}`}
+                          style={{ fontSize: '14px' }}
+                        >
+                          {t('lineupForHosts')}
+                        </a>
+                        <button
+                          onClick={(e) => copyToClipboard(part.lineup_for_hosts_link!, e)}
+                          className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
+                        >
+                          {copiedUrl === part.lineup_for_hosts_link ? (
                             <Check className="w-4 h-4 text-green-600" />
                           ) : (
                             <Copy className="w-4 h-4" />

@@ -32,6 +32,7 @@ interface Translations {
   viewProgram: string
   readingBeforeSleep: string
   lessonPreparation: string
+  lineupForHosts: string
   loading: string
   error: string
   noPartsAvailable: string
@@ -56,6 +57,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     viewProgram: 'מסמך',
     readingBeforeSleep: 'קטע הכנה לשינה',
     lessonPreparation: 'מסמך הכנה לשיעור',
+    lineupForHosts: 'ליינאפ מנחים',
     loading: 'טוען...',
     error: 'שגיאה בטעינת הנתונים',
     noPartsAvailable: 'אין חלקים זמינים',
@@ -77,6 +79,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     viewProgram: 'Document',
     readingBeforeSleep: 'Reading Before Sleep',
     lessonPreparation: 'Lesson Preparation',
+    lineupForHosts: 'Lineup for the hosts',
     loading: 'Loading...',
     error: 'Error loading data',
     noPartsAvailable: 'No parts available',
@@ -98,6 +101,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     viewProgram: 'Документ',
     readingBeforeSleep: 'Чтение перед сном',
     lessonPreparation: 'Подготовка к уроку',
+    lineupForHosts: 'Лайнап для ведущих',
     loading: 'Загрузка...',
     error: 'Ошибка загрузки данных',
     noPartsAvailable: 'Нет доступных частей',
@@ -119,6 +123,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     viewProgram: 'Documento',
     readingBeforeSleep: 'Lectura antes de dormir',
     lessonPreparation: 'Preparación de la lección',
+    lineupForHosts: 'Lineup para los presentadores',
     loading: 'Cargando...',
     error: 'Error al cargar datos',
     noPartsAvailable: 'No hay partes disponibles',
@@ -140,6 +145,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     viewProgram: 'Dokument',
     readingBeforeSleep: 'Lesen vor dem Schlafengehen',
     lessonPreparation: 'Lektionsvorbereitung',
+    lineupForHosts: 'Aufstellung für die Gastgeber',
     loading: 'Lädt...',
     error: 'Fehler beim Laden der Daten',
     noPartsAvailable: 'Keine Teile verfügbar',
@@ -161,6 +167,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     viewProgram: 'Documento',
     readingBeforeSleep: 'Lettura prima di dormire',
     lessonPreparation: 'Preparazione della lezione',
+    lineupForHosts: 'Lineup per i conduttori',
     loading: 'Caricamento...',
     error: 'Errore nel caricamento dei dati',
     noPartsAvailable: 'Nessuna parte disponibile',
@@ -182,6 +189,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     viewProgram: 'Document',
     readingBeforeSleep: 'Lecture avant de dormir',
     lessonPreparation: 'Préparation de la leçon',
+    lineupForHosts: 'Lineup pour les présentateurs',
     loading: 'Chargement...',
     error: 'Erreur de chargement des données',
     noPartsAvailable: 'Aucune partie disponible',
@@ -203,6 +211,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     viewProgram: 'Документ',
     readingBeforeSleep: 'Читання перед сном',
     lessonPreparation: 'Підготовка до уроку',
+    lineupForHosts: 'Програма для ведучих',
     loading: 'Завантаження...',
     error: 'Помилка завантаження даних',
     noPartsAvailable: 'Немає доступних частин',
@@ -236,6 +245,7 @@ interface Part {
   program_link?: string
   reading_before_sleep_link?: string
   lesson_preparation_link?: string
+  lineup_for_hosts_link?: string
   recorded_lesson_date?: string
   custom_links?: CustomLink[]
 }
@@ -555,6 +565,7 @@ export function EmbeddedLessonSidebar({
               part.program_link && { type: 'audio' as const, text: t.viewProgram, url: part.program_link },
               part.reading_before_sleep_link && { type: 'document' as const, text: t.readingBeforeSleep, url: part.reading_before_sleep_link },
               part.lesson_preparation_link && { type: 'document' as const, text: t.lessonPreparation, url: part.lesson_preparation_link },
+              part.lineup_for_hosts_link && { type: 'document' as const, text: t.lineupForHosts, url: part.lineup_for_hosts_link },
               ...(part.custom_links?.map(l => ({ type: 'document' as const, text: l.title, url: l.url })) || []),
             ].filter(Boolean) as Array<{ type: 'source' | 'video' | 'document' | 'audio', text: string, url: string, page?: string }>
 
