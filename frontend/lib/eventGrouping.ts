@@ -46,17 +46,28 @@ export const groupEventsByDate = (events: any[], locale: string = 'en-US'): Date
     const date = new Date(dateStr + 'T00:00:00Z')
     const dayIndex = date.getUTCDay() // 0=Sunday, 1=Monday, etc.
     
-    const dayOfWeek = new Intl.DateTimeFormat(locale === 'he' ? 'he-IL' : locale, {
+    const isHebrew = locale === 'he' || locale === 'he-IL'
+    
+    const dayOfWeek = new Intl.DateTimeFormat(isHebrew ? 'he-IL' : locale, {
       timeZone: 'Asia/Jerusalem',
       weekday: 'long',
     }).format(date)
     
-    const displayDate = new Intl.DateTimeFormat(locale === 'he' ? 'he-IL' : locale, {
-      timeZone: 'Asia/Jerusalem',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(date)
+    let displayDate: string
+    if (isHebrew) {
+      // Hebrew format: 2.2.26 (day.month.year with single digits)
+      const day = date.getUTCDate()
+      const month = date.getUTCMonth() + 1
+      const year = String(date.getUTCFullYear()).slice(-2) // Last 2 digits of year
+      displayDate = `${day}.${month}.${year}`
+    } else {
+      displayDate = new Intl.DateTimeFormat(locale, {
+        timeZone: 'Asia/Jerusalem',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }).format(date)
+    }
     
     return {
       date: dateStr,

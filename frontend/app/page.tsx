@@ -375,6 +375,99 @@ export default function PublicPage() {
     return TRANSLATIONS[language as keyof typeof TRANSLATIONS]?.[key] || TRANSLATIONS.en[key]
   }
 
+  // Format time range for display (removes leading zeros, uses language-specific separator)
+  const formatTimeRange = (startTime: string, endTime: string): string => {
+    // Remove leading zeros from hours: "02:40" becomes "2:40"
+    const start = startTime.replace(/^0/, '')
+    const end = endTime.replace(/^0/, '')
+    
+    // Language-specific separators
+    const separators: { [key: string]: string } = {
+      he: 'עד',      // Hebrew: until
+      en: 'to',      // English: to
+      ru: 'до',      // Russian: until
+      es: 'hasta',   // Spanish: until
+      de: 'bis',     // German: until
+      it: 'fino a',  // Italian: until to
+      fr: 'à',       // French: to
+      uk: 'до',      // Ukrainian: until
+    }
+    
+    const separator = separators[language] || '-'
+    return `${start} ${separator} ${end}`
+  }
+
+  // Format full event date display (day of week | date | time)
+  const formatEventDateDisplay = (dateString: string, startTime?: string, endTime?: string): string => {
+    // Validate input
+    if (!dateString || dateString === '' || dateString === 'null' || dateString === 'undefined') {
+      console.warn('formatEventDateDisplay: Invalid date string:', dateString)
+      return 'Date not available'
+    }
+
+    let date: Date
+    try {
+      if (typeof dateString !== 'string') {
+        console.warn('formatEventDateDisplay: dateString is not a string:', typeof dateString, dateString)
+        return 'Invalid date'
+      }
+
+      // Parse date string properly
+      if (dateString.includes('T')) {
+        // ISO format with time
+        date = new Date(dateString)
+      } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        // Date-only format (YYYY-MM-DD)
+        date = new Date(dateString + 'T00:00:00Z')
+      } else {
+        // Try parsing as-is
+        date = new Date(dateString)
+      }
+      
+      // Check if date is valid immediately after creation
+      if (!date || isNaN(date.getTime()) || date.getTime() === 0) {
+        console.warn('formatEventDateDisplay: Invalid date object created from:', dateString)
+        return 'Invalid date'
+      }
+    } catch (e) {
+      console.error('formatEventDateDisplay: Error parsing date:', dateString, e)
+      return 'Invalid date'
+    }
+
+    const isHebrew = language === 'he' || language === 'he-IL'
+    
+    try {
+      // Get day of week
+      const dayOfWeek = new Intl.DateTimeFormat(isHebrew ? 'he-IL' : language, {
+        timeZone: 'Asia/Jerusalem',
+        weekday: 'long',
+      }).format(date)
+      
+      // Get date in appropriate format
+      let displayDate: string
+      if (isHebrew) {
+        // Hebrew format: 2.2.26 (day.month.year with single digits)
+        const day = date.getUTCDate()
+        const month = date.getUTCMonth() + 1
+        const year = String(date.getUTCFullYear()).slice(-2)
+        displayDate = `${day}.${month}.${year}`
+      } else {
+        displayDate = formatDate(dateString)
+      }
+      
+      // Build the display string
+      let result = `${dayOfWeek} | ${displayDate}`
+      if (startTime && endTime) {
+        result += ` | ${formatTimeRange(startTime, endTime)}`
+      }
+      
+      return result
+    } catch (e) {
+      console.error('formatEventDateDisplay: Error formatting date:', dateString, e)
+      return 'Date formatting error'
+    }
+  }
+
   // Load language from localStorage and listen for changes from Navigation
   useEffect(() => {
     const saved = localStorage.getItem('language')
@@ -919,10 +1012,10 @@ export default function PublicPage() {
                   >
                     {/* Date Header */}
                     <div className="p-4 border-b border-gray-200 bg-gray-100">
-                      <div className="flex items-center gap-2 text-blue-900">
-                        <Calendar className="w-5 h-5" />
+                      <div className="flex items-center gap-2" style={{ color: '#646464' }}>
+                        <Calendar className="w-5 h-5" style={{ color: '#646464' }} />
                         <h3 style={{ fontSize: '18px', fontWeight: 'bold' }}>
-                          {dateGroup.dayOfWeek}, {dateGroup.displayDate}
+                          {dateGroup.dayOfWeek} | {dateGroup.displayDate}
                         </h3>
                       </div>
                     </div>
@@ -944,7 +1037,7 @@ export default function PublicPage() {
                                 {event.start_time && event.end_time && (
                                   <div className="flex items-center gap-2 text-gray-600 justify-start" style={{ fontSize: '13px' }}>
                                     <Clock className="w-4 h-4" />
-                                    <span>{event.start_time} - {event.end_time}</span>
+                                    <span>{formatTimeRange(event.start_time, event.end_time)}</span>
                                   </div>
                                 )}
                               </div>
@@ -959,7 +1052,7 @@ export default function PublicPage() {
                                 {event.start_time && event.end_time && (
                                   <div className="flex items-center gap-2 text-gray-600" style={{ fontSize: '13px' }}>
                                     <Clock className="w-4 h-4" />
-                                    <span>{event.start_time} - {event.end_time}</span>
+                                    <span>{formatTimeRange(event.start_time, event.end_time)}</span>
                                   </div>
                                 )}
                               </div>
@@ -1018,10 +1111,7 @@ export default function PublicPage() {
                 {getEventTitle(selectedEvent)}
               </h2>
               <p className="text-gray-600" style={{ fontSize: '14px' }}>
-                {formatDate(selectedEvent.date)}
-                {selectedEvent.start_time && selectedEvent.end_time && (
-                  <span> • {selectedEvent.start_time} - {selectedEvent.end_time}</span>
-                )}
+                {selectedEvent.date ? formatEventDateDisplay(selectedEvent.date, selectedEvent.start_time, selectedEvent.end_time) : 'Date not available'}
               </p>
               <button
                 onClick={(e) => {
