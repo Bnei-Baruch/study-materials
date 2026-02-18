@@ -151,6 +151,27 @@ export function EmbeddedEventsList({
     return event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'
   }
 
+  const formatTimeRange = (startTime: string, endTime: string): string => {
+    // Remove leading zeros from hours: "02:40" becomes "2:40"
+    const start = startTime.replace(/^0/, '')
+    const end = endTime.replace(/^0/, '')
+    
+    // Language-specific separators
+    const separators: { [key: string]: string } = {
+      he: 'עד',      // Hebrew: until
+      en: 'to',      // English: to
+      ru: 'до',      // Russian: until
+      es: 'hasta',   // Spanish: until
+      de: 'bis',     // German: until
+      it: 'fino a',  // Italian: until to
+      fr: 'à',       // French: to
+      uk: 'до',      // Ukrainian: until
+    }
+    
+    const separator = separators[language] || '-'
+    return `${start} ${separator} ${end}`
+  }
+
   const handleLanguageChange = (newLang: string) => {
     if (onLanguageChange) {
       onLanguageChange(newLang)
@@ -249,7 +270,7 @@ export function EmbeddedEventsList({
                             {event.start_time && event.end_time && (
                               <div className="flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] justify-start">
                                 <Clock className="w-3 h-3 flex-shrink-0" />
-                                <span className="truncate">{event.start_time} - {event.end_time}</span>
+                                <span className="truncate">{formatTimeRange(event.start_time, event.end_time)}</span>
                               </div>
                             )}
                           </div>
@@ -264,7 +285,7 @@ export function EmbeddedEventsList({
                             {event.start_time && event.end_time && (
                               <div className="flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]">
                                 <Clock className="w-3 h-3 flex-shrink-0" />
-                                <span className="truncate">{event.start_time} - {event.end_time}</span>
+                                <span className="truncate">{formatTimeRange(event.start_time, event.end_time)}</span>
                               </div>
                             )}
                           </div>

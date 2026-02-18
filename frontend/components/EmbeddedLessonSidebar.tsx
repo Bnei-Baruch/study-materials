@@ -391,7 +391,7 @@ export function EmbeddedLessonSidebar({
     if (!event) return ''
 
     const title = event.titles?.[language] || 'Lesson'
-    const date = formatEventDate(event.date)
+    const date = formatEventDate(event.date, event.start_time, event.end_time)
     
     const partsText = parts
       .map((part) => {
@@ -455,8 +455,41 @@ export function EmbeddedLessonSidebar({
     }
   }
 
-  const formatEventDate = (dateString: string) => {
-    const date = new Date(dateString)
+  const formatEventDate = (dateString: string | undefined, startTime?: string, endTime?: string) => {
+    // Validate input
+    if (!dateString || dateString === '' || dateString === 'null' || dateString === 'undefined') {
+      console.warn('formatEventDate: Invalid date string:', dateString)
+      return 'Date not available'
+    }
+
+    // Parse date string properly - handle both ISO format and date-only format
+    let date: Date
+    try {
+      if (typeof dateString !== 'string') {
+        console.warn('formatEventDate: dateString is not a string:', typeof dateString, dateString)
+        return 'Invalid date'
+      }
+
+      if (dateString.includes('T')) {
+        // ISO format with time
+        date = new Date(dateString)
+      } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        // Date-only format (YYYY-MM-DD), add time to avoid timezone issues
+        date = new Date(dateString + 'T00:00:00Z')
+      } else {
+        // Try parsing as-is
+        date = new Date(dateString)
+      }
+      
+      // Check if date is valid immediately after creation
+      if (!date || isNaN(date.getTime()) || date.getTime() === 0) {
+        console.warn('formatEventDate: Invalid date object created from:', dateString)
+        return 'Invalid date'
+      }
+    } catch (e) {
+      console.error('formatEventDate: Error parsing date:', dateString, e)
+      return 'Invalid date'
+    }
     
     // Map language codes to locale strings
     const localeMap: Record<string, string> = {
@@ -471,13 +504,60 @@ export function EmbeddedLessonSidebar({
     }
     
     const locale = localeMap[language] || 'en-US'
+    const isHebrew = language === 'he' || language === 'he-IL'
     
-    return new Intl.DateTimeFormat(locale, {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(date)
+    try {
+      // Get day of week
+      const dayOfWeek = new Intl.DateTimeFormat(locale, {
+        timeZone: 'Asia/Jerusalem',
+        weekday: 'long',
+      }).format(date)
+      
+      // Get date in appropriate format
+      let displayDate: string
+      if (isHebrew) {
+        // Hebrew format: 2.2.26 (day.month.year with single digits)
+        const day = date.getUTCDate()
+        const month = date.getUTCMonth() + 1
+        const year = String(date.getUTCFullYear()).slice(-2)
+        displayDate = `${day}.${month}.${year}`
+      } else {
+        displayDate = new Intl.DateTimeFormat(locale, {
+          timeZone: 'Asia/Jerusalem',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }).format(date)
+      }
+      
+      // Build the display string
+      let result = `${dayOfWeek} | ${displayDate}`
+      
+      // Add time range if provided
+      if (startTime && endTime) {
+        const start = startTime.replace(/^0/, '')
+        const end = endTime.replace(/^0/, '')
+        
+        const timeSeparators: Record<string, string> = {
+          'he': 'עד',
+          'en': 'to',
+          'ru': 'до',
+          'es': 'hasta',
+          'de': 'bis',
+          'it': 'fino a',
+          'fr': 'à',
+          'uk': 'до',
+        }
+        
+        const separator = timeSeparators[language] || '-'
+        result += ` | ${start} ${separator} ${end}`
+      }
+      
+      return result
+    } catch (e) {
+      console.error('formatEventDate: Error formatting date:', dateString, e)
+      return 'Date formatting error'
+    }
   }
 
   if (loading) {
@@ -510,10 +590,7 @@ export function EmbeddedLessonSidebar({
           {eventTitle}
         </h3>
         <p className="text-gray-600 text-[11px] sm:text-[13px] mt-0.5">
-          {formatEventDate(event.date)}
-          {event.start_time && event.end_time && (
-            <span> • {event.start_time} - {event.end_time}</span>
-          )}
+          {event && event.date ? formatEventDate(event.date, event.start_time, event.end_time) : 'Date not available'}
         </p>
         <div className={`absolute ${isRTL ? 'left-3 sm:left-4' : 'right-3 sm:right-4'} top-3 sm:top-4 flex gap-2 sm:gap-2`}>
           {onBack && (
