@@ -11,7 +11,8 @@ type LessonPart struct {
 	PartType               string       `json:"part_type" bson:"part_type"`                                                     // "live_lesson" or "recorded_lesson"
 	Language               string       `json:"language" bson:"language"`                                                       // ISO 639-1 code (e.g., "he", "en", "ru")
 	EventID                string       `json:"event_id,omitempty" bson:"event_id,omitempty"`                                   // Optional: links part to an event
-	Order                  int          `json:"order" bson:"order"`                                                             // Position within event (0=preparation, 1, 2, 3...)
+	Order                  *int         `json:"order,omitempty" bson:"order,omitempty"`                                         // Optional: part number (0=preparation, 1, 2, 3...). Required for lesson events, optional for non-lesson events
+	Position               int          `json:"position" bson:"position"`                                                       // Display order (for drag-and-drop sorting, applies to all events)
 	ExcerptsLink           string       `json:"excerpts_link,omitempty" bson:"excerpts_link,omitempty"`                         // Optional: link to selected excerpts
 	TranscriptLink         string       `json:"transcript_link,omitempty" bson:"transcript_link,omitempty"`                     // Optional: link to transcript
 	LessonLink             string       `json:"lesson_link,omitempty" bson:"lesson_link,omitempty"`                             // Optional: kabbalahmedia lesson URL
@@ -20,6 +21,8 @@ type LessonPart struct {
 	LessonPreparationLink  string       `json:"lesson_preparation_link,omitempty" bson:"lesson_preparation_link,omitempty"`     // Optional: for preparation parts (order=0)
 	LineupForHostsLink     string       `json:"lineup_for_hosts_link,omitempty" bson:"lineup_for_hosts_link,omitempty"`         // Optional: lineup for hosts link
 	RecordedLessonDate     string       `json:"recorded_lesson_date,omitempty" bson:"recorded_lesson_date,omitempty"`           // Optional: date the recorded lesson was given (YYYY-MM-DD)
+	StartTime              string       `json:"start_time,omitempty" bson:"start_time,omitempty"`                               // Optional: start time in HH:MM format
+	EndTime                string       `json:"end_time,omitempty" bson:"end_time,omitempty"`                                   // Optional: end time in HH:MM format
 	Sources                []Source     `json:"sources" bson:"sources"`
 	CustomLinks            []CustomLink `json:"custom_links,omitempty" bson:"custom_links,omitempty"` // Optional: custom links with titles (language-specific)
 	CreatedAt              time.Time    `json:"created_at" bson:"created_at"`
@@ -49,7 +52,8 @@ type CreatePartRequest struct {
 	PartType               string       `json:"part_type"`                           // "live_lesson" or "recorded_lesson", defaults to "live_lesson"
 	Language               string       `json:"language"`                            // ISO 639-1 code, defaults to "he"
 	EventID                string       `json:"event_id,omitempty"`                  // Optional: links part to an event
-	Order                  int          `json:"order"`                               // Position within event (0=preparation, 1, 2, 3...)
+	Order                  *int         `json:"order,omitempty"`                     // Optional: part number (0=preparation, 1, 2, 3...). Required for lesson events, optional for non-lesson events
+	Position               int          `json:"position"`                            // Display order (for drag-and-drop sorting)
 	TemplateID             string       `json:"template_id,omitempty"`               // Optional: ID of template used (for auto-translating)
 	ExcerptsLink           string       `json:"excerpts_link,omitempty"`             // Optional: link to selected excerpts
 	TranscriptLink         string       `json:"transcript_link,omitempty"`           // Optional: link to transcript
@@ -59,6 +63,8 @@ type CreatePartRequest struct {
 	LessonPreparationLink  string       `json:"lesson_preparation_link,omitempty"`   // Optional: for preparation parts (order=0)
 	LineupForHostsLink     string       `json:"lineup_for_hosts_link,omitempty"`     // Optional: lineup for hosts link
 	RecordedLessonDate     string       `json:"recorded_lesson_date,omitempty"`      // Optional: date the recorded lesson was given (YYYY-MM-DD)
+	StartTime              string       `json:"start_time,omitempty"`                // Optional: start time in HH:MM format
+	EndTime                string       `json:"end_time,omitempty"`                  // Optional: end time in HH:MM format
 	Sources                []Source     `json:"sources"`
 	CustomLinks            []CustomLink `json:"custom_links,omitempty"` // Optional: custom links with titles (language-specific)
 }

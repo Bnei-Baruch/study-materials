@@ -236,7 +236,8 @@ interface Part {
   id: string
   title: string
   description: string
-  order: number
+  order?: number | null
+  position: number
   language: string
   sources: Source[]
   excerpts_link?: string
@@ -247,6 +248,8 @@ interface Part {
   lesson_preparation_link?: string
   lineup_for_hosts_link?: string
   recorded_lesson_date?: string
+  start_time?: string
+  end_time?: string
   custom_links?: CustomLink[]
 }
 
@@ -368,7 +371,7 @@ export function EmbeddedLessonSidebar({
   }
 
   const getSectionShareText = (part: Part) => {
-    const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`
+    const partNumber = part.order === 0 ? t.preparation : (part.order != null ? `${t.part} ${part.order}` : part.title)
     const links = [
       ...(part.sources?.map((s) => `${t.readSource}: ${s.source_url}`) || []),
       part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
@@ -395,7 +398,7 @@ export function EmbeddedLessonSidebar({
     
     const partsText = parts
       .map((part) => {
-        const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`
+        const partNumber = part.order === 0 ? t.preparation : (part.order != null ? `${t.part} ${part.order}` : part.title)
         const links = [
           ...(part.sources?.map((s) => `${t.readSource}: ${s.source_url}`) || []),
           part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
@@ -429,7 +432,7 @@ export function EmbeddedLessonSidebar({
     }
   }
 
-  const getSectionColor = (order: number) => {
+  const getSectionColor = (order: number | null | undefined) => {
     const borderSide = isLTR ? 'border-l-[5px]' : 'border-r-[5px]'
     if (order === 0) return { text: 'text-orange-700', border: `${borderSide} border-orange-500`, bg: 'bg-orange-300/10' }
     const colors = [
@@ -438,7 +441,7 @@ export function EmbeddedLessonSidebar({
       { text: 'text-green-700', border: `${borderSide} border-green-500`, bg: 'bg-green-300/10' },
       { text: 'text-purple-700', border: `${borderSide} border-purple-500`, bg: 'bg-purple-300/10' },
     ]
-    return colors[(order - 1) % colors.length]
+    return colors[((order ?? 1) - 1) % colors.length]
   }
 
   const getLinkIcon = (link: string | undefined, type: 'source' | 'video' | 'document' | 'audio') => {
@@ -631,7 +634,7 @@ export function EmbeddedLessonSidebar({
           {parts.map((part, index) => {
             const isExpanded = expandedSections.includes(index)
             const colors = getSectionColor(part.order)
-            const partTitle = part.order === 0 ? t.preparation : `${t.part} ${part.order}: ${part.title}`
+            const partTitle = part.order === 0 ? t.preparation : (part.order != null ? `${t.part} ${part.order}: ${part.title}` : part.title)
 
             // Collect all links for this part
             const allLinks = [

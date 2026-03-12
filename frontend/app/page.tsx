@@ -66,7 +66,8 @@ interface Part {
   part_type: string
   language: string
   event_id: string
-  order: number
+  order?: number | null
+  position: number
   excerpts_link?: string
   transcript_link?: string
   lesson_link?: string
@@ -74,6 +75,8 @@ interface Part {
   reading_before_sleep_link?: string
   lesson_preparation_link?: string
   lineup_for_hosts_link?: string
+  start_time?: string
+  end_time?: string
   recorded_lesson_date?: string
   sources: Source[]
   custom_links?: CustomLink[]
@@ -611,7 +614,7 @@ export default function PublicPage() {
     try {
       const response = await fetch(getApiUrl(`/events/${eventId}/parts?language=${language}`))
       const data = await response.json()
-      setParts((data.parts || []).sort((a: Part, b: Part) => a.order - b.order))
+      setParts((data.parts || []).sort((a: Part, b: Part) => (a.position ?? 0) - (b.position ?? 0)))
     } catch (error) {
       console.error('Failed to fetch parts:', error)
       setParts([])
@@ -652,7 +655,7 @@ export default function PublicPage() {
     const eventTitle = getEventTitle(event)
     const eventDate = formatDate(event.date)
     const isPreparation = part.order === 0
-    const partTitle = isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
+    const partTitle = isPreparation ? part.title : (part.order != null ? `${t('part')} ${part.order}: ${part.title}` : part.title)
     const separator = language === 'he' ? '‮━━━━━━━━━━' : '━━━━━━━━━━'
     
     let message = `*${eventTitle}*\n${eventDate}\n\n${separator}\n\n`
@@ -733,7 +736,7 @@ export default function PublicPage() {
     if (parts && parts.length > 0) {
       parts.forEach(part => {
         const isPreparation = part.order === 0
-        const partTitle = isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
+        const partTitle = isPreparation ? part.title : (part.order != null ? `${t('part')} ${part.order}: ${part.title}` : part.title)
         
         message += `${separator}\n\n*${partTitle}*\n`
         
@@ -1180,7 +1183,7 @@ export default function PublicPage() {
 
             <div className="space-y-6">
               {parts.map((part) => {
-            const colors = getPartColorClasses(part.order)
+            const colors = getPartColorClasses(part.order ?? 0)
             const isExpanded = expandedParts.has(part.id)
             const isPreparation = part.order === 0
 

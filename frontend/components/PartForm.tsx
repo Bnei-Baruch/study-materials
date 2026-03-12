@@ -16,12 +16,13 @@ interface Source {
 interface PartFormProps {
   eventId: string
   eventDate: string
-  existingParts: Array<{ order: number }> // To calculate next order
+  eventType?: string
+  existingParts: Array<{ order?: number | null; position: number }> // To calculate next order/position
   onPartCreated: () => void
   onCancel?: () => void
 }
 
-export default function PartForm({ eventId, eventDate, existingParts, onPartCreated, onCancel }: PartFormProps) {
+export default function PartForm({ eventId, eventDate, eventType = 'morning_lesson', existingParts, onPartCreated, onCancel }: PartFormProps) {
   // Preparation translations
   const preparationTitles: { [key: string]: string } = {
     he: 'הכנה לשיעור',
@@ -45,7 +46,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
     if (existingParts.length === 0) {
       return 0 // Start with preparation if no parts
     }
-    const maxOrder = Math.max(...existingParts.map(p => p.order))
+    const maxOrder = Math.max(...existingParts.map(p => p.order ?? 0))
     return maxOrder + 1 // Next order after the highest existing
   }
 
@@ -70,6 +71,16 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
   const [error, setError] = useState('')
   const [showOptionalFields, setShowOptionalFields] = useState(false)
   const [titleTemplates, setTitleTemplates] = useState<TemplateDefinition[]>([])
+
+  // Time fields for parts
+  const [startTime, setStartTime] = useState('')
+  const [endTime, setEndTime] = useState('')
+
+  // Position field for drag-and-drop ordering
+  const [position, setPosition] = useState(0)
+
+  // Helper to detect lesson events
+  const isLessonEvent = ['morning_lesson', 'noon_lesson', 'evening_lesson'].includes(eventType)
 
   // Fetch templates from API on mount
   useEffect(() => {
@@ -183,13 +194,13 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (order === '') {
+    if (order === '' && isLessonEvent) {
       setError('Please select a part number')
       return
     }
 
-    if (!title.trim()) {
-      setError('Title is required')
+    if (!title.trim() && isLessonEvent) {
+      setError('Title is required for lesson events')
       return
     }
 
@@ -199,6 +210,11 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
     try {
       // Format date as YYYY-MM-DD (extract only date part from ISO string)
       const dateOnly = new Date(eventDate).toISOString().split('T')[0]
+      // For lesson events, order must be set; for non-lesson events, order can be null
+      // Also treat order=0 as null for non-lesson events (0=Preparation is a lesson-only concept)
+      const partOrder = isLessonEvent
+        ? (order === '' ? undefined : order)
+        : (order === '' || order === 0 ? null : order)
       
       const response = await fetch(getApiUrl('/parts'), {
         method: 'POST',
@@ -212,23 +228,27 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
           part_type: partType,
           language,
           event_id: eventId,
-          order: order,
+          order: partOrder,
+          position: position,
           template_id: selectedTemplate || undefined, // Send template ID if one was selected
-          sources: order === 0 ? [] : sources, // No sources for prep parts
-          // Preparation part links (only if order is 0)
-          reading_before_sleep_link: order === 0 ? readingBeforeSleepLink : undefined,
-          lesson_preparation_link: order === 0 ? lessonPreparationLink : undefined,
-          // Regular part links (only if order is NOT 0)
-          excerpts_link: order !== 0 ? excerptsLink || undefined : undefined,
-          transcript_link: order !== 0 ? transcriptLink || undefined : undefined,
-          lesson_link: order !== 0 ? lessonLink || undefined : undefined,
-          program_link: order !== 0 ? programLink || undefined : undefined,
+          sources: partOrder === 0 ? [] : sources, // No sources for prep parts (order 0)
+          // Preparation part links (only if partOrder is 0)
+          reading_before_sleep_link: partOrder === 0 ? readingBeforeSleepLink : undefined,
+          lesson_preparation_link: partOrder === 0 ? lessonPreparationLink : undefined,
+          // Regular part links (only if partOrder is NOT 0 and not null)
+          excerpts_link: (partOrder !== null && partOrder !== 0) ? excerptsLink || undefined : undefined,
+          transcript_link: (partOrder !== null && partOrder !== 0) ? transcriptLink || undefined : undefined,
+          lesson_link: (partOrder !== null && partOrder !== 0) ? lessonLink || undefined : undefined,
+          program_link: (partOrder !== null && partOrder !== 0) ? programLink || undefined : undefined,
           // Lineup for hosts (for Recorded Lesson and Lesson types)
           lineup_for_hosts_link: (partType === 'recorded_lesson' || partType === 'live_lesson') ? lineupForHostsLink || undefined : undefined,
-          // Custom links (language-specific)
-          custom_links: order !== 0 ? customLinks.filter(link => link.title && link.url) : undefined,
+          // Custom links (language-specific, only if not prep)
+          custom_links: (partOrder !== null && partOrder !== 0) ? customLinks.filter(link => link.title && link.url) : undefined,
           // Recorded lesson date (if provided)
           recorded_lesson_date: recordedLessonDate || undefined,
+          // Time fields (optional)
+          start_time: startTime || undefined,
+          end_time: endTime || undefined,
         }),
       })
 
@@ -254,6 +274,8 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       setLessonPreparationLink('')
       setRecordedLessonDate('')
       setLineupForHostsLink('')
+      setStartTime('')
+      setEndTime('')
       setShowOptionalFields(false)
 
       // Notify parent
@@ -277,7 +299,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       <div className="grid grid-cols-3 gap-4">
         <div>
           <label htmlFor="order" className="block text-sm font-medium text-gray-700 mb-2">
-            Part Number *
+            Part Number {isLessonEvent ? '*' : <span className="text-gray-500 text-xs">(optional)</span>}
           </label>
           <select
             id="order"
@@ -286,7 +308,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           >
             <option value="">-- Select Part Number --</option>
-            <option value={0}>0 - Preparation</option>
+            {isLessonEvent && <option value={0}>0 - Preparation</option>}
             <option value={1}>1</option>
             <option value={2}>2</option>
             <option value={3}>3</option>
@@ -665,6 +687,45 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
             </div>
           )}
         </>
+      )}
+
+      {/* Time Fields - shown for all event types */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="startTime" className="block text-sm font-medium text-gray-700 mb-2">
+            Start Time <span className="text-gray-500 text-xs">(optional)</span>
+          </label>
+          <input
+            id="startTime"
+            type="time"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            placeholder="HH:MM"
+          />
+        </div>
+        <div>
+          <label htmlFor="endTime" className="block text-sm font-medium text-gray-700 mb-2">
+            End Time <span className="text-gray-500 text-xs">(optional)</span>
+          </label>
+          <input
+            id="endTime"
+            type="time"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+            placeholder="HH:MM"
+          />
+        </div>
+      </div>
+
+      {/* Info banner for non-lesson events */}
+      {!isLessonEvent && (
+        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-800">
+            Parts are optional for this event type. Title and sources can be left empty.
+          </p>
+        </div>
       )}
 
       {/* Submit Buttons */}

@@ -29,10 +29,21 @@ func (a *App) HandleDeletePart(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Helper to compare optional int pointers by value
+		orderEqual := func(a, b *int) bool {
+			if a == nil && b == nil {
+				return true
+			}
+			if a == nil || b == nil {
+				return false
+			}
+			return *a == *b
+		}
+
 		// Find and delete all parts with same event_id and order
 		deletedCount := 0
 		for _, p := range allParts {
-			if p.EventID == part.EventID && p.Order == part.Order {
+			if p.EventID == part.EventID && orderEqual(p.Order, part.Order) {
 				if err := a.store.DeletePart(p.ID); err != nil {
 					fmt.Printf("Warning: Failed to delete part %s: %v\n", p.ID, err)
 				} else {
