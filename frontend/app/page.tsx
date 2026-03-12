@@ -66,7 +66,8 @@ interface Part {
   part_type: string
   language: string
   event_id: string
-  order: number
+  order?: number | null
+  position: number
   excerpts_link?: string
   transcript_link?: string
   lesson_link?: string
@@ -611,7 +612,7 @@ export default function PublicPage() {
     try {
       const response = await fetch(getApiUrl(`/events/${eventId}/parts?language=${language}`))
       const data = await response.json()
-      setParts((data.parts || []).sort((a: Part, b: Part) => a.order - b.order))
+      setParts((data.parts || []).sort((a: Part, b: Part) => (a.position ?? 0) - (b.position ?? 0)))
     } catch (error) {
       console.error('Failed to fetch parts:', error)
       setParts([])
@@ -652,7 +653,7 @@ export default function PublicPage() {
     const eventTitle = getEventTitle(event)
     const eventDate = formatDate(event.date)
     const isPreparation = part.order === 0
-    const partTitle = isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
+    const partTitle = part.order == null ? part.title : isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
     const separator = language === 'he' ? '‮━━━━━━━━━━' : '━━━━━━━━━━'
     
     let message = `*${eventTitle}*\n${eventDate}\n\n${separator}\n\n`
@@ -733,7 +734,7 @@ export default function PublicPage() {
     if (parts && parts.length > 0) {
       parts.forEach(part => {
         const isPreparation = part.order === 0
-        const partTitle = isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
+        const partTitle = part.order == null ? part.title : isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
         
         message += `${separator}\n\n*${partTitle}*\n`
         
@@ -848,7 +849,7 @@ export default function PublicPage() {
     }).format(date)
   }
 
-  const getPartColorClasses = (order: number) => {
+  const getPartColorClasses = (order: number | null | undefined) => {
     if (order === 0) {
       // Preparation
       return {
@@ -871,6 +872,8 @@ export default function PublicPage() {
       { border: 'border-rose-500', bg: 'bg-rose-300/10', bgHover: 'hover:bg-rose-400/20', text: 'text-rose-900', icon: 'text-rose-600' },
     ]
     
+    // For null/undefined order (non-lesson events), use position-based coloring (index 0)
+    if (order == null) return colorSchemes[0]
     return colorSchemes[(order - 1) % colorSchemes.length]
   }
 
@@ -1193,7 +1196,7 @@ export default function PublicPage() {
                 <div className="p-4 flex items-start gap-3">
                   <div className={`flex-1 max-w-[65%] ${isRTL ? 'border-r-4 pr-3' : 'border-l-4 pl-3'} ${colors.border}`}>
                     <h3 className={`${colors.text} font-bold mb-1`} style={{ fontSize: '16px' }}>
-                      {part.order === 0 ? part.title : `${t('part')} ${part.order}: ${part.title}`}
+                      {part.order == null ? part.title : part.order === 0 ? part.title : `${t('part')} ${part.order}: ${part.title}`}
                     </h3>
                     {part.description && (
                       <p className="text-gray-700 leading-relaxed" style={{ fontSize: '13px' }}>

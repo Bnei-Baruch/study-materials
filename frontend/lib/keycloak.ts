@@ -11,9 +11,9 @@ const initOptions = {
   checkLoginIframe: false,
   flow: 'standard' as const,
   pkceMethod: 'S256' as const,
-  // Use clean URL without hash fragments to prevent redirect loop
+  // Use URL without hash fragments to prevent redirect loop, but keep query params
   redirectUri: typeof window !== 'undefined' 
-    ? `${window.location.origin}${window.location.pathname}` 
+    ? `${window.location.origin}${window.location.pathname}${window.location.search}` 
     : undefined,
 }
 
