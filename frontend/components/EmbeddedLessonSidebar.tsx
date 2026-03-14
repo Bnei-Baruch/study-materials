@@ -264,13 +264,15 @@ interface EmbeddedLessonSidebarProps {
   eventId: string
   language?: string
   apiBaseUrl?: string
+  theme?: 'light' | 'dark'
   onBack?: () => void
 }
 
 export function EmbeddedLessonSidebar({
   eventId,
   language = 'he',
-  apiBaseUrl,  // REQUIRED - no fallback
+  apiBaseUrl,
+  theme = 'light',
   onBack,
 }: EmbeddedLessonSidebarProps) {
   const [event, setEvent] = useState<Event | null>(null)
@@ -431,12 +433,12 @@ export function EmbeddedLessonSidebar({
 
   const getSectionColor = (order: number) => {
     const borderSide = isLTR ? 'border-l-[5px]' : 'border-r-[5px]'
-    if (order === 0) return { text: 'text-orange-700', border: `${borderSide} border-orange-500`, bg: 'bg-orange-300/10' }
+    if (order === 0) return { text: 'text-orange-700 dark:text-orange-300', border: `${borderSide} border-orange-500`, bg: 'bg-orange-300/10 dark:bg-orange-900/20' }
     const colors = [
-      { text: 'text-blue-700', border: `${borderSide} border-blue-500`, bg: 'bg-blue-300/10' },
-      { text: 'text-orange-700', border: `${borderSide} border-orange-500`, bg: 'bg-orange-300/10' },
-      { text: 'text-green-700', border: `${borderSide} border-green-500`, bg: 'bg-green-300/10' },
-      { text: 'text-purple-700', border: `${borderSide} border-purple-500`, bg: 'bg-purple-300/10' },
+      { text: 'text-blue-700 dark:text-blue-300', border: `${borderSide} border-blue-500`, bg: 'bg-blue-300/10 dark:bg-blue-900/20' },
+      { text: 'text-orange-700 dark:text-orange-300', border: `${borderSide} border-orange-500`, bg: 'bg-orange-300/10 dark:bg-orange-900/20' },
+      { text: 'text-green-700 dark:text-green-300', border: `${borderSide} border-green-500`, bg: 'bg-green-300/10 dark:bg-green-900/20' },
+      { text: 'text-purple-700 dark:text-purple-300', border: `${borderSide} border-purple-500`, bg: 'bg-purple-300/10 dark:bg-purple-900/20' },
     ]
     return colors[(order - 1) % colors.length]
   }
@@ -562,8 +564,8 @@ export function EmbeddedLessonSidebar({
 
   if (loading) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="text-gray-600" style={{ fontSize: '14px' }}>
+      <div className={`h-full w-full flex items-center justify-center bg-white dark:bg-gray-900 ${theme === 'dark' ? 'dark' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="text-gray-600 dark:text-gray-400" style={{ fontSize: '14px' }}>
           {t.loading}
         </div>
       </div>
@@ -572,7 +574,7 @@ export function EmbeddedLessonSidebar({
 
   if (error || !event) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={`h-full w-full flex items-center justify-center bg-white dark:bg-gray-900 ${theme === 'dark' ? 'dark' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="text-red-600 text-center p-4" style={{ fontSize: '14px' }}>
           {error || t.error}
         </div>
@@ -583,13 +585,13 @@ export function EmbeddedLessonSidebar({
   const eventTitle = event.titles?.[language] || event.titles?.['he'] || 'Lesson'
 
   return (
-    <div className="h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`h-full w-full overflow-y-auto bg-white dark:bg-gray-900 border-t-4 border-blue-200 dark:border-blue-800 ${theme === 'dark' ? 'dark' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Compact Header */}
-      <div className="bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative">
-        <h3 className="text-blue-900 text-[18px] sm:text-[18px] font-semibold" style={{ lineHeight: '1.2' }}>
+      <div className="bg-blue-50 dark:bg-gray-800 p-2 sm:p-3 border-b-2 border-blue-200 dark:border-gray-700 sticky top-0 z-10 relative">
+        <h3 className="text-blue-900 dark:text-blue-200 text-[18px] sm:text-[18px] font-semibold" style={{ lineHeight: '1.2' }}>
           {eventTitle}
         </h3>
-        <p className="text-gray-600 text-[11px] sm:text-[13px] mt-0.5">
+        <p className="text-gray-600 dark:text-gray-400 text-[11px] sm:text-[13px] mt-0.5">
           {event && event.date ? formatEventDate(event.date, event.start_time, event.end_time) : 'Date not available'}
         </p>
         <div className={`absolute ${isRTL ? 'left-3 sm:left-4' : 'right-3 sm:right-4'} top-3 sm:top-4 flex gap-2 sm:gap-2`}>
@@ -623,7 +625,7 @@ export function EmbeddedLessonSidebar({
 
       {/* Parts */}
       {parts.length === 0 ? (
-        <div className="p-2 sm:p-4 text-center text-gray-500 text-[12px] sm:text-[13px]">
+        <div className="p-2 sm:p-4 text-center text-gray-500 dark:text-gray-400 text-[12px] sm:text-[13px]">
           {t.noPartsAvailable}
         </div>
       ) : (
@@ -649,7 +651,7 @@ export function EmbeddedLessonSidebar({
             return (
               <div
                 key={part.id}
-                className={`bg-white rounded-lg ${colors.border} shadow-lg`}
+                className={`bg-white dark:bg-gray-800 rounded-lg ${colors.border} shadow-lg`}
               >
                 {/* Section Header */}
                 <div className="p-1.5 sm:p-2.5 flex items-start gap-1 sm:gap-2">
@@ -658,7 +660,7 @@ export function EmbeddedLessonSidebar({
                       {partTitle}
                     </h4>
                     {part.description && (
-                      <p className="text-gray-600 leading-snug mt-0.5 text-[13px] sm:text-[13px] line-clamp-2">
+                      <p className="text-gray-600 dark:text-gray-400 leading-snug mt-0.5 text-[13px] sm:text-[13px] line-clamp-2">
                         {part.description}
                       </p>
                     )}
@@ -667,7 +669,7 @@ export function EmbeddedLessonSidebar({
                   <div className="flex gap-0.5 sm:gap-1 flex-shrink-0">
                     <button
                       onClick={() => shareSection(part, index)}
-                      className="bg-white text-green-500 border border-green-400 rounded-full p-0.5 sm:p-1 hover:bg-green-50 transition-all flex-shrink-0"
+                      className="bg-white dark:bg-gray-700 text-green-500 dark:text-green-400 border border-green-400 dark:border-green-600 rounded-full p-0.5 sm:p-1 hover:bg-green-50 dark:hover:bg-gray-600 transition-all flex-shrink-0"
                       title={t.shareSection}
                     >
                       {sharedSection === index ? (
@@ -679,7 +681,7 @@ export function EmbeddedLessonSidebar({
 
                     <button
                       onClick={() => toggleSection(index)}
-                      className="bg-white text-blue-500 border border-blue-400 rounded-full p-0.5 sm:p-1 hover:bg-blue-50 transition-all flex-shrink-0"
+                      className="bg-white dark:bg-gray-700 text-blue-500 dark:text-blue-400 border border-blue-400 dark:border-blue-600 rounded-full p-0.5 sm:p-1 hover:bg-blue-50 dark:hover:bg-gray-600 transition-all flex-shrink-0"
                     >
                       {isExpanded ? (
                         <ChevronUp className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
@@ -709,7 +711,7 @@ export function EmbeddedLessonSidebar({
                           rel="noopener noreferrer"
                         >
                           {link.text}
-                          {link.page && <span className="text-gray-500 text-[12px] sm:text-[12px]"> (p. {link.page})</span>}
+                          {link.page && <span className="text-gray-500 dark:text-gray-400 text-[12px] sm:text-[12px]"> (p. {link.page})</span>}
                         </a>
 
                         <button
@@ -743,11 +745,11 @@ export function EmbeddedLessonSidebar({
           onClick={() => setShowShareMenu(null)}
         >
           <div
-            className="bg-white rounded-lg p-3 sm:p-4 m-2 sm:m-4 max-w-sm w-full"
+            className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 m-2 sm:m-4 max-w-sm w-full"
             onClick={(e) => e.stopPropagation()}
             dir={isRTL ? 'rtl' : 'ltr'}
           >
-            <h4 className="text-gray-900 font-bold mb-2 sm:mb-3 text-[16px] sm:text-[16px]">
+            <h4 className="text-gray-900 dark:text-gray-100 font-bold mb-2 sm:mb-3 text-[16px] sm:text-[16px]">
               {t.shareLesson}
             </h4>
             <div className="space-y-2">
@@ -804,7 +806,7 @@ export function EmbeddedLessonSidebar({
             </div>
             <button
               onClick={() => setShowShareMenu(null)}
-              className="w-full mt-2 sm:mt-3 p-2 text-gray-600 hover:text-gray-800 transition-colors text-[14px] sm:text-[14px]"
+              className="w-full mt-2 sm:mt-3 p-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors text-[14px] sm:text-[14px]"
             >
               {language === 'he' ? 'ביטול' : 'Cancel'}
             </button>

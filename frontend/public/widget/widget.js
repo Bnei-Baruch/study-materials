@@ -62,12 +62,13 @@
 
   // Initialize widget in container
   function initWidgetInContainer(container) {
-    const eventId = container.getAttribute('data-event-id');  // Optional now
+    const eventId = container.getAttribute('data-event-id');
     const language = container.getAttribute('data-language') || 'he';
-    const apiUrl = container.getAttribute('data-api-url');  // REQUIRED - no fallback
+    const apiUrl = container.getAttribute('data-api-url');
     const limit = parseInt(container.getAttribute('data-limit') || '10');
     const position = container.getAttribute('data-position') || 'inline';
     const width = container.getAttribute('data-width') || '320px';
+    const theme = container.getAttribute('data-theme') || 'light';
 
     // Validate required attributes
     if (!apiUrl) {
@@ -120,6 +121,7 @@
           apiBaseUrl: apiUrl,
           limit: limit,
           cssBaseUrl: baseUrl,
+          theme: theme,
         });
         
         return instanceId;
@@ -140,12 +142,13 @@
     const autoInject = currentScript.getAttribute('data-auto-inject');
     if (autoInject !== 'true') return;
 
-    const eventId = currentScript.getAttribute('data-event-id');  // Optional now
+    const eventId = currentScript.getAttribute('data-event-id');
     const language = currentScript.getAttribute('data-language') || 'he';
-    const apiUrl = currentScript.getAttribute('data-api-url');  // REQUIRED - no fallback
+    const apiUrl = currentScript.getAttribute('data-api-url');
     const limit = parseInt(currentScript.getAttribute('data-limit') || '10');
     const position = currentScript.getAttribute('data-position') || 'fixed-right';
     const width = currentScript.getAttribute('data-width') || '320px';
+    const theme = currentScript.getAttribute('data-theme') || 'light';
 
     // Validate required attributes
     if (!apiUrl) {
@@ -164,6 +167,7 @@
     container.setAttribute('data-limit', limit.toString());
     container.setAttribute('data-position', position);
     container.setAttribute('data-width', width);
+    container.setAttribute('data-theme', theme);
 
     document.body.appendChild(container);
     initWidgetInContainer(container);
@@ -222,6 +226,9 @@
     }
     if (options.width) {
       container.setAttribute('data-width', options.width);
+    }
+    if (options.theme) {
+      container.setAttribute('data-theme', options.theme);
     }
     if (options.target) {
       options.target.appendChild(container);

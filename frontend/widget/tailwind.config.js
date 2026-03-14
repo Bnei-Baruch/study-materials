@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     './components/EmbeddedEventsList.tsx',
     './components/EmbeddedLessonSidebar.tsx',
@@ -11,8 +12,6 @@ module.exports = {
     extend: {},
   },
   plugins: [],
-  // All CSS is scoped to [data-studymaterials-widget] containers via input.css
-  // The important selector ensures widget styles take precedence
   important: '[data-studymaterials-widget]',
 }
 

@@ -9,6 +9,7 @@ interface StudyMaterialsWidgetProps {
   language?: string
   apiBaseUrl?: string
   limit?: number
+  theme?: 'light' | 'dark'
 }
 
 export function StudyMaterialsWidget({
@@ -16,6 +17,7 @@ export function StudyMaterialsWidget({
   language = 'he',
   apiBaseUrl = '',
   limit = 10,
+  theme = 'light',
 }: StudyMaterialsWidgetProps) {
   const [view, setView] = useState<'list' | 'detail'>(eventId ? 'detail' : 'list')
   const [selectedEventId, setSelectedEventId] = useState<string | undefined>(eventId)
@@ -56,6 +58,7 @@ export function StudyMaterialsWidget({
         language={currentLanguage}
         apiBaseUrl={apiBaseUrl}
         limit={limit}
+        theme={theme}
         onSelectEvent={handleSelectEvent}
         onLanguageChange={handleLanguageChange}
       />
@@ -67,6 +70,7 @@ export function StudyMaterialsWidget({
       eventId={selectedEventId!}
       language={currentLanguage}
       apiBaseUrl={apiBaseUrl}
+      theme={theme}
       onBack={handleBack}
     />
   )

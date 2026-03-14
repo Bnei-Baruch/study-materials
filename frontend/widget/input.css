@@ -54,6 +54,10 @@
   color: #374151;
 }
 
+[data-studymaterials-widget].dark {
+  color: #e5e7eb;
+}
+
 /* Override any parent page styles that might interfere */
 [data-studymaterials-widget] h1,
 [data-studymaterials-widget] h2,
@@ -83,5 +87,18 @@
 
 [data-studymaterials-widget] ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Dark mode scrollbar */
+[data-studymaterials-widget].dark ::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+[data-studymaterials-widget].dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+[data-studymaterials-widget].dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }
 

@@ -233,7 +233,7 @@ rsync -avz \
   --exclude 'node_modules' \
   --exclude '.next' \
   --exclude '.env' \
-  /Users/alexm/Projects/study-material-service/ \
+  /root/study-material-service/ \
   root@10.77.1.73:/root/study-material-service/
 
 # On server

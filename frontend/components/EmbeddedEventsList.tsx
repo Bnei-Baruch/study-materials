@@ -97,6 +97,7 @@ interface EmbeddedEventsListProps {
   language: string
   apiBaseUrl: string
   limit?: number
+  theme?: 'light' | 'dark'
   onSelectEvent: (eventId: string) => void
   onLanguageChange?: (lang: string) => void
 }
@@ -105,6 +106,7 @@ export function EmbeddedEventsList({
   language,
   apiBaseUrl,
   limit = 10,
+  theme = 'light',
   onSelectEvent,
   onLanguageChange,
 }: EmbeddedEventsListProps) {
@@ -180,8 +182,8 @@ export function EmbeddedEventsList({
 
   if (loading) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="text-gray-600 text-[14px] sm:text-[14px]">
+      <div className={`h-full w-full flex items-center justify-center bg-white dark:bg-gray-900 ${theme === 'dark' ? 'dark' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="text-gray-600 dark:text-gray-400 text-[14px] sm:text-[14px]">
           {t.loading}
         </div>
       </div>
@@ -190,7 +192,7 @@ export function EmbeddedEventsList({
 
   if (error) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-white" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={`h-full w-full flex items-center justify-center bg-white dark:bg-gray-900 ${theme === 'dark' ? 'dark' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="text-red-600 text-center p-2 sm:p-4 text-[14px] sm:text-[14px]">
           {error}
         </div>
@@ -199,13 +201,13 @@ export function EmbeddedEventsList({
   }
 
   return (
-    <div className="h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`h-full w-full overflow-y-auto bg-white dark:bg-gray-900 border-t-4 border-blue-200 dark:border-blue-800 ${theme === 'dark' ? 'dark' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Sidebar Header */}
-      <div className="bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative">
-        <h3 className="text-blue-900 text-[18px] sm:text-[18px] font-semibold">
+      <div className="bg-blue-50 dark:bg-gray-800 p-2 sm:p-3 border-b-2 border-blue-200 dark:border-gray-700 sticky top-0 z-10 relative">
+        <h3 className="text-blue-900 dark:text-blue-200 text-[18px] sm:text-[18px] font-semibold">
           {t.studyMaterials}
         </h3>
-        <p className="text-gray-600 text-[13px] sm:text-[13px] mt-0.5">
+        <p className="text-gray-600 dark:text-gray-400 text-[13px] sm:text-[13px] mt-0.5">
           {t.selectLesson}
         </p>
         
@@ -214,7 +216,7 @@ export function EmbeddedEventsList({
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className="bg-white border border-blue-300 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-blue-900 cursor-pointer hover:border-blue-500 transition-colors text-[12px] sm:text-[12px]"
+            className="bg-white dark:bg-gray-700 border border-blue-300 dark:border-gray-600 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-blue-900 dark:text-blue-200 cursor-pointer hover:border-blue-500 transition-colors text-[12px] sm:text-[12px]"
           >
             <option value="he">עברית</option>
             <option value="en">English</option>
@@ -230,7 +232,7 @@ export function EmbeddedEventsList({
 
       {/* Events List Grouped by Date */}
       {events.length === 0 ? (
-        <div className="p-2 sm:p-4 text-center text-gray-500 text-[14px] sm:text-[14px]">
+        <div className="p-2 sm:p-4 text-center text-gray-500 dark:text-gray-400 text-[14px] sm:text-[14px]">
           {t.noEventsAvailable}
         </div>
       ) : (
@@ -241,11 +243,11 @@ export function EmbeddedEventsList({
             return (
               <div
                 key={dateGroup.date}
-                className={`rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? 'border-r-4' : 'border-l-4'} ${isRTL ? colors.border : colors.borderLTR}`}
+                className={`rounded-lg shadow-md bg-white dark:bg-gray-800 overflow-hidden ${isRTL ? 'border-r-4' : 'border-l-4'} ${isRTL ? colors.border : colors.borderLTR}`}
               >
                 {/* Date Header */}
-                <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-100">
-                  <div className="flex items-center gap-2 text-blue-900">
+                <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800/80">
+                  <div className="flex items-center gap-2 text-blue-900 dark:text-blue-200">
                     <Calendar className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                     <h4 className="text-[14px] sm:text-[16px] font-bold truncate">
                       {dateGroup.dayOfWeek}, {dateGroup.displayDate}
@@ -254,42 +256,42 @@ export function EmbeddedEventsList({
                 </div>
                 
                 {/* Events for this date */}
-                <div className="divide-y divide-gray-200">
+                <div className="divide-y divide-gray-200 dark:divide-gray-700">
                   {dateGroup.events.map((event) => (
                     <button
                       key={event.id}
                       onClick={() => onSelectEvent(event.id)}
-                      className={`w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
+                      className={`w-full p-3 sm:p-4 hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
                     >
                       {isRTL ? (
                         <>
                           <div className="flex-1 min-w-0 text-right">
-                            <h5 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words">
+                            <h5 className="text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mb-1 text-[14px] sm:text-[15px] break-words">
                               {event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'}
                             </h5>
                             {event.start_time && event.end_time && (
-                              <div className="flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] justify-start">
+                              <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400 text-[11px] sm:text-[12px] justify-start">
                                 <Clock className="w-3 h-3 flex-shrink-0" />
                                 <span className="truncate">{formatTimeRange(event.start_time, event.end_time)}</span>
                               </div>
                             )}
                           </div>
-                          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" />
+                          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-[-3px] transition-all flex-shrink-0" />
                         </>
                       ) : (
                         <>
                           <div className="flex-1 min-w-0 text-left">
-                            <h5 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words">
+                            <h5 className="text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mb-1 text-[14px] sm:text-[15px] break-words">
                               {event.titles?.[language] || event.titles?.['he'] || event.titles?.['en'] || 'Lesson'}
                             </h5>
                             {event.start_time && event.end_time && (
-                              <div className="flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]">
+                              <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400 text-[11px] sm:text-[12px]">
                                 <Clock className="w-3 h-3 flex-shrink-0" />
                                 <span className="truncate">{formatTimeRange(event.start_time, event.end_time)}</span>
                               </div>
                             )}
                           </div>
-                          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" />
+                          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" />
                         </>
                       )}
                     </button>
@@ -307,12 +309,12 @@ export function EmbeddedEventsList({
           href="https://study.kli.one"
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-2 sm:p-3 transition-all"
+          className="block w-full text-center bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-gray-700 border-2 border-blue-300 dark:border-gray-600 rounded-lg p-2 sm:p-3 transition-all"
         >
-          <div className="text-blue-700 font-medium text-[14px] sm:text-[14px]">
+          <div className="text-blue-700 dark:text-blue-300 font-medium text-[14px] sm:text-[14px]">
             {t.viewAllMaterials}
           </div>
-          <div className="text-blue-600 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]">
+          <div className="text-blue-600 dark:text-blue-400 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]">
             study.kli.one
           </div>
         </a>

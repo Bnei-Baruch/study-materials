@@ -851,28 +851,26 @@ export default function PublicPage() {
 
   const getPartColorClasses = (order: number | null | undefined) => {
     if (order === 0) {
-      // Preparation
       return {
         border: 'border-amber-500',
-        bg: 'bg-amber-300/10',
+        bg: 'bg-amber-300/10 dark:bg-amber-900/20',
         bgHover: 'hover:bg-amber-400/20',
-        text: 'text-amber-900',
-        icon: 'text-amber-600',
+        text: 'text-amber-900 dark:text-amber-300',
+        icon: 'text-amber-600 dark:text-amber-400',
       }
     }
     
     const colorSchemes = [
-      { border: 'border-blue-500', bg: 'bg-blue-300/10', bgHover: 'hover:bg-blue-400/20', text: 'text-blue-900', icon: 'text-blue-600' },
-      { border: 'border-orange-500', bg: 'bg-orange-300/10', bgHover: 'hover:bg-orange-400/20', text: 'text-orange-900', icon: 'text-orange-600' },
-      { border: 'border-green-500', bg: 'bg-green-300/10', bgHover: 'hover:bg-green-400/20', text: 'text-green-900', icon: 'text-green-600' },
-      { border: 'border-indigo-500', bg: 'bg-indigo-300/10', bgHover: 'hover:bg-indigo-400/20', text: 'text-indigo-900', icon: 'text-indigo-600' },
-      { border: 'border-teal-500', bg: 'bg-teal-300/10', bgHover: 'hover:bg-teal-400/20', text: 'text-teal-900', icon: 'text-teal-600' },
-      { border: 'border-purple-500', bg: 'bg-purple-300/10', bgHover: 'hover:bg-purple-400/20', text: 'text-purple-900', icon: 'text-purple-600' },
-      { border: 'border-pink-500', bg: 'bg-pink-300/10', bgHover: 'hover:bg-pink-400/20', text: 'text-pink-900', icon: 'text-pink-600' },
-      { border: 'border-rose-500', bg: 'bg-rose-300/10', bgHover: 'hover:bg-rose-400/20', text: 'text-rose-900', icon: 'text-rose-600' },
+      { border: 'border-blue-500', bg: 'bg-blue-300/10 dark:bg-blue-900/20', bgHover: 'hover:bg-blue-400/20', text: 'text-blue-900 dark:text-blue-300', icon: 'text-blue-600 dark:text-blue-400' },
+      { border: 'border-orange-500', bg: 'bg-orange-300/10 dark:bg-orange-900/20', bgHover: 'hover:bg-orange-400/20', text: 'text-orange-900 dark:text-orange-300', icon: 'text-orange-600 dark:text-orange-400' },
+      { border: 'border-green-500', bg: 'bg-green-300/10 dark:bg-green-900/20', bgHover: 'hover:bg-green-400/20', text: 'text-green-900 dark:text-green-300', icon: 'text-green-600 dark:text-green-400' },
+      { border: 'border-indigo-500', bg: 'bg-indigo-300/10 dark:bg-indigo-900/20', bgHover: 'hover:bg-indigo-400/20', text: 'text-indigo-900 dark:text-indigo-300', icon: 'text-indigo-600 dark:text-indigo-400' },
+      { border: 'border-teal-500', bg: 'bg-teal-300/10 dark:bg-teal-900/20', bgHover: 'hover:bg-teal-400/20', text: 'text-teal-900 dark:text-teal-300', icon: 'text-teal-600 dark:text-teal-400' },
+      { border: 'border-purple-500', bg: 'bg-purple-300/10 dark:bg-purple-900/20', bgHover: 'hover:bg-purple-400/20', text: 'text-purple-900 dark:text-purple-300', icon: 'text-purple-600 dark:text-purple-400' },
+      { border: 'border-pink-500', bg: 'bg-pink-300/10 dark:bg-pink-900/20', bgHover: 'hover:bg-pink-400/20', text: 'text-pink-900 dark:text-pink-300', icon: 'text-pink-600 dark:text-pink-400' },
+      { border: 'border-rose-500', bg: 'bg-rose-300/10 dark:bg-rose-900/20', bgHover: 'hover:bg-rose-400/20', text: 'text-rose-900 dark:text-rose-300', icon: 'text-rose-600 dark:text-rose-400' },
     ]
     
-    // For null/undefined order (non-lesson events), use position-based coloring (index 0)
     if (order == null) return colorSchemes[0]
     return colorSchemes[(order - 1) % colorSchemes.length]
   }
@@ -904,15 +902,15 @@ export default function PublicPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex items-center justify-center">
+        <div className="text-gray-600 dark:text-gray-400">Loading...</div>
       </div>
     )
   }
 
   return (
     <div
-      className="notranslate min-h-screen bg-cyan-50"
+      className="notranslate min-h-screen bg-cyan-50 dark:bg-gray-950 transition-colors"
       dir={isRTL ? 'rtl' : 'ltr'}
     >
       <div className="max-w-4xl mx-auto px-6 py-8">
@@ -922,10 +920,10 @@ export default function PublicPage() {
           <div>
             {/* Page Header */}
             <div className="mb-8">
-              <h1 className="text-4xl font-bold text-blue-900 mb-2">
+              <h1 className="text-4xl font-bold text-blue-900 dark:text-blue-200 mb-2">
                 {t('studyMaterials')}
               </h1>
-              <p className="text-gray-600" style={{ fontSize: '15px' }}>
+              <p className="text-gray-600 dark:text-gray-400" style={{ fontSize: '15px' }}>
                 {t('studyMaterialsDescription')}
               </p>
             </div>
@@ -937,7 +935,7 @@ export default function PublicPage() {
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
                   hasActiveFilters
                     ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-2 border-gray-200 dark:border-gray-600 hover:border-blue-300'
                 }`}
                 style={{ fontSize: '14px' }}
               >
@@ -951,42 +949,42 @@ export default function PublicPage() {
               </button>
 
               {showFilters && (
-                <div className="mt-4 bg-white rounded-xl shadow-md p-5">
+                <div className="mt-4 bg-white dark:bg-gray-800 rounded-xl shadow-md p-5">
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-gray-700 mb-2" style={{ fontSize: '13px' }}>
+                      <label className="block text-gray-700 dark:text-gray-300 mb-2" style={{ fontSize: '13px' }}>
                         {t('fromDate')}
                       </label>
                       <input
                         type="date"
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
-                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
+                        className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
                         style={{ fontSize: '14px' }}
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-700 mb-2" style={{ fontSize: '13px' }}>
+                      <label className="block text-gray-700 dark:text-gray-300 mb-2" style={{ fontSize: '13px' }}>
                         {t('toDate')}
                       </label>
                       <input
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
-                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
+                        className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
                         style={{ fontSize: '14px' }}
                       />
                     </div>
                   </div>
 
                   {hasActiveFilters && (
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                      <span className="text-gray-600" style={{ fontSize: '13px' }}>
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
+                      <span className="text-gray-600 dark:text-gray-400" style={{ fontSize: '13px' }}>
                         {events.length} {t('eventsFound')}
                       </span>
                       <button
                         onClick={clearFilters}
-                        className="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-1"
+                        className="px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors flex items-center gap-1"
                         style={{ fontSize: '13px' }}
                       >
                         <X className="w-4 h-4" />
@@ -1001,7 +999,7 @@ export default function PublicPage() {
             {/* Events List Grouped by Date */}
             <div className="space-y-4">
             {events.length === 0 ? (
-              <div className="text-center text-gray-600 py-12">
+              <div className="text-center text-gray-600 dark:text-gray-400 py-12">
                 {t('noEvents')}
               </div>
             ) : (
@@ -1011,10 +1009,10 @@ export default function PublicPage() {
                 return (
                   <div
                     key={dateGroup.date}
-                    className={`rounded-xl shadow-md bg-white overflow-hidden ${isRTL ? 'border-r-4' : 'border-l-4'} ${isRTL ? colors.border : colors.borderLTR}`}
+                    className={`rounded-xl shadow-md bg-white dark:bg-gray-800 overflow-hidden ${isRTL ? 'border-r-4' : 'border-l-4'} ${isRTL ? colors.border : colors.borderLTR}`}
                   >
                     {/* Date Header */}
-                    <div className="p-4 border-b border-gray-200 bg-gray-100">
+                    <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800/80">
                       <div className="flex items-center gap-2" style={{ color: '#646464' }}>
                         <Calendar className="w-5 h-5" style={{ color: '#646464' }} />
                         <h3 style={{ fontSize: '18px', fontWeight: 'bold' }}>
@@ -1024,42 +1022,42 @@ export default function PublicPage() {
                     </div>
                     
                     {/* Events for this date */}
-                    <div className="divide-y divide-gray-200">
+                    <div className="divide-y divide-gray-200 dark:divide-gray-700">
                       {dateGroup.events.map((event) => (
                         <button
                           key={event.id}
                           onClick={() => handleEventClick(event)}
-                          className={`w-full p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
+                          className={`w-full p-4 hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
                         >
                           {isRTL ? (
                             <>
                               <div className="flex-1 text-right">
-                                <h4 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1" style={{ fontSize: '16px' }}>
+                                <h4 className="text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mb-1" style={{ fontSize: '16px' }}>
                                   {getEventTitle(event)}
                                 </h4>
                                 {event.start_time && event.end_time && (
-                                  <div className="flex items-center gap-2 text-gray-600 justify-start" style={{ fontSize: '13px' }}>
+                                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 justify-start" style={{ fontSize: '13px' }}>
                                     <Clock className="w-4 h-4" />
                                     <span>{formatTimeRange(event.start_time, event.end_time)}</span>
                                   </div>
                                 )}
                               </div>
-                              <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-4px] transition-all flex-shrink-0" />
+                              <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-[-4px] transition-all flex-shrink-0" />
                             </>
                           ) : (
                             <>
                               <div className="flex-1 text-left">
-                                <h4 className="text-blue-900 group-hover:text-blue-700 transition-colors mb-1" style={{ fontSize: '16px' }}>
+                                <h4 className="text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mb-1" style={{ fontSize: '16px' }}>
                                   {getEventTitle(event)}
                                 </h4>
                                 {event.start_time && event.end_time && (
-                                  <div className="flex items-center gap-2 text-gray-600" style={{ fontSize: '13px' }}>
+                                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400" style={{ fontSize: '13px' }}>
                                     <Clock className="w-4 h-4" />
                                     <span>{formatTimeRange(event.start_time, event.end_time)}</span>
                                   </div>
                                 )}
                               </div>
-                              <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" />
+                              <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" />
                             </>
                           )}
                         </button>
@@ -1075,7 +1073,7 @@ export default function PublicPage() {
               <div className="mt-8 text-center">
                 <button 
                   onClick={loadMore}
-                  className="px-6 py-3 bg-white text-blue-700 border-2 border-blue-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-colors shadow-md font-semibold"
+                  className="px-6 py-3 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-300 border-2 border-blue-200 dark:border-blue-800 rounded-xl hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors shadow-md font-semibold"
                   style={{ fontSize: '14px' }}
                 >
                   {t('loadMore')}
@@ -1088,12 +1086,12 @@ export default function PublicPage() {
           <div dir={isRTL ? 'rtl' : 'ltr'} className="max-w-2xl mx-auto">
             <button
               onClick={handleBackToEvents}
-              className="mb-4 text-blue-600 hover:text-blue-800 flex items-center gap-2"
+              className="mb-4 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-2"
             >
               <ChevronDown className={`w-5 h-5 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
               {t('backToEvents')}
             </button>
-            <div className="text-center text-gray-600">
+            <div className="text-center text-gray-600 dark:text-gray-400">
               {t('noMaterials')}
             </div>
           </div>
@@ -1102,18 +1100,18 @@ export default function PublicPage() {
           <div dir={isRTL ? 'rtl' : 'ltr'} className="max-w-2xl mx-auto">
             <button
               onClick={handleBackToEvents}
-              className="mb-6 text-blue-600 hover:text-blue-800 flex items-center gap-2"
+              className="mb-6 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-2"
             >
               <ChevronDown className={`w-5 h-5 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
               {t('backToEvents')}
             </button>
             
             {/* Event Title Header */}
-            <div className="mb-8 bg-blue-50 rounded-xl shadow-sm p-5 border border-blue-200 relative">
-              <h2 className="text-blue-900 mb-3 font-semibold" style={{ fontSize: '20px' }}>
+            <div className="mb-8 bg-blue-50 dark:bg-gray-800 rounded-xl shadow-sm p-5 border border-blue-200 dark:border-gray-700 relative">
+              <h2 className="text-blue-900 dark:text-blue-200 mb-3 font-semibold" style={{ fontSize: '20px' }}>
                 {getEventTitle(selectedEvent)}
               </h2>
-              <p className="text-gray-600" style={{ fontSize: '14px' }}>
+              <p className="text-gray-600 dark:text-gray-400" style={{ fontSize: '14px' }}>
                 {selectedEvent.date ? formatEventDateDisplay(selectedEvent.date, selectedEvent.start_time, selectedEvent.end_time) : 'Date not available'}
               </p>
               <button
@@ -1121,7 +1119,7 @@ export default function PublicPage() {
                   e.stopPropagation()
                   setOpenShareDropdown(openShareDropdown === 'event' ? null : 'event')
                 }}
-                className={`absolute top-5 ${isRTL ? 'left-5' : 'right-5'} bg-white text-green-500 border border-green-500 rounded-full p-2 hover:bg-green-50 transition-all flex-shrink-0 z-10`}
+                className={`absolute top-5 ${isRTL ? 'left-5' : 'right-5'} bg-white dark:bg-gray-700 text-green-500 dark:text-green-400 border border-green-500 dark:border-green-600 rounded-full p-2 hover:bg-green-50 dark:hover:bg-gray-600 transition-all flex-shrink-0 z-10`}
                 data-share-button
                 title={t('share')}
               >
@@ -1130,7 +1128,7 @@ export default function PublicPage() {
               
               {/* Share Dropdown */}
               {openShareDropdown === 'event' && (
-                <div data-share-dropdown className={`absolute ${isRTL ? 'left-5' : 'right-5'} top-16 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[160px] z-20`}>
+                <div data-share-dropdown className={`absolute ${isRTL ? 'left-5' : 'right-5'} top-16 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 py-2 min-w-[160px] z-20`}>
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
@@ -1140,7 +1138,7 @@ export default function PublicPage() {
                       window.open(whatsappUrl, '_blank')
                       setOpenShareDropdown(null)
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors dark:text-gray-200"
                   >
                     <MessageCircle className="w-5 h-5 text-green-600" />
                     <span>{t('whatsapp')}</span>
@@ -1154,9 +1152,9 @@ export default function PublicPage() {
                       window.open(telegramUrl, '_blank')
                       setOpenShareDropdown(null)
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors dark:text-gray-200"
                   >
-                    <Send className="w-5 h-5 text-blue-600" />
+                    <Send className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     <span>{t('telegram')}</span>
                   </button>
                   <button
@@ -1168,12 +1166,12 @@ export default function PublicPage() {
                       setTimeout(() => setSharedPart(null), 2000)
                       setOpenShareDropdown(null)
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors dark:text-gray-200"
                   >
                     {sharedPart === selectedEvent.id ? (
                       <Check className="w-5 h-5 text-green-600" />
                     ) : (
-                      <Copy className="w-5 h-5 text-gray-600" />
+                      <Copy className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                     )}
                     <span>{t('copyAsText')}</span>
                   </button>
@@ -1190,7 +1188,7 @@ export default function PublicPage() {
             return (
               <div
                 key={part.id}
-                className={`bg-white rounded-xl shadow-lg ${isRTL ? 'border-r-4' : 'border-l-4'} ${colors.border} relative mb-6`}
+                className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg ${isRTL ? 'border-r-4' : 'border-l-4'} ${colors.border} relative mb-6`}
               >
                 {/* Part Header */}
                 <div className="p-4 flex items-start gap-3">
@@ -1199,12 +1197,12 @@ export default function PublicPage() {
                       {part.order == null ? part.title : part.order === 0 ? part.title : `${t('part')} ${part.order}: ${part.title}`}
                     </h3>
                     {part.description && (
-                      <p className="text-gray-700 leading-relaxed" style={{ fontSize: '13px' }}>
+                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed" style={{ fontSize: '13px' }}>
                         {part.description}
                       </p>
                     )}
                     {part.recorded_lesson_date && (
-                      <p className="text-gray-600 mt-2" style={{ fontSize: '12px' }}>
+                      <p className="text-gray-600 dark:text-gray-400 mt-2" style={{ fontSize: '12px' }}>
                         {t('originalDate')} {formatDateByLanguage(part.recorded_lesson_date, language)}
                       </p>
                     )}
@@ -1217,7 +1215,7 @@ export default function PublicPage() {
                         e.stopPropagation()
                         togglePart(part.id)
                       }}
-                      className="bg-white text-blue-500 border border-blue-500 rounded-full p-2 hover:bg-blue-50 transition-all flex-shrink-0"
+                      className="bg-white dark:bg-gray-700 text-blue-500 dark:text-blue-400 border border-blue-500 dark:border-blue-600 rounded-full p-2 hover:bg-blue-50 dark:hover:bg-gray-600 transition-all flex-shrink-0"
                     >
                       {isExpanded ? (
                         <ChevronUp className="w-4 h-4" />
@@ -1231,7 +1229,7 @@ export default function PublicPage() {
                         e.stopPropagation()
                         setOpenShareDropdown(openShareDropdown === part.id ? null : part.id)
                       }}
-                      className="bg-white text-green-500 border border-green-500 rounded-full p-2 hover:bg-green-50 transition-all flex-shrink-0"
+                      className="bg-white dark:bg-gray-700 text-green-500 dark:text-green-400 border border-green-500 dark:border-green-600 rounded-full p-2 hover:bg-green-50 dark:hover:bg-gray-600 transition-all flex-shrink-0"
                       data-share-button
                       title={t('share')}
                     >
@@ -1240,14 +1238,14 @@ export default function PublicPage() {
                     
                     {/* Share Dropdown for Part */}
                     {openShareDropdown === part.id && (
-                      <div data-share-dropdown className={`absolute ${isRTL ? 'left-12' : 'right-12'} mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[160px] z-20`}>
+                      <div data-share-dropdown className={`absolute ${isRTL ? 'left-12' : 'right-12'} mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 py-2 min-w-[160px] z-20`}>
                         <button
                           onClick={(e) => {
                             e.stopPropagation()
                             sharePartToWhatsApp(part, selectedEvent)
                             setOpenShareDropdown(null)
                           }}
-                          className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                          className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors dark:text-gray-200"
                         >
                           <MessageCircle className="w-5 h-5 text-green-600" />
                           <span>{t('whatsapp')}</span>
@@ -1258,9 +1256,9 @@ export default function PublicPage() {
                             sharePartToTelegram(part, selectedEvent)
                             setOpenShareDropdown(null)
                           }}
-                          className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                          className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors dark:text-gray-200"
                         >
-                          <Send className="w-5 h-5 text-blue-600" />
+                          <Send className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                           <span>{t('telegram')}</span>
                         </button>
                         <button
@@ -1269,12 +1267,12 @@ export default function PublicPage() {
                             copyPartAsText(part, selectedEvent)
                             setOpenShareDropdown(null)
                           }}
-                          className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                          className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors dark:text-gray-200"
                         >
                           {sharedPart === part.id ? (
                             <Check className="w-5 h-5 text-green-600" />
                           ) : (
-                            <Copy className="w-5 h-5 text-gray-600" />
+                            <Copy className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                           )}
                           <span>{t('copyAsText')}</span>
                         </button>
@@ -1300,7 +1298,7 @@ export default function PublicPage() {
                           >
                             {t('readSource')}
                             {source.page_number && (
-                              <span className="text-gray-600 ml-2">
+                              <span className="text-gray-600 dark:text-gray-400 ml-2">
                                 {` ${t('page')} ${source.page_number}`}
                               </span>
                             )}
@@ -1318,7 +1316,7 @@ export default function PublicPage() {
                           </button>
                         </div>
                         {(source.start_point || source.end_point) && (
-                          <div className="text-xs text-gray-600 ml-6 space-y-1">
+                          <div className="text-xs text-gray-600 dark:text-gray-400 ml-6 space-y-1">
                             {source.start_point && (
                               <div><strong>{t('startPoint')}</strong> {source.start_point}</div>
                             )}

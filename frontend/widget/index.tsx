@@ -19,11 +19,12 @@ function generateInstanceId(): string {
 
 // Widget initialization function
 function initWidget(container: HTMLElement, config: {
-  eventId?: string  // Now optional
+  eventId?: string
   language?: string
   apiBaseUrl?: string
-  limit?: number  // Number of events to show in list
-  cssBaseUrl?: string  // Base URL for CSS (defaults to /widget/)
+  limit?: number
+  cssBaseUrl?: string
+  theme?: 'light' | 'dark'
 }): string {
   const instanceId = generateInstanceId()
   const cssBaseUrl = config.cssBaseUrl || '/widget/'
@@ -43,6 +44,9 @@ function initWidget(container: HTMLElement, config: {
   wrapper.setAttribute('data-studymaterials-widget', '')
   wrapper.style.width = '100%'
   wrapper.style.height = '100%'
+  if (config.theme === 'dark') {
+    wrapper.classList.add('dark')
+  }
   shadowRoot.appendChild(wrapper)
   
   // Load CSS into Shadow DOM only (absolute URL)
@@ -60,8 +64,9 @@ function initWidget(container: HTMLElement, config: {
       <StudyMaterialsWidget
         eventId={config.eventId}
         language={config.language || 'he'}
-        apiBaseUrl={config.apiBaseUrl}  // REQUIRED - no fallback
+        apiBaseUrl={config.apiBaseUrl}
         limit={config.limit || 10}
+        theme={config.theme || 'light'}
       />
     </React.StrictMode>
   )

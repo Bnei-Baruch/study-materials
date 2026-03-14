@@ -22037,16 +22037,25 @@ var StudyMaterialsWidgetBundle = (() => {
     return sortedDates.map((dateStr) => {
       const date = /* @__PURE__ */ new Date(dateStr + "T00:00:00Z");
       const dayIndex = date.getUTCDay();
-      const dayOfWeek = new Intl.DateTimeFormat(locale === "he" ? "he-IL" : locale, {
+      const isHebrew = locale === "he" || locale === "he-IL";
+      const dayOfWeek = new Intl.DateTimeFormat(isHebrew ? "he-IL" : locale, {
         timeZone: "Asia/Jerusalem",
         weekday: "long"
       }).format(date);
-      const displayDate = new Intl.DateTimeFormat(locale === "he" ? "he-IL" : locale, {
-        timeZone: "Asia/Jerusalem",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      }).format(date);
+      let displayDate;
+      if (isHebrew) {
+        const day = date.getUTCDate();
+        const month = date.getUTCMonth() + 1;
+        const year = String(date.getUTCFullYear()).slice(-2);
+        displayDate = `${day}.${month}.${year}`;
+      } else {
+        displayDate = new Intl.DateTimeFormat(locale, {
+          timeZone: "Asia/Jerusalem",
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        }).format(date);
+      }
       return {
         date: dateStr,
         dayOfWeek,
@@ -22132,6 +22141,7 @@ var StudyMaterialsWidgetBundle = (() => {
     language,
     apiBaseUrl,
     limit = 10,
+    theme = "light",
     onSelectEvent,
     onLanguageChange
   }) {
@@ -22170,27 +22180,51 @@ var StudyMaterialsWidgetBundle = (() => {
       var _a, _b, _c;
       return ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson";
     };
+    const formatTimeRange = (startTime, endTime) => {
+      const start = startTime.replace(/^0/, "");
+      const end = endTime.replace(/^0/, "");
+      const separators = {
+        he: "\u05E2\u05D3",
+        // Hebrew: until
+        en: "to",
+        // English: to
+        ru: "\u0434\u043E",
+        // Russian: until
+        es: "hasta",
+        // Spanish: until
+        de: "bis",
+        // German: until
+        it: "fino a",
+        // Italian: until to
+        fr: "\xE0",
+        // French: to
+        uk: "\u0434\u043E"
+        // Ukrainian: until
+      };
+      const separator = separators[language] || "-";
+      return `${start} ${separator} ${end}`;
+    };
     const handleLanguageChange = (newLang) => {
       if (onLanguageChange) {
         onLanguageChange(newLang);
       }
     };
     if (loading) {
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-gray-600 text-[14px] sm:text-[14px]", children: t.loading }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `h-full w-full flex items-center justify-center bg-white dark:bg-gray-900 ${theme === "dark" ? "dark" : ""}`, dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-gray-600 dark:text-gray-400 text-[14px] sm:text-[14px]", children: t.loading }) });
     }
     if (error) {
-      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-red-600 text-center p-2 sm:p-4 text-[14px] sm:text-[14px]", children: error }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `h-full w-full flex items-center justify-center bg-white dark:bg-gray-900 ${theme === "dark" ? "dark" : ""}`, dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-red-600 text-center p-2 sm:p-4 text-[14px] sm:text-[14px]", children: error }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200", dir: isRTL ? "rtl" : "ltr", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-blue-900 text-[18px] sm:text-[18px] font-semibold", children: t.studyMaterials }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-gray-600 text-[13px] sm:text-[13px] mt-0.5", children: t.selectLesson }),
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: `h-full w-full overflow-y-auto bg-white dark:bg-gray-900 border-t-4 border-blue-200 dark:border-blue-800 ${theme === "dark" ? "dark" : ""}`, dir: isRTL ? "rtl" : "ltr", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "bg-blue-50 dark:bg-gray-800 p-2 sm:p-3 border-b-2 border-blue-200 dark:border-gray-700 sticky top-0 z-10 relative", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "text-blue-900 dark:text-blue-200 text-[18px] sm:text-[18px] font-semibold", children: t.studyMaterials }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-gray-600 dark:text-gray-400 text-[13px] sm:text-[13px] mt-0.5", children: t.selectLesson }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: `absolute ${isLTR ? "right-2 sm:right-3" : "left-2 sm:left-3"} top-2 sm:top-3`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
           "select",
           {
             value: language,
             onChange: (e) => handleLanguageChange(e.target.value),
-            className: "bg-white border border-blue-300 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-blue-900 cursor-pointer hover:border-blue-500 transition-colors text-[12px] sm:text-[12px]",
+            className: "bg-white dark:bg-gray-700 border border-blue-300 dark:border-gray-600 rounded-md px-1.5 sm:px-2 py-0.5 sm:py-1 text-blue-900 dark:text-blue-200 cursor-pointer hover:border-blue-500 transition-colors text-[12px] sm:text-[12px]",
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "he", children: "\u05E2\u05D1\u05E8\u05D9\u05EA" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "en", children: "English" }),
@@ -22204,14 +22238,14 @@ var StudyMaterialsWidgetBundle = (() => {
           }
         ) })
       ] }),
-      events.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 sm:p-4 text-center text-gray-500 text-[14px] sm:text-[14px]", children: t.noEventsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-1 sm:p-2 space-y-2", children: groupEventsByDate(events, language === "he" ? "he-IL" : language).map((dateGroup) => {
+      events.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 sm:p-4 text-center text-gray-500 dark:text-gray-400 text-[14px] sm:text-[14px]", children: t.noEventsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-1 sm:p-2 space-y-2", children: groupEventsByDate(events, language === "he" ? "he-IL" : language).map((dateGroup) => {
         const colors = getDateGroupColorClasses(dateGroup.dayIndex);
         return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
           "div",
           {
-            className: `rounded-lg shadow-md bg-white overflow-hidden ${isRTL ? "border-r-4" : "border-l-4"} ${isRTL ? colors.border : colors.borderLTR}`,
+            className: `rounded-lg shadow-md bg-white dark:bg-gray-800 overflow-hidden ${isRTL ? "border-r-4" : "border-l-4"} ${isRTL ? colors.border : colors.borderLTR}`,
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-3 sm:p-4 border-b border-gray-200 bg-gray-100", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-2 text-blue-900", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800/80", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-2 text-blue-900 dark:text-blue-200", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Calendar, { className: "w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h4", { className: "text-[14px] sm:text-[16px] font-bold truncate", children: [
                   dateGroup.dayOfWeek,
@@ -22219,39 +22253,31 @@ var StudyMaterialsWidgetBundle = (() => {
                   dateGroup.displayDate
                 ] })
               ] }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "divide-y divide-gray-200", children: dateGroup.events.map((event) => {
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "divide-y divide-gray-200 dark:divide-gray-700", children: dateGroup.events.map((event) => {
                 var _a, _b, _c, _d, _e, _f;
                 return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                   "button",
                   {
                     onClick: () => onSelectEvent(event.id),
-                    className: `w-full p-3 sm:p-4 hover:bg-blue-100 transition-colors group flex items-center justify-between ${isRTL ? "text-right" : "text-left"}`,
+                    className: `w-full p-3 sm:p-4 hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group flex items-center justify-between ${isRTL ? "text-right" : "text-left"}`,
                     children: isRTL ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex-1 min-w-0 text-right", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: "text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words", children: ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson" }),
-                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px] justify-start", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: "text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mb-1 text-[14px] sm:text-[15px] break-words", children: ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || ((_c = event.titles) == null ? void 0 : _c["en"]) || "Lesson" }),
+                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1.5 text-gray-600 dark:text-gray-400 text-[11px] sm:text-[12px] justify-start", children: [
                           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3 h-3 flex-shrink-0" }),
-                          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "truncate", children: [
-                            event.start_time,
-                            " - ",
-                            event.end_time
-                          ] })
+                          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "truncate", children: formatTimeRange(event.start_time, event.end_time) })
                         ] })
                       ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-[-3px] transition-all flex-shrink-0" })
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-[-3px] transition-all flex-shrink-0" })
                     ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex-1 min-w-0 text-left", children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: "text-blue-900 group-hover:text-blue-700 transition-colors mb-1 text-[14px] sm:text-[15px] break-words", children: ((_d = event.titles) == null ? void 0 : _d[language]) || ((_e = event.titles) == null ? void 0 : _e["he"]) || ((_f = event.titles) == null ? void 0 : _f["en"]) || "Lesson" }),
-                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1.5 text-gray-600 text-[11px] sm:text-[12px]", children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h5", { className: "text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mb-1 text-[14px] sm:text-[15px] break-words", children: ((_d = event.titles) == null ? void 0 : _d[language]) || ((_e = event.titles) == null ? void 0 : _e["he"]) || ((_f = event.titles) == null ? void 0 : _f["en"]) || "Lesson" }),
+                        event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-1.5 text-gray-600 dark:text-gray-400 text-[11px] sm:text-[12px]", children: [
                           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Clock, { className: "w-3 h-3 flex-shrink-0" }),
-                          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "truncate", children: [
-                            event.start_time,
-                            " - ",
-                            event.end_time
-                          ] })
+                          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "truncate", children: formatTimeRange(event.start_time, event.end_time) })
                         ] })
                       ] }),
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" })
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ChevronLeft, { className: "w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" })
                     ] })
                   },
                   event.id
@@ -22268,10 +22294,10 @@ var StudyMaterialsWidgetBundle = (() => {
           href: "https://study.kli.one",
           target: "_blank",
           rel: "noopener noreferrer",
-          className: "block w-full text-center bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-2 sm:p-3 transition-all",
+          className: "block w-full text-center bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-gray-700 border-2 border-blue-300 dark:border-gray-600 rounded-lg p-2 sm:p-3 transition-all",
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-700 font-medium text-[14px] sm:text-[14px]", children: t.viewAllMaterials }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-600 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]", children: "study.kli.one" })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-700 dark:text-blue-300 font-medium text-[14px] sm:text-[14px]", children: t.viewAllMaterials }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-600 dark:text-blue-400 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]", children: "study.kli.one" })
           ]
         }
       ) })
@@ -22297,6 +22323,7 @@ var StudyMaterialsWidgetBundle = (() => {
       viewProgram: "\u05DE\u05E1\u05DE\u05DA",
       readingBeforeSleep: "\u05E7\u05D8\u05E2 \u05D4\u05DB\u05E0\u05D4 \u05DC\u05E9\u05D9\u05E0\u05D4",
       lessonPreparation: "\u05DE\u05E1\u05DE\u05DA \u05D4\u05DB\u05E0\u05D4 \u05DC\u05E9\u05D9\u05E2\u05D5\u05E8",
+      lineupForHosts: "\u05DC\u05D9\u05D9\u05E0\u05D0\u05E4 \u05DE\u05E0\u05D7\u05D9\u05DD",
       loading: "\u05D8\u05D5\u05E2\u05DF...",
       error: "\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05D8\u05E2\u05D9\u05E0\u05EA \u05D4\u05E0\u05EA\u05D5\u05E0\u05D9\u05DD",
       noPartsAvailable: "\u05D0\u05D9\u05DF \u05D7\u05DC\u05E7\u05D9\u05DD \u05D6\u05DE\u05D9\u05E0\u05D9\u05DD",
@@ -22318,6 +22345,7 @@ var StudyMaterialsWidgetBundle = (() => {
       viewProgram: "Document",
       readingBeforeSleep: "Reading Before Sleep",
       lessonPreparation: "Lesson Preparation",
+      lineupForHosts: "Lineup for the hosts",
       loading: "Loading...",
       error: "Error loading data",
       noPartsAvailable: "No parts available",
@@ -22339,6 +22367,7 @@ var StudyMaterialsWidgetBundle = (() => {
       viewProgram: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442",
       readingBeforeSleep: "\u0427\u0442\u0435\u043D\u0438\u0435 \u043F\u0435\u0440\u0435\u0434 \u0441\u043D\u043E\u043C",
       lessonPreparation: "\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u043A \u0443\u0440\u043E\u043A\u0443",
+      lineupForHosts: "\u041B\u0430\u0439\u043D\u0430\u043F \u0434\u043B\u044F \u0432\u0435\u0434\u0443\u0449\u0438\u0445",
       loading: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430...",
       error: "\u041E\u0448\u0438\u0431\u043A\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438 \u0434\u0430\u043D\u043D\u044B\u0445",
       noPartsAvailable: "\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0447\u0430\u0441\u0442\u0435\u0439",
@@ -22360,6 +22389,7 @@ var StudyMaterialsWidgetBundle = (() => {
       viewProgram: "Documento",
       readingBeforeSleep: "Lectura antes de dormir",
       lessonPreparation: "Preparaci\xF3n de la lecci\xF3n",
+      lineupForHosts: "Lineup para los presentadores",
       loading: "Cargando...",
       error: "Error al cargar datos",
       noPartsAvailable: "No hay partes disponibles",
@@ -22381,6 +22411,7 @@ var StudyMaterialsWidgetBundle = (() => {
       viewProgram: "Dokument",
       readingBeforeSleep: "Lesen vor dem Schlafengehen",
       lessonPreparation: "Lektionsvorbereitung",
+      lineupForHosts: "Aufstellung f\xFCr die Gastgeber",
       loading: "L\xE4dt...",
       error: "Fehler beim Laden der Daten",
       noPartsAvailable: "Keine Teile verf\xFCgbar",
@@ -22402,6 +22433,7 @@ var StudyMaterialsWidgetBundle = (() => {
       viewProgram: "Documento",
       readingBeforeSleep: "Lettura prima di dormire",
       lessonPreparation: "Preparazione della lezione",
+      lineupForHosts: "Lineup per i conduttori",
       loading: "Caricamento...",
       error: "Errore nel caricamento dei dati",
       noPartsAvailable: "Nessuna parte disponibile",
@@ -22423,6 +22455,7 @@ var StudyMaterialsWidgetBundle = (() => {
       viewProgram: "Document",
       readingBeforeSleep: "Lecture avant de dormir",
       lessonPreparation: "Pr\xE9paration de la le\xE7on",
+      lineupForHosts: "Lineup pour les pr\xE9sentateurs",
       loading: "Chargement...",
       error: "Erreur de chargement des donn\xE9es",
       noPartsAvailable: "Aucune partie disponible",
@@ -22444,6 +22477,7 @@ var StudyMaterialsWidgetBundle = (() => {
       viewProgram: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442",
       readingBeforeSleep: "\u0427\u0438\u0442\u0430\u043D\u043D\u044F \u043F\u0435\u0440\u0435\u0434 \u0441\u043D\u043E\u043C",
       lessonPreparation: "\u041F\u0456\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0434\u043E \u0443\u0440\u043E\u043A\u0443",
+      lineupForHosts: "\u041F\u0440\u043E\u0433\u0440\u0430\u043C\u0430 \u0434\u043B\u044F \u0432\u0435\u0434\u0443\u0447\u0438\u0445",
       loading: "\u0417\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F...",
       error: "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
       noPartsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0447\u0430\u0441\u0442\u0438\u043D",
@@ -22455,7 +22489,7 @@ var StudyMaterialsWidgetBundle = (() => {
     eventId,
     language = "he",
     apiBaseUrl,
-    // REQUIRED - no fallback
+    theme = "light",
     onBack
   }) {
     var _a, _b;
@@ -22561,7 +22595,7 @@ ${links.join("\n")}`;
       var _a2;
       if (!event) return "";
       const title = ((_a2 = event.titles) == null ? void 0 : _a2[language]) || "Lesson";
-      const date = formatEventDate(event.date);
+      const date = formatEventDate(event.date, event.start_time, event.end_time);
       const partsText = parts.map((part) => {
         var _a3, _b2;
         const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`;
@@ -22600,12 +22634,12 @@ ${partsText}`;
     };
     const getSectionColor = (order) => {
       const borderSide = isLTR ? "border-l-[5px]" : "border-r-[5px]";
-      if (order === 0) return { text: "text-orange-700", border: `${borderSide} border-orange-500`, bg: "bg-orange-300/10" };
+      if (order === 0) return { text: "text-orange-700 dark:text-orange-300", border: `${borderSide} border-orange-500`, bg: "bg-orange-300/10 dark:bg-orange-900/20" };
       const colors = [
-        { text: "text-blue-700", border: `${borderSide} border-blue-500`, bg: "bg-blue-300/10" },
-        { text: "text-orange-700", border: `${borderSide} border-orange-500`, bg: "bg-orange-300/10" },
-        { text: "text-green-700", border: `${borderSide} border-green-500`, bg: "bg-green-300/10" },
-        { text: "text-purple-700", border: `${borderSide} border-purple-500`, bg: "bg-purple-300/10" }
+        { text: "text-blue-700 dark:text-blue-300", border: `${borderSide} border-blue-500`, bg: "bg-blue-300/10 dark:bg-blue-900/20" },
+        { text: "text-orange-700 dark:text-orange-300", border: `${borderSide} border-orange-500`, bg: "bg-orange-300/10 dark:bg-orange-900/20" },
+        { text: "text-green-700 dark:text-green-300", border: `${borderSide} border-green-500`, bg: "bg-green-300/10 dark:bg-green-900/20" },
+        { text: "text-purple-700 dark:text-purple-300", border: `${borderSide} border-purple-500`, bg: "bg-purple-300/10 dark:bg-purple-900/20" }
       ];
       return colors[(order - 1) % colors.length];
     };
@@ -22622,8 +22656,32 @@ ${partsText}`;
           return getIcon("audio");
       }
     };
-    const formatEventDate = (dateString) => {
-      const date = new Date(dateString);
+    const formatEventDate = (dateString, startTime, endTime) => {
+      if (!dateString || dateString === "" || dateString === "null" || dateString === "undefined") {
+        console.warn("formatEventDate: Invalid date string:", dateString);
+        return "Date not available";
+      }
+      let date;
+      try {
+        if (typeof dateString !== "string") {
+          console.warn("formatEventDate: dateString is not a string:", typeof dateString, dateString);
+          return "Invalid date";
+        }
+        if (dateString.includes("T")) {
+          date = new Date(dateString);
+        } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          date = /* @__PURE__ */ new Date(dateString + "T00:00:00Z");
+        } else {
+          date = new Date(dateString);
+        }
+        if (!date || isNaN(date.getTime()) || date.getTime() === 0) {
+          console.warn("formatEventDate: Invalid date object created from:", dateString);
+          return "Invalid date";
+        }
+      } catch (e) {
+        console.error("formatEventDate: Error parsing date:", dateString, e);
+        return "Invalid date";
+      }
       const localeMap = {
         "he": "he-IL",
         "en": "en-US",
@@ -22635,32 +22693,60 @@ ${partsText}`;
         "uk": "uk-UA"
       };
       const locale = localeMap[language] || "en-US";
-      return new Intl.DateTimeFormat(locale, {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      }).format(date);
+      const isHebrew = language === "he" || language === "he-IL";
+      try {
+        const dayOfWeek = new Intl.DateTimeFormat(locale, {
+          timeZone: "Asia/Jerusalem",
+          weekday: "long"
+        }).format(date);
+        let displayDate;
+        if (isHebrew) {
+          const day = date.getUTCDate();
+          const month = date.getUTCMonth() + 1;
+          const year = String(date.getUTCFullYear()).slice(-2);
+          displayDate = `${day}.${month}.${year}`;
+        } else {
+          displayDate = new Intl.DateTimeFormat(locale, {
+            timeZone: "Asia/Jerusalem",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          }).format(date);
+        }
+        let result = `${dayOfWeek} | ${displayDate}`;
+        if (startTime && endTime) {
+          const start = startTime.replace(/^0/, "");
+          const end = endTime.replace(/^0/, "");
+          const timeSeparators = {
+            "he": "\u05E2\u05D3",
+            "en": "to",
+            "ru": "\u0434\u043E",
+            "es": "hasta",
+            "de": "bis",
+            "it": "fino a",
+            "fr": "\xE0",
+            "uk": "\u0434\u043E"
+          };
+          const separator = timeSeparators[language] || "-";
+          result += ` | ${start} ${separator} ${end}`;
+        }
+        return result;
+      } catch (e) {
+        console.error("formatEventDate: Error formatting date:", dateString, e);
+        return "Date formatting error";
+      }
     };
     if (loading) {
-      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-gray-600", style: { fontSize: "14px" }, children: t.loading }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: `h-full w-full flex items-center justify-center bg-white dark:bg-gray-900 ${theme === "dark" ? "dark" : ""}`, dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-gray-600 dark:text-gray-400", style: { fontSize: "14px" }, children: t.loading }) });
     }
     if (error || !event) {
-      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "h-full w-full flex items-center justify-center bg-white", dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "14px" }, children: error || t.error }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: `h-full w-full flex items-center justify-center bg-white dark:bg-gray-900 ${theme === "dark" ? "dark" : ""}`, dir: isRTL ? "rtl" : "ltr", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "text-red-600 text-center p-4", style: { fontSize: "14px" }, children: error || t.error }) });
     }
     const eventTitle = ((_a = event.titles) == null ? void 0 : _a[language]) || ((_b = event.titles) == null ? void 0 : _b["he"]) || "Lesson";
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "h-full w-full overflow-y-auto bg-white border-t-4 border-blue-200", dir: isRTL ? "rtl" : "ltr", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "bg-blue-50 p-2 sm:p-3 border-b-2 border-blue-200 sticky top-0 z-10 relative", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { className: "text-blue-900 text-[18px] sm:text-[18px] font-semibold", style: { lineHeight: "1.2" }, children: eventTitle }),
-        /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("p", { className: "text-gray-600 text-[11px] sm:text-[13px] mt-0.5", children: [
-          formatEventDate(event.date),
-          event.start_time && event.end_time && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { children: [
-            " \u2022 ",
-            event.start_time,
-            " - ",
-            event.end_time
-          ] })
-        ] }),
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: `h-full w-full overflow-y-auto bg-white dark:bg-gray-900 border-t-4 border-blue-200 dark:border-blue-800 ${theme === "dark" ? "dark" : ""}`, dir: isRTL ? "rtl" : "ltr", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "bg-blue-50 dark:bg-gray-800 p-2 sm:p-3 border-b-2 border-blue-200 dark:border-gray-700 sticky top-0 z-10 relative", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h3", { className: "text-blue-900 dark:text-blue-200 text-[18px] sm:text-[18px] font-semibold", style: { lineHeight: "1.2" }, children: eventTitle }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-gray-600 dark:text-gray-400 text-[11px] sm:text-[13px] mt-0.5", children: event && event.date ? formatEventDate(event.date, event.start_time, event.end_time) : "Date not available" }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: `absolute ${isRTL ? "left-3 sm:left-4" : "right-3 sm:right-4"} top-3 sm:top-4 flex gap-2 sm:gap-2`, children: [
           onBack && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
             "button",
@@ -22687,7 +22773,7 @@ ${partsText}`;
           )
         ] })
       ] }),
-      parts.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "p-2 sm:p-4 text-center text-gray-500 text-[12px] sm:text-[13px]", children: t.noPartsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "space-y-2 sm:space-y-3 p-1.5 sm:p-3", children: parts.map((part, index) => {
+      parts.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "p-2 sm:p-4 text-center text-gray-500 dark:text-gray-400 text-[12px] sm:text-[13px]", children: t.noPartsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "space-y-2 sm:space-y-3 p-1.5 sm:p-3", children: parts.map((part, index) => {
         var _a2, _b2;
         const isExpanded = expandedSections.includes(index);
         const colors = getSectionColor(part.order);
@@ -22700,24 +22786,25 @@ ${partsText}`;
           part.program_link && { type: "audio", text: t.viewProgram, url: part.program_link },
           part.reading_before_sleep_link && { type: "document", text: t.readingBeforeSleep, url: part.reading_before_sleep_link },
           part.lesson_preparation_link && { type: "document", text: t.lessonPreparation, url: part.lesson_preparation_link },
+          part.lineup_for_hosts_link && { type: "document", text: t.lineupForHosts, url: part.lineup_for_hosts_link },
           ...((_b2 = part.custom_links) == null ? void 0 : _b2.map((l) => ({ type: "document", text: l.title, url: l.url }))) || []
         ].filter(Boolean);
         return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
           "div",
           {
-            className: `bg-white rounded-lg ${colors.border} shadow-lg`,
+            className: `bg-white dark:bg-gray-800 rounded-lg ${colors.border} shadow-lg`,
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "p-1.5 sm:p-2.5 flex items-start gap-1 sm:gap-2", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: `flex-1 ${isRTL ? "pr-1 sm:pr-2" : "pl-1 sm:pl-2"}`, children: [
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: `${colors.text} text-[16px] sm:text-[16px] font-bold break-words`, children: partTitle }),
-                  part.description && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-gray-600 leading-snug mt-0.5 text-[13px] sm:text-[13px] line-clamp-2", children: part.description })
+                  part.description && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("p", { className: "text-gray-600 dark:text-gray-400 leading-snug mt-0.5 text-[13px] sm:text-[13px] line-clamp-2", children: part.description })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex gap-0.5 sm:gap-1 flex-shrink-0", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
                     "button",
                     {
                       onClick: () => shareSection(part, index),
-                      className: "bg-white text-green-500 border border-green-400 rounded-full p-0.5 sm:p-1 hover:bg-green-50 transition-all flex-shrink-0",
+                      className: "bg-white dark:bg-gray-700 text-green-500 dark:text-green-400 border border-green-400 dark:border-green-600 rounded-full p-0.5 sm:p-1 hover:bg-green-50 dark:hover:bg-gray-600 transition-all flex-shrink-0",
                       title: t.shareSection,
                       children: sharedSection === index ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Share2, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" })
                     }
@@ -22726,7 +22813,7 @@ ${partsText}`;
                     "button",
                     {
                       onClick: () => toggleSection(index),
-                      className: "bg-white text-blue-500 border border-blue-400 rounded-full p-0.5 sm:p-1 hover:bg-blue-50 transition-all flex-shrink-0",
+                      className: "bg-white dark:bg-gray-700 text-blue-500 dark:text-blue-400 border border-blue-400 dark:border-blue-600 rounded-full p-0.5 sm:p-1 hover:bg-blue-50 dark:hover:bg-gray-600 transition-all flex-shrink-0",
                       children: isExpanded ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ChevronUp, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ChevronDown, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" })
                     }
                   )
@@ -22747,7 +22834,7 @@ ${partsText}`;
                         rel: "noopener noreferrer",
                         children: [
                           link.text,
-                          link.page && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "text-gray-500 text-[12px] sm:text-[12px]", children: [
+                          link.page && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "text-gray-500 dark:text-gray-400 text-[12px] sm:text-[12px]", children: [
                             " (p. ",
                             link.page,
                             ")"
@@ -22784,11 +22871,11 @@ ${partsText}`;
           children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
             "div",
             {
-              className: "bg-white rounded-lg p-3 sm:p-4 m-2 sm:m-4 max-w-sm w-full",
+              className: "bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 m-2 sm:m-4 max-w-sm w-full",
               onClick: (e) => e.stopPropagation(),
               dir: isRTL ? "rtl" : "ltr",
               children: [
-                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: "text-gray-900 font-bold mb-2 sm:mb-3 text-[16px] sm:text-[16px]", children: t.shareLesson }),
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("h4", { className: "text-gray-900 dark:text-gray-100 font-bold mb-2 sm:mb-3 text-[16px] sm:text-[16px]", children: t.shareLesson }),
                 /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "space-y-2", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
                     "button",
@@ -22837,7 +22924,7 @@ ${partsText}`;
                   "button",
                   {
                     onClick: () => setShowShareMenu(null),
-                    className: "w-full mt-2 sm:mt-3 p-2 text-gray-600 hover:text-gray-800 transition-colors text-[14px] sm:text-[14px]",
+                    className: "w-full mt-2 sm:mt-3 p-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors text-[14px] sm:text-[14px]",
                     children: language === "he" ? "\u05D1\u05D9\u05D8\u05D5\u05DC" : "Cancel"
                   }
                 )
@@ -22855,7 +22942,8 @@ ${partsText}`;
     eventId,
     language = "he",
     apiBaseUrl = "",
-    limit = 10
+    limit = 10,
+    theme = "light"
   }) {
     const [view, setView] = (0, import_react5.useState)(eventId ? "detail" : "list");
     const [selectedEventId, setSelectedEventId] = (0, import_react5.useState)(eventId);
@@ -22889,6 +22977,7 @@ ${partsText}`;
           language: currentLanguage,
           apiBaseUrl,
           limit,
+          theme,
           onSelectEvent: handleSelectEvent,
           onLanguageChange: handleLanguageChange
         }
@@ -22900,6 +22989,7 @@ ${partsText}`;
         eventId: selectedEventId,
         language: currentLanguage,
         apiBaseUrl,
+        theme,
         onBack: handleBack
       }
     );
@@ -22924,6 +23014,9 @@ ${partsText}`;
     wrapper.setAttribute("data-studymaterials-widget", "");
     wrapper.style.width = "100%";
     wrapper.style.height = "100%";
+    if (config.theme === "dark") {
+      wrapper.classList.add("dark");
+    }
     shadowRoot.appendChild(wrapper);
     const linkElement = document.createElement("link");
     linkElement.rel = "stylesheet";
@@ -22939,7 +23032,8 @@ ${partsText}`;
           eventId: config.eventId,
           language: config.language || "he",
           apiBaseUrl: config.apiBaseUrl,
-          limit: config.limit || 10
+          limit: config.limit || 10,
+          theme: config.theme || "light"
         }
       ) })
     );
