@@ -54,7 +54,7 @@
   color: #374151;
 }
 
-[data-studymaterials-widget].dark {
+[data-studymaterials-widget] .dark {
   color: #e5e7eb;
 }
 
@@ -90,15 +90,15 @@
 }
 
 /* Dark mode scrollbar */
-[data-studymaterials-widget].dark ::-webkit-scrollbar-track {
+[data-studymaterials-widget] .dark ::-webkit-scrollbar-track {
   background: #1f2937;
 }
 
-[data-studymaterials-widget].dark ::-webkit-scrollbar-thumb {
+[data-studymaterials-widget] .dark ::-webkit-scrollbar-thumb {
   background: #4b5563;
 }
 
-[data-studymaterials-widget].dark ::-webkit-scrollbar-thumb:hover {
+[data-studymaterials-widget] .dark ::-webkit-scrollbar-thumb:hover {
   background: #6b7280;
 }
 

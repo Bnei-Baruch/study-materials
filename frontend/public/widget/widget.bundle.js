@@ -23001,9 +23001,33 @@ ${partsText}`;
   function generateInstanceId() {
     return `widget-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
   }
+  function detectHostDarkMode() {
+    const htmlHasDark = document.documentElement.classList.contains("dark");
+    const bodyHasDark = document.body.classList.contains("dark");
+    console.log("[StudyMaterials] detectHostDarkMode - html.dark:", htmlHasDark, "body.dark:", bodyHasDark);
+    if (htmlHasDark || bodyHasDark) {
+      return true;
+    }
+    const themeName = localStorage.getItem("themeName");
+    const themeKey = localStorage.getItem("theme");
+    const stored = themeName || themeKey;
+    console.log("[StudyMaterials] detectHostDarkMode - themeName:", themeName, "theme:", themeKey, "stored:", stored);
+    if (stored === "dark") return true;
+    if (stored === "light") return false;
+    const muiScheme = document.documentElement.getAttribute("data-mui-color-scheme") || document.body.getAttribute("data-mui-color-scheme");
+    console.log("[StudyMaterials] detectHostDarkMode - muiScheme:", muiScheme);
+    if (muiScheme === "dark") return true;
+    const bodyStyle = getComputedStyle(document.body);
+    console.log("[StudyMaterials] detectHostDarkMode - colorScheme:", bodyStyle.colorScheme);
+    if (bodyStyle.colorScheme === "dark") return true;
+    const osDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    console.log("[StudyMaterials] detectHostDarkMode - OS prefers dark:", osDark);
+    return osDark;
+  }
   function initWidget(container, config) {
     const instanceId = generateInstanceId();
     const cssBaseUrl = config.cssBaseUrl || "/widget/";
+    const themeMode = config.theme || "auto";
     const shadowHost = document.createElement("div");
     shadowHost.setAttribute("data-studymaterials-widget-shadow", instanceId);
     shadowHost.style.width = "100%";
@@ -23014,17 +23038,56 @@ ${partsText}`;
     wrapper.setAttribute("data-studymaterials-widget", "");
     wrapper.style.width = "100%";
     wrapper.style.height = "100%";
-    if (config.theme === "dark") {
-      wrapper.classList.add("dark");
+    const themeLayer = document.createElement("div");
+    themeLayer.style.width = "100%";
+    themeLayer.style.height = "100%";
+    wrapper.appendChild(themeLayer);
+    const applyDark = (isDark) => {
+      console.log("[StudyMaterials] applyDark:", isDark);
+      if (isDark) {
+        themeLayer.classList.add("dark");
+      } else {
+        themeLayer.classList.remove("dark");
+      }
+      console.log("[StudyMaterials] themeLayer classes:", themeLayer.className);
+    };
+    console.log("[StudyMaterials] themeMode:", themeMode);
+    if (themeMode === "dark") {
+      applyDark(true);
+    } else if (themeMode === "auto") {
+      const detected = detectHostDarkMode();
+      console.log("[StudyMaterials] auto-detected dark:", detected);
+      applyDark(detected);
+      const observer = new MutationObserver(() => {
+        applyDark(detectHostDarkMode());
+      });
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-mui-color-scheme", "data-theme", "style"] });
+      observer.observe(document.body, { attributes: true, attributeFilter: ["class", "data-mui-color-scheme", "data-theme", "style"] });
+      const mql = window.matchMedia("(prefers-color-scheme: dark)");
+      const mqlHandler = () => applyDark(detectHostDarkMode());
+      mql.addEventListener("change", mqlHandler);
+      const origSetItem = localStorage.setItem.bind(localStorage);
+      localStorage.setItem = function(key, value) {
+        origSetItem(key, value);
+        if (key === "themeName" || key === "theme") {
+          applyDark(value === "dark");
+        }
+      };
+      themeLayer.__darkModeCleanup = () => {
+        observer.disconnect();
+        mql.removeEventListener("change", mqlHandler);
+        localStorage.setItem = origSetItem;
+      };
     }
     shadowRoot.appendChild(wrapper);
     const linkElement = document.createElement("link");
     linkElement.rel = "stylesheet";
-    const cssUrl = cssBaseUrl + "widget.css?v=1.0.0";
-    console.log("\u{1F517} Widget CSS URL:", cssUrl, "baseUrl:", cssBaseUrl);
+    const cssUrl = cssBaseUrl + "widget.css?v=1.1.0";
     linkElement.href = cssUrl;
     shadowRoot.appendChild(linkElement);
-    const root = (0, import_client.createRoot)(wrapper);
+    const resolvedTheme = themeLayer.classList.contains("dark") ? "dark" : "light";
+    console.log("[StudyMaterials] resolvedTheme:", resolvedTheme, "themeLayer.classList:", themeLayer.className);
+    const root = (0, import_client.createRoot)(themeLayer);
     root.render(
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         StudyMaterialsWidget,
@@ -23033,7 +23096,7 @@ ${partsText}`;
           language: config.language || "he",
           apiBaseUrl: config.apiBaseUrl,
           limit: config.limit || 10,
-          theme: config.theme || "light"
+          theme: resolvedTheme
         }
       ) })
     );
@@ -23041,8 +23104,12 @@ ${partsText}`;
       id: instanceId,
       root,
       container: shadowHost,
-      // Store the shadow host
-      unmount: () => root.unmount()
+      unmount: () => {
+        if (themeLayer.__darkModeCleanup) {
+          themeLayer.__darkModeCleanup();
+        }
+        root.unmount();
+      }
     });
     return instanceId;
   }

@@ -1251,12 +1251,6 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-[data-studymaterials-widget] :is(.shadow) {
-  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
 [data-studymaterials-widget] :is(.shadow-lg) {
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
@@ -1342,7 +1336,7 @@ video {
   color: #374151;
 }
 
-[data-studymaterials-widget].dark {
+[data-studymaterials-widget] .dark {
   color: #e5e7eb;
 }
 
@@ -1381,15 +1375,15 @@ video {
 
 /* Dark mode scrollbar */
 
-[data-studymaterials-widget].dark ::-webkit-scrollbar-track {
+[data-studymaterials-widget] .dark ::-webkit-scrollbar-track {
   background: #1f2937;
 }
 
-[data-studymaterials-widget].dark ::-webkit-scrollbar-thumb {
+[data-studymaterials-widget] .dark ::-webkit-scrollbar-thumb {
   background: #4b5563;
 }
 
-[data-studymaterials-widget].dark ::-webkit-scrollbar-thumb:hover {
+[data-studymaterials-widget] .dark ::-webkit-scrollbar-thumb:hover {
   background: #6b7280;
 }
 

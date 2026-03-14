@@ -68,7 +68,7 @@
     const limit = parseInt(container.getAttribute('data-limit') || '10');
     const position = container.getAttribute('data-position') || 'inline';
     const width = container.getAttribute('data-width') || '320px';
-    const theme = container.getAttribute('data-theme') || 'light';
+    const theme = container.getAttribute('data-theme') || 'auto';
 
     // Validate required attributes
     if (!apiUrl) {
@@ -148,7 +148,7 @@
     const limit = parseInt(currentScript.getAttribute('data-limit') || '10');
     const position = currentScript.getAttribute('data-position') || 'fixed-right';
     const width = currentScript.getAttribute('data-width') || '320px';
-    const theme = currentScript.getAttribute('data-theme') || 'light';
+    const theme = currentScript.getAttribute('data-theme') || 'auto';
 
     // Validate required attributes
     if (!apiUrl) {

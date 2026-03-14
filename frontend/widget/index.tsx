@@ -18,16 +18,47 @@ function generateInstanceId(): string {
 }
 
 // Widget initialization function
+function detectHostDarkMode(): boolean {
+  // Tailwind: dark class on html/body
+  const htmlHasDark = document.documentElement.classList.contains('dark')
+  const bodyHasDark = document.body.classList.contains('dark')
+  console.log('[StudyMaterials] detectHostDarkMode - html.dark:', htmlHasDark, 'body.dark:', bodyHasDark)
+  if (htmlHasDark || bodyHasDark) {
+    return true
+  }
+  // MUI / Galaxy3: themeName in localStorage
+  const themeName = localStorage.getItem('themeName')
+  const themeKey = localStorage.getItem('theme')
+  const stored = themeName || themeKey
+  console.log('[StudyMaterials] detectHostDarkMode - themeName:', themeName, 'theme:', themeKey, 'stored:', stored)
+  if (stored === 'dark') return true
+  if (stored === 'light') return false
+  // MUI data attribute
+  const muiScheme = document.documentElement.getAttribute('data-mui-color-scheme') ||
+                    document.body.getAttribute('data-mui-color-scheme')
+  console.log('[StudyMaterials] detectHostDarkMode - muiScheme:', muiScheme)
+  if (muiScheme === 'dark') return true
+  // CSS color-scheme on body
+  const bodyStyle = getComputedStyle(document.body)
+  console.log('[StudyMaterials] detectHostDarkMode - colorScheme:', bodyStyle.colorScheme)
+  if (bodyStyle.colorScheme === 'dark') return true
+  // OS preference fallback
+  const osDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+  console.log('[StudyMaterials] detectHostDarkMode - OS prefers dark:', osDark)
+  return osDark
+}
+
 function initWidget(container: HTMLElement, config: {
   eventId?: string
   language?: string
   apiBaseUrl?: string
   limit?: number
   cssBaseUrl?: string
-  theme?: 'light' | 'dark'
+  theme?: 'light' | 'dark' | 'auto'
 }): string {
   const instanceId = generateInstanceId()
   const cssBaseUrl = config.cssBaseUrl || '/widget/'
+  const themeMode = config.theme || 'auto'
   
   // Create Shadow DOM host
   const shadowHost = document.createElement('div')
@@ -44,20 +75,74 @@ function initWidget(container: HTMLElement, config: {
   wrapper.setAttribute('data-studymaterials-widget', '')
   wrapper.style.width = '100%'
   wrapper.style.height = '100%'
-  if (config.theme === 'dark') {
-    wrapper.classList.add('dark')
+
+  // Separate inner div for dark class — Tailwind's important selector
+  // generates `[data-studymaterials-widget] .dark .dark\:*` which requires
+  // .dark to be a DESCENDANT of the wrapper, not on it.
+  const themeLayer = document.createElement('div')
+  themeLayer.style.width = '100%'
+  themeLayer.style.height = '100%'
+  wrapper.appendChild(themeLayer)
+
+  const applyDark = (isDark: boolean) => {
+    console.log('[StudyMaterials] applyDark:', isDark)
+    if (isDark) {
+      themeLayer.classList.add('dark')
+    } else {
+      themeLayer.classList.remove('dark')
+    }
+    console.log('[StudyMaterials] themeLayer classes:', themeLayer.className)
   }
+
+  console.log('[StudyMaterials] themeMode:', themeMode)
+  if (themeMode === 'dark') {
+    applyDark(true)
+  } else if (themeMode === 'auto') {
+    const detected = detectHostDarkMode()
+    console.log('[StudyMaterials] auto-detected dark:', detected)
+    applyDark(detected)
+
+    // Watch for host page class/attribute changes (Tailwind, MUI)
+    const observer = new MutationObserver(() => {
+      applyDark(detectHostDarkMode())
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-mui-color-scheme', 'data-theme', 'style'] })
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'data-mui-color-scheme', 'data-theme', 'style'] })
+
+    // Watch for OS-level preference changes
+    const mql = window.matchMedia('(prefers-color-scheme: dark)')
+    const mqlHandler = () => applyDark(detectHostDarkMode())
+    mql.addEventListener('change', mqlHandler)
+
+    // Watch for localStorage changes (MUI/Galaxy3 store theme in localStorage)
+    // storage event only fires cross-tab; for same-tab we intercept setItem
+    const origSetItem = localStorage.setItem.bind(localStorage)
+    localStorage.setItem = function(key: string, value: string) {
+      origSetItem(key, value)
+      if (key === 'themeName' || key === 'theme') {
+        applyDark(value === 'dark')
+      }
+    }
+
+    ;(themeLayer as any).__darkModeCleanup = () => {
+      observer.disconnect()
+      mql.removeEventListener('change', mqlHandler)
+      localStorage.setItem = origSetItem
+    }
+  }
+
   shadowRoot.appendChild(wrapper)
   
   // Load CSS into Shadow DOM only (absolute URL)
   const linkElement = document.createElement('link')
   linkElement.rel = 'stylesheet'
-  const cssUrl = cssBaseUrl + 'widget.css?v=1.0.0'
-  console.log('🔗 Widget CSS URL:', cssUrl, 'baseUrl:', cssBaseUrl)
+  const cssUrl = cssBaseUrl + 'widget.css?v=1.1.0'
   linkElement.href = cssUrl
   shadowRoot.appendChild(linkElement)
-  
-  const root = createRoot(wrapper)
+
+  const resolvedTheme = themeLayer.classList.contains('dark') ? 'dark' : 'light'
+  console.log('[StudyMaterials] resolvedTheme:', resolvedTheme, 'themeLayer.classList:', themeLayer.className)
+  const root = createRoot(themeLayer)
   
   root.render(
     <React.StrictMode>
@@ -66,7 +151,7 @@ function initWidget(container: HTMLElement, config: {
         language={config.language || 'he'}
         apiBaseUrl={config.apiBaseUrl}
         limit={config.limit || 10}
-        theme={config.theme || 'light'}
+        theme={resolvedTheme}
       />
     </React.StrictMode>
   )
@@ -75,8 +160,13 @@ function initWidget(container: HTMLElement, config: {
   widgetInstances.set(instanceId, {
     id: instanceId,
     root,
-    container: shadowHost, // Store the shadow host
-    unmount: () => root.unmount()
+    container: shadowHost,
+    unmount: () => {
+      if ((themeLayer as any).__darkModeCleanup) {
+        (themeLayer as any).__darkModeCleanup()
+      }
+      root.unmount()
+    }
   })
   
   return instanceId
