@@ -19,6 +19,17 @@ type EventStore interface {
 	DeleteEvent(id string) error
 }
 
+// EventTypeStore defines the interface for event type storage
+type EventTypeStore interface {
+	CreateEventType(eventType *EventType) error
+	GetEventType(id string) (*EventType, error)
+	GetEventTypeByName(name string) (*EventType, error)
+	ListEventTypes() ([]*EventType, error)
+	UpdateEventType(eventType *EventType) error
+	DeleteEventType(id string) error
+	CountEventTypes() (int64, error)
+}
+
 // TemplateStore defines the interface for template storage
 type TemplateStore interface {
 	SaveConfig(config *TemplateConfig) error

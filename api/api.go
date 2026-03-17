@@ -17,6 +17,7 @@ type App struct {
 	cors                *cors.Cors
 	store               storage.PartStore
 	eventStore          storage.EventStore
+	eventTypeStore      storage.EventTypeStore
 	templateStore       storage.TemplateStore
 	kabbalahmediaClient *kabbalahmedia.Client
 	templateConfig      *storage.TemplateConfig
@@ -24,10 +25,11 @@ type App struct {
 }
 
 // NewApp creates a new App instance with dependencies
-func NewApp(partStore storage.PartStore, eventStore storage.EventStore, templateStore storage.TemplateStore, kabbalahmediaClient *kabbalahmedia.Client, templateConfig *storage.TemplateConfig) *App {
+func NewApp(partStore storage.PartStore, eventStore storage.EventStore, eventTypeStore storage.EventTypeStore, templateStore storage.TemplateStore, kabbalahmediaClient *kabbalahmedia.Client, templateConfig *storage.TemplateConfig) *App {
 	return &App{
 		store:               partStore,
 		eventStore:          eventStore,
+		eventTypeStore:      eventTypeStore,
 		templateStore:       templateStore,
 		kabbalahmediaClient: kabbalahmediaClient,
 		templateConfig:      templateConfig,
@@ -85,6 +87,13 @@ func (a *App) initRouters() {
 	a.router.HandleFunc("/api/events/{id}/toggle-public", a.HandleToggleEventPublic).Methods(http.MethodPut, http.MethodOptions)
 	a.router.HandleFunc("/api/events/{id}/send-email", a.HandleSendEventEmail).Methods(http.MethodPost, http.MethodOptions)
 	a.router.HandleFunc("/api/events/{event_id}/parts", a.HandleGetEventParts).Methods(http.MethodGet, http.MethodOptions)
+
+	// Event type endpoints
+	a.router.HandleFunc("/api/event-types", a.HandleListEventTypes).Methods(http.MethodGet, http.MethodOptions)
+	a.router.HandleFunc("/api/event-types", a.HandleCreateEventType).Methods(http.MethodPost, http.MethodOptions)
+	a.router.HandleFunc("/api/event-types/{id}", a.HandleGetEventType).Methods(http.MethodGet, http.MethodOptions)
+	a.router.HandleFunc("/api/event-types/{id}", a.HandleUpdateEventType).Methods(http.MethodPut, http.MethodOptions)
+	a.router.HandleFunc("/api/event-types/{id}", a.HandleDeleteEventType).Methods(http.MethodDelete, http.MethodOptions)
 
 	// Template endpoints
 	a.router.HandleFunc("/api/templates", a.HandleGetTemplates).Methods(http.MethodGet, http.MethodOptions)

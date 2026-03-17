@@ -46,6 +46,17 @@ func serverFn(cmd *cobra.Command, args []string) {
 	}
 	eventStore := mongoEventStore
 
+	// Create event type store using the same MongoDB database
+	mongoEventTypeStore, err := storage.NewMongoDBEventTypeStore(mongoPartStore.GetDatabase())
+	if err != nil {
+		log.Fatalf("Failed to initialize MongoDB event type store: %v", err)
+	}
+
+	// Seed default event types on first run
+	if err := storage.SeedDefaultEventTypes(mongoEventTypeStore); err != nil {
+		log.Fatalf("Failed to seed default event types: %v", err)
+	}
+
 	log.Printf("Initialized MongoDB storage: %s/%s", mongoURI, mongoDatabase)
 
 	// Initialize kabbalahmedia client
@@ -90,6 +101,6 @@ func serverFn(cmd *cobra.Command, args []string) {
 	log.Printf("Loaded %d templates from MongoDB", len(templateConfig.Templates))
 
 	// Start API server with dependencies
-	app := api.NewApp(partStore, eventStore, mongoTemplateStore, kabbalahmediaClient, templateConfig)
+	app := api.NewApp(partStore, eventStore, mongoEventTypeStore, mongoTemplateStore, kabbalahmediaClient, templateConfig)
 	app.Init()
 }

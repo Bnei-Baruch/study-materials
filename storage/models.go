@@ -78,6 +78,32 @@ type Event struct {
 	CreatedAt   time.Time         `json:"created_at" bson:"created_at"`
 }
 
+// EventType represents a configurable event type stored in MongoDB
+type EventType struct {
+	ID        string            `json:"id" bson:"_id"`
+	Name      string            `json:"name" bson:"name"`           // Unique slug, e.g. "morning_lesson"
+	Titles    map[string]string `json:"titles" bson:"titles"`       // Multi-language titles
+	Color     string            `json:"color" bson:"color"`         // Tailwind color name, e.g. "blue", "amber"
+	Order     int               `json:"order" bson:"order"`         // Display order
+	CreatedAt time.Time         `json:"created_at" bson:"created_at"`
+	UpdatedAt time.Time         `json:"updated_at" bson:"updated_at"`
+}
+
+// CreateEventTypeRequest is the request body for creating an event type
+type CreateEventTypeRequest struct {
+	Name   string            `json:"name"`
+	Titles map[string]string `json:"titles"`
+	Color  string            `json:"color"`
+	Order  *int              `json:"order,omitempty"`
+}
+
+// UpdateEventTypeRequest is the request body for updating an event type
+type UpdateEventTypeRequest struct {
+	Titles map[string]string `json:"titles,omitempty"`
+	Color  string            `json:"color,omitempty"`
+	Order  *int              `json:"order,omitempty"`
+}
+
 // CreateEventRequest is the request body for creating an event
 type CreateEventRequest struct {
 	Date      string            `json:"date"`                 // ISO format: YYYY-MM-DD

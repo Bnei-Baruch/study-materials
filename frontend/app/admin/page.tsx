@@ -7,6 +7,7 @@ import Link from 'next/link'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
 import TemplateManager from '@/components/TemplateManager'
+import EventTypeManager from '@/components/EventTypeManager'
 import {
   DndContext,
   closestCenter,
@@ -232,7 +233,7 @@ function AdminPageContent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [language, setLanguage] = useState('he')
-  const [activeTab, setActiveTab] = useState<'events' | 'templates'>('events')
+  const [activeTab, setActiveTab] = useState<'events' | 'templates' | 'event-types'>('events')
   const { user, logout } = useAuth()
 
   const sensors = useSensors(
@@ -333,12 +334,14 @@ function AdminPageContent() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold text-gray-800 mb-2">
-              {activeTab === 'events' ? 'Events' : 'Templates'}
+              {activeTab === 'events' ? 'Events' : activeTab === 'templates' ? 'Templates' : 'Event Types'}
             </h1>
             <p className="text-gray-600">
               {activeTab === 'events'
                 ? 'Daily lessons, meals, conventions, and more'
-                : 'Manage lesson part templates and their translations'}
+                : activeTab === 'templates'
+                ? 'Manage lesson part templates and their translations'
+                : 'Configure event categories, colors, and translations'}
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -348,6 +351,14 @@ function AdminPageContent() {
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
               >
                 Create Event
+              </Link>
+            )}
+            {activeTab === 'event-types' && false && (
+              <Link
+                href="/admin/event-types/create"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+              >
+                + Add Event Type
               </Link>
             )}
             <div className="flex flex-col items-end gap-2">
@@ -383,6 +394,16 @@ function AdminPageContent() {
             }`}
           >
             Templates
+          </button>
+          <button
+            onClick={() => setActiveTab('event-types')}
+            className={`px-4 py-2 font-medium transition-colors ${
+              activeTab === 'event-types'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Event Types
           </button>
         </div>
 
@@ -429,6 +450,11 @@ function AdminPageContent() {
         {/* Templates Tab */}
         {activeTab === 'templates' && (
           <TemplateManager />
+        )}
+
+        {/* Event Types Tab */}
+        {activeTab === 'event-types' && (
+          <EventTypeManager />
         )}
       </div>
     </div>

@@ -6,6 +6,7 @@ import { getApiUrl } from '@/lib/api'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
+import EventTypeSelect from '@/components/EventTypeSelect'
 
 // Helper function to get default title for an event type in a specific language
 function getDefaultTitle(eventType: string, lang: string): string {
@@ -214,20 +215,13 @@ function CreateEventPageContent() {
               <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-2">
                 Event Type *
               </label>
-              <select
-                id="type"
+              <EventTypeSelect
                 value={type}
-                onChange={(e) => setType(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900"
-              >
-                <option value="morning_lesson">Morning Lesson</option>
-                <option value="noon_lesson">Noon Lesson</option>
-                <option value="evening_lesson">Evening Lesson</option>
-                <option value="meal">Meal</option>
-                <option value="convention">Convention</option>
-                <option value="lecture">Lecture</option>
-                <option value="other">Other</option>
-              </select>
+                onChange={setType}
+                language="en"
+                className="w-full px-4 py-3"
+                required
+              />
             </div>
 
             {/* Number */}

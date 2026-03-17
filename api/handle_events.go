@@ -32,20 +32,13 @@ func (a *App) HandleCreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate and default type
+	// Validate and default type using database
 	if req.Type == "" {
 		req.Type = "morning_lesson" // Default
 	}
-	validTypes := []string{"morning_lesson", "noon_lesson", "evening_lesson", "meal", "convention", "lecture", "other"}
-	valid := false
-	for _, t := range validTypes {
-		if req.Type == t {
-			valid = true
-			break
-		}
-	}
-	if !valid {
-		http.Error(w, "Invalid event type, must be one of: morning_lesson, noon_lesson, evening_lesson, meal, convention, lecture, other", http.StatusBadRequest)
+	eventTypeDef, err := a.eventTypeStore.GetEventTypeByName(req.Type)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid event type: %s", req.Type), http.StatusBadRequest)
 		return
 	}
 
@@ -66,8 +59,11 @@ func (a *App) HandleCreateEvent(w http.ResponseWriter, r *http.Request) {
 		order = *req.Order
 	}
 
-	// Generate default titles for the event type
-	titles := getDefaultTitles(req.Type)
+	// Generate default titles from the database event type definition
+	titles := make(map[string]string)
+	for lang, title := range eventTypeDef.Titles {
+		titles[lang] = title
+	}
 
 	// Merge user-provided titles with defaults (user overrides take precedence)
 	if req.Titles != nil {
