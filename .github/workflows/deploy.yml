@@ -16,6 +16,9 @@ jobs:
       - name: Deploy to VM
         run: |
           cd /root/study-material-service
+
+          # Mark git directory as safe (fixes permission issues after Docker)
+          git config --global --add safe.directory /root/study-material-service
           
           # Fetch latest from remote
           git fetch origin
