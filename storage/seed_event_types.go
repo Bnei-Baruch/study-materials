@@ -36,6 +36,8 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"it": "Lezione mattutina",
 				"fr": "Leçon du matin",
 				"uk": "Ранковий урок",
+				"tr": "Sabah Dersi",
+				"pt-BR": "Aula da Manhã",
 			},
 		},
 		{
@@ -51,6 +53,8 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"it": "Lezione di mezzogiorno",
 				"fr": "Leçon de midi",
 				"uk": "Денний урок",
+				"tr": "Öğlen Dersi",
+				"pt-BR": "Aula do Meio-dia",
 			},
 		},
 		{
@@ -66,6 +70,8 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"it": "Lezione serale",
 				"fr": "Leçon du soir",
 				"uk": "Вечірній урок",
+				"tr": "Akşam Dersi",
+				"pt-BR": "Aula da Noite",
 			},
 		},
 		{
@@ -81,6 +87,8 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"it": "Pasto",
 				"fr": "Repas",
 				"uk": "Трапеза",
+				"tr": "Yemek",
+				"pt-BR": "Refeição",
 			},
 		},
 		{
@@ -96,6 +104,8 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"it": "Congresso",
 				"fr": "Congrès",
 				"uk": "Конгрес",
+				"tr": "Kongre",
+				"pt-BR": "Congresso",
 			},
 		},
 		{
@@ -111,6 +121,8 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"it": "Conferenza",
 				"fr": "Conférence",
 				"uk": "Лекція",
+				"tr": "Ders",
+				"pt-BR": "Palestra",
 			},
 		},
 		{
@@ -126,6 +138,8 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"it": "Altro",
 				"fr": "Autre",
 				"uk": "Інше",
+				"tr": "Diğer",
+				"pt-BR": "Outro",
 			},
 		},
 	}

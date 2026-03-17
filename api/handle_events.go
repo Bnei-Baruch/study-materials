@@ -207,6 +207,8 @@ func getDefaultTitles(eventType string) map[string]string {
 			"it": "Lezione mattutina",
 			"fr": "Leçon du matin",
 			"uk": "Ранковий урок",
+			"tr": "Sabah Dersi",
+			"pt-BR": "Aula da Manhã",
 		},
 		"noon_lesson": {
 			"he": "שיעור צהריים",
@@ -217,6 +219,8 @@ func getDefaultTitles(eventType string) map[string]string {
 			"it": "Lezione di mezzogiorno",
 			"fr": "Leçon de midi",
 			"uk": "Денний урок",
+			"tr": "Öğlen Dersi",
+			"pt-BR": "Aula do Meio-dia",
 		},
 		"evening_lesson": {
 			"he": "שיעור ערב",
@@ -227,6 +231,8 @@ func getDefaultTitles(eventType string) map[string]string {
 			"it": "Lezione serale",
 			"fr": "Leçon du soir",
 			"uk": "Вечірній урок",
+			"tr": "Akşam Dersi",
+			"pt-BR": "Aula da Noite",
 		},
 		"meal": {
 			"he": "סעודה",
@@ -237,6 +243,8 @@ func getDefaultTitles(eventType string) map[string]string {
 			"it": "Pasto",
 			"fr": "Repas",
 			"uk": "Трапеза",
+			"tr": "Yemek",
+			"pt-BR": "Refeição",
 		},
 		"convention": {
 			"he": "כנס",
@@ -247,6 +255,8 @@ func getDefaultTitles(eventType string) map[string]string {
 			"it": "Congresso",
 			"fr": "Congrès",
 			"uk": "Конгрес",
+			"tr": "Kongre",
+			"pt-BR": "Congresso",
 		},
 		"lecture": {
 			"he": "הרצאה",
@@ -257,6 +267,8 @@ func getDefaultTitles(eventType string) map[string]string {
 			"it": "Conferenza",
 			"fr": "Conférence",
 			"uk": "Лекція",
+			"tr": "Ders",
+			"pt-BR": "Palestra",
 		},
 		"other": {
 			"he": "אחר",
@@ -267,6 +279,8 @@ func getDefaultTitles(eventType string) map[string]string {
 			"it": "Altro",
 			"fr": "Autre",
 			"uk": "Інше",
+			"tr": "Diğer",
+			"pt-BR": "Outro",
 		},
 	}
 
