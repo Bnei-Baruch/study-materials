@@ -14,17 +14,21 @@ jobs:
           ref: ${{ github.ref_name }}
       
       - name: Deploy to VM
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd /root/study-material-service
 
-          # Mark git directory as safe (fixes permission issues after Docker)
+          # Configure git
           git config --global --add safe.directory /root/study-material-service
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
           
-          # Fetch latest from remote
-          git fetch origin
+          # Fetch latest from remote using HTTPS with token
+          git fetch https://${{ env.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.ref_name }}
           
           # Reset to exact remote version of current branch (discards local changes)
-          git reset --hard origin/${{ github.ref_name }}
+          git reset --hard FETCH_HEAD
           
           # Clean untracked files (respects .gitignore)
           git clean -fd
