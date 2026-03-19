@@ -353,14 +353,6 @@ function AdminPageContent() {
                 Create Event
               </Link>
             )}
-            {activeTab === 'event-types' && false && (
-              <Link
-                href="/admin/event-types/create"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
-              >
-                + Add Event Type
-              </Link>
-            )}
             <div className="flex flex-col items-end gap-2">
               {user?.name && <span className="text-sm text-gray-600">{user.name}</span>}
               <button
