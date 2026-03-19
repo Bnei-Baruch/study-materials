@@ -81,6 +81,22 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     noEventsAvailable: 'Немає доступних уроків',
     viewAllMaterials: 'Переглянути всі навчальні матеріали',
   },
+  tr: {
+    studyMaterials: 'Çalışma Materyalleri',
+    selectLesson: 'Listeden bir ders seçin',
+    loading: 'Yükleniyor...',
+    error: 'Veri yükleme hatası',
+    noEventsAvailable: 'Kullanılabilir ders yok',
+    viewAllMaterials: 'Tüm çalışma materyallerini görüntüle',
+  },
+  'pt-BR': {
+    studyMaterials: 'Materiais de Estudo',
+    selectLesson: 'Selecione uma aula da lista',
+    loading: 'Carregando...',
+    error: 'Erro ao carregar dados',
+    noEventsAvailable: 'Nenhuma aula disponível',
+    viewAllMaterials: 'Ver todos os materiais de estudo',
+  },
 }
 
 interface Event {
@@ -226,6 +242,8 @@ export function EmbeddedEventsList({
             <option value="it">Italiano</option>
             <option value="fr">Français</option>
             <option value="uk">Українська</option>
+            <option value="tr">Türkçe</option>
+            <option value="pt-BR">Português</option>
           </select>
         </div>
       </div>

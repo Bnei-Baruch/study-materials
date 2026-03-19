@@ -100,6 +100,7 @@ func (a *App) initRouters() {
 	a.router.HandleFunc("/api/templates", a.HandleCreateTemplate).Methods(http.MethodPost, http.MethodOptions)
 	a.router.HandleFunc("/api/templates/{id}", a.HandleUpdateTemplate).Methods(http.MethodPut, http.MethodOptions)
 	a.router.HandleFunc("/api/templates/{id}", a.HandleDeleteTemplate).Methods(http.MethodDelete, http.MethodOptions)
+	a.router.HandleFunc("/api/templates/sync", a.HandleSyncTemplates).Methods(http.MethodPost, http.MethodOptions)
 
 	// Health check
 	a.router.HandleFunc("/health", handleHealth).Methods(http.MethodGet, http.MethodOptions)

@@ -240,6 +240,10 @@ rsync -avz \
 cd /root/study-material-service
 docker compose up --build -d
 docker compose logs -f
+
+# Sync templates from json
+curl -X POST http://your-production-server:8081/api/templates/sync
+
 ```
 
 **Full rebuild (dependency/config changes):**

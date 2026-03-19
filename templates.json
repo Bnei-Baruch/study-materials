@@ -1,5 +1,5 @@
 {
-  "languages": ["he", "en", "ru", "es", "de", "it", "fr", "uk"],
+  "languages": ["he", "en", "ru", "es", "de", "it", "fr", "uk", "tr", "pt-BR"],
   "preparation": {
     "he": "הכנה לשיעור",
     "en": "Preparation to lesson",
@@ -8,7 +8,9 @@
     "de": "Vorbereitung zum Unterricht",
     "it": "Preparazione alla lezione",
     "fr": "Préparation à la leçon",
-    "uk": "Підготовка до уроку"
+    "uk": "Підготовка до уроку",
+    "tr": "Ders Hazırlığı",
+    "pt-BR": "Preparação para a aula"
   },
   "templates": [
     {
@@ -22,7 +24,9 @@
         "de": "Aufgezeichnete Lektion",
         "it": "Lezione registrata",
         "fr": "Leçon enregistrée",
-        "uk": "Записаний урок"
+        "uk": "Записаний урок",
+        "tr": "Kaydedilmiş Ders",
+        "pt-BR": "Aula Gravada"
       }
     },
     {
@@ -36,7 +40,9 @@
         "de": "Live-Übertragung mit Rav",
         "it": "Trasmissione in diretta con Rav",
         "fr": "Diffusion en direct avec Rav",
-        "uk": "Пряма трансляція з Равом"
+        "uk": "Пряма трансляція з Равом",
+        "tr": "Rav ile Canlı Yayın",
+        "pt-BR": "Transmissão ao Vivo com Rav"
       }
     },
     {
@@ -50,7 +56,9 @@
         "de": "TES-Lektion mit RABASH",
         "it": "Lezione TES con RABASH",
         "fr": "Leçon TES avec RABASH",
-        "uk": "Урок ТЕС з РАБАШем"
+        "uk": "Урок ТЕС з РАБАШем",
+        "tr": "RABASH ile TES Dersi",
+        "pt-BR": "Aula TES com RABASH"
       }
     },
     {
@@ -64,7 +72,9 @@
         "de": "Sohar-Lesung",
         "it": "Lettura dello Zohar",
         "fr": "Lecture du Zohar",
-        "uk": "Читаємо Зоар"
+        "uk": "Читаємо Зоар",
+        "tr": "Zohar Okuma",
+        "pt-BR": "Leitura do Zohar"
       }
     },
     {
@@ -78,7 +88,9 @@
         "de": "Wir bauen eine spirituelle Gesellschaft",
         "it": "Costruiamo una società spirituale",
         "fr": "Construire une société spirituelle",
-        "uk": "Будуємо духовне суспільство"
+        "uk": "Будуємо духовне суспільство",
+        "tr": "Ruhani Bir Toplum İnşa Etmek",
+        "pt-BR": "Construindo uma Sociedade Espiritual"
       }
     },
     {
@@ -92,7 +104,9 @@
         "de": "Gespräche unterwegs",
         "it": "Conversazioni lungo la strada",
         "fr": "Conversations en chemin",
-        "uk": "Бесіди на шляху"
+        "uk": "Бесіди на шляху",
+        "tr": "Yol Üzerinde Sohbetler",
+        "pt-BR": "Conversas no Caminho"
       }
     },
     {
@@ -106,7 +120,9 @@
         "de": "Lernen mit Freunden",
         "it": "Studio tra amici",
         "fr": "Étudier avec des amis",
-        "uk": "Навчання з друзями"
+        "uk": "Навчання з друзями",
+        "tr": "Arkadaşlarla Çalışmak",
+        "pt-BR": "Estudar com Amigos"
       }
     },
     {
@@ -120,7 +136,9 @@
         "de": "Lesung des Artikels in der Zehnergruppe",
         "it": "Lettura dell'articolo nel gruppo di dieci",
         "fr": "Lecture de l'article dans le groupe de dix",
-        "uk": "Читання статті в десятці"
+        "uk": "Читання статті в десятці",
+        "tr": "On Kişilik Grupta Makale Okuma",
+        "pt-BR": "Leitura do Artigo no Grupo de Dez"
       }
     }
   ]

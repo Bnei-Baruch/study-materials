@@ -191,3 +191,87 @@ func (a *App) HandleDeleteTemplate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Template deleted successfully"})
 }
+
+// HandleSyncTemplates syncs templates from JSON file to MongoDB, merging with existing data
+// This preserves all existing data and only adds new language translations
+func (a *App) HandleSyncTemplates(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	// Load fresh templates from JSON file
+	jsonConfig, err := storage.LoadTemplates("templates.json")
+	if err != nil {
+		log.Printf("Error loading templates from JSON: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to load templates.json"})
+		return
+	}
+
+	// Get current config from database
+	currentConfig, err := a.templateStore.GetConfig()
+	if err != nil {
+		log.Printf("Error getting current config: %v", err)
+		// If no config exists, use the JSON config
+		currentConfig = jsonConfig
+	} else {
+		// Merge templates: keep DB templates, add new language translations from JSON
+		for i, dbTemplate := range currentConfig.Templates {
+			// Find matching template in JSON
+			for _, jsonTemplate := range jsonConfig.Templates {
+				if dbTemplate.ID == jsonTemplate.ID {
+					// Initialize translations map if nil
+					if currentConfig.Templates[i].Translations == nil {
+						currentConfig.Templates[i].Translations = make(map[string]string)
+					}
+
+					// Merge translations: add new languages from JSON
+					for lang, text := range jsonTemplate.Translations {
+						currentConfig.Templates[i].Translations[lang] = text
+					}
+
+					break
+				}
+			}
+		}
+
+		// Add any new templates from JSON that don't exist in DB
+		for _, jsonTemplate := range jsonConfig.Templates {
+			found := false
+			for _, dbTemplate := range currentConfig.Templates {
+				if dbTemplate.ID == jsonTemplate.ID {
+					found = true
+					break
+				}
+			}
+			if !found {
+				currentConfig.Templates = append(currentConfig.Templates, jsonTemplate)
+			}
+		}
+
+		// Update languages list and preparation from JSON
+		currentConfig.Languages = jsonConfig.Languages
+		currentConfig.Preparation = jsonConfig.Preparation
+	}
+
+	// Save merged config back to database
+	if err := a.templateStore.SaveConfig(currentConfig); err != nil {
+		log.Printf("Error saving synced config: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to save synced templates"})
+		return
+	}
+
+	// Update in-memory config
+	a.templateConfig = currentConfig
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message":       "Templates synced successfully",
+		"templates":     len(currentConfig.Templates),
+		"languages":     currentConfig.Languages,
+	})
+}

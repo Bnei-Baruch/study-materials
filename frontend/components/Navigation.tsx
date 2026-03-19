@@ -12,6 +12,8 @@ const LANGUAGES = {
   it: 'Italiano',
   fr: 'Français',
   uk: 'Українська',
+  tr: 'Türkçe',
+  'pt-BR': 'Português',
 }
 
 const SITE_NAME = {
@@ -23,6 +25,8 @@ const SITE_NAME = {
   it: 'Bnei Baruch',
   fr: 'Bnei Baruch',
   uk: 'Бней Барух',
+  tr: 'Bnei Baruch',
+  'pt-BR': 'Bnei Baruch',
 }
 
 const SITE_SUBTITLE = {
@@ -34,6 +38,8 @@ const SITE_SUBTITLE = {
   it: 'Comunità di Apprendimento della Cabala',
   fr: 'Communauté d\'Apprentissage de la Kabbale',
   uk: 'Спільнота вивчення Каббали',
+  tr: 'Kabala Öğrenme Topluluğu',
+  'pt-BR': 'Comunidade de Aprendizado de Cabalá',
 }
 
 export default function Navigation() {
