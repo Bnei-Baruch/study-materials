@@ -21,7 +21,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-const LANGUAGES = ['he', 'en', 'ru', 'es', 'de', 'it', 'fr', 'uk', 'tr', 'pt-BR'] as const
+const LANGUAGES = ['he', 'en', 'ru', 'es', 'de', 'it', 'fr', 'uk', 'tr', 'pt-BR', 'bg'] as const
 
 const COLOR_OPTIONS = [
   { value: 'blue', label: 'Blue', classes: 'bg-blue-100 text-blue-800' },

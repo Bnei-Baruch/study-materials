@@ -262,6 +262,28 @@ const TRANSLATIONS: Record<string, Translations> = {
     back: 'Voltar',
     copyAsText: 'Copiar como Texto',
   },
+  bg: {
+    preparation: 'Подготовка за урока',
+    part: 'Част',
+    shareLesson: 'Споделяне',
+    shareSection: 'Споделяне',
+    copyLink: 'Копиране на връзка',
+    copied: 'Копирано!',
+    readSource: 'Прочети източника',
+    watchLesson: 'Гледай урока',
+    readDocument: 'Документ',
+    viewExcerpts: 'Избрани откъси',
+    viewTranscript: 'Транскрипт на урока',
+    viewProgram: 'Документ',
+    readingBeforeSleep: 'Четене преди сън',
+    lessonPreparation: 'Подготовка за урока',
+    lineupForHosts: 'Програма за водещи',
+    loading: 'Зареждане...',
+    error: 'Грешка при зареждане на данни',
+    noPartsAvailable: 'Няма налични части',
+    back: 'Назад',
+    copyAsText: 'Копирай като текст',
+  },
 }
 
 interface Source {

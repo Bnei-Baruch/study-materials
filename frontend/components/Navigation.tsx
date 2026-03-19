@@ -14,6 +14,7 @@ const LANGUAGES = {
   uk: 'Українська',
   tr: 'Türkçe',
   'pt-BR': 'Português',
+  bg: 'Български',
 }
 
 const SITE_NAME = {
@@ -27,6 +28,7 @@ const SITE_NAME = {
   uk: 'Бней Барух',
   tr: 'Bnei Baruch',
   'pt-BR': 'Bnei Baruch',
+  bg: 'Бней Барух',
 }
 
 const SITE_SUBTITLE = {
@@ -40,6 +42,7 @@ const SITE_SUBTITLE = {
   uk: 'Спільнота вивчення Каббали',
   tr: 'Kabala Öğrenme Topluluğu',
   'pt-BR': 'Comunidade de Aprendizado de Cabalá',
+  bg: 'Общност за изучаване на Кабала',
 }
 
 export default function Navigation() {

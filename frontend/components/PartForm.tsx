@@ -34,6 +34,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
     uk: 'Підготовка до уроку',
     tr: 'Ders Hazırlığı',
     'pt-BR': 'Preparação para a aula',
+    bg: 'Подготовка за урока',
   }
 
   interface TemplateDefinition {
@@ -337,6 +338,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
             <option value="fr">French (fr)</option>
             <option value="tr">Turkish (tr)</option>
             <option value="pt-BR">Portuguese (pt-BR)</option>
+            <option value="bg">Bulgarian (bg)</option>
           </select>
         </div>
       </div>
