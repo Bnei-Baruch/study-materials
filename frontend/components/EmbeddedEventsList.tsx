@@ -97,6 +97,14 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     noEventsAvailable: 'Nenhuma aula disponível',
     viewAllMaterials: 'Ver todos os materiais de estudo',
   },
+  bg: {
+    studyMaterials: 'Учебни материали',
+    selectLesson: 'Изберете урок от списъка',
+    loading: 'Зареждане...',
+    error: 'Грешка при зареждане на данни',
+    noEventsAvailable: 'Няма налични уроци',
+    viewAllMaterials: 'Вижте всички учебни материали',
+  },
 }
 
 interface Event {
@@ -244,6 +252,7 @@ export function EmbeddedEventsList({
             <option value="uk">Українська</option>
             <option value="tr">Türkçe</option>
             <option value="pt-BR">Português</option>
+            <option value="bg">Български</option>
           </select>
         </div>
       </div>

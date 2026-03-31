@@ -121,6 +121,7 @@ function CreateEventPageContent() {
     { code: 'uk', name: 'Ukrainian (Українська)' },
     { code: 'tr', name: 'Turkish (Türkçe)' },
     { code: 'pt-BR', name: 'Portuguese (Português)' },
+    { code: 'bg', name: 'Bulgarian (Български)' },
   ]
 
   const handleSubmit = async (e: React.FormEvent) => {

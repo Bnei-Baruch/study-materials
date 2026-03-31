@@ -38,6 +38,7 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"uk": "Ранковий урок",
 				"tr": "Sabah Dersi",
 				"pt-BR": "Aula da Manhã",
+				"bg":    "Сутрешен урок",
 			},
 		},
 		{
@@ -55,6 +56,7 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"uk": "Денний урок",
 				"tr": "Öğlen Dersi",
 				"pt-BR": "Aula do Meio-dia",
+				"bg":    "Обеден урок",
 			},
 		},
 		{
@@ -72,6 +74,7 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"uk": "Вечірній урок",
 				"tr": "Akşam Dersi",
 				"pt-BR": "Aula da Noite",
+				"bg":    "Вечерен урок",
 			},
 		},
 		{
@@ -89,6 +92,7 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"uk": "Трапеза",
 				"tr": "Yemek",
 				"pt-BR": "Refeição",
+				"bg":    "Трапеза",
 			},
 		},
 		{
@@ -106,6 +110,7 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"uk": "Конгрес",
 				"tr": "Kongre",
 				"pt-BR": "Congresso",
+				"bg":    "Конгрес",
 			},
 		},
 		{
@@ -123,6 +128,7 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"uk": "Лекція",
 				"tr": "Ders",
 				"pt-BR": "Palestra",
+				"bg":    "Лекция",
 			},
 		},
 		{
@@ -140,6 +146,7 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 				"uk": "Інше",
 				"tr": "Diğer",
 				"pt-BR": "Outro",
+				"bg":    "Друго",
 			},
 		},
 	}

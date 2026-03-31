@@ -100,7 +100,15 @@ func serverFn(cmd *cobra.Command, args []string) {
 	}
 	log.Printf("Loaded %d templates from MongoDB", len(templateConfig.Templates))
 
+	// Load API secret key
+	apiSecretKey := viper.GetString("api.secret_key")
+	if apiSecretKey == "" {
+		log.Println("WARNING: API_SECRET_KEY is not set — write endpoints are unprotected")
+	} else {
+		log.Println("API secret key protection enabled")
+	}
+
 	// Start API server with dependencies
-	app := api.NewApp(partStore, eventStore, mongoEventTypeStore, mongoTemplateStore, kabbalahmediaClient, templateConfig)
+	app := api.NewApp(partStore, eventStore, mongoEventTypeStore, mongoTemplateStore, kabbalahmediaClient, templateConfig, apiSecretKey)
 	app.Init()
 }

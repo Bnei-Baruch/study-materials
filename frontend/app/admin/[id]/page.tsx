@@ -137,7 +137,7 @@ function AdminEventDetailPageContent() {
   const [originalParts, setOriginalParts] = useState<{ [key: string]: Part }>({})
   const [scrollToLangCode, setScrollToLangCode] = useState<string | null>(null)
   const [expandedPartOrders, setExpandedPartOrders] = useState<Set<number>>(new Set())
-  const orderedLanguageCodes = ['he', 'en', 'ru', 'es', 'uk', 'de', 'it', 'fr', 'tr', 'pt-BR']
+  const orderedLanguageCodes = ['he', 'en', 'ru', 'es', 'uk', 'de', 'it', 'fr', 'tr', 'pt-BR', 'bg']
 
   // Initialize expanded parts when parts load
   useEffect(() => {
@@ -180,6 +180,7 @@ function AdminEventDetailPageContent() {
     fr: '🇫🇷 Français',
     tr: '🇹🇷 Türkçe',
     'pt-BR': '🇧🇷 Português',
+    bg: '🇧🇬 Български',
   }
 
   const getColorClasses = (part: Part) => {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
 import { AuthProvider } from "@/contexts/AuthContext";
+import LayoutContent from "@/components/LayoutContent";
 
 export const metadata: Metadata = {
   title: "Study Material Service",
@@ -33,8 +33,7 @@ export default function RootLayout({
       </head>
       <body>
         <AuthProvider>
-          <Navigation />
-          {children}
+          <LayoutContent>{children}</LayoutContent>
         </AuthProvider>
       </body>
     </html>

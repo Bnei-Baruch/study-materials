@@ -14,6 +14,7 @@ const LANGUAGES = {
   uk: 'Українська',
   tr: 'Türkçe',
   'pt-BR': 'Português',
+  bg: 'Български',
 }
 
 const SITE_NAME = {
@@ -27,6 +28,7 @@ const SITE_NAME = {
   uk: 'Бней Барух',
   tr: 'Bnei Baruch',
   'pt-BR': 'Bnei Baruch',
+  bg: 'Бней Барух',
 }
 
 const SITE_SUBTITLE = {
@@ -40,6 +42,7 @@ const SITE_SUBTITLE = {
   uk: 'Спільнота вивчення Каббали',
   tr: 'Kabala Öğrenme Topluluğu',
   'pt-BR': 'Comunidade de Aprendizado de Cabalá',
+  bg: 'Общност за изучаване на Кабала',
 }
 
 export default function Navigation() {
@@ -49,7 +52,7 @@ export default function Navigation() {
   const isRTL = language === 'he'
 
   useEffect(() => {
-    const saved = localStorage.getItem('language')
+    const saved = localStorage.getItem('public-language')
     if (saved && saved in LANGUAGES) {
       setLanguage(saved)
     }
@@ -58,7 +61,7 @@ export default function Navigation() {
 
   const handleLanguageChange = (newLang: string) => {
     setLanguage(newLang)
-    localStorage.setItem('language', newLang)
+    localStorage.setItem('public-language', newLang)
     window.dispatchEvent(new Event('languageChange'))
   }
 

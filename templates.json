@@ -1,5 +1,5 @@
 {
-  "languages": ["he", "en", "ru", "es", "de", "it", "fr", "uk", "tr", "pt-BR"],
+  "languages": ["he", "en", "ru", "es", "de", "it", "fr", "uk", "tr", "pt-BR", "bg"],
   "preparation": {
     "he": "הכנה לשיעור",
     "en": "Preparation to lesson",
@@ -10,7 +10,8 @@
     "fr": "Préparation à la leçon",
     "uk": "Підготовка до уроку",
     "tr": "Ders Hazırlığı",
-    "pt-BR": "Preparação para a aula"
+    "pt-BR": "Preparação para a aula",
+    "bg": "Подготовка за урока"
   },
   "templates": [
     {
@@ -26,7 +27,8 @@
         "fr": "Leçon enregistrée",
         "uk": "Записаний урок",
         "tr": "Kaydedilmiş Ders",
-        "pt-BR": "Aula Gravada"
+        "pt-BR": "Aula Gravada",
+        "bg": "Записан урок"
       }
     },
     {
@@ -42,7 +44,8 @@
         "fr": "Diffusion en direct avec Rav",
         "uk": "Пряма трансляція з Равом",
         "tr": "Rav ile Canlı Yayın",
-        "pt-BR": "Transmissão ao Vivo com Rav"
+        "pt-BR": "Transmissão ao Vivo com Rav",
+        "bg": "Пряко предаване с Рав"
       }
     },
     {
@@ -58,7 +61,8 @@
         "fr": "Leçon TES avec RABASH",
         "uk": "Урок ТЕС з РАБАШем",
         "tr": "RABASH ile TES Dersi",
-        "pt-BR": "Aula TES com RABASH"
+        "pt-BR": "Aula TES com RABASH",
+        "bg": "Урок ТЕС с РАБАШ"
       }
     },
     {
@@ -74,7 +78,8 @@
         "fr": "Lecture du Zohar",
         "uk": "Читаємо Зоар",
         "tr": "Zohar Okuma",
-        "pt-BR": "Leitura do Zohar"
+        "pt-BR": "Leitura do Zohar",
+        "bg": "Четене на Зоар"
       }
     },
     {
@@ -90,7 +95,8 @@
         "fr": "Construire une société spirituelle",
         "uk": "Будуємо духовне суспільство",
         "tr": "Ruhani Bir Toplum İnşa Etmek",
-        "pt-BR": "Construindo uma Sociedade Espiritual"
+        "pt-BR": "Construindo uma Sociedade Espiritual",
+        "bg": "Изграждаме духовно общество"
       }
     },
     {
@@ -106,7 +112,8 @@
         "fr": "Conversations en chemin",
         "uk": "Бесіди на шляху",
         "tr": "Yol Üzerinde Sohbetler",
-        "pt-BR": "Conversas no Caminho"
+        "pt-BR": "Conversas no Caminho",
+        "bg": "Разговори по пътя"
       }
     },
     {
@@ -122,7 +129,8 @@
         "fr": "Étudier avec des amis",
         "uk": "Навчання з друзями",
         "tr": "Arkadaşlarla Çalışmak",
-        "pt-BR": "Estudar com Amigos"
+        "pt-BR": "Estudar com Amigos",
+        "bg": "Учене с приятели"
       }
     },
     {
@@ -138,7 +146,8 @@
         "fr": "Lecture de l'article dans le groupe de dix",
         "uk": "Читання статті в десятці",
         "tr": "On Kişilik Grupta Makale Okuma",
-        "pt-BR": "Leitura do Artigo no Grupo de Dez"
+        "pt-BR": "Leitura do Artigo no Grupo de Dez",
+        "bg": "Четене на статията в десятката"
       }
     }
   ]
