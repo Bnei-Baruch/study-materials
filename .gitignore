@@ -58,6 +58,5 @@ frontend/build/
 frontend/*.tsbuildinfo
 frontend/.env*.local
 docs/ARCHITECTURE-NOTES.md
-docs/ARCHITECTURE-NOTES.md
 docs/CONFIGURATION.md
 docs/DOCKER.md
