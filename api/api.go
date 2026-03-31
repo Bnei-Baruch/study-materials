@@ -72,6 +72,8 @@ func (a *App) apiKeyMiddleware(next http.Handler) http.Handler {
 			ip = ip[:idx]
 		}
 
+		log.Printf("[API] %s %s - RemoteAddr=%s, X-Forwarded-For=%s, ResolvedIP=%s", r.Method, r.RequestURI, r.RemoteAddr, r.Header.Get("X-Forwarded-For"), ip)
+
 		// Allow localhost/127.0.0.1/[::1] (container internal)
 		if ip == "127.0.0.1" || ip == "localhost" || ip == "::1" || ip == "[::1]" {
 			next.ServeHTTP(w, r)
