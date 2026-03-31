@@ -8,6 +8,19 @@ import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
 import TemplateManager from '@/components/TemplateManager'
 import EventTypeManager from '@/components/EventTypeManager'
+
+const LANGUAGES = {
+  he: '🇮🇱 עברית',
+  en: '🇬🇧 English',
+  ru: '🇷🇺 Русский',
+  es: '🇪🇸 Español',
+  de: '🇩🇪 Deutsch',
+  it: '🇮🇹 Italiano',
+  fr: '🇫🇷 Français',
+  uk: '🇺🇦 Українська',
+  tr: '🇹🇷 Türkçe',
+  'pt-BR': '🇧🇷 Português',
+}
 import {
   DndContext,
   closestCenter,
@@ -245,21 +258,10 @@ function AdminPageContent() {
 
   useEffect(() => {
     // Load language from localStorage
-    const saved = localStorage.getItem('language')
+    const saved = localStorage.getItem('admin-language')
     if (saved) {
       setLanguage(saved)
     }
-
-    // Listen for language changes from Navigation component
-    const handleLanguageChange = () => {
-      const newLang = localStorage.getItem('language')
-      if (newLang) {
-        setLanguage(newLang)
-      }
-    }
-
-    window.addEventListener('languageChange', handleLanguageChange)
-    return () => window.removeEventListener('languageChange', handleLanguageChange)
   }, [])
 
   useEffect(() => {
@@ -330,40 +332,31 @@ function AdminPageContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+      {/* Top navigation bar */}
+      <div className="fixed top-0 right-0 p-4 flex items-center gap-2 z-50">
+        <select
+          value={language}
+          onChange={(e) => {
+            setLanguage(e.target.value)
+            localStorage.setItem('admin-language', e.target.value)
+          }}
+          className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          {Object.entries(LANGUAGES).map(([code, label]) => (
+            <option key={code} value={code}>
+              {label}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={logout}
+          className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-lg transition duration-200"
+        >
+          Logout
+        </button>
+      </div>
+
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">
-              {activeTab === 'events' ? 'Events' : activeTab === 'templates' ? 'Templates' : 'Event Types'}
-            </h1>
-            <p className="text-gray-600">
-              {activeTab === 'events'
-                ? 'Daily lessons, meals, conventions, and more'
-                : activeTab === 'templates'
-                ? 'Manage lesson part templates and their translations'
-                : 'Configure event categories, colors, and translations'}
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            {activeTab === 'events' && (
-              <Link
-                href="/admin/create"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
-              >
-                Create Event
-              </Link>
-            )}
-            <div className="flex flex-col items-end gap-2">
-              {user?.name && <span className="text-sm text-gray-600">{user.name}</span>}
-              <button
-                onClick={logout}
-                className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-lg transition duration-200"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
 
         {/* Tab Navigation */}
         <div className="mb-8 flex gap-2 border-b border-gray-300">

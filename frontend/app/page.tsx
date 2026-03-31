@@ -570,14 +570,14 @@ export default function PublicPage() {
 
   // Load language from localStorage and listen for changes from Navigation
   useEffect(() => {
-    const saved = localStorage.getItem('language')
+    const saved = localStorage.getItem('public-language')
     if (saved && saved in LANGUAGES) {
       setLanguage(saved)
     }
 
     // Listen for language changes from Navigation
     const handleLanguageChange = () => {
-      const newLang = localStorage.getItem('language')
+      const newLang = localStorage.getItem('public-language')
       if (newLang && newLang in LANGUAGES) {
         setLanguage(newLang)
       }

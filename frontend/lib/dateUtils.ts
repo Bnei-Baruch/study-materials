@@ -31,6 +31,8 @@ const localeMap: { [key: string]: string } = {
   it: 'it-IT',
   fr: 'fr-FR',
   uk: 'uk-UA',
+  tr: 'tr-TR',
+  'pt-BR': 'pt-BR',
 }
 
 /**

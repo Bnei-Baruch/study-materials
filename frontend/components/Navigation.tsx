@@ -52,7 +52,7 @@ export default function Navigation() {
   const isRTL = language === 'he'
 
   useEffect(() => {
-    const saved = localStorage.getItem('language')
+    const saved = localStorage.getItem('public-language')
     if (saved && saved in LANGUAGES) {
       setLanguage(saved)
     }
@@ -61,7 +61,7 @@ export default function Navigation() {
 
   const handleLanguageChange = (newLang: string) => {
     setLanguage(newLang)
-    localStorage.setItem('language', newLang)
+    localStorage.setItem('public-language', newLang)
     window.dispatchEvent(new Event('languageChange'))
   }
 
