@@ -58,9 +58,17 @@ func (a *App) apiKeyMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Extract IP from request (remove port)
+		// Extract IP from request (check X-Forwarded-For first for proxies)
 		ip := r.RemoteAddr
-		if idx := strings.LastIndex(ip, ":"); idx != -1 {
+		if forwarded := r.Header.Get("X-Forwarded-For"); forwarded != "" {
+			// X-Forwarded-For can contain multiple IPs, take the first one (original client)
+			if idx := strings.Index(forwarded, ","); idx != -1 {
+				ip = strings.TrimSpace(forwarded[:idx])
+			} else {
+				ip = strings.TrimSpace(forwarded)
+			}
+		} else if idx := strings.LastIndex(ip, ":"); idx != -1 {
+			// Remove port from direct connection
 			ip = ip[:idx]
 		}
 
@@ -70,8 +78,8 @@ func (a *App) apiKeyMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Allow internal network (10.66.0.0/16 - adjust if needed)
-		if strings.HasPrefix(ip, "10.66.") {
+		// Allow internal network (10.66.0.0/16 and 10.77.0.0/16)
+		if strings.HasPrefix(ip, "10.66.") || strings.HasPrefix(ip, "10.77.") {
 			next.ServeHTTP(w, r)
 			return
 		}
