@@ -60,6 +60,21 @@ func (a *App) apiKeyMiddleware(next http.Handler) http.Handler {
 
 		// Extract IP from request (check X-Forwarded-For first for proxies)
 		ip := r.RemoteAddr
+		if idx := strings.LastIndex(ip, ":"); idx != -1 {
+			// Remove port from direct connection
+			ip = ip[:idx]
+		}
+
+		log.Printf("[API] %s %s - RemoteAddr=%s, X-Forwarded-For=%s, ResolvedIP=%s", r.Method, r.RequestURI, r.RemoteAddr, r.Header.Get("X-Forwarded-For"), ip)
+
+		// Check if direct connection is from trusted internal network first
+		if strings.HasPrefix(ip, "10.66.") || strings.HasPrefix(ip, "10.77.") || strings.HasPrefix(ip, "172.") || strings.HasPrefix(ip, "127.") {
+			// Direct connection from trusted network - allow immediately
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// For external direct connections, check X-Forwarded-For (from proxy)
 		if forwarded := r.Header.Get("X-Forwarded-For"); forwarded != "" {
 			// X-Forwarded-For can contain multiple IPs, take the first one (original client)
 			if idx := strings.Index(forwarded, ","); idx != -1 {
@@ -67,12 +82,8 @@ func (a *App) apiKeyMiddleware(next http.Handler) http.Handler {
 			} else {
 				ip = strings.TrimSpace(forwarded)
 			}
-		} else if idx := strings.LastIndex(ip, ":"); idx != -1 {
-			// Remove port from direct connection
-			ip = ip[:idx]
+			log.Printf("[API] Using X-Forwarded-For IP: %s", ip)
 		}
-
-		log.Printf("[API] %s %s - RemoteAddr=%s, X-Forwarded-For=%s, ResolvedIP=%s", r.Method, r.RequestURI, r.RemoteAddr, r.Header.Get("X-Forwarded-For"), ip)
 
 		// Allow localhost/127.0.0.1/[::1] (container internal)
 		if ip == "127.0.0.1" || ip == "localhost" || ip == "::1" || ip == "[::1]" {
