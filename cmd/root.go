@@ -39,6 +39,7 @@ func initConfig() {
 	viper.BindEnv("app.app-script-pass", "APP_SCRIPT_PASSWORD")
 	viper.BindEnv("app.max-lessons-per-language", "MAX_LESSONS_PER_LANGUAGE")
 	viper.BindEnv("templates.path", "TEMPLATES_PATH")
+	viper.BindEnv("api.secret_key", "API_SECRET_KEY")
 
 	// Read config file (if exists)
 	if err := viper.ReadInConfig(); err != nil {

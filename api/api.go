@@ -3,6 +3,7 @@ package api
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/Bnei-Baruch/study-material-service/integrations/kabbalahmedia"
 	"github.com/Bnei-Baruch/study-material-service/storage"
@@ -22,10 +23,11 @@ type App struct {
 	kabbalahmediaClient *kabbalahmedia.Client
 	templateConfig      *storage.TemplateConfig
 	emailService        *EmailService
+	apiSecretKey        string
 }
 
 // NewApp creates a new App instance with dependencies
-func NewApp(partStore storage.PartStore, eventStore storage.EventStore, eventTypeStore storage.EventTypeStore, templateStore storage.TemplateStore, kabbalahmediaClient *kabbalahmedia.Client, templateConfig *storage.TemplateConfig) *App {
+func NewApp(partStore storage.PartStore, eventStore storage.EventStore, eventTypeStore storage.EventTypeStore, templateStore storage.TemplateStore, kabbalahmediaClient *kabbalahmedia.Client, templateConfig *storage.TemplateConfig, apiSecretKey string) *App {
 	return &App{
 		store:               partStore,
 		eventStore:          eventStore,
@@ -34,7 +36,60 @@ func NewApp(partStore storage.PartStore, eventStore storage.EventStore, eventTyp
 		kabbalahmediaClient: kabbalahmediaClient,
 		templateConfig:      templateConfig,
 		emailService:        NewEmailService(),
+		apiSecretKey:        apiSecretKey,
 	}
+}
+
+// apiKeyMiddleware rejects write requests that don't carry the correct X-API-Key header.
+// GET and OPTIONS are always allowed so public widgets and browsers can read freely.
+// Requests from localhost/internal network IPs are allowed for admin UI on same server.
+// If no secret key is configured the middleware is a no-op (useful for local dev).
+func (a *App) apiKeyMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Allow GET and OPTIONS (read-only)
+		if r.Method == http.MethodGet || r.Method == http.MethodOptions {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// If no API key configured, allow all (backward compatible for dev)
+		if a.apiSecretKey == "" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// Extract IP from request (remove port)
+		ip := r.RemoteAddr
+		if idx := strings.LastIndex(ip, ":"); idx != -1 {
+			ip = ip[:idx]
+		}
+
+		// Allow localhost/127.0.0.1/[::1] (container internal)
+		if ip == "127.0.0.1" || ip == "localhost" || ip == "::1" || ip == "[::1]" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// Allow internal network (10.66.0.0/16 - adjust if needed)
+		if strings.HasPrefix(ip, "10.66.") {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// Allow Docker internal network (172.x.x.x)
+		if strings.HasPrefix(ip, "172.") {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// For external requests, require API key
+		if r.Header.Get("X-API-Key") != a.apiSecretKey {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 // Init initializes and starts the API server
@@ -42,7 +97,7 @@ func (a *App) Init() {
 	a.initCors()
 	a.initRouters()
 
-	handler := a.cors.Handler(a.router)
+	handler := a.cors.Handler(a.apiKeyMiddleware(a.router))
 
 	addr := viper.GetString("server.bind-address")
 	log.Printf("Starting server on %s", addr)
