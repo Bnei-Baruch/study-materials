@@ -48,7 +48,7 @@ const SITE_SUBTITLE = {
 const USEFUL_LINKS: { labels: Record<string, string>; url: string }[] = [
   {
     labels: { he: 'לוח אירועים', en: 'Events Calendar', ru: 'Календарь событий', es: 'Calendario de eventos', de: 'Veranstaltungskalender', it: 'Calendario eventi', fr: 'Calendrier des événements', uk: 'Календар подій', tr: 'Etkinlik Takvimi', 'pt-BR': 'Calendário de eventos', bg: 'Календар на събитията' },
-    url: 'https://cal.kli.one',
+    url: 'https://events.kli.one',
   },
   {
     labels: { he: 'מערכת הערבות', en: 'Arvut System', ru: 'Система Арвут', es: 'Sistema Arvut', de: 'Arvut-System', it: 'Sistema Arvut', fr: 'Système Arvut', uk: 'Система Арвут', tr: 'Arvut Sistemi', 'pt-BR': 'Sistema Arvut', bg: 'Система Арвут' },
