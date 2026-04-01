@@ -247,6 +247,7 @@ function AdminPageContent() {
   const [error, setError] = useState('')
   const [language, setLanguage] = useState('he')
   const [activeTab, setActiveTab] = useState<'events' | 'templates' | 'event-types'>('events')
+  const [langOpen, setLangOpen] = useState(false)
   const { user, logout } = useAuth()
 
   const sensors = useSensors(
@@ -334,26 +335,48 @@ function AdminPageContent() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       {/* Top navigation bar */}
       <div className="fixed top-0 right-0 p-4 flex items-center gap-2 z-50">
+
         <Link
           href="/admin/create"
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
         >
           Create Event
         </Link>
-        <select
-          value={language}
-          onChange={(e) => {
-            setLanguage(e.target.value)
-            localStorage.setItem('admin-language', e.target.value)
-          }}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {Object.entries(LANGUAGES).map(([code, label]) => (
-            <option key={code} value={code}>
-              {label}
-            </option>
-          ))}
-        </select>
+        {/* Language selector dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setLangOpen(o => !o)}
+            className="px-3 py-2 bg-white border border-gray-300 hover:border-gray-400 rounded-lg text-sm font-bold text-gray-800 flex items-center gap-1 transition duration-200"
+          >
+            {language.toUpperCase()}
+            <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          </button>
+          {langOpen && (
+            <>
+              <div className="fixed inset-0" onClick={() => setLangOpen(false)} />
+              <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50">
+                {Object.entries(LANGUAGES).map(([code, label]) => {
+                  const name = label.replace(/^[\p{Emoji}\s]+/u, '')
+                  return (
+                    <button
+                      key={code}
+                      onClick={() => {
+                        setLanguage(code)
+                        localStorage.setItem('admin-language', code)
+                        setLangOpen(false)
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-50 text-left"
+                    >
+                      <span className="font-bold text-gray-800 w-8">{code.toUpperCase()}</span>
+                      <span className="text-gray-500 text-sm flex-1">{name}</span>
+                      {code === language && <span className="text-gray-800">✓</span>}
+                    </button>
+                  )
+                })}
+              </div>
+            </>
+          )}
+        </div>
         <button
           onClick={logout}
           className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-lg transition duration-200"
