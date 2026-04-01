@@ -334,6 +334,12 @@ function AdminPageContent() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       {/* Top navigation bar */}
       <div className="fixed top-0 right-0 p-4 flex items-center gap-2 z-50">
+        <Link
+          href="/admin/create"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
+        >
+          Create Event
+        </Link>
         <select
           value={language}
           onChange={(e) => {
