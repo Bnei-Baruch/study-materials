@@ -590,6 +590,18 @@ export default function PublicPage() {
   // Fetch public events when language or date filters change
   useEffect(() => {
     fetchEvents()
+
+    const interval = setInterval(() => {
+      if (!document.hidden) fetchEvents()
+    }, 10 * 60 * 1000)
+
+    const onVisible = () => { if (!document.hidden) fetchEvents() }
+    document.addEventListener('visibilitychange', onVisible)
+
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
   }, [language, startDate, endDate])
 
   // Fetch parts when event is selected
@@ -658,6 +670,7 @@ export default function PublicPage() {
   }, [events])
 
   const fetchEvents = async () => {
+    console.log(`[study] fetching events at ${new Date().toLocaleTimeString()}`)
     try {
       setLoading(true)
       const params = new URLSearchParams({
