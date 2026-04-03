@@ -23,6 +23,7 @@ type LessonPart struct {
 	Sources                []Source     `json:"sources" bson:"sources"`
 	CustomLinks            []CustomLink `json:"custom_links,omitempty" bson:"custom_links,omitempty"` // Optional: custom links with titles (language-specific)
 	CreatedAt              time.Time    `json:"created_at" bson:"created_at"`
+	UpdatedAt              *time.Time   `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
 }
 
 // Source represents a study source from kabbalahmedia
