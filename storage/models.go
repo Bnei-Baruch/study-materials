@@ -22,8 +22,8 @@ type LessonPart struct {
 	RecordedLessonDate     string       `json:"recorded_lesson_date,omitempty" bson:"recorded_lesson_date,omitempty"`           // Optional: date the recorded lesson was given (YYYY-MM-DD)
 	Sources                []Source     `json:"sources" bson:"sources"`
 	CustomLinks            []CustomLink `json:"custom_links,omitempty" bson:"custom_links,omitempty"` // Optional: custom links with titles (language-specific)
+	ShowUpdatedBadge       bool         `json:"show_updated_badge" bson:"show_updated_badge"`
 	CreatedAt              time.Time    `json:"created_at" bson:"created_at"`
-	UpdatedAt              *time.Time   `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
 }
 
 // Source represents a study source from kabbalahmedia
@@ -62,6 +62,7 @@ type CreatePartRequest struct {
 	RecordedLessonDate     string       `json:"recorded_lesson_date,omitempty"`      // Optional: date the recorded lesson was given (YYYY-MM-DD)
 	Sources                []Source     `json:"sources"`
 	CustomLinks            []CustomLink `json:"custom_links,omitempty"` // Optional: custom links with titles (language-specific)
+	ShowUpdatedBadge       bool         `json:"show_updated_badge"`
 }
 
 // Event represents a study event (morning lesson, noon lesson, evening lesson, meal, convention, etc.)

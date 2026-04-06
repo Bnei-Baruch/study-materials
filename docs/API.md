@@ -221,6 +221,7 @@ You must send the full part body (all fields). Fields not included will be clear
 | `recorded_lesson_date` | Original date of a recorded lesson (YYYY-MM-DD) |
 | `sources` | Array of kabbalahmedia sources with optional page/paragraph range |
 | `custom_links` | Array of `{title, url}` — language-specific custom links |
+| `show_updated_badge` | `true` to display an "Updated" badge next to the part title on the public site. Must be set explicitly by admin — never set automatically. |
 
 > **Note:** `id`, `language`, `event_id`, and `created_at` are immutable — they are ignored even if included in the request body.
 
