@@ -11,7 +11,8 @@ type LessonPart struct {
 	PartType               string       `json:"part_type" bson:"part_type"`                                                     // "live_lesson" or "recorded_lesson"
 	Language               string       `json:"language" bson:"language"`                                                       // ISO 639-1 code (e.g., "he", "en", "ru")
 	EventID                string       `json:"event_id,omitempty" bson:"event_id,omitempty"`                                   // Optional: links part to an event
-	Order                  int          `json:"order" bson:"order"`                                                             // Position within event (0=preparation, 1, 2, 3...)
+	PartNumber             int          `json:"part_number" bson:"part_number"`                                                 // Display label and group key within event (0=Preparation, 1+=Part N)
+	Order                  int          `json:"order" bson:"order"`                                                             // Sort position within event (auto-assigned)
 	ExcerptsLink           string       `json:"excerpts_link,omitempty" bson:"excerpts_link,omitempty"`                         // Optional: link to selected excerpts
 	TranscriptLink         string       `json:"transcript_link,omitempty" bson:"transcript_link,omitempty"`                     // Optional: link to transcript
 	LessonLink             string       `json:"lesson_link,omitempty" bson:"lesson_link,omitempty"`                             // Optional: kabbalahmedia lesson URL
@@ -50,7 +51,8 @@ type CreatePartRequest struct {
 	PartType               string       `json:"part_type"`                           // "live_lesson" or "recorded_lesson", defaults to "live_lesson"
 	Language               string       `json:"language"`                            // ISO 639-1 code, defaults to "he"
 	EventID                string       `json:"event_id,omitempty"`                  // Optional: links part to an event
-	Order                  int          `json:"order"`                               // Position within event (0=preparation, 1, 2, 3...)
+	PartNumber             int          `json:"part_number"`                         // Display label and group key within event (0=Preparation, 1+=Part N)
+	Order                  int          `json:"order"`                               // Sort position within event (auto-assigned)
 	TemplateID             string       `json:"template_id,omitempty"`               // Optional: ID of template used (for auto-translating)
 	ExcerptsLink           string       `json:"excerpts_link,omitempty"`             // Optional: link to selected excerpts
 	TranscriptLink         string       `json:"transcript_link,omitempty"`           // Optional: link to transcript

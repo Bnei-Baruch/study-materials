@@ -57,6 +57,11 @@ func serverFn(cmd *cobra.Command, args []string) {
 		log.Fatalf("Failed to seed default event types: %v", err)
 	}
 
+	// Backfill part_number for parts created before the field existed
+	if err := storage.MigrateLegacyParts(partStore); err != nil {
+		log.Fatalf("Failed to migrate legacy parts: %v", err)
+	}
+
 	log.Printf("Initialized MongoDB storage: %s/%s", mongoURI, mongoDatabase)
 
 	// Initialize kabbalahmedia client

@@ -16,7 +16,7 @@ interface Source {
 interface PartFormProps {
   eventId: string
   eventDate: string
-  existingParts: Array<{ order: number }> // To calculate next order
+  existingParts: Array<{ part_number: number }> // To suggest next part number
   onPartCreated: () => void
   onCancel?: () => void
 }
@@ -43,18 +43,16 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
     visible: boolean
   }
 
-  // Calculate next order number based on existing parts
-  const calculateInitialOrder = () => {
-    if (existingParts.length === 0) {
-      return 0 // Start with preparation if no parts
-    }
-    const maxOrder = Math.max(...existingParts.map(p => p.order))
-    return maxOrder + 1 // Next order after the highest existing
+  // Suggest next part_number based on existing parts
+  const calculateNextPartNumber = () => {
+    if (existingParts.length === 0) return 0
+    const max = Math.max(...existingParts.map(p => p.part_number))
+    return max + 1
   }
 
   const [partType, setPartType] = useState('live_lesson')
   const [language, setLanguage] = useState('he')
-  const [order, setOrder] = useState<number | ''>('') // Start blank
+  const [partNumber, setPartNumber] = useState<number | ''>('') // Start blank
   const [title, setTitle] = useState('') // Start blank
   const [description, setDescription] = useState('')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('') // Track selected template
@@ -103,29 +101,26 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
     }
   }
 
-  // Auto-update title and links when order is 0 (preparation)
-  const handleOrderChange = (newOrder: number | '') => {
-    setOrder(newOrder)
-    if (newOrder === 0) {
+  // Auto-update title and links when part_number is 0 (preparation)
+  const handlePartNumberChange = (newPartNumber: number | '') => {
+    setPartNumber(newPartNumber)
+    if (newPartNumber === 0) {
       setTitle(preparationTitles[language] || 'Preparation to lesson')
-      // Auto-fill preparation links
       setReadingBeforeSleepLink('https://goo.gl/zCBDD4')
       setLessonPreparationLink('https://docs.google.com/document/d/1uHtE1U7sgWCumeWUc5jyE2dfECqj09DZgaPQys-jbzs/edit')
     } else {
-      // Clear title if it was a preparation title
-      if (order === 0 && Object.values(preparationTitles).includes(title)) {
+      if (partNumber === 0 && Object.values(preparationTitles).includes(title)) {
         setTitle('')
       }
-      // Clear preparation links when switching to regular part
       setReadingBeforeSleepLink('')
       setLessonPreparationLink('')
     }
   }
 
-  // Auto-update title when language changes and order is 0
+  // Auto-update title when language changes and part_number is 0
   const handleLanguageChange = (newLanguage: string) => {
     setLanguage(newLanguage)
-    if (order === 0) {
+    if (partNumber === 0) {
       setTitle(preparationTitles[newLanguage] || 'Preparation to lesson')
     }
   }
@@ -186,7 +181,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (order === '') {
+    if (partNumber === '') {
       setError('Please select a part number')
       return
     }
@@ -215,22 +210,17 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
           part_type: partType,
           language,
           event_id: eventId,
-          order: order,
-          template_id: selectedTemplate || undefined, // Send template ID if one was selected
-          sources: order === 0 ? [] : sources, // No sources for prep parts
-          // Preparation part links (only if order is 0)
-          reading_before_sleep_link: order === 0 ? readingBeforeSleepLink : undefined,
-          lesson_preparation_link: order === 0 ? lessonPreparationLink : undefined,
-          // Regular part links (only if order is NOT 0)
-          excerpts_link: order !== 0 ? excerptsLink || undefined : undefined,
-          transcript_link: order !== 0 ? transcriptLink || undefined : undefined,
-          lesson_link: order !== 0 ? lessonLink || undefined : undefined,
-          program_link: order !== 0 ? programLink || undefined : undefined,
-          // Lineup for hosts (for Recorded Lesson and Lesson types)
+          part_number: partNumber,
+          template_id: selectedTemplate || undefined,
+          sources: partNumber === 0 ? [] : sources,
+          reading_before_sleep_link: partNumber === 0 ? readingBeforeSleepLink : undefined,
+          lesson_preparation_link: partNumber === 0 ? lessonPreparationLink : undefined,
+          excerpts_link: partNumber !== 0 ? excerptsLink || undefined : undefined,
+          transcript_link: partNumber !== 0 ? transcriptLink || undefined : undefined,
+          lesson_link: partNumber !== 0 ? lessonLink || undefined : undefined,
+          program_link: partNumber !== 0 ? programLink || undefined : undefined,
           lineup_for_hosts_link: (partType === 'recorded_lesson' || partType === 'live_lesson') ? lineupForHostsLink || undefined : undefined,
-          // Custom links (language-specific)
-          custom_links: order !== 0 ? customLinks.filter(link => link.title && link.url) : undefined,
-          // Recorded lesson date (if provided)
+          custom_links: partNumber !== 0 ? customLinks.filter(link => link.title && link.url) : undefined,
           recorded_lesson_date: recordedLessonDate || undefined,
         }),
       })
@@ -245,7 +235,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       setDescription('')
       setPartType('live_lesson')
       setLanguage('he')
-      setOrder('') // Reset to blank
+      setPartNumber('') // Reset to blank
       setSelectedTemplate('') // Clear template selection
       setSources([])
       setExcerptsLink('')
@@ -279,13 +269,13 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       {/* Part Number, Type, and Language - MOVED TO TOP */}
       <div className="grid grid-cols-3 gap-4">
         <div>
-          <label htmlFor="order" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="partNumber" className="block text-sm font-medium text-gray-700 mb-2">
             Part Number *
           </label>
           <select
-            id="order"
-            value={order}
-            onChange={(e) => handleOrderChange(e.target.value === '' ? '' : parseInt(e.target.value))}
+            id="partNumber"
+            value={partNumber}
+            onChange={(e) => handlePartNumberChange(e.target.value === '' ? '' : parseInt(e.target.value))}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           >
             <option value="">-- Select Part Number --</option>
@@ -346,11 +336,11 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       {/* Title */}
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-          Title * {order === 0 && <span className="text-gray-500 text-xs">(auto-filled for preparation)</span>}
+          Title * {partNumber === 0 && <span className="text-gray-500 text-xs">(auto-filled for preparation)</span>}
         </label>
         
         {/* Template Tags */}
-        {order !== 0 && (
+        {partNumber !== 0 && (
           <div className="mb-3">
             <p className="text-xs text-gray-600 mb-2">Quick templates:</p>
             <div className="flex flex-wrap gap-2">
@@ -375,7 +365,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
           onChange={(e) => setTitle(e.target.value)}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
           placeholder="e.g., Shamati #1 - There Is None Else Besides Him"
-          readOnly={order === 0}
+          readOnly={partNumber === 0}
           required
         />
       </div>
@@ -396,7 +386,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
       </div>
 
       {/* Conditional Layout: Preparation vs Regular Part */}
-      {order === 0 ? (
+      {partNumber === 0 ? (
         // PREPARATION LAYOUT
         <div className="space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
           <div className="flex items-center gap-2 mb-2">

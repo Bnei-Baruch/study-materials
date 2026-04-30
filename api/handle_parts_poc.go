@@ -66,6 +66,19 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Auto-assign order (sort position) as max existing order + 1 for this event
+	autoOrder := 1
+	if req.EventID != "" {
+		allParts, err := a.store.ListParts()
+		if err == nil {
+			for _, p := range allParts {
+				if p.EventID == req.EventID && p.Order >= autoOrder {
+					autoOrder = p.Order + 1
+				}
+			}
+		}
+	}
+
 	// Create part
 	part := &storage.LessonPart{
 		Title:                  req.Title,
@@ -74,7 +87,8 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 		PartType:               partType,
 		Language:               language,
 		EventID:                req.EventID,
-		Order:                  req.Order,
+		PartNumber:             req.PartNumber,
+		Order:                  autoOrder,
 		ExcerptsLink:           req.ExcerptsLink,
 		TranscriptLink:         req.TranscriptLink,
 		LessonLink:             req.LessonLink,
@@ -109,7 +123,7 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 
 		// Determine title for translation stub
 		stubTitle := "[Translation needed]"
-		if part.Order == 0 {
+		if part.PartNumber == 0 {
 			// For preparation parts, use translated title from config
 			if translatedTitle, ok := a.templateConfig.Preparation[lang]; ok {
 				stubTitle = translatedTitle
@@ -151,6 +165,7 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 		PartType:    part.PartType,
 		Language:    lang,
 		EventID:     part.EventID,
+		PartNumber:  part.PartNumber,
 		Order:       part.Order,
 		// Copy shared links (same across languages)
 		ExcerptsLink:           part.ExcerptsLink,
@@ -214,6 +229,7 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 	// Update all editable fields
 	existingPart.Title = req.Title
 	existingPart.Description = req.Description
+	existingPart.PartNumber = req.PartNumber
 	existingPart.Order = req.Order
 	existingPart.Sources = req.Sources
 	existingPart.ExcerptsLink = req.ExcerptsLink

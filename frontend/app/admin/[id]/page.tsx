@@ -39,6 +39,50 @@ import {
 } from 'lucide-react'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  useSortable,
+  arrayMove,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+
+function SortablePartGroup({
+  id,
+  disabled,
+  children,
+}: {
+  id: string
+  disabled?: boolean
+  children: (dragHandleProps: React.HTMLAttributes<HTMLElement>) => React.ReactNode
+}) {
+  const { setNodeRef, transform, transition, listeners, attributes, isDragging } = useSortable({
+    id,
+    disabled,
+  })
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.6 : 1,
+        position: isDragging ? 'relative' : undefined,
+        zIndex: isDragging ? 50 : undefined,
+      }}
+    >
+      {children({ ...listeners, ...attributes })}
+    </div>
+  )
+}
 
 interface Event {
   id: string
@@ -80,6 +124,7 @@ interface Part {
   id: string
   title: string
   description: string
+  part_number: number
   order: number
   language: string
   part_type?: string // part type: 'live_lesson' or 'recorded_lesson'
@@ -184,8 +229,11 @@ function AdminEventDetailPageContent() {
     bg: '🇧🇬 Български',
   }
 
+  const getDisplayNumber = (part: Part) => part.part_number
+
   const getColorClasses = (part: Part) => {
-    if (part.order === 0) {
+    const displayNum = getDisplayNumber(part)
+    if (displayNum === 0) {
       return {
         bg: 'bg-purple-500',
         text: 'text-purple-700',
@@ -198,7 +246,7 @@ function AdminEventDetailPageContent() {
       { bg: 'bg-green-500', text: 'text-green-700', border: 'border-green-500', light: 'bg-green-50' },
       { bg: 'bg-orange-500', text: 'text-orange-700', border: 'border-orange-500', light: 'bg-orange-50' },
     ]
-    return colors[part.order % colors.length]
+    return colors[displayNum % colors.length]
   }
 
 
@@ -262,18 +310,16 @@ const fetchEventAndParts = async () => {
   }
 
   const startEditAll = (part: Part, scrollToLang?: string) => {
-    console.log('🚀 startEditAll called with:', { order: part.order, language: part.language, scrollToLang })
-    // Start editing all languages of a part
-    const partsForOrder = parts.filter(p => p.order === part.order)
+    // Group by order (unique sort position — the stable group key)
+    const partsForGroup = parts.filter(p => p.order === part.order)
     const edited: { [key: string]: Part } = {}
     const original: { [key: string]: Part } = {}
-    
-    partsForOrder.forEach(p => {
+
+    partsForGroup.forEach(p => {
       edited[p.language] = {...p}
       original[p.language] = {...p}
     })
-    
-    console.log('📦 Setting editing state for order:', part.order, 'with languages:', Object.keys(edited))
+
     setEditingPartOrder(part.order)
     setEditedParts(edited)
     setOriginalParts(original)
@@ -289,6 +335,59 @@ const fetchEventAndParts = async () => {
     setEditingPartId(null)
     setEditedPart(null)
     setOriginalPart(null)
+  }
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const sortedOrders = Array.from(new Set(parts.map(p => p.order))).sort((a, b) => a - b)
+    const activeIndex = sortedOrders.indexOf(Number(active.id))
+    const overIndex = sortedOrders.indexOf(Number(over.id))
+    if (activeIndex === -1 || overIndex === -1) return
+
+    const newSortedOrders = arrayMove(sortedOrders, activeIndex, overIndex)
+
+    // Build update list: for each position that changed, update all parts in that group
+    const updates: Array<{ part: Part; newOrder: number }> = []
+    for (let i = 0; i < sortedOrders.length; i++) {
+      if (sortedOrders[i] === newSortedOrders[i]) continue
+      const groupParts = parts.filter(p => p.order === newSortedOrders[i])
+      groupParts.forEach(p => updates.push({ part: p, newOrder: sortedOrders[i] }))
+    }
+
+    try {
+      await Promise.all(
+        updates.map(({ part, newOrder }) =>
+          fetch(getApiUrl(`/parts/${part.id}`), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: part.title,
+              description: part.description,
+              part_number: part.part_number,
+              order: newOrder,
+              sources: part.sources,
+              excerpts_link: part.excerpts_link || '',
+              transcript_link: part.transcript_link || '',
+              lesson_link: part.lesson_link || '',
+              program_link: part.program_link || '',
+              reading_before_sleep_link: part.reading_before_sleep_link || '',
+              lesson_preparation_link: part.lesson_preparation_link || '',
+              lineup_for_hosts_link: part.lineup_for_hosts_link || '',
+              recorded_lesson_date: part.recorded_lesson_date || '',
+              custom_links: part.custom_links || [],
+              show_updated_badge: part.show_updated_badge || false,
+            }),
+          }).then(res => { if (!res.ok) throw new Error('Failed to reorder') })
+        )
+      )
+      await fetchEventAndParts()
+    } catch {
+      await fetchEventAndParts()
+    }
   }
 
   const togglePartExpanded = (order: number) => {
@@ -377,6 +476,56 @@ const fetchEventAndParts = async () => {
     if (!editedPart) return
 
     try {
+      // If order changed, update all sibling parts (same old order) to keep order in sync across languages
+      if (originalPart) {
+        const orderChanged = editedPart.order !== originalPart.order
+        const partNumberChanged = editedPart.part_number !== originalPart.part_number
+
+        if (orderChanged) {
+          // Swap: move parts at the new position to the vacated old position
+          const displaced = parts.filter(p => p.order === editedPart.order && p.order !== originalPart.order)
+          for (const p of displaced) {
+            const res = await fetch(getApiUrl(`/parts/${p.id}`), {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                title: p.title, description: p.description,
+                part_number: p.part_number, order: originalPart.order,
+                sources: p.sources, excerpts_link: p.excerpts_link || '',
+                transcript_link: p.transcript_link || '', lesson_link: p.lesson_link || '',
+                program_link: p.program_link || '', reading_before_sleep_link: p.reading_before_sleep_link || '',
+                lesson_preparation_link: p.lesson_preparation_link || '', lineup_for_hosts_link: p.lineup_for_hosts_link || '',
+                recorded_lesson_link: p.recorded_lesson_link || '', recorded_lesson_date: p.recorded_lesson_date || '',
+                custom_links: p.custom_links || [], show_updated_badge: p.show_updated_badge || false,
+              }),
+            })
+            if (!res.ok) throw new Error(`Failed to swap position for ${p.language} version`)
+          }
+        }
+
+        if (orderChanged || partNumberChanged) {
+          // Propagate position and part_number changes to all sibling language variants
+          const siblings = parts.filter(p => p.order === originalPart.order && p.id !== editedPart.id)
+          for (const sibling of siblings) {
+            const res = await fetch(getApiUrl(`/parts/${sibling.id}`), {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                title: sibling.title, description: sibling.description,
+                part_number: editedPart.part_number, order: editedPart.order,
+                sources: sibling.sources, excerpts_link: sibling.excerpts_link || '',
+                transcript_link: sibling.transcript_link || '', lesson_link: sibling.lesson_link || '',
+                program_link: sibling.program_link || '', reading_before_sleep_link: sibling.reading_before_sleep_link || '',
+                lesson_preparation_link: sibling.lesson_preparation_link || '', lineup_for_hosts_link: sibling.lineup_for_hosts_link || '',
+                recorded_lesson_link: sibling.recorded_lesson_link || '', recorded_lesson_date: sibling.recorded_lesson_date || '',
+                custom_links: sibling.custom_links || [], show_updated_badge: sibling.show_updated_badge || false,
+              }),
+            })
+            if (!res.ok) throw new Error(`Failed to update ${sibling.language} version`)
+          }
+        }
+      }
+
       const response = await fetch(getApiUrl(`/parts/${editedPart.id}`), {
         method: 'PUT',
         headers: {
@@ -385,6 +534,7 @@ const fetchEventAndParts = async () => {
         body: JSON.stringify({
           title: editedPart.title,
           description: editedPart.description,
+          part_number: editedPart.part_number,
           order: editedPart.order,
           sources: editedPart.sources,
           excerpts_link: editedPart.excerpts_link || '',
@@ -418,15 +568,41 @@ const fetchEventAndParts = async () => {
 
   const saveAllParts = async () => {
     try {
+      const newOrder = Object.values(editedParts)[0]?.order
+      const oldOrder = editingPartOrder !== null
+        ? Object.values(originalParts)[0]?.order
+        : undefined
+
+      // If position (order) changed, swap any parts currently occupying the new position
+      if (newOrder !== undefined && oldOrder !== undefined && newOrder !== oldOrder) {
+        const displaced = parts.filter(p => p.order === newOrder && !Object.values(editedParts).some(ep => ep.id === p.id))
+        for (const p of displaced) {
+          const res = await fetch(getApiUrl(`/parts/${p.id}`), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: p.title, description: p.description,
+              part_number: p.part_number, order: oldOrder,
+              sources: p.sources, excerpts_link: p.excerpts_link || '',
+              transcript_link: p.transcript_link || '', lesson_link: p.lesson_link || '',
+              program_link: p.program_link || '', reading_before_sleep_link: p.reading_before_sleep_link || '',
+              lesson_preparation_link: p.lesson_preparation_link || '', lineup_for_hosts_link: p.lineup_for_hosts_link || '',
+              recorded_lesson_link: p.recorded_lesson_link || '', recorded_lesson_date: p.recorded_lesson_date || '',
+              custom_links: p.custom_links || [], show_updated_badge: p.show_updated_badge || false,
+            }),
+          })
+          if (!res.ok) throw new Error(`Failed to swap position for ${p.language} version`)
+        }
+      }
+
       for (const [_, part] of Object.entries(editedParts)) {
         const response = await fetch(getApiUrl(`/parts/${part.id}`), {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             title: part.title,
             description: part.description,
+            part_number: part.part_number,
             order: part.order,
             sources: part.sources,
             excerpts_link: part.excerpts_link || '',
@@ -449,7 +625,6 @@ const fetchEventAndParts = async () => {
         }
       }
 
-      // Clear edit state and refresh
       setEditingPartOrder(null)
       setEditedParts({})
       setOriginalParts({})
@@ -487,24 +662,22 @@ const fetchEventAndParts = async () => {
     }
   }
 
-  const deleteAllLanguagesOfPart = async (partOrder: number, partTitle: string) => {
+  const deleteAllLanguagesOfPart = async (orderVal: number, partTitle: string) => {
     if (!confirm(`Are you sure you want to delete ALL languages of "${partTitle}"?\n\nThis will delete this part in ALL languages.`)) {
       return
     }
 
     try {
-      // Delete all parts with this order
-      for (const [_, part] of Object.entries(editedParts)) {
+      const toDelete = parts.filter(p => p.order === orderVal)
+      for (const part of toDelete) {
         const response = await fetch(getApiUrl(`/parts/${part.id}`), {
           method: 'DELETE',
         })
-
         if (!response.ok) {
           throw new Error(`Failed to delete ${part.language} version`)
         }
       }
 
-      // Clear edit state and refresh
       setEditingPartOrder(null)
       setEditedParts({})
       setOriginalParts({})
@@ -1198,24 +1371,38 @@ const fetchEventAndParts = async () => {
                 <p className="text-gray-500 mb-4">No parts yet for this event</p>
               </div>
             ) : (
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext
+                items={Array.from(new Set(parts.map(p => p.order))).sort((a, b) => a - b).map(String)}
+                strategy={verticalListSortingStrategy}
+              >
               <div className="divide-y divide-gray-100">
-                {/* Group parts by order */}
-                {Array.from(new Set(parts.map(p => p.order))).sort((a, b) => a - b).map((order) => {
-                  const partsForOrder = parts.filter(p => p.order === order)
+                {/* Group parts by order (unique sort position) */}
+                {Array.from(new Set(parts.map(p => p.order)))
+                  .sort((a, b) => a - b)
+                  .map((orderVal) => {
+                  const partsForOrder = parts.filter(p => p.order === orderVal)
                   const firstPart = partsForOrder[0]
+                  const partNumber = getDisplayNumber(firstPart)
                   const colors = getColorClasses(firstPart)
-                  const isEditingThisOrder = editingPartOrder === order
-                  
+                  const isEditingThisOrder = editingPartOrder === orderVal
+
                   return (
-                    <div key={`${order}-group`}>
+                    <SortablePartGroup
+                      key={`${orderVal}-group`}
+                      id={String(orderVal)}
+                      disabled={editingPartOrder !== null}
+                    >
+                    {(dragHandleProps) => (
+                    <div>
                       {/* Header - Always visible */}
                       <div className={`p-4 flex items-center gap-4 transition ${isEditingThisOrder ? 'bg-blue-50 border-b-2 border-blue-500' : 'hover:bg-gray-50 border-b border-gray-100'}`}>
                         {/* Collapse Button */}
-                        <button 
-                          onClick={() => togglePartExpanded(order)}
+                        <button
+                          onClick={() => togglePartExpanded(orderVal)}
                           className="text-gray-400 hover:text-gray-600 transition-colors"
                         >
-                          {expandedPartOrders.has(order) ? (
+                          {expandedPartOrders.has(orderVal) ? (
                             <ChevronUp className="w-5 h-5" />
                           ) : (
                             <ChevronDown className="w-5 h-5" />
@@ -1223,13 +1410,17 @@ const fetchEventAndParts = async () => {
                         </button>
 
                         {/* Drag Handle */}
-                        <button className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing">
+                        <button
+                          {...dragHandleProps}
+                          className="text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing touch-none"
+                          onClick={e => e.stopPropagation()}
+                        >
                           <GripVertical className="w-5 h-5" />
                         </button>
 
                         {/* Part Number Badge */}
                         <div className={`w-10 h-10 rounded-lg ${colors.bg} text-white flex items-center justify-center flex-shrink-0 shadow-sm font-bold`}>
-                          {order}
+                          {partNumber}
                         </div>
 
                         {/* Content - clickable to open edit */}
@@ -1245,7 +1436,7 @@ const fetchEventAndParts = async () => {
                         {/* Actions */}
                         {!isEditingThisOrder && (
                           <button
-                            onClick={() => deleteAllLanguagesOfPart(order, firstPart.title)}
+                            onClick={() => deleteAllLanguagesOfPart(orderVal, firstPart.title)}
                             className="p-2 hover:bg-white rounded-lg transition-colors text-red-600"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1254,14 +1445,14 @@ const fetchEventAndParts = async () => {
                       </div>
 
                       {/* Preview - All Languages (when not editing) */}
-                      {!isEditingThisOrder && expandedPartOrders.has(order) && (
+                      {!isEditingThisOrder && expandedPartOrders.has(orderVal) && (
                         <div className="p-6 bg-gray-50 space-y-6 border-b border-gray-100">
                           {orderedLanguageCodes.map((langCode) => {
                             const langPart = partsForOrder.find(p => p.language === langCode)
                             if (!langPart) return null
                             
                             return (
-                              <div key={`${order}-${langCode}`} className="p-4 mb-4 border-2 border-gray-300 rounded-lg bg-white">
+                              <div key={`${orderVal}-${langCode}`} className="p-4 mb-4 border-2 border-gray-300 rounded-lg bg-white">
                                 <div className="flex items-start justify-between mb-2">
                                   <h5 className="font-semibold text-gray-900" style={{ fontSize: '14px' }}>
                                     {languageNames[langCode]}
@@ -1293,7 +1484,7 @@ const fetchEventAndParts = async () => {
                                 )}
 
                                 {/* Quick Links */}
-                                {order !== 0 && (
+                                {partNumber !== 0 && (
                                   <div className="mb-3">
                                     <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Quick Links:</p>
                                     <div className="flex flex-wrap gap-2">
@@ -1357,7 +1548,7 @@ const fetchEventAndParts = async () => {
                                 )}
 
                                 {/* Preparation Links (order 0) */}
-                                {order === 0 && (
+                                {partNumber === 0 && (
                                   <div className="mb-3">
                                     <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Quick Links:</p>
                                     <div className="flex flex-wrap gap-2">
@@ -1455,6 +1646,28 @@ const fetchEventAndParts = async () => {
                       {/* Edit View - All Languages (when editing) */}
                       {isEditingThisOrder && (
                         <div className="p-6 bg-gray-50 border-b border-gray-100 space-y-8">
+                          {/* Part Number — global field (applies to all languages) */}
+                          <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg flex items-center gap-8">
+                            <div>
+                              <label className="block text-gray-700 font-semibold mb-2 text-sm">Part Number</label>
+                              <input
+                                type="number"
+                                min="0"
+                                value={(Object.values(editedParts)[0] ?? firstPart).part_number}
+                                onChange={(e) => {
+                                  const val = parseInt(e.target.value) || 0
+                                  const updated: { [key: string]: Part } = {}
+                                  for (const [lang, p] of Object.entries(editedParts)) {
+                                    updated[lang] = {...p, part_number: val}
+                                  }
+                                  setEditedParts(updated)
+                                }}
+                                className="w-24 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                              />
+                              <p className="text-gray-400 text-xs mt-1">0 = Preparation</p>
+                            </div>
+                          </div>
+
                           {/* Edit fields for all languages */}
                           {orderedLanguageCodes.map((langCode) => {
                             const langPart = partsForOrder.find(p => p.language === langCode)
@@ -1531,7 +1744,7 @@ const fetchEventAndParts = async () => {
                                 </div>
 
                                 {/* Recorded Lesson Date */}
-                                {order !== 0 && (
+                                {partNumber !== 0 && (
                                   <div>
                                     <label className="block text-gray-700 font-medium mb-2 text-xs">Original Lesson Date</label>
                                     <input
@@ -1548,7 +1761,7 @@ const fetchEventAndParts = async () => {
                                 )}
 
                                 {/* Quick Links for lesson parts (order !== 0) */}
-                                {order !== 0 && (
+                                {partNumber !== 0 && (
                                   <div>
                                     <label className="block text-gray-700 font-medium mb-3 text-xs">Quick Links</label>
                                     <div className="grid grid-cols-2 gap-3">
@@ -1687,7 +1900,7 @@ const fetchEventAndParts = async () => {
                                 )}
 
                                 {/* Custom Links */}
-                                {order !== 0 && (
+                                {partNumber !== 0 && (
                                   <div>
                                     <div className="flex items-center justify-between mb-2">
                                       <label className="block text-gray-700 font-medium text-xs">Custom Links (Language-Specific)</label>
@@ -1761,7 +1974,7 @@ const fetchEventAndParts = async () => {
                                 )}
 
                                 {/* Preparation part special links (order === 0) */}
-                                {order === 0 && (
+                                {partNumber === 0 && (
                                   <div>
                                     <label className="block text-gray-700 font-medium mb-3 text-xs">Quick Links</label>
                                     <div className="grid grid-cols-2 gap-3">
@@ -1982,9 +2195,13 @@ const fetchEventAndParts = async () => {
                         </div>
                       )}
                     </div>
+                    )}
+                    </SortablePartGroup>
                   )
                 })}
               </div>
+              </SortableContext>
+              </DndContext>
             )
           ) : (
             /* Single Language View */
@@ -2015,7 +2232,7 @@ const fetchEventAndParts = async () => {
 
                         {/* Part Number Badge */}
                         <div className={`w-10 h-10 rounded-lg ${colors.bg} text-white flex items-center justify-center flex-shrink-0 shadow-sm font-bold`}>
-                          {part.order}
+                          {part.part_number}
                         </div>
 
                         {/* Content - clickable to open edit */}
@@ -2055,7 +2272,7 @@ const fetchEventAndParts = async () => {
                           )}
 
                           {/* Quick Links */}
-                          {part.order !== 0 && (
+                          {part.part_number !== 0 && (
                             <div className="mb-3">
                               <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Quick Links:</p>
                               <div className="flex flex-wrap gap-2">
@@ -2119,7 +2336,7 @@ const fetchEventAndParts = async () => {
                           )}
 
                           {/* Preparation Links (order 0) */}
-                          {part.order === 0 && (
+                          {part.part_number === 0 && (
                             <div className="mb-3">
                               <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '12px' }}>Quick Links:</p>
                               <div className="flex flex-wrap gap-2">
@@ -2215,18 +2432,18 @@ const fetchEventAndParts = async () => {
                       {isEditing && (
                         <div className="p-6 bg-gray-50 border-b border-gray-100">
                           <div className="space-y-4">
-                            {/* Part Number & Part Type in 2-column grid */}
+                            {/* Part Number & Part Type in grid */}
                             <div className="grid grid-cols-2 gap-4">
                               <div>
                                 <label className="block text-gray-700 font-medium mb-2 text-xs">Part Number *</label>
                                 <input
                                   type="number"
                                   min="0"
-                                  value={editedPart ? editedPart.order : part.order}
-                                  onChange={(e) => editedPart && updateEditedField('order', parseInt(e.target.value) || 0)}
+                                  value={editedPart ? editedPart.part_number : part.part_number}
+                                  onChange={(e) => editedPart && updateEditedField('part_number', parseInt(e.target.value) || 0)}
                                   className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
                                 />
-                                <p className="text-gray-400 text-xs mt-1">0 = Preparation, 1+ = Lesson parts</p>
+                                <p className="text-gray-400 text-xs mt-1">0 = Preparation</p>
                               </div>
                               <div>
                                 <label className="block text-gray-700 font-medium mb-2 text-xs">Part Type</label>
@@ -2278,7 +2495,7 @@ const fetchEventAndParts = async () => {
                             </div>
 
                             {/* Recorded Lesson Date */}
-                            {(editedPart ? editedPart.order : part.order) !== 0 && (
+                            {(editedPart ? editedPart.part_number : part.part_number) !== 0 && (
                               <div>
                                 <label className="block text-gray-700 font-medium mb-2 text-xs">Original Lesson Date</label>
                                 <input
@@ -2292,7 +2509,7 @@ const fetchEventAndParts = async () => {
                             )}
 
                             {/* Quick Links - 2-column grid */}
-                            {(editedPart ? editedPart.order : part.order) !== 0 && (
+                            {(editedPart ? editedPart.part_number : part.part_number) !== 0 && (
                               <div>
                                 <label className="block text-gray-700 font-medium mb-3 text-xs">Quick Links</label>
                                 <div className="grid grid-cols-2 gap-3">
@@ -2421,7 +2638,7 @@ const fetchEventAndParts = async () => {
                             )}
 
                             {/* Custom Links */}
-                            {(editedPart ? editedPart.order : part.order) !== 0 && editingPartId === part.id && editedPart && (
+                            {(editedPart ? editedPart.part_number : part.part_number) !== 0 && editingPartId === part.id && editedPart && (
                               <div>
                                 <div className="flex items-center justify-between mb-2">
                                   <label className="block text-gray-700 font-medium text-xs">Custom Links (Language-Specific)</label>
@@ -2491,7 +2708,7 @@ const fetchEventAndParts = async () => {
                             )}
 
                             {/* Preparation part special links */}
-                            {(editedPart ? editedPart.order : part.order) === 0 && (
+                            {(editedPart ? editedPart.part_number : part.part_number) === 0 && (
                               <div>
                                 <label className="block text-gray-700 font-medium mb-3 text-xs">Quick Links</label>
                                 <div className="grid grid-cols-2 gap-3">

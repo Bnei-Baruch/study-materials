@@ -303,6 +303,7 @@ interface Part {
   title: string
   description: string
   order: number
+  part_number: number
   language: string
   sources: Source[]
   excerpts_link?: string
@@ -436,7 +437,8 @@ export function EmbeddedLessonSidebar({
   }
 
   const getSectionShareText = (part: Part) => {
-    const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`
+    const displayNum = part.part_number
+    const partNumber = displayNum === 0 ? t.preparation : `${t.part} ${displayNum}`
     const links = [
       ...(part.sources?.map((s) => `${t.readSource}: ${s.source_url}`) || []),
       part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
@@ -463,7 +465,8 @@ export function EmbeddedLessonSidebar({
     
     const partsText = parts
       .map((part) => {
-        const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`
+        const displayNum = part.part_number
+        const partNumber = displayNum === 0 ? t.preparation : `${t.part} ${displayNum}`
         const links = [
           ...(part.sources?.map((s) => `${t.readSource}: ${s.source_url}`) || []),
           part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
@@ -698,8 +701,9 @@ export function EmbeddedLessonSidebar({
         <div className="space-y-2 sm:space-y-3 p-1.5 sm:p-3">
           {parts.map((part, index) => {
             const isExpanded = expandedSections.includes(index)
-            const colors = getSectionColor(part.order)
-            const partTitle = part.order === 0 ? t.preparation : `${t.part} ${part.order}: ${part.title}`
+            const displayNum = part.part_number
+            const colors = getSectionColor(displayNum)
+            const partTitle = displayNum === 0 ? t.preparation : `${t.part} ${displayNum}: ${part.title}`
 
             // Collect all links for this part
             const allLinks = [
