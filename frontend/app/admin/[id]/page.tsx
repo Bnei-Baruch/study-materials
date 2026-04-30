@@ -292,7 +292,7 @@ const fetchEventAndParts = async () => {
       const partsRes = await fetch(getApiUrl(`/events/${eventId}/parts${languageParam}`))
       if (partsRes.ok) {
         const partsData = await partsRes.json()
-        const fetchedParts = partsData.parts || []
+        const fetchedParts = (partsData.parts || []).map((p: Part) => ({ ...p, part_number: p.part_number ?? p.order }))
         setParts(fetchedParts)
         return fetchedParts
       }

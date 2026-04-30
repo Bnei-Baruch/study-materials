@@ -11,6 +11,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func intPtr(v int) *int { return &v }
+
 // HandleCreatePart creates a new lesson part (POC)
 func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 	var req storage.CreatePartRequest
@@ -87,7 +89,7 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 		PartType:               partType,
 		Language:               language,
 		EventID:                req.EventID,
-		PartNumber:             req.PartNumber,
+		PartNumber:             intPtr(req.PartNumber),
 		Order:                  autoOrder,
 		ExcerptsLink:           req.ExcerptsLink,
 		TranscriptLink:         req.TranscriptLink,
@@ -123,7 +125,7 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 
 		// Determine title for translation stub
 		stubTitle := "[Translation needed]"
-		if part.PartNumber == 0 {
+		if part.PartNumber == nil || *part.PartNumber == 0 {
 			// For preparation parts, use translated title from config
 			if translatedTitle, ok := a.templateConfig.Preparation[lang]; ok {
 				stubTitle = translatedTitle
@@ -229,7 +231,7 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 	// Update all editable fields
 	existingPart.Title = req.Title
 	existingPart.Description = req.Description
-	existingPart.PartNumber = req.PartNumber
+	existingPart.PartNumber = intPtr(req.PartNumber)
 	existingPart.Order = req.Order
 	existingPart.Sources = req.Sources
 	existingPart.ExcerptsLink = req.ExcerptsLink

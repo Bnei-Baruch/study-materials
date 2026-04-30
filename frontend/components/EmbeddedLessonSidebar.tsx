@@ -380,7 +380,7 @@ export function EmbeddedLessonSidebar({
           throw new Error('Failed to fetch parts')
         }
         const partsData = await partsRes.json()
-        const fetchedParts = partsData.parts || []
+        const fetchedParts = (partsData.parts || []).map((p: Part) => ({ ...p, part_number: p.part_number ?? p.order }))
         setParts(fetchedParts)
 
         // Expand all sections by default

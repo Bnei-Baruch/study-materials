@@ -22135,6 +22135,30 @@ var StudyMaterialsWidgetBundle = (() => {
       error: "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
       noEventsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0443\u0440\u043E\u043A\u0456\u0432",
       viewAllMaterials: "\u041F\u0435\u0440\u0435\u0433\u043B\u044F\u043D\u0443\u0442\u0438 \u0432\u0441\u0456 \u043D\u0430\u0432\u0447\u0430\u043B\u044C\u043D\u0456 \u043C\u0430\u0442\u0435\u0440\u0456\u0430\u043B\u0438"
+    },
+    tr: {
+      studyMaterials: "\xC7al\u0131\u015Fma Materyalleri",
+      selectLesson: "Listeden bir ders se\xE7in",
+      loading: "Y\xFCkleniyor...",
+      error: "Veri y\xFCkleme hatas\u0131",
+      noEventsAvailable: "Kullan\u0131labilir ders yok",
+      viewAllMaterials: "T\xFCm \xE7al\u0131\u015Fma materyallerini g\xF6r\xFCnt\xFCle"
+    },
+    "pt-BR": {
+      studyMaterials: "Materiais de Estudo",
+      selectLesson: "Selecione uma aula da lista",
+      loading: "Carregando...",
+      error: "Erro ao carregar dados",
+      noEventsAvailable: "Nenhuma aula dispon\xEDvel",
+      viewAllMaterials: "Ver todos os materiais de estudo"
+    },
+    bg: {
+      studyMaterials: "\u0423\u0447\u0435\u0431\u043D\u0438 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u0438",
+      selectLesson: "\u0418\u0437\u0431\u0435\u0440\u0435\u0442\u0435 \u0443\u0440\u043E\u043A \u043E\u0442 \u0441\u043F\u0438\u0441\u044A\u043A\u0430",
+      loading: "\u0417\u0430\u0440\u0435\u0436\u0434\u0430\u043D\u0435...",
+      error: "\u0413\u0440\u0435\u0448\u043A\u0430 \u043F\u0440\u0438 \u0437\u0430\u0440\u0435\u0436\u0434\u0430\u043D\u0435 \u043D\u0430 \u0434\u0430\u043D\u043D\u0438",
+      noEventsAvailable: "\u041D\u044F\u043C\u0430 \u043D\u0430\u043B\u0438\u0447\u043D\u0438 \u0443\u0440\u043E\u0446\u0438",
+      viewAllMaterials: "\u0412\u0438\u0436\u0442\u0435 \u0432\u0441\u0438\u0447\u043A\u0438 \u0443\u0447\u0435\u0431\u043D\u0438 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u0438"
     }
   };
   function EmbeddedEventsList({
@@ -22233,7 +22257,10 @@ var StudyMaterialsWidgetBundle = (() => {
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "de", children: "Deutsch" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "it", children: "Italiano" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "fr", children: "Fran\xE7ais" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "uk", children: "\u0423\u043A\u0440\u0430\u0457\u043D\u0441\u044C\u043A\u0430" })
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "uk", children: "\u0423\u043A\u0440\u0430\u0457\u043D\u0441\u044C\u043A\u0430" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "tr", children: "T\xFCrk\xE7e" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "pt-BR", children: "Portugu\xEAs" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "bg", children: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438" })
             ]
           }
         ) })
@@ -22483,6 +22510,72 @@ var StudyMaterialsWidgetBundle = (() => {
       noPartsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0447\u0430\u0441\u0442\u0438\u043D",
       back: "\u041D\u0430\u0437\u0430\u0434",
       copyAsText: "\u041A\u043E\u043F\u0456\u044E\u0432\u0430\u0442\u0438 \u044F\u043A \u0442\u0435\u043A\u0441\u0442"
+    },
+    tr: {
+      preparation: "Ders Haz\u0131rl\u0131\u011F\u0131",
+      part: "B\xF6l\xFCm",
+      shareLesson: "Payla\u015F",
+      shareSection: "Payla\u015F",
+      copyLink: "Ba\u011Flant\u0131y\u0131 Kopyala",
+      copied: "Kopyaland\u0131!",
+      readSource: "Kayna\u011F\u0131 Oku",
+      watchLesson: "Dersi \u0130zle",
+      readDocument: "Belge",
+      viewExcerpts: "Se\xE7ilmi\u015F Al\u0131nt\u0131lar",
+      viewTranscript: "Ders Transkripti",
+      viewProgram: "Belge",
+      readingBeforeSleep: "Uyku \xD6ncesi Okuma",
+      lessonPreparation: "Ders Haz\u0131rl\u0131\u011F\u0131",
+      lineupForHosts: "Sunucular i\xE7in Program",
+      loading: "Y\xFCkleniyor...",
+      error: "Veri y\xFCkleme hatas\u0131",
+      noPartsAvailable: "Kullan\u0131labilir b\xF6l\xFCm yok",
+      back: "Geri",
+      copyAsText: "Metin olarak Kopyala"
+    },
+    "pt-BR": {
+      preparation: "Prepara\xE7\xE3o da Aula",
+      part: "Parte",
+      shareLesson: "Compartilhar",
+      shareSection: "Compartilhar",
+      copyLink: "Copiar Link",
+      copied: "Copiado!",
+      readSource: "Ler a Fonte",
+      watchLesson: "Assistir Aula",
+      readDocument: "Documento",
+      viewExcerpts: "Trechos Selecionados",
+      viewTranscript: "Transcri\xE7\xE3o da Aula",
+      viewProgram: "Documento",
+      readingBeforeSleep: "Leitura Antes de Dormir",
+      lessonPreparation: "Prepara\xE7\xE3o da Aula",
+      lineupForHosts: "Lineup para Apresentadores",
+      loading: "Carregando...",
+      error: "Erro ao carregar dados",
+      noPartsAvailable: "Nenhuma parte dispon\xEDvel",
+      back: "Voltar",
+      copyAsText: "Copiar como Texto"
+    },
+    bg: {
+      preparation: "\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0437\u0430 \u0443\u0440\u043E\u043A\u0430",
+      part: "\u0427\u0430\u0441\u0442",
+      shareLesson: "\u0421\u043F\u043E\u0434\u0435\u043B\u044F\u043D\u0435",
+      shareSection: "\u0421\u043F\u043E\u0434\u0435\u043B\u044F\u043D\u0435",
+      copyLink: "\u041A\u043E\u043F\u0438\u0440\u0430\u043D\u0435 \u043D\u0430 \u0432\u0440\u044A\u0437\u043A\u0430",
+      copied: "\u041A\u043E\u043F\u0438\u0440\u0430\u043D\u043E!",
+      readSource: "\u041F\u0440\u043E\u0447\u0435\u0442\u0438 \u0438\u0437\u0442\u043E\u0447\u043D\u0438\u043A\u0430",
+      watchLesson: "\u0413\u043B\u0435\u0434\u0430\u0439 \u0443\u0440\u043E\u043A\u0430",
+      readDocument: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442",
+      viewExcerpts: "\u0418\u0437\u0431\u0440\u0430\u043D\u0438 \u043E\u0442\u043A\u044A\u0441\u0438",
+      viewTranscript: "\u0422\u0440\u0430\u043D\u0441\u043A\u0440\u0438\u043F\u0442 \u043D\u0430 \u0443\u0440\u043E\u043A\u0430",
+      viewProgram: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442",
+      readingBeforeSleep: "\u0427\u0435\u0442\u0435\u043D\u0435 \u043F\u0440\u0435\u0434\u0438 \u0441\u044A\u043D",
+      lessonPreparation: "\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0437\u0430 \u0443\u0440\u043E\u043A\u0430",
+      lineupForHosts: "\u041F\u0440\u043E\u0433\u0440\u0430\u043C\u0430 \u0437\u0430 \u0432\u043E\u0434\u0435\u0449\u0438",
+      loading: "\u0417\u0430\u0440\u0435\u0436\u0434\u0430\u043D\u0435...",
+      error: "\u0413\u0440\u0435\u0448\u043A\u0430 \u043F\u0440\u0438 \u0437\u0430\u0440\u0435\u0436\u0434\u0430\u043D\u0435 \u043D\u0430 \u0434\u0430\u043D\u043D\u0438",
+      noPartsAvailable: "\u041D\u044F\u043C\u0430 \u043D\u0430\u043B\u0438\u0447\u043D\u0438 \u0447\u0430\u0441\u0442\u0438",
+      back: "\u041D\u0430\u0437\u0430\u0434",
+      copyAsText: "\u041A\u043E\u043F\u0438\u0440\u0430\u0439 \u043A\u0430\u0442\u043E \u0442\u0435\u043A\u0441\u0442"
     }
   };
   function EmbeddedLessonSidebar({
@@ -22524,7 +22617,10 @@ var StudyMaterialsWidgetBundle = (() => {
             throw new Error("Failed to fetch parts");
           }
           const partsData = yield partsRes.json();
-          const fetchedParts = partsData.parts || [];
+          const fetchedParts = (partsData.parts || []).map((p) => {
+            var _a2;
+            return __spreadProps(__spreadValues({}, p), { part_number: (_a2 = p.part_number) != null ? _a2 : p.order });
+          });
           setParts(fetchedParts);
           setExpandedSections(fetchedParts.map((_, idx) => idx));
         } catch (err) {
@@ -22572,7 +22668,8 @@ var StudyMaterialsWidgetBundle = (() => {
     });
     const getSectionShareText = (part) => {
       var _a2, _b2;
-      const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`;
+      const displayNum = part.part_number;
+      const partNumber = displayNum === 0 ? t.preparation : `${t.part} ${displayNum}`;
       const links = [
         ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => `${t.readSource}: ${s.source_url}`)) || [],
         part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
@@ -22598,7 +22695,8 @@ ${links.join("\n")}`;
       const date = formatEventDate(event.date, event.start_time, event.end_time);
       const partsText = parts.map((part) => {
         var _a3, _b2;
-        const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`;
+        const displayNum = part.part_number;
+        const partNumber = displayNum === 0 ? t.preparation : `${t.part} ${displayNum}`;
         const links = [
           ...((_a3 = part.sources) == null ? void 0 : _a3.map((s) => `${t.readSource}: ${s.source_url}`)) || [],
           part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
@@ -22776,8 +22874,9 @@ ${partsText}`;
       parts.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "p-2 sm:p-4 text-center text-gray-500 dark:text-gray-400 text-[12px] sm:text-[13px]", children: t.noPartsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "space-y-2 sm:space-y-3 p-1.5 sm:p-3", children: parts.map((part, index) => {
         var _a2, _b2;
         const isExpanded = expandedSections.includes(index);
-        const colors = getSectionColor(part.order);
-        const partTitle = part.order === 0 ? t.preparation : `${t.part} ${part.order}: ${part.title}`;
+        const displayNum = part.part_number;
+        const colors = getSectionColor(displayNum);
+        const partTitle = displayNum === 0 ? t.preparation : `${t.part} ${displayNum}: ${part.title}`;
         const allLinks = [
           ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => ({ type: "source", text: t.readSource, url: s.source_url, page: s.page_number }))) || [],
           part.excerpts_link && { type: "document", text: t.viewExcerpts, url: part.excerpts_link },
