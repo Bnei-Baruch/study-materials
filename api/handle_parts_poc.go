@@ -225,6 +225,7 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 	existingPart.LineupForHostsLink = req.LineupForHostsLink
 	existingPart.RecordedLessonDate = req.RecordedLessonDate
 	existingPart.CustomLinks = req.CustomLinks
+	existingPart.ShowUpdatedBadge = req.ShowUpdatedBadge
 
 	// Parse and update date if provided
 	if req.Date != "" {
@@ -235,8 +236,6 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Don't change: ID, language, event_id, created_at
-	now := time.Now()
-	existingPart.UpdatedAt = &now
 
 	if err := a.store.SavePart(existingPart); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to update part: %v", err), http.StatusInternalServerError)

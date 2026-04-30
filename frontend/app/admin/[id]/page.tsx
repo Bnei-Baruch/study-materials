@@ -94,6 +94,7 @@ interface Part {
   recorded_lesson_date?: string
   lineup_for_hosts_link?: string
   custom_links?: CustomLink[]
+  show_updated_badge?: boolean
 }
 
 export default function AdminEventDetailPage() {
@@ -396,6 +397,7 @@ const fetchEventAndParts = async () => {
           recorded_lesson_link: editedPart.recorded_lesson_link || '',
           recorded_lesson_date: editedPart.recorded_lesson_date || '',
           custom_links: editedPart.custom_links || [],
+          show_updated_badge: editedPart.show_updated_badge || false,
         }),
       })
 
@@ -437,6 +439,7 @@ const fetchEventAndParts = async () => {
             recorded_lesson_link: part.recorded_lesson_link || '',
             recorded_lesson_date: part.recorded_lesson_date || '',
             custom_links: part.custom_links || [],
+            show_updated_badge: part.show_updated_badge || false,
           }),
         })
 
@@ -1508,6 +1511,23 @@ const fetchEventAndParts = async () => {
                                     className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-none"
                                     placeholder="Brief description of the lesson part..."
                                   />
+                                </div>
+
+                                {/* Updated badge toggle */}
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    id={`show-updated-badge-${langCode}`}
+                                    checked={editedPart.show_updated_badge || false}
+                                    onChange={(e) => {
+                                      const updated = {...editedPart, show_updated_badge: e.target.checked}
+                                      setEditedParts({...editedParts, [langCode]: updated})
+                                    }}
+                                    className="w-4 h-4 accent-amber-500"
+                                  />
+                                  <label htmlFor={`show-updated-badge-${langCode}`} className="text-xs text-gray-700 font-medium select-none cursor-pointer">
+                                    Show "Updated" badge on public site
+                                  </label>
                                 </div>
 
                                 {/* Recorded Lesson Date */}

@@ -79,7 +79,7 @@ interface Part {
   sources: Source[]
   custom_links?: CustomLink[]
   created_at: string
-  updated_at?: string
+  show_updated_badge?: boolean
 }
 
 const LANGUAGES = {
@@ -1319,7 +1319,7 @@ export default function PublicPage() {
                   <div className={`flex-1 max-w-[65%] ${isRTL ? 'border-r-4 pr-3' : 'border-l-4 pl-3'} ${colors.border}`}>
                     <h3 className={`${colors.text} font-bold mb-1 flex items-center gap-2 flex-wrap`} style={{ fontSize: '16px' }}>
                       {part.order == null ? part.title : part.order === 0 ? part.title : `${t('part')} ${part.order}: ${part.title}`}
-                      {part.updated_at && new Date(part.updated_at) > new Date(part.created_at) && (
+                      {part.show_updated_badge && (
                         <span className="text-xs font-medium px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
                           {t('updated')}
                         </span>
