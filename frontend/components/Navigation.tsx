@@ -129,13 +129,13 @@ export default function Navigation() {
           <a href="#" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src="/tree-logo.svg" width="54" height="72" alt="" />
             <div className="flex flex-col gap-0.5">
-              <h1 className="text-blue-900 dark:text-blue-200 leading-none font-bold" style={{ fontSize: '17px' }}>
+              <h1 className="text-blue-900 dark:text-blue-200 leading-none font-bold" style={{ fontSize: '22px' }}>
                 {SITE_NAME[language as keyof typeof SITE_NAME]}
               </h1>
-              <h1 className="text-blue-900 dark:text-blue-200 leading-none font-bold" style={{ fontSize: '17px' }}>
+              <h1 className="text-blue-900 dark:text-blue-200 leading-none font-bold" style={{ fontSize: '22px' }}>
                 {SITE_TAGLINE[language as keyof typeof SITE_TAGLINE]}
               </h1>
-              <p className="text-blue-800 dark:text-blue-300 leading-none" style={{ fontSize: '11px' }}>
+              <p className="text-blue-800 dark:text-blue-300 leading-none" style={{ fontSize: '14px' }}>
                 {SITE_SUBTITLE[language as keyof typeof SITE_SUBTITLE]}
               </p>
             </div>
