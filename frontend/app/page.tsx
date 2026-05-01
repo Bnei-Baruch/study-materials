@@ -67,6 +67,7 @@ interface Part {
   language: string
   event_id: string
   order?: number | null
+  part_number: number | null
   position: number
   excerpts_link?: string
   transcript_link?: string
@@ -736,7 +737,9 @@ export default function PublicPage() {
     try {
       const response = await fetch(getApiUrl(`/events/${eventId}/parts?language=${language}`))
       const data = await response.json()
-      setParts((data.parts || []).sort((a: Part, b: Part) => (a.position ?? 0) - (b.position ?? 0)))
+      setParts((data.parts || [])
+        .sort((a: Part, b: Part) => (a.order ?? 0) - (b.order ?? 0))
+        .map((p: Part) => ({ ...p, part_number: p.part_number ?? p.order })))
     } catch (error) {
       console.error('Failed to fetch parts:', error)
       setParts([])
@@ -776,8 +779,8 @@ export default function PublicPage() {
   const generatePartMessage = (part: Part, event: Event) => {
     const eventTitle = getEventTitle(event)
     const eventDate = formatDate(event.date)
-    const isPreparation = part.order === 0
-    const partTitle = part.order == null ? part.title : isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
+    const isPreparation = part.part_number === 0
+    const partTitle = isPreparation ? part.title : `${t('part')} ${part.part_number}: ${part.title}`
     const separator = language === 'he' ? '‮━━━━━━━━━━' : '━━━━━━━━━━'
     
     let message = `*${eventTitle}*\n${eventDate}\n\n${separator}\n\n`
@@ -857,8 +860,8 @@ export default function PublicPage() {
     // Include all parts information
     if (parts && parts.length > 0) {
       parts.forEach(part => {
-        const isPreparation = part.order === 0
-        const partTitle = part.order == null ? part.title : isPreparation ? part.title : `${t('part')} ${part.order}: ${part.title}`
+        const isPreparation = part.part_number === 0
+        const partTitle = isPreparation ? part.title : `${t('part')} ${part.part_number}: ${part.title}`
         
         message += `${separator}\n\n*${partTitle}*\n`
         
@@ -1305,9 +1308,9 @@ export default function PublicPage() {
 
             <div className="space-y-6">
               {parts.map((part) => {
-            const colors = getPartColorClasses(part.order)
+            const colors = getPartColorClasses(part.part_number)
             const isExpanded = expandedParts.has(part.id)
-            const isPreparation = part.order === 0
+            const isPreparation = part.part_number === 0
 
             return (
               <div
@@ -1318,7 +1321,7 @@ export default function PublicPage() {
                 <div className="p-4 flex items-start gap-3">
                   <div className={`flex-1 max-w-[65%] ${isRTL ? 'border-r-4 pr-3' : 'border-l-4 pl-3'} ${colors.border}`}>
                     <h3 className={`${colors.text} font-bold mb-1 flex items-center gap-2 flex-wrap`} style={{ fontSize: '16px' }}>
-                      {part.order == null ? part.title : part.order === 0 ? part.title : `${t('part')} ${part.order}: ${part.title}`}
+                      {part.part_number === 0 ? part.title : `${t('part')} ${part.part_number}: ${part.title}`}
                       {part.show_updated_badge && (
                         <span className="text-xs font-medium px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
                           {t('updated')}
