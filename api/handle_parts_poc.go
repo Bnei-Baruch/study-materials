@@ -93,6 +93,8 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 		Order:                  autoOrder,
 		ExcerptsLink:           req.ExcerptsLink,
 		TranscriptLink:         req.TranscriptLink,
+		TranscriptStartPoint:   req.TranscriptStartPoint,
+		TranscriptEndPoint:     req.TranscriptEndPoint,
 		LessonLink:             req.LessonLink,
 		ProgramLink:            req.ProgramLink,
 		ReadingBeforeSleepLink: req.ReadingBeforeSleepLink,
@@ -236,6 +238,8 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 	existingPart.Sources = req.Sources
 	existingPart.ExcerptsLink = req.ExcerptsLink
 	existingPart.TranscriptLink = req.TranscriptLink
+	existingPart.TranscriptStartPoint = req.TranscriptStartPoint
+	existingPart.TranscriptEndPoint = req.TranscriptEndPoint
 	existingPart.LessonLink = req.LessonLink
 	existingPart.ProgramLink = req.ProgramLink
 	existingPart.ReadingBeforeSleepLink = req.ReadingBeforeSleepLink

@@ -131,6 +131,8 @@ interface Part {
   sources: Source[]
   excerpts_link?: string
   transcript_link?: string
+  transcript_start_point?: string
+  transcript_end_point?: string
   lesson_link?: string
   program_link?: string
   reading_before_sleep_link?: string
@@ -372,6 +374,8 @@ const fetchEventAndParts = async () => {
               sources: part.sources,
               excerpts_link: part.excerpts_link || '',
               transcript_link: part.transcript_link || '',
+              transcript_start_point: part.transcript_start_point || '',
+              transcript_end_point: part.transcript_end_point || '',
               lesson_link: part.lesson_link || '',
               program_link: part.program_link || '',
               reading_before_sleep_link: part.reading_before_sleep_link || '',
@@ -492,7 +496,8 @@ const fetchEventAndParts = async () => {
                 title: p.title, description: p.description,
                 part_number: p.part_number, order: originalPart.order,
                 sources: p.sources, excerpts_link: p.excerpts_link || '',
-                transcript_link: p.transcript_link || '', lesson_link: p.lesson_link || '',
+                transcript_link: p.transcript_link || '', transcript_start_point: p.transcript_start_point || '', transcript_end_point: p.transcript_end_point || '',
+                lesson_link: p.lesson_link || '',
                 program_link: p.program_link || '', reading_before_sleep_link: p.reading_before_sleep_link || '',
                 lesson_preparation_link: p.lesson_preparation_link || '', lineup_for_hosts_link: p.lineup_for_hosts_link || '',
                 recorded_lesson_link: p.recorded_lesson_link || '', recorded_lesson_date: p.recorded_lesson_date || '',
@@ -514,7 +519,8 @@ const fetchEventAndParts = async () => {
                 title: sibling.title, description: sibling.description,
                 part_number: editedPart.part_number, order: editedPart.order,
                 sources: sibling.sources, excerpts_link: sibling.excerpts_link || '',
-                transcript_link: sibling.transcript_link || '', lesson_link: sibling.lesson_link || '',
+                transcript_link: sibling.transcript_link || '', transcript_start_point: sibling.transcript_start_point || '', transcript_end_point: sibling.transcript_end_point || '',
+                lesson_link: sibling.lesson_link || '',
                 program_link: sibling.program_link || '', reading_before_sleep_link: sibling.reading_before_sleep_link || '',
                 lesson_preparation_link: sibling.lesson_preparation_link || '', lineup_for_hosts_link: sibling.lineup_for_hosts_link || '',
                 recorded_lesson_link: sibling.recorded_lesson_link || '', recorded_lesson_date: sibling.recorded_lesson_date || '',
@@ -539,6 +545,8 @@ const fetchEventAndParts = async () => {
           sources: editedPart.sources,
           excerpts_link: editedPart.excerpts_link || '',
           transcript_link: editedPart.transcript_link || '',
+          transcript_start_point: editedPart.transcript_start_point || '',
+          transcript_end_point: editedPart.transcript_end_point || '',
           lesson_link: editedPart.lesson_link || '',
           program_link: editedPart.program_link || '',
           reading_before_sleep_link: editedPart.reading_before_sleep_link || '',
@@ -584,7 +592,8 @@ const fetchEventAndParts = async () => {
               title: p.title, description: p.description,
               part_number: p.part_number, order: oldOrder,
               sources: p.sources, excerpts_link: p.excerpts_link || '',
-              transcript_link: p.transcript_link || '', lesson_link: p.lesson_link || '',
+              transcript_link: p.transcript_link || '', transcript_start_point: p.transcript_start_point || '', transcript_end_point: p.transcript_end_point || '',
+              lesson_link: p.lesson_link || '',
               program_link: p.program_link || '', reading_before_sleep_link: p.reading_before_sleep_link || '',
               lesson_preparation_link: p.lesson_preparation_link || '', lineup_for_hosts_link: p.lineup_for_hosts_link || '',
               recorded_lesson_link: p.recorded_lesson_link || '', recorded_lesson_date: p.recorded_lesson_date || '',
@@ -607,6 +616,8 @@ const fetchEventAndParts = async () => {
             sources: part.sources,
             excerpts_link: part.excerpts_link || '',
             transcript_link: part.transcript_link || '',
+            transcript_start_point: part.transcript_start_point || '',
+            transcript_end_point: part.transcript_end_point || '',
             lesson_link: part.lesson_link || '',
             program_link: part.program_link || '',
             reading_before_sleep_link: part.reading_before_sleep_link || '',
@@ -1816,6 +1827,22 @@ const fetchEventAndParts = async () => {
                                             </a>
                                           )}
                                         </div>
+                                        <div className="grid grid-cols-2 gap-2 mt-2">
+                                          <input
+                                            type="text"
+                                            value={editedPart.transcript_start_point || ''}
+                                            onChange={(e) => setEditedParts({...editedParts, [langCode]: {...editedPart, transcript_start_point: e.target.value}})}
+                                            className="px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                            placeholder="Start From"
+                                          />
+                                          <input
+                                            type="text"
+                                            value={editedPart.transcript_end_point || ''}
+                                            onChange={(e) => setEditedParts({...editedParts, [langCode]: {...editedPart, transcript_end_point: e.target.value}})}
+                                            className="px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                            placeholder="End Point"
+                                          />
+                                        </div>
                                       </div>
                                       <div>
                                         <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lesson Link</label>
@@ -2559,6 +2586,22 @@ const fetchEventAndParts = async () => {
                                           <ExternalLink className="w-4 h-4" />
                                         </a>
                                       )}
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2 mt-2">
+                                      <input
+                                        type="text"
+                                        value={editedPart ? editedPart.transcript_start_point || '' : part.transcript_start_point || ''}
+                                        onChange={(e) => editedPart && updateEditedField('transcript_start_point', e.target.value)}
+                                        className="px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                        placeholder="Start From"
+                                      />
+                                      <input
+                                        type="text"
+                                        value={editedPart ? editedPart.transcript_end_point || '' : part.transcript_end_point || ''}
+                                        onChange={(e) => editedPart && updateEditedField('transcript_end_point', e.target.value)}
+                                        className="px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                        placeholder="End Point"
+                                      />
                                     </div>
                                   </div>
                                   <div>

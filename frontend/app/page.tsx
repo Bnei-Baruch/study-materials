@@ -71,6 +71,8 @@ interface Part {
   position: number
   excerpts_link?: string
   transcript_link?: string
+  transcript_start_point?: string
+  transcript_end_point?: string
   lesson_link?: string
   program_link?: string
   reading_before_sleep_link?: string
@@ -1539,27 +1541,35 @@ export default function PublicPage() {
 
                     {/* Transcript Link */}
                     {part.transcript_link && (
-                      <div className={`flex items-center gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
-                        <FileText className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
-                        <a
-                          href={part.transcript_link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`flex-1 ${colors.text}`}
-                          style={{ fontSize: '14px' }}
-                        >
-                          {t('lessonTranscript')}
-                        </a>
-                        <button
-                          onClick={(e) => copyToClipboard(part.transcript_link!, e)}
-                          className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
-                        >
-                          {copiedUrl === part.transcript_link ? (
-                            <Check className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </button>
+                      <div className={`flex flex-col gap-2 ${colors.bg} rounded-lg p-3 group hover:opacity-90 transition-all`}>
+                        <div className="flex items-center gap-2">
+                          <FileText className={`w-4 h-4 ${colors.icon} flex-shrink-0`} />
+                          <a
+                            href={part.transcript_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`flex-1 ${colors.text}`}
+                            style={{ fontSize: '14px' }}
+                          >
+                            {t('lessonTranscript')}
+                          </a>
+                          <button
+                            onClick={(e) => copyToClipboard(part.transcript_link!, e)}
+                            className={`${colors.icon} hover:opacity-70 rounded p-1 transition-opacity`}
+                          >
+                            {copiedUrl === part.transcript_link ? (
+                              <Check className="w-4 h-4 text-green-600" />
+                            ) : (
+                              <Copy className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
+                        {(part.transcript_start_point || part.transcript_end_point) && (
+                          <div className="text-xs text-gray-600 dark:text-gray-400 ml-6 space-y-1">
+                            {part.transcript_start_point && <div><strong>{t('startPoint')}</strong> {part.transcript_start_point}</div>}
+                            {part.transcript_end_point && <div><strong>{t('endPoint')}</strong> {part.transcript_end_point}</div>}
+                          </div>
+                        )}
                       </div>
                     )}
 

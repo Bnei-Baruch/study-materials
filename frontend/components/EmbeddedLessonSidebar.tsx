@@ -38,6 +38,8 @@ interface Translations {
   noPartsAvailable: string
   back: string
   copyAsText: string
+  startPoint: string
+  endPoint: string
 }
 
 // Translation object for all supported languages
@@ -63,6 +65,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'אין חלקים זמינים',
     back: 'חזרה',
     copyAsText: 'העתק כטקסט',
+    startPoint: 'דבר המתחיל:',
+    endPoint: 'עד:',
   },
   en: {
     preparation: 'Lesson Preparation',
@@ -85,6 +89,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'No parts available',
     back: 'Back',
     copyAsText: 'Copy as text',
+    startPoint: 'From:',
+    endPoint: 'To:',
   },
   ru: {
     preparation: 'Подготовка к уроку',
@@ -107,6 +113,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'Нет доступных частей',
     back: 'Назад',
     copyAsText: 'Копировать как текст',
+    startPoint: 'От:',
+    endPoint: 'До:',
   },
   es: {
     preparation: 'Preparación de la lección',
@@ -129,6 +137,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'No hay partes disponibles',
     back: 'Volver',
     copyAsText: 'Copiar como texto',
+    startPoint: 'Desde:',
+    endPoint: 'Hasta:',
   },
   de: {
     preparation: 'Lektionsvorbereitung',
@@ -151,6 +161,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'Keine Teile verfügbar',
     back: 'Zurück',
     copyAsText: 'Als Text kopieren',
+    startPoint: 'Von:',
+    endPoint: 'Bis:',
   },
   it: {
     preparation: 'Preparazione della lezione',
@@ -173,6 +185,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'Nessuna parte disponibile',
     back: 'Indietro',
     copyAsText: 'Copia come testo',
+    startPoint: 'Da:',
+    endPoint: 'A:',
   },
   fr: {
     preparation: 'Préparation de la leçon',
@@ -195,6 +209,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'Aucune partie disponible',
     back: 'Retour',
     copyAsText: 'Copier en tant que texte',
+    startPoint: 'De:',
+    endPoint: 'À:',
   },
   uk: {
     preparation: 'Підготовка до уроку',
@@ -217,6 +233,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'Немає доступних частин',
     back: 'Назад',
     copyAsText: 'Копіювати як текст',
+    startPoint: 'Від:',
+    endPoint: 'До:',
   },
   tr: {
     preparation: 'Ders Hazırlığı',
@@ -239,6 +257,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'Kullanılabilir bölüm yok',
     back: 'Geri',
     copyAsText: 'Metin olarak Kopyala',
+    startPoint: 'Başlangıç:',
+    endPoint: 'Bitiş:',
   },
   'pt-BR': {
     preparation: 'Preparação da Aula',
@@ -261,6 +281,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'Nenhuma parte disponível',
     back: 'Voltar',
     copyAsText: 'Copiar como Texto',
+    startPoint: 'De:',
+    endPoint: 'Até:',
   },
   bg: {
     preparation: 'Подготовка за урока',
@@ -283,6 +305,8 @@ const TRANSLATIONS: Record<string, Translations> = {
     noPartsAvailable: 'Няма налични части',
     back: 'Назад',
     copyAsText: 'Копирай като текст',
+    startPoint: 'От:',
+    endPoint: 'До:',
   },
 }
 
@@ -291,6 +315,8 @@ interface Source {
   source_title: string
   source_url: string
   page_number?: string
+  start_point?: string
+  end_point?: string
 }
 
 interface CustomLink {
@@ -308,6 +334,8 @@ interface Part {
   sources: Source[]
   excerpts_link?: string
   transcript_link?: string
+  transcript_start_point?: string
+  transcript_end_point?: string
   lesson_link?: string
   program_link?: string
   reading_before_sleep_link?: string
@@ -707,16 +735,16 @@ export function EmbeddedLessonSidebar({
 
             // Collect all links for this part
             const allLinks = [
-              ...(part.sources?.map(s => ({ type: 'source' as const, text: t.readSource, url: s.source_url, page: s.page_number })) || []),
+              ...(part.sources?.map(s => ({ type: 'source' as const, text: t.readSource, url: s.source_url, page: s.page_number, start_point: s.start_point, end_point: s.end_point })) || []),
               part.excerpts_link && { type: 'document' as const, text: t.viewExcerpts, url: part.excerpts_link },
-              part.transcript_link && { type: 'document' as const, text: t.viewTranscript, url: part.transcript_link },
+              part.transcript_link && { type: 'document' as const, text: t.viewTranscript, url: part.transcript_link, start_point: part.transcript_start_point, end_point: part.transcript_end_point },
               part.lesson_link && { type: 'video' as const, text: t.watchLesson, url: part.lesson_link },
               part.program_link && { type: 'audio' as const, text: t.viewProgram, url: part.program_link },
               part.reading_before_sleep_link && { type: 'document' as const, text: t.readingBeforeSleep, url: part.reading_before_sleep_link },
               part.lesson_preparation_link && { type: 'document' as const, text: t.lessonPreparation, url: part.lesson_preparation_link },
               part.lineup_for_hosts_link && { type: 'document' as const, text: t.lineupForHosts, url: part.lineup_for_hosts_link },
               ...(part.custom_links?.map(l => ({ type: 'document' as const, text: l.title, url: l.url })) || []),
-            ].filter(Boolean) as Array<{ type: 'source' | 'video' | 'document' | 'audio', text: string, url: string, page?: string }>
+            ].filter(Boolean) as Array<{ type: 'source' | 'video' | 'document' | 'audio', text: string, url: string, page?: string, start_point?: string, end_point?: string }>
 
             return (
               <div
@@ -766,38 +794,41 @@ export function EmbeddedLessonSidebar({
                 {isExpanded && allLinks.length > 0 && (
                   <div className={`space-y-1 sm:space-y-1.5 ${isRTL ? 'pr-1.5 sm:pr-2.5 pl-1.5 sm:pl-2.5' : 'px-1.5 sm:px-2.5'} pb-1.5 sm:pb-2.5`}>
                     {allLinks.map((link, linkIdx) => (
-                      <div
-                        key={linkIdx}
-                        className={`flex items-center gap-1 sm:gap-2 ${colors.bg} rounded-md p-1 sm:p-2 hover:opacity-80 transition-all group`}
-                      >
-                        <span className={`${colors.text} flex-shrink-0`}>
-                          {getLinkIcon(link.url, link.type)}
-                        </span>
-
-                        <a
-                          href={link.url}
-                          className={`flex-1 ${colors.text} hover:underline truncate text-[14px] sm:text-[14px]`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {link.text}
-                          {link.page && <span className="text-gray-500 dark:text-gray-400 text-[12px] sm:text-[12px]"> (p. {link.page})</span>}
-                        </a>
-
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault()
-                            copyToClipboard(link.url)
-                          }}
-                          className={`${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all flex-shrink-0`}
-                          title={t.copyLink}
-                        >
-                          {copiedUrl === link.url ? (
-                            <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" />
-                          ) : (
-                            <Copy className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                          )}
-                        </button>
+                      <div key={linkIdx} className={`${colors.bg} rounded-md`}>
+                        <div className="flex items-center gap-1 sm:gap-2 p-1 sm:p-2 hover:opacity-80 transition-all group">
+                          <span className={`${colors.text} flex-shrink-0`}>
+                            {getLinkIcon(link.url, link.type)}
+                          </span>
+                          <a
+                            href={link.url}
+                            className={`flex-1 ${colors.text} hover:underline truncate text-[14px] sm:text-[14px]`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {link.text}
+                            {link.page && <span className="text-gray-500 dark:text-gray-400 text-[12px] sm:text-[12px]"> (p. {link.page})</span>}
+                          </a>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault()
+                              copyToClipboard(link.url)
+                            }}
+                            className={`${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all flex-shrink-0`}
+                            title={t.copyLink}
+                          >
+                            {copiedUrl === link.url ? (
+                              <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" />
+                            ) : (
+                              <Copy className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                            )}
+                          </button>
+                        </div>
+                        {(link.start_point || link.end_point) && (
+                          <div className="text-xs text-gray-600 dark:text-gray-400 pe-[22px] sm:pe-[30px] ps-8 pb-2 space-y-1">
+                            {link.start_point && <div><strong>{t.startPoint}</strong> {link.start_point}</div>}
+                            {link.end_point && <div><strong>{t.endPoint}</strong> {link.end_point}</div>}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

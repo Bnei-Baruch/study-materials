@@ -15,6 +15,8 @@ type LessonPart struct {
 	Order                  int          `json:"order" bson:"order"`                                                             // Sort position within event (auto-assigned)
 	ExcerptsLink           string       `json:"excerpts_link,omitempty" bson:"excerpts_link,omitempty"`                         // Optional: link to selected excerpts
 	TranscriptLink         string       `json:"transcript_link,omitempty" bson:"transcript_link,omitempty"`                     // Optional: link to transcript
+	TranscriptStartPoint   string       `json:"transcript_start_point,omitempty" bson:"transcript_start_point,omitempty"`       // Optional: start point in transcript (language-specific)
+	TranscriptEndPoint     string       `json:"transcript_end_point,omitempty" bson:"transcript_end_point,omitempty"`           // Optional: end point in transcript (language-specific)
 	LessonLink             string       `json:"lesson_link,omitempty" bson:"lesson_link,omitempty"`                             // Optional: kabbalahmedia lesson URL
 	ProgramLink            string       `json:"program_link,omitempty" bson:"program_link,omitempty"`                           // Optional: link to program
 	ReadingBeforeSleepLink string       `json:"reading_before_sleep_link,omitempty" bson:"reading_before_sleep_link,omitempty"` // Optional: for preparation parts (order=0)
@@ -56,6 +58,8 @@ type CreatePartRequest struct {
 	TemplateID             string       `json:"template_id,omitempty"`               // Optional: ID of template used (for auto-translating)
 	ExcerptsLink           string       `json:"excerpts_link,omitempty"`             // Optional: link to selected excerpts
 	TranscriptLink         string       `json:"transcript_link,omitempty"`           // Optional: link to transcript
+	TranscriptStartPoint   string       `json:"transcript_start_point,omitempty"`    // Optional: start point in transcript
+	TranscriptEndPoint     string       `json:"transcript_end_point,omitempty"`      // Optional: end point in transcript
 	LessonLink             string       `json:"lesson_link,omitempty"`               // Optional: kabbalahmedia lesson URL
 	ProgramLink            string       `json:"program_link,omitempty"`              // Optional: link to program
 	ReadingBeforeSleepLink string       `json:"reading_before_sleep_link,omitempty"` // Optional: for preparation parts (order=0)
