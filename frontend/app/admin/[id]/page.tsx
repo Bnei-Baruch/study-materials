@@ -89,6 +89,9 @@ interface Event {
   date: string
   start_time?: string
   end_time?: string
+  end_date?: string
+  parent_event_id?: string
+  hide_from_lessons_tab?: boolean
   type: string
   number: number
   order: number
@@ -177,7 +180,13 @@ function AdminEventDetailPageContent() {
   const [editEventDate, setEditEventDate] = useState('')
   const [editEventStartTime, setEditEventStartTime] = useState('')
   const [editEventEndTime, setEditEventEndTime] = useState('')
+  const [editEventEndDate, setEditEventEndDate] = useState('')
+  const [editParentEventId, setEditParentEventId] = useState('')
+  const [editHideFromLessonsTab, setEditHideFromLessonsTab] = useState(false)
   const [editEventTitles, setEditEventTitles] = useState<{ [key: string]: string }>({})
+  const [conventionEvents, setConventionEvents] = useState<Event[]>([])
+  const [childSessions, setChildSessions] = useState<Event[]>([])
+  const CONVENTION_TYPES = ['convention', 'holiday', 'special_event']
   const [emailSentAt, setEmailSentAt] = useState<string | null>(null)
   const [templates, setTemplates] = useState<Array<{ id: string; translations: { [key: string]: string }; visible: boolean }>>([])
   const [editingPartOrder, setEditingPartOrder] = useState<number | null>(null)
@@ -286,6 +295,22 @@ const fetchEventAndParts = async () => {
       // Set email status if available
       if (eventData.email_sent_at) {
         setEmailSentAt(eventData.email_sent_at)
+      }
+
+      // Fetch convention events for parent dropdown
+      const conventionRes = await fetch(getApiUrl(`/events?types=convention,holiday,special_event&limit=200`))
+      if (conventionRes.ok) {
+        const conventionData = await conventionRes.json()
+        setConventionEvents((conventionData.events || []).filter((e: Event) => e.id !== eventId))
+      }
+
+      // Fetch child sessions if this is a convention-type event
+      if (['convention', 'holiday', 'special_event'].includes(eventData.type) && !eventData.parent_event_id) {
+        const sessionsRes = await fetch(getApiUrl(`/events?parent_id=${eventId}&limit=200`))
+        if (sessionsRes.ok) {
+          const sessionsData = await sessionsRes.json()
+          setChildSessions(sessionsData.events || [])
+        }
       }
 
       // Fetch parts for this event with language filter
@@ -1124,11 +1149,29 @@ const fetchEventAndParts = async () => {
                     formatDate(event.date)
                   )}
                 </h2>
-                <div className="flex items-center gap-4 text-gray-500" style={{ fontSize: '13px' }}>
+                <div className="flex items-center gap-4 text-gray-500 flex-wrap" style={{ fontSize: '13px' }}>
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
                     <span>{event.start_time && event.end_time ? `${event.start_time} - ${event.end_time}` : 'Not set'}</span>
                   </div>
+                  {event.end_date && (
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>Until {event.end_date.split('T')[0]}</span>
+                    </div>
+                  )}
+                  {event.parent_event_id && (
+                    <div className="flex items-center gap-1 text-purple-600">
+                      <LinkIcon className="w-4 h-4" />
+                      <Link href={`/admin/${event.parent_event_id}`} className="underline hover:no-underline">Parent event</Link>
+                    </div>
+                  )}
+                  {event.hide_from_lessons_tab && (
+                    <div className="flex items-center gap-1 text-amber-600">
+                      <EyeOff className="w-4 h-4" />
+                      <span>Hidden from lessons tab</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-1">
                     <Hash className="w-4 h-4" />
                     <span>Display Order: {event.order}</span>
@@ -1191,6 +1234,9 @@ const fetchEventAndParts = async () => {
                         date: editEventDate,
                         start_time: editEventStartTime || undefined,
                         end_time: editEventEndTime || undefined,
+                        end_date: editEventEndDate || '',
+                        parent_event_id: editParentEventId || '',
+                        hide_from_lessons_tab: editHideFromLessonsTab,
                         titles: editEventTitles,
                       })
                     }}
@@ -1207,11 +1253,17 @@ const fetchEventAndParts = async () => {
                       setEditEventDate(event.date)
                       setEditEventStartTime(event.start_time || '')
                       setEditEventEndTime(event.end_time || '')
+                      setEditEventEndDate(event.end_date ? formatDateForInput(event.end_date) : '')
+                      setEditParentEventId(event.parent_event_id || '')
+                      setEditHideFromLessonsTab(event.hide_from_lessons_tab || false)
                       setEditEventTitles(event.titles || {})
                     } else if (!editingEvent && event) {
                       setEditEventDate(formatDateForInput(event.date))
                       setEditEventStartTime(event.start_time || '')
                       setEditEventEndTime(event.end_time || '')
+                      setEditEventEndDate(event.end_date ? formatDateForInput(event.end_date) : '')
+                      setEditParentEventId(event.parent_event_id || '')
+                      setEditHideFromLessonsTab(event.hide_from_lessons_tab || false)
                       setEditEventTitles(event.titles || {})
                     }
                     setEditingEvent(!editingEvent)
@@ -1313,6 +1365,57 @@ const fetchEventAndParts = async () => {
                     </div>
                   </div>
 
+                  {/* End Date — shown for convention types */}
+                  {CONVENTION_TYPES.includes(event.type) && (
+                    <div>
+                      <label className="block text-gray-700 font-medium mb-2 text-xs">End Date (for multi-day events)</label>
+                      <input
+                        type="date"
+                        value={editEventEndDate}
+                        onChange={(e) => setEditEventEndDate(e.target.value)}
+                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                      />
+                      <p className="text-xs text-gray-400 mt-1">Leave empty for single-day events</p>
+                    </div>
+                  )}
+
+                  {/* Parent Convention */}
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2 text-xs">Parent Convention / Event</label>
+                    <select
+                      value={editParentEventId}
+                      onChange={(e) => {
+                        setEditParentEventId(e.target.value)
+                        if (e.target.value && !editHideFromLessonsTab) {
+                          setEditHideFromLessonsTab(true)
+                        }
+                      }}
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white"
+                    >
+                      <option value="">— None (standalone event) —</option>
+                      {conventionEvents.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.titles?.he || c.titles?.en || c.type} · {c.date.split('T')[0]}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-gray-400 mt-1">Setting a parent will auto-hide this event from the lessons tab</p>
+                  </div>
+
+                  {/* Hide from Lessons Tab */}
+                  <div className="flex items-center gap-3">
+                    <input
+                      id="hide-from-lessons"
+                      type="checkbox"
+                      checked={editHideFromLessonsTab}
+                      onChange={(e) => setEditHideFromLessonsTab(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <label htmlFor="hide-from-lessons" className="text-gray-700 font-medium text-xs cursor-pointer">
+                      Hide from Daily Lessons tab
+                    </label>
+                  </div>
+
                   {/* Titles by Language */}
                   <div>
                     <label className="block text-gray-700 font-medium mb-2 text-xs">Event Titles</label>
@@ -1337,8 +1440,89 @@ const fetchEventAndParts = async () => {
           </div>
         </div>
 
-        {/* Parts Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        {/* Sessions Section — shown for convention-type parent events */}
+        {CONVENTION_TYPES.includes(event.type) && !event.parent_event_id && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
+            <div className="p-5 border-b border-gray-100 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-gray-900" style={{ fontSize: '16px' }}>
+                  Sessions ({childSessions.length})
+                </h3>
+                <p className="text-gray-500 mt-1" style={{ fontSize: '13px' }}>
+                  Events linked to this convention as child sessions
+                </p>
+              </div>
+              <Link
+                href={`/admin/create?parent_id=${event.id}`}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Add Session
+              </Link>
+            </div>
+
+            {childSessions.length === 0 ? (
+              <div className="p-6 text-center text-gray-400 text-sm">
+                No sessions yet. Use &quot;Add Session&quot; to create linked events.
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {childSessions
+                  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime() || (a.start_time || '').localeCompare(b.start_time || ''))
+                  .map((session) => (
+                    <div key={session.id} className="p-4 flex items-center gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">
+                            {session.type.replace('_', ' ')}
+                          </span>
+                          <span className="text-gray-900 font-medium text-sm">
+                            {session.titles?.he || session.titles?.en || '—'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                          <span>{session.date.split('T')[0]}</span>
+                          {session.start_time && <span>{session.start_time}{session.end_time ? ` – ${session.end_time}` : ''}</span>}
+                        </div>
+                      </div>
+                      {/* Visibility toggle */}
+                      <button
+                        title={session.hide_from_lessons_tab ? 'Hidden from lessons tab — click to show' : 'Visible in lessons tab — click to hide'}
+                        onClick={async () => {
+                          await fetch(getApiUrl(`/events/${session.id}`), {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ hide_from_lessons_tab: !session.hide_from_lessons_tab }),
+                          })
+                          const sessionsRes = await fetch(getApiUrl(`/events?parent_id=${event.id}&limit=200`))
+                          if (sessionsRes.ok) {
+                            const data = await sessionsRes.json()
+                            setChildSessions(data.events || [])
+                          }
+                        }}
+                        className={`p-1.5 rounded-lg border transition-colors ${
+                          session.hide_from_lessons_tab
+                            ? 'border-gray-200 text-gray-400 hover:border-blue-300 hover:text-blue-600'
+                            : 'border-green-200 text-green-600 hover:border-red-300 hover:text-red-600'
+                        }`}
+                      >
+                        {session.hide_from_lessons_tab ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                      <Link
+                        href={`/admin/${session.id}`}
+                        className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-blue-300 hover:text-blue-600 transition-colors"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Parts Section — hidden for convention/holiday/special_event (use Sessions instead) */}
+        {!CONVENTION_TYPES.includes(event.type) && <div className="bg-white rounded-xl shadow-sm border border-gray-200">
           {/* Header */}
           <div className="p-5 border-b border-gray-100 flex items-center justify-between">
             <div>
@@ -2939,7 +3123,7 @@ const fetchEventAndParts = async () => {
               </div>
             ) : null
           )}
-        </div>
+        </div>}
       </div>
     </div>
   )

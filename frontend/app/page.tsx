@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
 import { formatEventDate, formatDateOnly } from '@/lib/dateUtils'
 import { groupEventsByDate, getDateGroupColorClasses } from '@/lib/eventGrouping'
@@ -42,6 +43,16 @@ interface Event {
     uk?: string
   }
   public: boolean
+  end_date?: string
+  parent_event_id?: string
+  hide_from_lessons_tab?: boolean
+}
+
+interface EventTypeInfo {
+  id: string
+  name: string
+  color: string
+  titles: Record<string, string>
 }
 
 interface Source {
@@ -106,6 +117,17 @@ const formatDateByLanguage = (dateString: string, language: string) => {
 
 const TRANSLATIONS = {
   he: {
+    conventionsTab: 'כנסים ואירועים',
+    lessonsTab: 'שיעורים יומיים',
+    upcoming: 'קרובים',
+    past: 'שעברו',
+    all: 'הכל',
+    toStudyMaterials: 'לחומרי הלימוד',
+    addToCalendar: 'הוסף ליומן',
+    day: 'יום',
+    days: 'ימים',
+    backToConventions: 'חזרה לרשימה',
+    todayBadge: 'היום',
     noEvents: 'אין אירועים זמינים',
     backToEvents: 'חזרה לרשימת השיעורים',
     noMaterials: 'אין חומרים זמינים',
@@ -139,6 +161,17 @@ const TRANSLATIONS = {
     updated: 'עודכן',
   },
   en: {
+    conventionsTab: 'Conventions & Events',
+    lessonsTab: 'Daily Lessons',
+    upcoming: 'Upcoming',
+    past: 'Past',
+    all: 'All',
+    toStudyMaterials: 'Study Materials',
+    addToCalendar: 'Add to Calendar',
+    day: 'Day',
+    days: 'days',
+    backToConventions: 'Back to list',
+    todayBadge: 'Today',
     noEvents: 'No events available',
     backToEvents: 'Back to events',
     noMaterials: 'No materials available',
@@ -172,6 +205,17 @@ const TRANSLATIONS = {
     updated: 'Updated',
   },
   ru: {
+    conventionsTab: 'Съезды и мероприятия',
+    lessonsTab: 'Ежедневные уроки',
+    upcoming: 'Предстоящие',
+    past: 'Прошедшие',
+    all: 'Все',
+    toStudyMaterials: 'К материалам',
+    addToCalendar: 'В календарь',
+    day: 'День',
+    days: 'дней',
+    backToConventions: 'Назад к списку',
+    todayBadge: 'Сегодня',
     noEvents: 'Нет доступных событий',
     backToEvents: 'Вернуться к событиям',
     noMaterials: 'Нет доступных материалов',
@@ -205,6 +249,17 @@ const TRANSLATIONS = {
     updated: 'Обновлено',
   },
   es: {
+    conventionsTab: 'Congresos y Eventos',
+    lessonsTab: 'Lecciones Diarias',
+    upcoming: 'Próximos',
+    past: 'Pasados',
+    all: 'Todos',
+    toStudyMaterials: 'Materiales de estudio',
+    addToCalendar: 'Añadir al calendario',
+    day: 'Día',
+    days: 'días',
+    backToConventions: 'Volver a la lista',
+    todayBadge: 'Hoy',
     noEvents: 'No hay eventos disponibles',
     backToEvents: 'Volver a eventos',
     noMaterials: 'No hay materiales disponibles',
@@ -238,6 +293,17 @@ const TRANSLATIONS = {
     updated: 'Actualizado',
   },
   de: {
+    conventionsTab: 'Kongresse & Veranstaltungen',
+    lessonsTab: 'Tägliche Lektionen',
+    upcoming: 'Bevorstehend',
+    past: 'Vergangen',
+    all: 'Alle',
+    toStudyMaterials: 'Zu den Materialien',
+    addToCalendar: 'Zum Kalender',
+    day: 'Tag',
+    days: 'Tage',
+    backToConventions: 'Zurück zur Liste',
+    todayBadge: 'Heute',
     noEvents: 'Keine Veranstaltungen verfügbar',
     backToEvents: 'Zurück zu Veranstaltungen',
     noMaterials: 'Keine Materialien verfügbar',
@@ -271,6 +337,17 @@ const TRANSLATIONS = {
     updated: 'Aktualisiert',
   },
   it: {
+    conventionsTab: 'Congressi ed Eventi',
+    lessonsTab: 'Lezioni Quotidiane',
+    upcoming: 'In arrivo',
+    past: 'Passati',
+    all: 'Tutti',
+    toStudyMaterials: 'Materiali di studio',
+    addToCalendar: 'Aggiungi al calendario',
+    day: 'Giorno',
+    days: 'giorni',
+    backToConventions: 'Torna alla lista',
+    todayBadge: 'Oggi',
     noEvents: 'Nessun evento disponibile',
     backToEvents: 'Torna agli eventi',
     noMaterials: 'Nessun materiale disponibile',
@@ -304,6 +381,17 @@ const TRANSLATIONS = {
     updated: 'Aggiornato',
   },
   fr: {
+    conventionsTab: 'Congrès & Événements',
+    lessonsTab: 'Leçons Quotidiennes',
+    upcoming: 'À venir',
+    past: 'Passés',
+    all: 'Tous',
+    toStudyMaterials: 'Matériaux d\'étude',
+    addToCalendar: 'Ajouter au calendrier',
+    day: 'Jour',
+    days: 'jours',
+    backToConventions: 'Retour à la liste',
+    todayBadge: 'Aujourd\'hui',
     noEvents: 'Aucun événement disponible',
     backToEvents: 'Retour aux événements',
     noMaterials: 'Aucun matériel disponible',
@@ -337,6 +425,17 @@ const TRANSLATIONS = {
     updated: 'Mis à jour',
   },
   uk: {
+    conventionsTab: 'З\'їзди та заходи',
+    lessonsTab: 'Щоденні уроки',
+    upcoming: 'Наближаються',
+    past: 'Минулі',
+    all: 'Всі',
+    toStudyMaterials: 'До матеріалів',
+    addToCalendar: 'До календаря',
+    day: 'День',
+    days: 'днів',
+    backToConventions: 'Назад до списку',
+    todayBadge: 'Сьогодні',
     noEvents: 'Немає доступних подій',
     backToEvents: 'Повернутися до подій',
     noMaterials: 'Немає доступних матеріалів',
@@ -370,6 +469,17 @@ const TRANSLATIONS = {
     updated: 'Оновлено',
   },
   tr: {
+    conventionsTab: 'Kongreler & Etkinlikler',
+    lessonsTab: 'Günlük Dersler',
+    upcoming: 'Yaklaşan',
+    past: 'Geçmiş',
+    all: 'Tümü',
+    toStudyMaterials: 'Ders Materyalleri',
+    addToCalendar: 'Takvime Ekle',
+    day: 'Gün',
+    days: 'gün',
+    backToConventions: 'Listeye Dön',
+    todayBadge: 'Bugün',
     noEvents: 'Kullanılabilir etkinlik yok',
     backToEvents: 'Etkinliklere geri dön',
     noMaterials: 'Kullanılabilir materyal yok',
@@ -403,6 +513,17 @@ const TRANSLATIONS = {
     updated: 'Güncellendi',
   },
   'pt-BR': {
+    conventionsTab: 'Congressos & Eventos',
+    lessonsTab: 'Aulas Diárias',
+    upcoming: 'Próximos',
+    past: 'Anteriores',
+    all: 'Todos',
+    toStudyMaterials: 'Materiais de estudo',
+    addToCalendar: 'Adicionar ao calendário',
+    day: 'Dia',
+    days: 'dias',
+    backToConventions: 'Voltar à lista',
+    todayBadge: 'Hoje',
     noEvents: 'Nenhum evento disponível',
     backToEvents: 'Voltar para eventos',
     noMaterials: 'Nenhum material disponível',
@@ -436,6 +557,17 @@ const TRANSLATIONS = {
     updated: 'Atualizado',
   },
   bg: {
+    conventionsTab: 'Конгреси и събития',
+    lessonsTab: 'Ежедневни уроци',
+    upcoming: 'Предстоящи',
+    past: 'Минали',
+    all: 'Всички',
+    toStudyMaterials: 'Учебни материали',
+    addToCalendar: 'Добави в календар',
+    day: 'Ден',
+    days: 'дни',
+    backToConventions: 'Назад към списъка',
+    todayBadge: 'Днес',
     noEvents: 'Няма налични събития',
     backToEvents: 'Обратно към събитията',
     noMaterials: 'Няма налични материали',
@@ -470,7 +602,8 @@ const TRANSLATIONS = {
   },
 }
 
-export default function PublicPage() {
+export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'lessons' | 'conventions' } = {}) {
+  const router = useRouter()
   const [language, setLanguage] = useState('he')
   const [events, setEvents] = useState<Event[]>([])
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
@@ -484,6 +617,24 @@ export default function PublicPage() {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [totalEvents, setTotalEvents] = useState(0)
+  const [activeTab, setActiveTab] = useState<'conventions' | 'lessons'>(initialTab)
+  const [conventionFilter, setConventionFilter] = useState<'upcoming' | 'past' | 'all'>('upcoming')
+  const [conventions, setConventions] = useState<Event[]>([])
+  const [conventionsLoading, setConventionsLoading] = useState(false)
+  const [selectedConvention, setSelectedConvention] = useState<Event | null>(null)
+  const [conventionSessions, setConventionSessions] = useState<Event[]>([])
+  const [selectedConventionDay, setSelectedConventionDay] = useState<string | null>(null)
+  const [fromConvention, setFromConvention] = useState(false)
+  const [eventTypes, setEventTypes] = useState<EventTypeInfo[]>([])
+  const [isDark, setIsDark] = useState(false)
+  useEffect(() => {
+    const update = () => setIsDark(document.documentElement.classList.contains('dark'))
+    update()
+    const observer = new MutationObserver(update)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
+
 
   // Translation helper
   const t = (key: keyof typeof TRANSLATIONS.en) => {
@@ -619,6 +770,12 @@ export default function PublicPage() {
     }
   }, [language, startDate, endDate])
 
+  // Fetch conventions and event types on mount / language change
+  useEffect(() => {
+    fetchConventions()
+    fetchEventTypes()
+  }, [language])
+
   // Fetch parts when event is selected
   useEffect(() => {
     if (selectedEvent) {
@@ -647,42 +804,66 @@ export default function PublicPage() {
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
 
-  // Detect event from URL parameter and auto-select
+  // Detect event/convention from URL parameter and auto-select
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const eventId = urlParams.get('event')
+    const conventionId = urlParams.get('convention')
 
     if (eventId && events.length > 0) {
       const event = events.find(e => e.id === eventId)
-      if (event) {
-        setSelectedEvent(event)
+      if (event) { setSelectedEvent(event); setActiveTab('lessons') }
+    } else if (conventionId && conventions.length > 0) {
+      const convention = conventions.find(c => c.id === conventionId)
+      if (convention) {
+        setActiveTab('conventions')
+        setSelectedConvention(convention)
+        setConventionSessions([])
+        setSelectedConventionDay(null)
+        fetchConventionSessions(convention.id)
       }
     }
-  }, [events])
+  }, [events, conventions])
 
   // Listen for browser back/forward button
   useEffect(() => {
     const handlePopState = () => {
       const urlParams = new URLSearchParams(window.location.search)
       const eventId = urlParams.get('event')
-      
-      if (!eventId) {
-        // No event in URL - go back to list
-        setSelectedEvent(null)
-        setParts([])
-        setExpandedParts(new Set())
-      } else if (events.length > 0) {
-        // Event in URL - select it
+      const conventionId = urlParams.get('convention')
+      const isConventionsPath = window.location.pathname === '/conventions'
+
+      if (eventId && events.length > 0) {
         const event = events.find(e => e.id === eventId)
-        if (event) {
-          setSelectedEvent(event)
+        if (event) { setSelectedEvent(event); setActiveTab('lessons'); return }
+      }
+      if (conventionId && conventions.length > 0) {
+        const convention = conventions.find(c => c.id === conventionId)
+        if (convention) {
+          setSelectedEvent(null)
+          setParts([])
+          setExpandedParts(new Set())
+          setSelectedConvention(convention)
+          setConventionSessions([])
+          setSelectedConventionDay(null)
+          setActiveTab('conventions')
+          fetchConventionSessions(convention.id)
+          return
         }
       }
+      // No specific item — sync tab from path and clear selection
+      setSelectedEvent(null)
+      setParts([])
+      setExpandedParts(new Set())
+      setSelectedConvention(null)
+      setConventionSessions([])
+      setSelectedConventionDay(null)
+      setActiveTab(isConventionsPath ? 'conventions' : 'lessons')
     }
-    
+
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
-  }, [events])
+  }, [events, conventions])
 
   const fetchEvents = async () => {
     console.log(`[study] fetching events at ${new Date().toLocaleTimeString()}`)
@@ -691,20 +872,70 @@ export default function PublicPage() {
       const params = new URLSearchParams({
         public: 'true',
         limit: '10',
-        language: language
+        language: language,
+        hide_from_lessons_tab: 'false',
       })
       if (startDate) params.append('from_date', startDate)
       if (endDate) params.append('to_date', endDate)
-      
+
       const response = await fetch(getApiUrl(`/events?${params}`))
       const data = await response.json()
       setEvents(data.events || [])
       setTotalEvents(data.total || 0)
-      // Don't auto-select - let user choose
     } catch (error) {
       console.error('Failed to fetch events:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchConventions = async () => {
+    try {
+      setConventionsLoading(true)
+      const params = new URLSearchParams({
+        public: 'true',
+        types: 'convention,holiday,special_event',
+        limit: '100',
+      })
+      const response = await fetch(getApiUrl(`/events?${params}`))
+      const data = await response.json()
+      setConventions(data.events || [])
+    } catch (error) {
+      console.error('Failed to fetch conventions:', error)
+    } finally {
+      setConventionsLoading(false)
+    }
+  }
+
+  const fetchConventionSessions = async (conventionId: string) => {
+    try {
+      const params = new URLSearchParams({
+        public: 'true',
+        parent_id: conventionId,
+        limit: '100',
+      })
+      const response = await fetch(getApiUrl(`/events?${params}`))
+      const data = await response.json()
+      const sessions: Event[] = data.events || []
+      setConventionSessions(sessions)
+      // Auto-select first day
+      if (sessions.length > 0) {
+        const firstDay = sessions[0].date.split('T')[0]
+        setSelectedConventionDay(firstDay)
+      }
+    } catch (error) {
+      console.error('Failed to fetch convention sessions:', error)
+      setConventionSessions([])
+    }
+  }
+
+  const fetchEventTypes = async () => {
+    try {
+      const response = await fetch(getApiUrl('/event-types'))
+      const data = await response.json()
+      setEventTypes(data || [])
+    } catch (error) {
+      console.error('Failed to fetch event types:', error)
     }
   }
 
@@ -714,11 +945,12 @@ export default function PublicPage() {
         public: 'true',
         limit: '10',
         offset: events.length.toString(),
-        language: language
+        language: language,
+        hide_from_lessons_tab: 'false',
       })
       if (startDate) params.append('from_date', startDate)
       if (endDate) params.append('to_date', endDate)
-      
+
       const response = await fetch(getApiUrl(`/events?${params}`))
       const data = await response.json()
       setEvents([...events, ...(data.events || [])])
@@ -1010,21 +1242,114 @@ export default function PublicPage() {
            `Event ${event.number}`
   }
 
-  const handleEventClick = (event: Event) => {
-    console.log('Event clicked:', event.id, event.titles?.he)
+  const CONVENTION_TYPES = ['convention', 'holiday', 'special_event']
+
+  const getConventionDays = (convention: Event): string[] => {
+    const start = new Date(convention.date)
+    const end = convention.end_date ? new Date(convention.end_date) : start
+    const days: string[] = []
+    const cur = new Date(start)
+    while (cur <= end) {
+      days.push(cur.toISOString().split('T')[0])
+      cur.setDate(cur.getDate() + 1)
+    }
+    return days
+  }
+
+  const formatConventionDateRange = (convention: Event): string => {
+    const startDate = convention.date
+    const endDate = convention.end_date
+    if (!endDate || endDate.split('T')[0] === startDate.split('T')[0]) {
+      return formatDateByLanguage(startDate, language)
+    }
+    const s = new Date(startDate)
+    const e = new Date(endDate)
+    const sDay = s.getUTCDate()
+    const eDay = e.getUTCDate()
+    const sMonth = s.toLocaleDateString(language === 'he' ? 'he-IL' : language, { month: 'long', timeZone: 'UTC' })
+    const eMonth = e.toLocaleDateString(language === 'he' ? 'he-IL' : language, { month: 'long', timeZone: 'UTC' })
+    const year = e.getUTCFullYear()
+    if (sMonth === eMonth) {
+      return language === 'he'
+        ? `${eDay}-${sDay} ${eMonth} ${year}`
+        : `${sDay}–${eDay} ${eMonth} ${year}`
+    }
+    return language === 'he'
+      ? `${eDay} ${eMonth} - ${sDay} ${sMonth} ${year}`
+      : `${sDay} ${sMonth} – ${eDay} ${eMonth} ${year}`
+  }
+
+  const getEventTypeBadgeStyle = (typeName: string) => {
+    const et = eventTypes.find(t => t.name === typeName)
+    const color = et?.color || 'gray'
+    const colorMap: Record<string, { bg: string; text: string; dot: string }> = {
+      blue:   { bg: 'bg-blue-100 dark:bg-blue-900/40',   text: 'text-blue-800 dark:text-blue-200',   dot: 'bg-blue-500' },
+      amber:  { bg: 'bg-amber-100 dark:bg-amber-900/40', text: 'text-amber-800 dark:text-amber-200', dot: 'bg-amber-500' },
+      indigo: { bg: 'bg-indigo-100 dark:bg-indigo-900/40', text: 'text-indigo-800 dark:text-indigo-200', dot: 'bg-indigo-500' },
+      green:  { bg: 'bg-green-100 dark:bg-green-900/40', text: 'text-green-800 dark:text-green-200', dot: 'bg-green-500' },
+      purple: { bg: 'bg-purple-100 dark:bg-purple-900/40', text: 'text-purple-800 dark:text-purple-200', dot: 'bg-purple-500' },
+      yellow: { bg: 'bg-yellow-100 dark:bg-yellow-900/40', text: 'text-yellow-800 dark:text-yellow-200', dot: 'bg-yellow-500' },
+      gray:   { bg: 'bg-gray-100 dark:bg-gray-700',     text: 'text-gray-800 dark:text-gray-200',   dot: 'bg-gray-500' },
+      orange: { bg: 'bg-orange-100 dark:bg-orange-900/40', text: 'text-orange-800 dark:text-orange-200', dot: 'bg-orange-500' },
+      teal:   { bg: 'bg-teal-100 dark:bg-teal-900/40',  text: 'text-teal-800 dark:text-teal-200',   dot: 'bg-teal-500' },
+      pink:   { bg: 'bg-pink-100 dark:bg-pink-900/40',  text: 'text-pink-800 dark:text-pink-200',   dot: 'bg-pink-500' },
+      red:    { bg: 'bg-red-100 dark:bg-red-900/40',    text: 'text-red-800 dark:text-red-200',     dot: 'bg-red-500' },
+    }
+    return colorMap[color] || colorMap.gray
+  }
+
+  const getEventTypeTitle = (typeName: string) => {
+    const et = eventTypes.find(t => t.name === typeName)
+    return et?.titles?.[language] || et?.titles?.['en'] || typeName
+  }
+
+  const handleEventClick = (event: Event, originConvention?: boolean) => {
     setSelectedEvent(event)
     setParts([])
     setExpandedParts(new Set())
-    // Update URL to include event parameter
+    setFromConvention(originConvention ?? false)
     window.history.pushState(null, '', `/?event=${event.id}`)
+    // Note: event detail stays on / regardless of source tab
+  }
+
+  const handleConventionClick = (convention: Event) => {
+    setSelectedConvention(convention)
+    setConventionSessions([])
+    setSelectedConventionDay(null)
+    fetchConventionSessions(convention.id)
+    const fromLessons = activeTab === 'lessons' ? '?from=lessons' : ''
+    window.history.pushState(null, '', `/conventions?convention=${convention.id}${fromLessons}`)
   }
 
   const handleBackToEvents = () => {
+    if (fromConvention && selectedConvention) {
+      // Go back to convention detail
+      setSelectedEvent(null)
+      setParts([])
+      setExpandedParts(new Set())
+      setFromConvention(false)
+      window.history.pushState(null, '', '/')
+      return
+    }
     setSelectedEvent(null)
     setParts([])
     setExpandedParts(new Set())
-    // Reset URL to remove event parameter
+    setFromConvention(false)
     window.history.pushState(null, '', '/')
+  }
+
+  const handleBackToConventions = () => {
+    const params = new URLSearchParams(window.location.search)
+    const from = params.get('from')
+    setSelectedConvention(null)
+    setConventionSessions([])
+    setSelectedConventionDay(null)
+    if (from === 'lessons') {
+      setActiveTab('lessons')
+      router.push('/')
+    } else {
+      router.push('/conventions')
+    }
   }
 
   const isRTL = language === 'he'
@@ -1044,174 +1369,8 @@ export default function PublicPage() {
     >
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Content */}
-        {!selectedEvent ? (
-          // Events List
-          <div>
-            {/* Page Header */}
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold text-blue-900 dark:text-blue-200 mb-2">
-                {t('studyMaterials')}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400" style={{ fontSize: '15px' }}>
-                {t('studyMaterialsDescription')}
-              </p>
-            </div>
-
-            {/* Filters */}
-            <div className="mb-6">
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
-                  hasActiveFilters
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-2 border-gray-200 dark:border-gray-600 hover:border-blue-300'
-                }`}
-                style={{ fontSize: '14px' }}
-              >
-                <Filter className="w-4 h-4" />
-                <span>{t('filterByDate')}</span>
-                {hasActiveFilters && (
-                  <span className="bg-white text-blue-600 rounded-full w-5 h-5 flex items-center justify-center" style={{ fontSize: '11px' }}>
-                    1
-                  </span>
-                )}
-              </button>
-
-              {showFilters && (
-                <div className="mt-4 bg-white dark:bg-gray-800 rounded-xl shadow-md p-5">
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <label className="block text-gray-700 dark:text-gray-300 mb-2" style={{ fontSize: '13px' }}>
-                        {t('fromDate')}
-                      </label>
-                      <input
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
-                        style={{ fontSize: '14px' }}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 dark:text-gray-300 mb-2" style={{ fontSize: '13px' }}>
-                        {t('toDate')}
-                      </label>
-                      <input
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
-                        style={{ fontSize: '14px' }}
-                      />
-                    </div>
-                  </div>
-
-                  {hasActiveFilters && (
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
-                      <span className="text-gray-600 dark:text-gray-400" style={{ fontSize: '13px' }}>
-                        {events.length} {t('eventsFound')}
-                      </span>
-                      <button
-                        onClick={clearFilters}
-                        className="px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors flex items-center gap-1"
-                        style={{ fontSize: '13px' }}
-                      >
-                        <X className="w-4 h-4" />
-                        <span>{t('clearFilters')}</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Events List Grouped by Date */}
-            <div className="space-y-4">
-            {events.length === 0 ? (
-              <div className="text-center text-gray-600 dark:text-gray-400 py-12">
-                {t('noEvents')}
-              </div>
-            ) : (
-              groupEventsByDate(events, language === 'he' ? 'he-IL' : language).map((dateGroup) => {
-                const colors = getDateGroupColorClasses(dateGroup.dayIndex)
-                
-                return (
-                  <div
-                    key={dateGroup.date}
-                    className={`rounded-xl shadow-md bg-white dark:bg-gray-800 overflow-hidden ${isRTL ? 'border-r-4' : 'border-l-4'} ${isRTL ? colors.border : colors.borderLTR}`}
-                  >
-                    {/* Date Header */}
-                    <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800/80">
-                      <div className="flex items-center gap-2" style={{ color: '#646464' }}>
-                        <Calendar className="w-5 h-5" style={{ color: '#646464' }} />
-                        <h3 style={{ fontSize: '18px', fontWeight: 'bold' }}>
-                          {dateGroup.dayOfWeek} | {dateGroup.displayDate}
-                        </h3>
-                      </div>
-                    </div>
-                    
-                    {/* Events for this date */}
-                    <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                      {dateGroup.events.map((event) => (
-                        <button
-                          key={event.id}
-                          onClick={() => handleEventClick(event)}
-                          className={`w-full p-4 hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
-                        >
-                          {isRTL ? (
-                            <>
-                              <div className="flex-1 text-right">
-                                <h4 className="text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mb-1" style={{ fontSize: '16px' }}>
-                                  {getEventTitle(event)}
-                                </h4>
-                                {event.start_time && event.end_time && (
-                                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 justify-start" style={{ fontSize: '13px' }}>
-                                    <Clock className="w-4 h-4" />
-                                    <span>{formatTimeRange(event.start_time, event.end_time)}</span>
-                                  </div>
-                                )}
-                              </div>
-                              <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-[-4px] transition-all flex-shrink-0" />
-                            </>
-                          ) : (
-                            <>
-                              <div className="flex-1 text-left">
-                                <h4 className="text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mb-1" style={{ fontSize: '16px' }}>
-                                  {getEventTitle(event)}
-                                </h4>
-                                {event.start_time && event.end_time && (
-                                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400" style={{ fontSize: '13px' }}>
-                                    <Clock className="w-4 h-4" />
-                                    <span>{formatTimeRange(event.start_time, event.end_time)}</span>
-                                  </div>
-                                )}
-                              </div>
-                              <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" />
-                            </>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )
-              })
-            )}
-
-            {/* Load More Button */}
-            {events.length > 0 && events.length < totalEvents && (
-              <div className="mt-8 text-center">
-                <button 
-                  onClick={loadMore}
-                  className="px-6 py-3 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-300 border-2 border-blue-200 dark:border-blue-800 rounded-xl hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors shadow-md font-semibold"
-                  style={{ fontSize: '14px' }}
-                >
-                  {t('loadMore')}
-                </button>
-              </div>
-            )}
-          </div>
-          </div>
-        ) : parts.length === 0 ? (
+        {selectedEvent ? (
+          parts.length === 0 ? (
           <div dir={isRTL ? 'rtl' : 'ltr'} className="max-w-2xl mx-auto">
             <button
               onClick={handleBackToEvents}
@@ -1656,6 +1815,593 @@ export default function PublicPage() {
             )
           })}
             </div>
+          </div>
+          )
+        ) : selectedConvention ? (
+          // Convention Detail View
+          <div>
+            {/* Back button */}
+            <div className="flex justify-start mb-4">
+              <button
+                onClick={handleBackToConventions}
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-2"
+                style={{ fontSize: '14px' }}
+              >
+                <ChevronDown className={`w-5 h-5 transform ${isRTL ? '-rotate-90' : 'rotate-90'}`} />
+                {t('backToConventions')}
+              </button>
+            </div>
+
+            {/* Convention Header Card */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 mb-6 border border-gray-100 dark:border-gray-700">
+              <div className="flex items-center gap-2 mb-3 flex-wrap">
+                {(() => {
+                  const style = getEventTypeBadgeStyle(selectedConvention.type)
+                  return (
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${style.bg} ${style.text}`}>
+                      {getEventTypeTitle(selectedConvention.type)}
+                    </span>
+                  )
+                })()}
+              </div>
+              <h2 className="text-blue-900 dark:text-blue-200 font-bold mb-3" style={{ fontSize: '22px' }}>
+                {getEventTitle(selectedConvention)}
+              </h2>
+              <div className="flex items-center gap-5 text-gray-600 dark:text-gray-400 flex-wrap" style={{ fontSize: '14px' }}>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>{formatConventionDateRange(selectedConvention)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>{getConventionDays(selectedConvention).length} {t('days')}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Day Navigation Tabs */}
+            {getConventionDays(selectedConvention).length > 1 && (
+              <div className="flex gap-2 mb-5 overflow-x-auto pb-1 flex-wrap justify-start">
+                {getConventionDays(selectedConvention).map((dayStr, idx) => {
+                  const dayDate = new Date(dayStr + 'T00:00:00Z')
+                  const monthName = dayDate.toLocaleDateString(language === 'he' ? 'he-IL' : language, { month: 'short', timeZone: 'UTC' })
+                  const dayNum = dayDate.getUTCDate()
+                  const isSelected = selectedConventionDay === dayStr
+                  return (
+                    <button
+                      key={dayStr}
+                      onClick={() => setSelectedConventionDay(dayStr)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                        isSelected
+                          ? 'bg-blue-700 text-white'
+                          : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:border-blue-400'
+                      }`}
+                    >
+                      {t('day')} {idx + 1} · {dayNum} {monthName}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Sessions for Selected Day */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+              {conventionSessions.filter(s => {
+                const sDay = s.date.split('T')[0]
+                return sDay === (selectedConventionDay || getConventionDays(selectedConvention)[0])
+              }).length === 0 ? (
+                <div className="text-center text-gray-500 dark:text-gray-400 py-10" style={{ fontSize: '14px' }}>
+                  {t('noEvents')}
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                  {conventionSessions
+                    .filter(s => {
+                      const sDay = s.date.split('T')[0]
+                      return sDay === (selectedConventionDay || getConventionDays(selectedConvention)[0])
+                    })
+                    .sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''))
+                    .map((session) => {
+                      const timeStr = session.start_time
+                        ? session.start_time.replace(/^0/, '') + (session.end_time ? ` – ${session.end_time.replace(/^0/, '')}` : '')
+                        : null
+                      return (
+                        <button
+                          key={session.id}
+                          onClick={() => handleEventClick(session, true)}
+                          className={`w-full px-4 py-3 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
+                        >
+                          <div className="flex-1 flex items-center gap-3">
+                            {timeStr && (
+                              <span className="text-gray-500 dark:text-gray-400 flex-shrink-0" style={{ fontSize: '13px' }}>
+                                {session.end_time ? formatTimeRange(session.start_time!, session.end_time) : session.start_time!.replace(/^0/, '')}
+                              </span>
+                            )}
+                            {timeStr && <span className="text-gray-300 dark:text-gray-600 flex-shrink-0">|</span>}
+                            <span className="text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 font-medium" style={{ fontSize: '15px' }}>
+                              {getEventTitle(session)}
+                            </span>
+                          </div>
+                          {isRTL
+                            ? <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 flex-shrink-0 ms-3" />
+                            : <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 flex-shrink-0 rotate-180 ms-3" />
+                          }
+                        </button>
+                      )
+                    })}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          // List View with Tabs
+          <div>
+            {/* Page Header */}
+            <div className="mb-6">
+              <h1 className="text-4xl font-bold text-blue-900 dark:text-blue-200 mb-2">
+                {t('studyMaterials')}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400" style={{ fontSize: '15px' }}>
+                {t('studyMaterialsDescription')}
+              </p>
+            </div>
+
+            {/* Tab Navigation */}
+            <div className={`flex border-b border-gray-200 dark:border-gray-700 mb-6`}>
+              {(['lessons', 'conventions'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => {
+                    setActiveTab(tab)
+                    router.push(tab === 'lessons' ? '/' : '/conventions')
+                  }}
+                  className={`flex items-center gap-2 px-5 py-3 font-medium transition-colors border-b-2 -mb-px ${
+                    activeTab === tab
+                      ? 'border-blue-700 text-blue-900 dark:text-blue-200'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                  }`}
+                  style={{ fontSize: '16px' }}
+                >
+                  {tab === 'conventions' ? (
+                    <><Calendar className="w-4 h-4" />{t('conventionsTab')}</>
+                  ) : (
+                    <><BookOpen className="w-4 h-4" />{t('lessonsTab')}</>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'conventions' ? (
+              // Conventions Tab
+              <div>
+                {(() => {
+                  const today = new Date()
+                  today.setHours(0, 0, 0, 0)
+                  const isUpcoming = (c: Event) => {
+                    const end = new Date((c.end_date || c.date).split('T')[0] + 'T23:59:59Z')
+                    return end >= today
+                  }
+                  const upcomingList = conventions.filter(isUpcoming).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                  const pastList = conventions.filter(c => !isUpcoming(c)).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                  const filteredConventions = conventionFilter === 'upcoming' ? upcomingList : conventionFilter === 'past' ? pastList : [...upcomingList, ...pastList]
+
+                  return (
+                    <>
+                      {/* Time filter pills */}
+                      <div className="flex gap-2 mb-5 flex-wrap">
+                        {([['upcoming', upcomingList.length], ['past', pastList.length], ['all', conventions.length]] as const).map(([filter, count]) => (
+                          <button
+                            key={filter}
+                            onClick={() => setConventionFilter(filter)}
+                            className={`px-4 py-2 rounded-full font-medium transition-colors flex items-center gap-1.5 ${
+                              conventionFilter === filter
+                                ? 'bg-blue-800 text-white'
+                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:border-blue-400'
+                            }`}
+                            style={{ fontSize: '14px' }}
+                          >
+                            {filter === 'upcoming' ? t('upcoming') : filter === 'past' ? t('past') : t('all')}
+                            <span className={`text-xs rounded-full w-5 h-5 flex items-center justify-center ${conventionFilter === filter ? 'bg-white/20 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
+                              {count}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Convention Cards */}
+                      {conventionsLoading ? (
+                        <div className="text-center text-gray-500 dark:text-gray-400 py-12">{t('noEvents')}</div>
+                      ) : filteredConventions.length === 0 ? (
+                        <div className="text-center text-gray-500 dark:text-gray-400 py-12">{t('noEvents')}</div>
+                      ) : (
+                        <div className="space-y-3">
+                          {filteredConventions.map((convention) => {
+                            const style = getEventTypeBadgeStyle(convention.type)
+                            const days = getConventionDays(convention)
+                            const daysCount = days.length
+                            const startD = new Date(convention.date.split('T')[0] + 'T00:00:00Z')
+                            const endD = convention.end_date ? new Date(convention.end_date.split('T')[0] + 'T00:00:00Z') : startD
+                            const now = new Date()
+                            now.setHours(0, 0, 0, 0)
+                            const isToday = startD <= now && endD >= now
+                            const daysUntilStart = Math.ceil((startD.getTime() - now.getTime()) / 86400000)
+                            const monthName = startD.toLocaleDateString(language === 'he' ? 'he-IL' : language, { month: 'short', timeZone: 'UTC' })
+                            const startDay = startD.getUTCDate()
+                            const endDay = endD.getUTCDate()
+                            const year = startD.getUTCFullYear()
+                            const dayDisplay = daysCount > 1 ? (language === 'he' ? `${endDay}-${startDay}` : `${startDay}-${endDay}`) : `${startDay}`
+
+                            return (
+                              <div key={convention.id} onClick={() => handleConventionClick(convention)} className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden flex items-stretch cursor-pointer hover:shadow-lg transition-shadow">
+                                {/* Date column */}
+                                <div className={`w-20 flex-shrink-0 flex flex-col items-center justify-center py-3 gap-0.5 ${style.bg}`}>
+                                  <span className={`text-xs font-medium ${style.text}`}>{monthName}</span>
+                                  <span className={`font-bold leading-none ${style.text}`} style={{ fontSize: daysCount > 1 ? '20px' : '28px' }}>{dayDisplay}</span>
+                                  <span className={`text-xs ${style.text}`}>{year}</span>
+                                </div>
+
+                                {/* Main content */}
+                                <div className="flex-1 p-4">
+                                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${style.bg} ${style.text}`}>
+                                      {getEventTypeTitle(convention.type)}
+                                    </span>
+                                    {isToday && (
+                                      <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300">
+                                        {t('todayBadge')}
+                                      </span>
+                                    )}
+                                    {!isToday && daysUntilStart > 0 && (
+                                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                                        {language === 'he' ? `בעוד ${daysUntilStart} ${t('days')}` : `${t('days').replace('days', '')}${daysUntilStart} ${t('days')}`}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <h3 className="text-blue-900 dark:text-blue-200 font-semibold mb-2 leading-snug" style={{ fontSize: '16px' }}>
+                                    {getEventTitle(convention)}
+                                  </h3>
+                                  <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400 flex-wrap" style={{ fontSize: '13px' }}>
+                                    <div className="flex items-center gap-1">
+                                      <Calendar className="w-3.5 h-3.5" />
+                                      <span>{formatConventionDateRange(convention)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <Clock className="w-3.5 h-3.5" />
+                                      <span>{daysCount} {t('days')}</span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Action buttons */}
+                                <div className="flex flex-col gap-2 p-3 justify-center flex-shrink-0">
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); handleConventionClick(convention) }}
+                                    className={`px-3 py-2 rounded-lg text-white font-medium text-xs flex items-center gap-1 ${style.dot.replace('bg-', 'bg-')} hover:opacity-90 transition-opacity`}
+                                    style={{ backgroundColor: style.dot.includes('purple') ? '#7c3aed' : style.dot.includes('teal') ? '#0d9488' : style.dot.includes('orange') ? '#ea580c' : '#2563eb' }}
+                                  >
+                                    {t('toStudyMaterials')}
+                                    <ChevronLeft className={`w-4 h-4 ${isRTL ? '' : 'rotate-180'}`} />
+                                  </button>
+                                  <button
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="px-3 py-2 rounded-lg text-gray-700 dark:text-gray-200 font-medium text-xs border border-gray-300 dark:border-gray-600 hover:border-gray-500 dark:hover:border-gray-400 transition-colors flex items-center gap-1"
+                                  >
+                                    {t('addToCalendar')}
+                                    <span>+</span>
+                                  </button>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </>
+                  )
+                })()}
+              </div>
+            ) : (
+              // Daily Lessons Tab
+              <div>
+                {/* Filters */}
+                <div className="mb-6">
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                      hasActiveFilters
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-2 border-gray-200 dark:border-gray-600 hover:border-blue-300'
+                    }`}
+                    style={{ fontSize: '14px' }}
+                  >
+                    <Filter className="w-4 h-4" />
+                    <span>{t('filterByDate')}</span>
+                    {hasActiveFilters && (
+                      <span className="bg-white text-blue-600 rounded-full w-5 h-5 flex items-center justify-center" style={{ fontSize: '11px' }}>
+                        1
+                      </span>
+                    )}
+                  </button>
+
+                  {showFilters && (
+                    <div className="mt-4 bg-white dark:bg-gray-800 rounded-xl shadow-md p-5">
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label className="block text-gray-700 dark:text-gray-300 mb-2" style={{ fontSize: '13px' }}>
+                            {t('fromDate')}
+                          </label>
+                          <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
+                            style={{ fontSize: '14px' }}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-gray-700 dark:text-gray-300 mb-2" style={{ fontSize: '13px' }}>
+                            {t('toDate')}
+                          </label>
+                          <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 focus:border-blue-500 focus:outline-none"
+                            style={{ fontSize: '14px' }}
+                          />
+                        </div>
+                      </div>
+
+                      {hasActiveFilters && (
+                        <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
+                          <span className="text-gray-600 dark:text-gray-400" style={{ fontSize: '13px' }}>
+                            {events.length} {t('eventsFound')}
+                          </span>
+                          <button
+                            onClick={clearFilters}
+                            className="px-3 py-1.5 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors flex items-center gap-1"
+                            style={{ fontSize: '13px' }}
+                          >
+                            <X className="w-4 h-4" />
+                            <span>{t('clearFilters')}</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Events List Grouped by Date */}
+                <div className="space-y-4">
+                  {loading ? (
+                    <div className="text-center text-gray-600 dark:text-gray-400 py-12">Loading...</div>
+                  ) : events.length === 0 ? (
+                    <div className="text-center text-gray-600 dark:text-gray-400 py-12">
+                      {t('noEvents')}
+                    </div>
+                  ) : (
+                    groupEventsByDate(events, language === 'he' ? 'he-IL' : language).map((dateGroup) => {
+                      const colors = getDateGroupColorClasses(dateGroup.dayIndex)
+                      const groupDate = new Date(dateGroup.date + 'T00:00:00Z')
+                      const activeConventions = conventions.filter(c => {
+                        const start = new Date(c.date.split('T')[0] + 'T00:00:00Z')
+                        const end = c.end_date ? new Date(c.end_date.split('T')[0] + 'T00:00:00Z') : start
+                        return groupDate >= start && groupDate <= end
+                      })
+                      return (
+                        <div
+                          key={dateGroup.date}
+                          className={`rounded-xl shadow-md bg-white dark:bg-gray-800 overflow-hidden ${isRTL ? 'border-r-4' : 'border-l-4'} ${isRTL ? colors.border : colors.borderLTR}`}
+                        >
+                          <div
+                            className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700"
+                            style={activeConventions.length > 0 ? (() => {
+                              const c = activeConventions[0]
+                              const isHoliday = c.type === 'holiday'
+                              const s = getEventTypeBadgeStyle(c.type)
+                              const accent = isDark
+                                ? (c.type === 'holiday' ? '#fbbf24' : c.type === 'special_event' ? '#2dd4bf' : '#a78bfa')
+                                : (c.type === 'holiday' ? '#f59e0b' : c.type === 'special_event' ? '#0d9488' : '#7c3aed')
+                              if (isHoliday) {
+                                return isDark
+                                  ? { background: 'linear-gradient(90deg, #78350f40, #92400e28, #78350f15)' }
+                                  : { background: 'linear-gradient(90deg, #fef3c740, #fde68a50, #fef9c320)' }
+                              }
+                              const dir = isRTL ? '270deg' : '90deg'
+                              return { background: `linear-gradient(${dir}, ${accent}30, ${accent}12)` }
+                            })() : undefined}
+                          >
+                            <div className="flex items-center gap-2 flex-wrap" style={{ color: isDark ? '#d1d5db' : '#646464' }}>
+                              <div className="flex items-center gap-2">
+                                <Calendar className="w-5 h-5" style={{ color: 'inherit' }} />
+                                <h3 style={{ fontSize: '18px', fontWeight: 'bold' }}>
+                                  {dateGroup.dayOfWeek} | {dateGroup.displayDate}
+                                </h3>
+                              </div>
+                              {activeConventions.map(c => {
+                                const cStart = new Date(c.date.split('T')[0] + 'T00:00:00Z')
+                                const dayNum = Math.floor((groupDate.getTime() - cStart.getTime()) / 86400000) + 1
+                                const typeClass = c.type === 'holiday'
+                                  ? (isDark ? 'bg-amber-900/50 text-amber-200' : 'bg-amber-100 text-amber-800')
+                                  : c.type === 'convention'
+                                  ? (isDark ? 'bg-purple-900/50 text-purple-200' : 'bg-purple-100 text-purple-800')
+                                  : (isDark ? 'bg-teal-900/50 text-teal-200' : 'bg-teal-100 text-teal-800')
+                                const cStyle = getEventTypeBadgeStyle(c.type)
+                                return (
+                                  <span key={c.id} className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${typeClass}`}>
+                                    {c.type !== 'holiday' && <span className={`w-1.5 h-1.5 rounded-full ${cStyle.dot}`} />}
+                                    {getEventTitle(c)} · {t('day')} {dayNum}
+                                  </span>
+                                )
+                              })}
+                            </div>
+                          </div>
+                          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {(() => {
+                              const CONVENTION_TYPES = ['convention', 'holiday', 'special_event']
+                              const childrenMap: Record<string, Event[]> = {}
+                              const topLevel: Event[] = []
+                              const topLevelIds = new Set(dateGroup.events.filter(ev => !ev.parent_event_id).map(ev => ev.id))
+                              for (const ev of dateGroup.events) {
+                                if (ev.parent_event_id && topLevelIds.has(ev.parent_event_id)) {
+                                  if (!childrenMap[ev.parent_event_id]) childrenMap[ev.parent_event_id] = []
+                                  childrenMap[ev.parent_event_id].push(ev)
+                                } else {
+                                  topLevel.push(ev)
+                                }
+                              }
+                              const getAccentColor = (ev: Event) => {
+                                const s = getEventTypeBadgeStyle(ev.type)
+                                if (isDark) {
+                                  return s.dot.includes('purple') ? '#a78bfa' : s.dot.includes('teal') ? '#2dd4bf' : s.dot.includes('orange') ? '#fb923c' : '#60a5fa'
+                                }
+                                return s.dot.includes('purple') ? '#7c3aed' : s.dot.includes('teal') ? '#0d9488' : s.dot.includes('orange') ? '#ea580c' : '#2563eb'
+                              }
+                              const renderEventRow = (event: Event, isChild = false, parentEvent?: Event) => {
+                                const isConventionType = CONVENTION_TYPES.includes(event.type)
+                                const evStyle = isConventionType ? getEventTypeBadgeStyle(event.type) : null
+                                const accentColor = getAccentColor(event)
+                                const parentAccent = parentEvent ? getAccentColor(parentEvent) : (isDark ? '#a78bfa' : '#7c3aed')
+
+                                if (isConventionType && !isChild) {
+                                  return (
+                                    <button
+                                      key={event.id}
+                                      onClick={() => handleConventionClick(event)}
+                                      className={`w-full p-4 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
+                                      style={{ background: `linear-gradient(${isRTL ? '270deg' : '90deg'}, ${accentColor}22, ${accentColor}0a)` }}
+                                    >
+                                      {isRTL ? (
+                                        <>
+                                          <div className="flex-1">
+                                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                              <span className="font-semibold text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors" style={{ fontSize: '16px' }}>
+                                                {getEventTitle(event)}
+                                              </span>
+                                              {evStyle && (
+                                                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${evStyle.bg} ${evStyle.text}`}>
+                                                  {getEventTypeTitle(event.type)}
+                                                </span>
+                                              )}
+                                            </div>
+                                            <div className="flex items-center gap-3 flex-wrap" style={{ fontSize: '13px', color: accentColor }}>
+                                              <div className="flex items-center gap-1">
+                                                <Calendar className="w-3.5 h-3.5" />
+                                                <span>{formatConventionDateRange(event)}</span>
+                                              </div>
+                                              {event.start_time && event.end_time && (
+                                                <div className="flex items-center gap-1">
+                                                  <Clock className="w-3.5 h-3.5" />
+                                                  <span>{formatTimeRange(event.start_time, event.end_time)}</span>
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                          <div className="flex-shrink-0 ms-3 w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: `${accentColor}15` }}>
+                                            <ChevronLeft className="w-4 h-4" style={{ color: accentColor }} />
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <div className="flex-1">
+                                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                              {evStyle && (
+                                                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${evStyle.bg} ${evStyle.text}`}>
+                                                  {getEventTypeTitle(event.type)}
+                                                </span>
+                                              )}
+                                              <span className="font-semibold text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors" style={{ fontSize: '16px' }}>
+                                                {getEventTitle(event)}
+                                              </span>
+                                            </div>
+                                            <div className="flex items-center gap-3 flex-wrap" style={{ fontSize: '13px', color: accentColor }}>
+                                              <div className="flex items-center gap-1">
+                                                <Calendar className="w-3.5 h-3.5" />
+                                                <span>{formatConventionDateRange(event)}</span>
+                                              </div>
+                                              {event.start_time && event.end_time && (
+                                                <div className="flex items-center gap-1">
+                                                  <Clock className="w-3.5 h-3.5" />
+                                                  <span>{formatTimeRange(event.start_time, event.end_time)}</span>
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                          <div className="flex-shrink-0 ms-3 w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: `${accentColor}15` }}>
+                                            <ChevronLeft className="w-4 h-4 rotate-180" style={{ color: accentColor }} />
+                                          </div>
+                                        </>
+                                      )}
+                                    </button>
+                                  )
+                                }
+
+                                return (
+                                  <button
+                                    key={event.id}
+                                    onClick={() => handleEventClick(event)}
+                                    className={`w-full transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'} ${isChild ? (isRTL ? 'pr-10 pl-4 py-3' : 'pl-10 pr-4 py-3') : 'p-4 hover:bg-blue-100 dark:hover:bg-gray-700'}`}
+                                    style={isChild ? { borderInlineEnd: `3px solid ${parentAccent}40`, background: `${parentAccent}06` } : undefined}
+                                  >
+                                    {isRTL ? (
+                                      <>
+                                        <div className="flex-1 text-right">
+                                          <h4 className={`text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mb-1 ${isChild ? 'font-normal' : ''}`} style={{ fontSize: isChild ? '14px' : '16px' }}>
+                                            {getEventTitle(event)}
+                                          </h4>
+                                          {event.start_time && event.end_time && (
+                                            <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400" style={{ fontSize: '13px' }}>
+                                              <Clock className="w-3.5 h-3.5" />
+                                              <span>{formatTimeRange(event.start_time, event.end_time)}</span>
+                                            </div>
+                                          )}
+                                        </div>
+                                        <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-[-4px] transition-all flex-shrink-0" />
+                                      </>
+                                    ) : (
+                                      <>
+                                        <div className="flex-1 text-left">
+                                          <h4 className={`text-blue-900 dark:text-blue-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mb-1 ${isChild ? 'font-normal' : ''}`} style={{ fontSize: isChild ? '14px' : '16px' }}>
+                                            {getEventTitle(event)}
+                                          </h4>
+                                          {event.start_time && event.end_time && (
+                                            <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400" style={{ fontSize: '13px' }}>
+                                              <Clock className="w-3.5 h-3.5" />
+                                              <span>{formatTimeRange(event.start_time, event.end_time)}</span>
+                                            </div>
+                                          )}
+                                        </div>
+                                        <ChevronLeft className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all flex-shrink-0 rotate-180" />
+                                      </>
+                                    )}
+                                  </button>
+                                )
+                              }
+                              return topLevel.flatMap(event => [
+                                renderEventRow(event),
+                                ...(childrenMap[event.id] || []).map(child => renderEventRow(child, true, event)),
+                              ])
+                            })()}
+                          </div>
+                        </div>
+                      )
+                    })
+                  )}
+
+                  {/* Load More Button */}
+                  {events.length > 0 && events.length < totalEvents && (
+                    <div className="mt-8 text-center">
+                      <button
+                        onClick={loadMore}
+                        className="px-6 py-3 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-300 border-2 border-blue-200 dark:border-blue-800 rounded-xl hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors shadow-md font-semibold"
+                        style={{ fontSize: '14px' }}
+                      >
+                        {t('loadMore')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
         </div>

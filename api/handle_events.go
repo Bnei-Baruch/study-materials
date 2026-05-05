@@ -5,12 +5,24 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Bnei-Baruch/study-material-service/storage"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 )
+
+func splitAndTrim(s string) []string {
+	parts := strings.Split(s, ",")
+	result := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if t := strings.TrimSpace(p); t != "" {
+			result = append(result, t)
+		}
+	}
+	return result
+}
 
 // HandleCreateEvent creates a new event
 func (a *App) HandleCreateEvent(w http.ResponseWriter, r *http.Request) {
@@ -74,16 +86,35 @@ func (a *App) HandleCreateEvent(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Parse optional end date
+	var endDate *time.Time
+	if req.EndDate != "" {
+		if parsed, err := time.Parse("2006-01-02", req.EndDate); err == nil {
+			endDate = &parsed
+		}
+	}
+
+	// Determine hide_from_lessons_tab: explicit value wins; otherwise auto-hide when parent is set
+	hideFromLessonsTab := false
+	if req.HideFromLessonsTab != nil {
+		hideFromLessonsTab = *req.HideFromLessonsTab
+	} else if req.ParentEventID != "" {
+		hideFromLessonsTab = true
+	}
+
 	// Create event
 	event := &storage.Event{
-		Date:      date,
-		StartTime: req.StartTime,
-		EndTime:   req.EndTime,
-		Type:      req.Type,
-		Number:    req.Number,
-		Order:     order,
-		Titles:    titles,
-		Public:    isPublic,
+		Date:               date,
+		StartTime:          req.StartTime,
+		EndTime:            req.EndTime,
+		Type:               req.Type,
+		Number:             req.Number,
+		Order:              order,
+		Titles:             titles,
+		Public:             isPublic,
+		EndDate:            endDate,
+		ParentEventID:      req.ParentEventID,
+		HideFromLessonsTab: hideFromLessonsTab,
 	}
 
 	if err := a.eventStore.SaveEvent(event); err != nil {
@@ -118,6 +149,10 @@ func (a *App) HandleGetEvent(w http.ResponseWriter, r *http.Request) {
 //   - offset (int): offset for pagination (e.g., ?offset=20)
 //   - from_date (string): filter events from this date (YYYY-MM-DD)
 //   - to_date (string): filter events until this date (YYYY-MM-DD)
+//   - types (string): comma-separated event types to include (e.g., ?types=convention,holiday)
+//   - exclude_types (string): comma-separated event types to exclude
+//   - parent_id (string): filter by parent event ID (sessions of a convention)
+//   - hide_from_lessons_tab (bool): filter by hide_from_lessons_tab flag
 func (a *App) HandleListEvents(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 
@@ -161,20 +196,47 @@ func (a *App) HandleListEvents(w http.ResponseWriter, r *http.Request) {
 	if fromDate != "" || toDate != "" {
 		dateFilter := bson.M{}
 		if fromDate != "" {
-			// Parse date and set to start of day
 			if parsedDate, err := time.Parse("2006-01-02", fromDate); err == nil {
 				dateFilter["$gte"] = parsedDate
 			}
 		}
 		if toDate != "" {
-			// Parse date and set to end of day
 			if parsedDate, err := time.Parse("2006-01-02", toDate); err == nil {
-				// Add 24 hours to include the entire end date
 				dateFilter["$lte"] = parsedDate.Add(24 * time.Hour)
 			}
 		}
 		if len(dateFilter) > 0 {
 			filter["date"] = dateFilter
+		}
+	}
+
+	// Type inclusion filter (?types=convention,holiday,special_event)
+	if typesStr := queryParams.Get("types"); typesStr != "" {
+		types := splitAndTrim(typesStr)
+		if len(types) > 0 {
+			filter["type"] = bson.M{"$in": types}
+		}
+	}
+
+	// Type exclusion filter (?exclude_types=convention,holiday,special_event)
+	if excludeTypesStr := queryParams.Get("exclude_types"); excludeTypesStr != "" {
+		types := splitAndTrim(excludeTypesStr)
+		if len(types) > 0 {
+			filter["type"] = bson.M{"$nin": types}
+		}
+	}
+
+	// Parent event filter (?parent_id=abc123)
+	if parentID := queryParams.Get("parent_id"); parentID != "" {
+		filter["parent_event_id"] = parentID
+	}
+
+	// Hide from lessons tab filter (?hide_from_lessons_tab=true)
+	if hideStr := queryParams.Get("hide_from_lessons_tab"); hideStr != "" {
+		if hideStr == "true" {
+			filter["hide_from_lessons_tab"] = true
+		} else if hideStr == "false" {
+			filter["hide_from_lessons_tab"] = bson.M{"$in": []interface{}{false, nil}}
 		}
 	}
 

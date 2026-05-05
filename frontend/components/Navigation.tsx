@@ -126,7 +126,7 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
           {/* Logo and Site Name */}
-          <a href="#" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src="/tree-logo.svg" width="54" height="72" alt="" />
             <div className="flex flex-col gap-0.5">
               <h1 className="text-blue-900 dark:text-blue-200 leading-none font-bold" style={{ fontSize: '22px' }}>

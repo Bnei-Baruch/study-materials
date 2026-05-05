@@ -11,12 +11,15 @@ import (
 
 // UpdateEventRequest represents the request to update an event
 type UpdateEventRequest struct {
-	Date      *string           `json:"date,omitempty"`       // Optional: update date (YYYY-MM-DD)
-	Titles    map[string]string `json:"titles,omitempty"`     // Optional: update titles
-	StartTime *string           `json:"start_time,omitempty"` // Optional: update start time (HH:MM)
-	EndTime   *string           `json:"end_time,omitempty"`   // Optional: update end time (HH:MM)
-	Order     *int              `json:"order,omitempty"`      // Optional: update order
-	Public    *bool             `json:"public,omitempty"`     // Optional: update public status
+	Date               *string           `json:"date,omitempty"`                  // Optional: update date (YYYY-MM-DD)
+	Titles             map[string]string `json:"titles,omitempty"`                // Optional: update titles
+	StartTime          *string           `json:"start_time,omitempty"`            // Optional: update start time (HH:MM)
+	EndTime            *string           `json:"end_time,omitempty"`              // Optional: update end time (HH:MM)
+	Order              *int              `json:"order,omitempty"`                 // Optional: update order
+	Public             *bool             `json:"public,omitempty"`                // Optional: update public status
+	EndDate            *string           `json:"end_date,omitempty"`              // Optional: end date for multi-day events (YYYY-MM-DD), empty string clears it
+	ParentEventID      *string           `json:"parent_event_id,omitempty"`       // Optional: parent convention ID, empty string clears it
+	HideFromLessonsTab *bool             `json:"hide_from_lessons_tab,omitempty"` // Optional: hide from daily lessons tab
 }
 
 // HandleUpdateEvent updates an existing event
@@ -81,6 +84,34 @@ func (a *App) HandleUpdateEvent(w http.ResponseWriter, r *http.Request) {
 	// Update public status if provided
 	if req.Public != nil {
 		event.Public = *req.Public
+	}
+
+	// Update end date if provided (empty string clears it)
+	if req.EndDate != nil {
+		if *req.EndDate == "" {
+			event.EndDate = nil
+		} else {
+			parsedEndDate, err := time.Parse("2006-01-02", *req.EndDate)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Invalid end_date format: %v", err), http.StatusBadRequest)
+				return
+			}
+			event.EndDate = &parsedEndDate
+		}
+	}
+
+	// Update parent event ID if provided (empty string clears it)
+	if req.ParentEventID != nil {
+		event.ParentEventID = *req.ParentEventID
+		// Auto-hide from lessons tab when attached to a parent convention
+		if *req.ParentEventID != "" && req.HideFromLessonsTab == nil {
+			event.HideFromLessonsTab = true
+		}
+	}
+
+	// Update hide_from_lessons_tab if explicitly provided
+	if req.HideFromLessonsTab != nil {
+		event.HideFromLessonsTab = *req.HideFromLessonsTab
 	}
 
 	// Save updated event

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/ProtectedRoute'
@@ -96,6 +96,7 @@ export default function CreateEventPage() {
 
 function CreateEventPageContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user, logout } = useAuth()
   const [date, setDate] = useState(() => {
     const today = new Date()
@@ -105,10 +106,32 @@ function CreateEventPageContent() {
   const [number, setNumber] = useState(1)
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [parentEventId, setParentEventId] = useState('')
+  const [hideFromLessonsTab, setHideFromLessonsTab] = useState(false)
   const [showTitleCustomization, setShowTitleCustomization] = useState(false)
   const [customTitles, setCustomTitles] = useState<{ [key: string]: string }>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [conventionEvents, setConventionEvents] = useState<Array<{ id: string; titles?: { he?: string; en?: string }; type: string; date: string }>>([])
+  const CONVENTION_TYPES = ['convention', 'holiday', 'special_event']
+
+  // Pre-fill parent_id from URL query param
+  useEffect(() => {
+    const pid = searchParams.get('parent_id')
+    if (pid) {
+      setParentEventId(pid)
+      setHideFromLessonsTab(true)
+    }
+  }, [searchParams])
+
+  // Fetch convention events for parent dropdown
+  useEffect(() => {
+    fetch(getApiUrl('/events?types=convention,holiday,special_event&limit=200'))
+      .then(r => r.json())
+      .then(data => setConventionEvents(data.events || []))
+      .catch(() => {})
+  }, [])
 
   const languages = [
     { code: 'he', name: 'Hebrew (עברית)' },
@@ -138,15 +161,13 @@ function CreateEventPageContent() {
     try {
       // Build request body with optional custom titles and times
       const requestBody: any = { date, type, number }
-      
-      // Add times if provided
-      if (startTime) {
-        requestBody.start_time = startTime
-      }
-      if (endTime) {
-        requestBody.end_time = endTime
-      }
-      
+
+      if (startTime) requestBody.start_time = startTime
+      if (endTime) requestBody.end_time = endTime
+      if (endDate) requestBody.end_date = endDate
+      if (parentEventId) requestBody.parent_event_id = parentEventId
+      requestBody.hide_from_lessons_tab = hideFromLessonsTab
+
       // Only include titles if at least one custom title was entered
       const hasCustomTitles = Object.values(customTitles).some(title => title.trim() !== '')
       if (hasCustomTitles) {
@@ -271,6 +292,66 @@ function CreateEventPageContent() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900"
                 />
               </div>
+            </div>
+
+            {/* End Date (for multi-day convention types) */}
+            {CONVENTION_TYPES.includes(type) && (
+              <div>
+                <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">
+                  End Date (Optional)
+                </label>
+                <input
+                  id="endDate"
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  min={date}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900"
+                />
+                <p className="mt-1 text-sm text-gray-500">
+                  For multi-day events; leave empty for single-day
+                </p>
+              </div>
+            )}
+
+            {/* Parent Convention */}
+            <div>
+              <label htmlFor="parentEventId" className="block text-sm font-medium text-gray-700 mb-2">
+                Parent Convention (Optional)
+              </label>
+              <select
+                id="parentEventId"
+                value={parentEventId}
+                onChange={(e) => {
+                  setParentEventId(e.target.value)
+                  if (e.target.value) setHideFromLessonsTab(true)
+                }}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900"
+              >
+                <option value="">None</option>
+                {conventionEvents.map((ev) => (
+                  <option key={ev.id} value={ev.id}>
+                    {ev.titles?.en || ev.titles?.he || ev.type} — {ev.date}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-sm text-gray-500">
+                Link this event as a session of a convention. Automatically hides it from the lessons tab.
+              </p>
+            </div>
+
+            {/* Hide from Lessons Tab */}
+            <div className="flex items-center gap-3">
+              <input
+                id="hideFromLessonsTab"
+                type="checkbox"
+                checked={hideFromLessonsTab}
+                onChange={(e) => setHideFromLessonsTab(e.target.checked)}
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <label htmlFor="hideFromLessonsTab" className="text-sm font-medium text-gray-700">
+                Hide from Daily Lessons tab
+              </label>
             </div>
 
             {/* Optional Title Customization */}
