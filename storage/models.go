@@ -87,6 +87,7 @@ type Event struct {
 	HideFromLessonsTab bool              `json:"hide_from_lessons_tab" bson:"hide_from_lessons_tab"`             // When true, excluded from the daily lessons tab
 	EmailSentAt        *time.Time        `json:"email_sent_at,omitempty" bson:"email_sent_at,omitempty"`         // Track when email was sent to Google Group
 	CreatedAt          time.Time         `json:"created_at" bson:"created_at"`
+	ExternalID         string            `json:"external_id,omitempty" bson:"external_id,omitempty"`             // External system ID for synced events (events.kli.one)
 }
 
 // EventType represents a configurable event type stored in MongoDB

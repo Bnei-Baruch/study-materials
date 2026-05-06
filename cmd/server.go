@@ -113,7 +113,21 @@ func serverFn(cmd *cobra.Command, args []string) {
 		log.Println("API secret key protection enabled")
 	}
 
+	// Ensure canonical event type colors (fixes legacy DB records)
+	storage.EnsureEventTypeColors(mongoEventTypeStore)
+
 	// Start API server with dependencies
 	app := api.NewApp(partStore, eventStore, mongoEventTypeStore, mongoTemplateStore, kabbalahmediaClient, templateConfig, apiSecretKey)
+
+	// Background sync from events.kli.one every 10 minutes
+	go func() {
+		app.SyncExternalEvents()
+		ticker := time.NewTicker(10 * time.Minute)
+		defer ticker.Stop()
+		for range ticker.C {
+			app.SyncExternalEvents()
+		}
+	}()
+
 	app.Init()
 }

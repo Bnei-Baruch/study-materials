@@ -12,6 +12,7 @@ import (
 // UpdateEventRequest represents the request to update an event
 type UpdateEventRequest struct {
 	Date               *string           `json:"date,omitempty"`                  // Optional: update date (YYYY-MM-DD)
+	Type               string            `json:"type,omitempty"`                  // Optional: update event type
 	Titles             map[string]string `json:"titles,omitempty"`                // Optional: update titles
 	StartTime          *string           `json:"start_time,omitempty"`            // Optional: update start time (HH:MM)
 	EndTime            *string           `json:"end_time,omitempty"`              // Optional: update end time (HH:MM)
@@ -64,6 +65,15 @@ func (a *App) HandleUpdateEvent(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		event.Date = parsedDate
+	}
+
+	// Update type if provided
+	if req.Type != "" {
+		if _, err := a.eventTypeStore.GetEventTypeByName(req.Type); err != nil {
+			http.Error(w, fmt.Sprintf("Invalid event type: %s", req.Type), http.StatusBadRequest)
+			return
+		}
+		event.Type = req.Type
 	}
 
 	// Update start time if provided

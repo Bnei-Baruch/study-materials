@@ -202,3 +202,25 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 	log.Printf("Seeded %d default event types", len(defaults))
 	return nil
 }
+
+// EnsureEventTypeColors updates the color of specific event types to their
+// canonical values. Run on every startup to fix legacy DB records.
+func EnsureEventTypeColors(store EventTypeStore) {
+	updates := map[string]string{
+		"holiday":       "orange",
+		"special_event": "teal",
+		"convention":    "purple",
+	}
+	for name, color := range updates {
+		et, err := store.GetEventTypeByName(name)
+		if err != nil || et == nil {
+			continue
+		}
+		if et.Color != color {
+			et.Color = color
+			if err := store.UpdateEventType(et); err != nil {
+				log.Printf("Failed to update color for %s: %v", name, err)
+			}
+		}
+	}
+}

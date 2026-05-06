@@ -184,6 +184,8 @@ function AdminEventDetailPageContent() {
   const [editParentEventId, setEditParentEventId] = useState('')
   const [editHideFromLessonsTab, setEditHideFromLessonsTab] = useState(false)
   const [editEventTitles, setEditEventTitles] = useState<{ [key: string]: string }>({})
+  const [editEventType, setEditEventType] = useState('')
+  const [availableEventTypes, setAvailableEventTypes] = useState<Array<{ id: string; name: string; titles: { [key: string]: string } }>>([])
   const [conventionEvents, setConventionEvents] = useState<Event[]>([])
   const [childSessions, setChildSessions] = useState<Event[]>([])
   const CONVENTION_TYPES = ['convention', 'holiday', 'special_event']
@@ -295,6 +297,12 @@ const fetchEventAndParts = async () => {
       // Set email status if available
       if (eventData.email_sent_at) {
         setEmailSentAt(eventData.email_sent_at)
+      }
+
+      // Fetch event types for type dropdown
+      const etRes = await fetch(getApiUrl('/event-types'))
+      if (etRes.ok) {
+        setAvailableEventTypes(await etRes.json())
       }
 
       // Fetch convention events for parent dropdown
@@ -1232,6 +1240,7 @@ const fetchEventAndParts = async () => {
                     onClick={() => {
                       updateEventDetails({
                         date: editEventDate,
+                        type: editEventType,
                         start_time: editEventStartTime || undefined,
                         end_time: editEventEndTime || undefined,
                         end_date: editEventEndDate || '',
@@ -1257,6 +1266,7 @@ const fetchEventAndParts = async () => {
                       setEditParentEventId(event.parent_event_id || '')
                       setEditHideFromLessonsTab(event.hide_from_lessons_tab || false)
                       setEditEventTitles(event.titles || {})
+                      setEditEventType(event.type || '')
                     } else if (!editingEvent && event) {
                       setEditEventDate(formatDateForInput(event.date))
                       setEditEventStartTime(event.start_time || '')
@@ -1265,6 +1275,7 @@ const fetchEventAndParts = async () => {
                       setEditParentEventId(event.parent_event_id || '')
                       setEditHideFromLessonsTab(event.hide_from_lessons_tab || false)
                       setEditEventTitles(event.titles || {})
+                      setEditEventType(event.type || '')
                     }
                     setEditingEvent(!editingEvent)
                   }}
@@ -1365,8 +1376,24 @@ const fetchEventAndParts = async () => {
                     </div>
                   </div>
 
+                  {/* Event Type */}
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2 text-xs">Event Type</label>
+                    <select
+                      value={editEventType}
+                      onChange={(e) => setEditEventType(e.target.value)}
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm bg-white"
+                    >
+                      {availableEventTypes.map((et) => (
+                        <option key={et.id} value={et.name}>
+                          {et.titles?.en || et.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   {/* End Date — shown for convention types */}
-                  {CONVENTION_TYPES.includes(event.type) && (
+                  {CONVENTION_TYPES.includes(editEventType) && (
                     <div>
                       <label className="block text-gray-700 font-medium mb-2 text-xs">End Date (for multi-day events)</label>
                       <input

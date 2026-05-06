@@ -45,6 +45,9 @@ interface Event {
   type: string
   number: number
   order: number
+  public: boolean
+  hide_from_lessons_tab: boolean
+  external_id?: string
   titles?: {
     he?: string
     en?: string
@@ -208,16 +211,31 @@ function SortableEventItem({ event, language }: { event: Event; language: string
             {/* Date and title - clickable to navigate */}
             <Link
               href={`/admin/${event.id}`}
-              className="flex items-center gap-4 flex-1"
+              className="flex items-center gap-4 flex-1 min-w-0"
             >
-              <div className="text-sm text-gray-500 w-40">
+              <div className="text-sm text-gray-500 w-40 shrink-0">
                 {formatDate(event.date)}
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-base font-medium text-gray-800">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <span className="text-base font-medium text-gray-800 truncate">
                   {eventTitle}
                 </span>
-                <span className="text-sm text-gray-500">#{event.number}</span>
+                <span className="text-sm text-gray-500 shrink-0">#{event.number}</span>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {event.external_id && (
+                  <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-600 border border-blue-200" title="Synced from events.kli.one">
+                    sync
+                  </span>
+                )}
+                <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${event.public ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'}`}>
+                  {event.public ? 'public' : 'private'}
+                </span>
+                {event.hide_from_lessons_tab && (
+                  <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                    hidden
+                  </span>
+                )}
               </div>
             </Link>
           </div>
@@ -248,6 +266,11 @@ function AdminPageContent() {
   const [language, setLanguage] = useState('he')
   const [activeTab, setActiveTab] = useState<'events' | 'templates' | 'event-types'>('events')
   const [langOpen, setLangOpen] = useState(false)
+  const [filterPublic, setFilterPublic] = useState<'all' | 'public' | 'private'>('all')
+  const [filterHidden, setFilterHidden] = useState<'all' | 'hidden' | 'visible'>('all')
+  const [filterSync, setFilterSync] = useState<'all' | 'synced' | 'manual'>('all')
+  const [filterType, setFilterType] = useState<string>('all')
+  const [eventTypes, setEventTypes] = useState<Array<{ name: string; titles: { [k: string]: string } }>>([])
   const { user, logout } = useAuth()
 
   const sensors = useSensors(
@@ -267,6 +290,7 @@ function AdminPageContent() {
 
   useEffect(() => {
     fetchEvents()
+    fetch(getApiUrl('/event-types')).then(r => r.json()).then(setEventTypes).catch(() => {})
   }, [])
 
   const fetchEvents = async () => {
@@ -430,34 +454,89 @@ function AdminPageContent() {
         {/* Events Tab */}
         {activeTab === 'events' && (
           <>
-        {events.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <div className="text-gray-500 mb-4">No events yet</div>
-            <Link
-              href="/admin/create"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
-            >
-              Create Your First Event
-            </Link>
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={events.map((e) => e.id)}
-                strategy={verticalListSortingStrategy}
+          {/* Filter bar */}
+          <div className="flex flex-wrap items-center gap-4 mb-4 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Type</span>
+              <select
+                value={filterType}
+                onChange={e => setFilterType(e.target.value)}
+                className="px-2 py-1 rounded-lg text-xs font-medium border border-gray-200 bg-white text-gray-700 focus:outline-none focus:border-blue-400"
               >
-                {events.map((event) => (
-                  <SortableEventItem key={event.id} event={event} language={language} />
+                <option value="all">All</option>
+                {eventTypes.map(et => (
+                  <option key={et.name} value={et.name}>{et.titles?.en || et.name}</option>
                 ))}
-              </SortableContext>
-            </DndContext>
+              </select>
+            </div>
+            <div className="w-px h-5 bg-gray-200" />
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Visibility</span>
+              {(['all', 'public', 'private'] as const).map(v => (
+                <button key={v} onClick={() => setFilterPublic(v)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${filterPublic === v ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                  {v === 'all' ? 'All' : v.charAt(0).toUpperCase() + v.slice(1)}
+                </button>
+              ))}
+            </div>
+            <div className="w-px h-5 bg-gray-200" />
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Lessons tab</span>
+              {(['all', 'visible', 'hidden'] as const).map(v => (
+                <button key={v} onClick={() => setFilterHidden(v)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${filterHidden === v ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                  {v === 'all' ? 'All' : v.charAt(0).toUpperCase() + v.slice(1)}
+                </button>
+              ))}
+            </div>
+            <div className="w-px h-5 bg-gray-200" />
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Source</span>
+              {(['all', 'synced', 'manual'] as const).map(v => (
+                <button key={v} onClick={() => setFilterSync(v)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${filterSync === v ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                  {v === 'all' ? 'All' : v.charAt(0).toUpperCase() + v.slice(1)}
+                </button>
+              ))}
+            </div>
+            {(filterPublic !== 'all' || filterHidden !== 'all' || filterSync !== 'all' || filterType !== 'all') && (
+              <button onClick={() => { setFilterPublic('all'); setFilterHidden('all'); setFilterSync('all'); setFilterType('all') }}
+                className="ml-auto text-xs text-gray-400 hover:text-gray-600 underline">
+                Clear filters
+              </button>
+            )}
           </div>
-        )}
+
+        {(() => {
+          const filtered = events.filter(e => {
+            if (filterPublic === 'public' && !e.public) return false
+            if (filterPublic === 'private' && e.public) return false
+            if (filterHidden === 'hidden' && !e.hide_from_lessons_tab) return false
+            if (filterHidden === 'visible' && e.hide_from_lessons_tab) return false
+            if (filterSync === 'synced' && !e.external_id) return false
+            if (filterSync === 'manual' && e.external_id) return false
+            if (filterType !== 'all' && e.type !== filterType) return false
+            return true
+          })
+          return filtered.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+              <div className="text-gray-500 mb-4">No events found</div>
+              <Link href="/admin/create" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+                Create Your First Event
+              </Link>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={filtered.map((e) => e.id)} strategy={verticalListSortingStrategy}>
+                  {filtered.map((event) => (
+                    <SortableEventItem key={event.id} event={event} language={language} />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            </div>
+          )
+        })()}
           </>
         )}
 

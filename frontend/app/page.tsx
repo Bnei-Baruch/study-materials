@@ -602,7 +602,17 @@ const TRANSLATIONS = {
   },
 }
 
-export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'lessons' | 'conventions' } = {}) {
+export default function PublicPage({
+  initialTab = 'lessons',
+  initialEventId,
+  initialConventionId,
+  initialDay,
+}: {
+  initialTab?: 'lessons' | 'conventions'
+  initialEventId?: string
+  initialConventionId?: string
+  initialDay?: string
+} = {}) {
   const router = useRouter()
   const [language, setLanguage] = useState('he')
   const [events, setEvents] = useState<Event[]>([])
@@ -624,7 +634,6 @@ export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'l
   const [selectedConvention, setSelectedConvention] = useState<Event | null>(null)
   const [conventionSessions, setConventionSessions] = useState<Event[]>([])
   const [selectedConventionDay, setSelectedConventionDay] = useState<string | null>(null)
-  const [fromConvention, setFromConvention] = useState(false)
   const [eventTypes, setEventTypes] = useState<EventTypeInfo[]>([])
   const [isDark, setIsDark] = useState(false)
   useEffect(() => {
@@ -804,66 +813,36 @@ export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'l
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
 
-  // Detect event/convention from URL parameter and auto-select
+  // Auto-select event from route param
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const eventId = urlParams.get('event')
-    const conventionId = urlParams.get('convention')
+    if (!initialEventId || selectedEvent) return
+    const found = events.find(e => e.id === initialEventId)
+    if (found) { setSelectedEvent(found); setActiveTab('lessons'); return }
+    // Not in the events list (e.g. a hidden session) — fetch it directly
+    fetch(getApiUrl(`/events/${initialEventId}`))
+      .then(r => r.ok ? r.json() : null)
+      .then(event => { if (event?.id) { setSelectedEvent(event); setActiveTab('lessons') } })
+      .catch(() => {})
+  }, [events, initialEventId])
 
-    if (eventId && events.length > 0) {
-      const event = events.find(e => e.id === eventId)
-      if (event) { setSelectedEvent(event); setActiveTab('lessons') }
-    } else if (conventionId && conventions.length > 0) {
-      const convention = conventions.find(c => c.id === conventionId)
-      if (convention) {
-        setActiveTab('conventions')
-        setSelectedConvention(convention)
-        setConventionSessions([])
-        setSelectedConventionDay(null)
-        fetchConventionSessions(convention.id)
-      }
-    }
-  }, [events, conventions])
-
-  // Listen for browser back/forward button
+  // Auto-select convention from route param
   useEffect(() => {
-    const handlePopState = () => {
-      const urlParams = new URLSearchParams(window.location.search)
-      const eventId = urlParams.get('event')
-      const conventionId = urlParams.get('convention')
-      const isConventionsPath = window.location.pathname === '/conventions'
-
-      if (eventId && events.length > 0) {
-        const event = events.find(e => e.id === eventId)
-        if (event) { setSelectedEvent(event); setActiveTab('lessons'); return }
-      }
-      if (conventionId && conventions.length > 0) {
-        const convention = conventions.find(c => c.id === conventionId)
-        if (convention) {
-          setSelectedEvent(null)
-          setParts([])
-          setExpandedParts(new Set())
-          setSelectedConvention(convention)
-          setConventionSessions([])
-          setSelectedConventionDay(null)
-          setActiveTab('conventions')
-          fetchConventionSessions(convention.id)
-          return
-        }
-      }
-      // No specific item — sync tab from path and clear selection
-      setSelectedEvent(null)
-      setParts([])
-      setExpandedParts(new Set())
-      setSelectedConvention(null)
-      setConventionSessions([])
-      setSelectedConventionDay(null)
-      setActiveTab(isConventionsPath ? 'conventions' : 'lessons')
+    if (!initialConventionId || conventions.length === 0 || selectedConvention) return
+    const convention = conventions.find(c => c.id === initialConventionId)
+    if (convention) {
+      setSelectedConvention(convention)
+      setActiveTab('conventions')
+      fetchConventionSessions(convention.id)
     }
+  }, [conventions, initialConventionId])
 
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
-  }, [events, conventions])
+  // Apply initial day once convention and sessions load (initialDay is "day-1", "day-2", etc.)
+  useEffect(() => {
+    if (!initialDay || !selectedConvention) return
+    const idx = parseInt(initialDay.replace('day-', '')) - 1
+    const days = getConventionDays(selectedConvention)
+    if (days[idx]) setSelectedConventionDay(days[idx])
+  }, [conventionSessions, initialDay, selectedConvention])
 
   const fetchEvents = async () => {
     console.log(`[study] fetching events at ${new Date().toLocaleTimeString()}`)
@@ -1303,53 +1282,20 @@ export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'l
     return et?.titles?.[language] || et?.titles?.['en'] || typeName
   }
 
-  const handleEventClick = (event: Event, originConvention?: boolean) => {
-    setSelectedEvent(event)
-    setParts([])
-    setExpandedParts(new Set())
-    setFromConvention(originConvention ?? false)
-    window.history.pushState(null, '', `/?event=${event.id}`)
-    // Note: event detail stays on / regardless of source tab
+  const handleEventClick = (event: Event) => {
+    router.push(`/event/${event.id}`)
   }
 
   const handleConventionClick = (convention: Event) => {
-    setSelectedConvention(convention)
-    setConventionSessions([])
-    setSelectedConventionDay(null)
-    fetchConventionSessions(convention.id)
-    const fromLessons = activeTab === 'lessons' ? '?from=lessons' : ''
-    window.history.pushState(null, '', `/conventions?convention=${convention.id}${fromLessons}`)
+    router.push(`/conventions/${convention.id}`)
   }
 
   const handleBackToEvents = () => {
-    if (fromConvention && selectedConvention) {
-      // Go back to convention detail
-      setSelectedEvent(null)
-      setParts([])
-      setExpandedParts(new Set())
-      setFromConvention(false)
-      window.history.pushState(null, '', '/')
-      return
-    }
-    setSelectedEvent(null)
-    setParts([])
-    setExpandedParts(new Set())
-    setFromConvention(false)
-    window.history.pushState(null, '', '/')
+    router.back()
   }
 
   const handleBackToConventions = () => {
-    const params = new URLSearchParams(window.location.search)
-    const from = params.get('from')
-    setSelectedConvention(null)
-    setConventionSessions([])
-    setSelectedConventionDay(null)
-    if (from === 'lessons') {
-      setActiveTab('lessons')
-      router.push('/')
-    } else {
-      router.push('/conventions')
-    }
+    router.push('/conventions')
   }
 
   const isRTL = language === 'he'
@@ -1870,7 +1816,7 @@ export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'l
                   return (
                     <button
                       key={dayStr}
-                      onClick={() => setSelectedConventionDay(dayStr)}
+                      onClick={() => router.push(`/conventions/${selectedConvention!.id}/day-${idx + 1}`)}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                         isSelected
                           ? 'bg-blue-700 text-white'
@@ -1908,7 +1854,7 @@ export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'l
                       return (
                         <button
                           key={session.id}
-                          onClick={() => handleEventClick(session, true)}
+                          onClick={() => handleEventClick(session)}
                           className={`w-full px-4 py-3 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors group flex items-center justify-between ${isRTL ? 'text-right' : 'text-left'}`}
                         >
                           <div className="flex-1 flex items-center gap-3">
@@ -1975,11 +1921,10 @@ export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'l
               // Conventions Tab
               <div>
                 {(() => {
-                  const today = new Date()
-                  today.setHours(0, 0, 0, 0)
+                  const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' }) // YYYY-MM-DD in IL time
                   const isUpcoming = (c: Event) => {
-                    const end = new Date((c.end_date || c.date).split('T')[0] + 'T23:59:59Z')
-                    return end >= today
+                    const endStr = (c.end_date || c.date).split('T')[0]
+                    return endStr >= todayStr
                   }
                   const upcomingList = conventions.filter(isUpcoming).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                   const pastList = conventions.filter(c => !isUpcoming(c)).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -2021,10 +1966,11 @@ export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'l
                             const daysCount = days.length
                             const startD = new Date(convention.date.split('T')[0] + 'T00:00:00Z')
                             const endD = convention.end_date ? new Date(convention.end_date.split('T')[0] + 'T00:00:00Z') : startD
-                            const now = new Date()
-                            now.setHours(0, 0, 0, 0)
-                            const isToday = startD <= now && endD >= now
-                            const daysUntilStart = Math.ceil((startD.getTime() - now.getTime()) / 86400000)
+                            const nowStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' })
+                            const startStr = convention.date.split('T')[0]
+                            const endStr = (convention.end_date || convention.date).split('T')[0]
+                            const isToday = startStr <= nowStr && endStr >= nowStr
+                            const daysUntilStart = Math.ceil((startD.getTime() - new Date(nowStr + 'T00:00:00Z').getTime()) / 86400000)
                             const monthName = startD.toLocaleDateString(language === 'he' ? 'he-IL' : language, { month: 'short', timeZone: 'UTC' })
                             const startDay = startD.getUTCDate()
                             const endDay = endD.getUTCDate()
@@ -2199,12 +2145,12 @@ export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'l
                               const isHoliday = c.type === 'holiday'
                               const s = getEventTypeBadgeStyle(c.type)
                               const accent = isDark
-                                ? (c.type === 'holiday' ? '#fbbf24' : c.type === 'special_event' ? '#2dd4bf' : '#a78bfa')
-                                : (c.type === 'holiday' ? '#f59e0b' : c.type === 'special_event' ? '#0d9488' : '#7c3aed')
+                                ? (c.type === 'holiday' ? '#fb923c' : c.type === 'special_event' ? '#2dd4bf' : '#a78bfa')
+                                : (c.type === 'holiday' ? '#ea580c' : c.type === 'special_event' ? '#0d9488' : '#7c3aed')
                               if (isHoliday) {
                                 return isDark
-                                  ? { background: 'linear-gradient(90deg, #78350f40, #92400e28, #78350f15)' }
-                                  : { background: 'linear-gradient(90deg, #fef3c740, #fde68a50, #fef9c320)' }
+                                  ? { background: 'linear-gradient(90deg, #7c2d1240, #9a341228, #7c2d1215)' }
+                                  : { background: 'linear-gradient(90deg, #ffedd540, #fed7aa50, #ffedd520)' }
                               }
                               const dir = isRTL ? '270deg' : '90deg'
                               return { background: `linear-gradient(${dir}, ${accent}30, ${accent}12)` }
@@ -2221,7 +2167,7 @@ export default function PublicPage({ initialTab = 'lessons' }: { initialTab?: 'l
                                 const cStart = new Date(c.date.split('T')[0] + 'T00:00:00Z')
                                 const dayNum = Math.floor((groupDate.getTime() - cStart.getTime()) / 86400000) + 1
                                 const typeClass = c.type === 'holiday'
-                                  ? (isDark ? 'bg-amber-900/50 text-amber-200' : 'bg-amber-100 text-amber-800')
+                                  ? (isDark ? 'bg-orange-900/50 text-orange-200' : 'bg-orange-100 text-orange-800')
                                   : c.type === 'convention'
                                   ? (isDark ? 'bg-purple-900/50 text-purple-200' : 'bg-purple-100 text-purple-800')
                                   : (isDark ? 'bg-teal-900/50 text-teal-200' : 'bg-teal-100 text-teal-800')
