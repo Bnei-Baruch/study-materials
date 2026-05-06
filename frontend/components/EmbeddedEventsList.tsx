@@ -153,6 +153,8 @@ export function EmbeddedEventsList({
           public: 'true',
           limit: limit.toString(),
           offset: '0',
+          hide_from_lessons_tab: 'false',
+          exclude_types: 'convention,holiday,special_event',
         })
 
         const response = await fetch(`${apiBaseUrl}/api/events?${params}`)

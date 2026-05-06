@@ -22183,7 +22183,9 @@ var StudyMaterialsWidgetBundle = (() => {
           const params = new URLSearchParams({
             public: "true",
             limit: limit.toString(),
-            offset: "0"
+            offset: "0",
+            hide_from_lessons_tab: "false",
+            exclude_types: "convention,holiday,special_event"
           });
           const response = yield fetch(`${apiBaseUrl}/api/events?${params}`);
           if (!response.ok) {
