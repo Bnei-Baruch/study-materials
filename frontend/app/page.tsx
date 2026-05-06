@@ -1143,6 +1143,88 @@ export default function PublicPage({
     return message
   }
 
+  const formatSessionParts = (sessionParts: Part[]): string => {
+    if (sessionParts.length === 0) return ''
+    let text = ''
+    sessionParts.forEach(part => {
+      const isPreparation = part.part_number === 0
+      const partTitle = isPreparation ? part.title : `${t('part')} ${part.part_number}: ${part.title}`
+      text += `\n  *${partTitle}*\n`
+      if (part.description) text += `  ${part.description}\n`
+      if (part.recorded_lesson_date) text += `  ${t('originalDate')}${formatDateByLanguage(part.recorded_lesson_date, language)}\n`
+      part.sources?.forEach(source => {
+        text += `  ◆ ${t('readSource')}\n  ${addLanguageToUrl(source.source_url)}\n`
+        if (source.page_number) text += `     ${t('page')} ${source.page_number}\n`
+      })
+      const links: { label: string; url: string }[] = []
+      if (isPreparation) {
+        if (part.reading_before_sleep_link) links.push({ label: t('readingBeforeSleep'), url: addLanguageToUrl(part.reading_before_sleep_link) })
+        if (part.lesson_preparation_link) links.push({ label: t('lessonPreparation'), url: addLanguageToUrl(part.lesson_preparation_link) })
+      } else {
+        if (part.lesson_link) links.push({ label: t('watchLesson'), url: addLanguageToUrl(part.lesson_link) })
+        if (part.transcript_link) links.push({ label: t('lessonTranscript'), url: addLanguageToUrl(part.transcript_link) })
+        if (part.excerpts_link) links.push({ label: t('selectedExcerpts'), url: addLanguageToUrl(part.excerpts_link) })
+        if (part.lineup_for_hosts_link) links.push({ label: t('lineupForHosts'), url: addLanguageToUrl(part.lineup_for_hosts_link) })
+      }
+      part.custom_links?.forEach(link => links.push({ label: link.title, url: addLanguageToUrl(link.url) }))
+      links.forEach(link => { text += `  ◆ ${link.label}\n  ${link.url}\n` })
+    })
+    return text
+  }
+
+  const buildConventionShareMessage = async (convention: Event): Promise<string> => {
+    const title = getEventTitle(convention)
+    const dateRange = formatConventionDateRange(convention)
+    const typeName = getEventTypeTitle(convention.type)
+    const separator = language === 'he' ? '‮━━━━━━━━━━' : '━━━━━━━━━━'
+
+    // Fetch parts for all sessions in parallel
+    const sessionPartsMap = new Map<string, Part[]>()
+    await Promise.all(
+      conventionSessions.map(async session => {
+        try {
+          const res = await fetch(getApiUrl(`/events/${session.id}/parts?language=${language}`))
+          const data = await res.json()
+          const sorted = (data.parts || [])
+            .sort((a: Part, b: Part) => (a.order ?? 0) - (b.order ?? 0))
+            .map((p: Part) => ({ ...p, part_number: p.part_number ?? p.order }))
+          sessionPartsMap.set(session.id, sorted)
+        } catch {
+          sessionPartsMap.set(session.id, [])
+        }
+      })
+    )
+
+    let message = `*${title}*\n${typeName} | ${dateRange}\n`
+
+    const days = getConventionDays(convention)
+    days.forEach((dayStr, idx) => {
+      const sessionsForDay = conventionSessions
+        .filter(s => s.date.split('T')[0] === dayStr)
+        .sort((a, b) => (a.start_time || '').localeCompare(b.start_time || ''))
+
+      if (sessionsForDay.length === 0) return
+
+      const dayDate = new Date(dayStr + 'T00:00:00Z')
+      const monthName = dayDate.toLocaleDateString(language === 'he' ? 'he-IL' : language, { month: 'long', timeZone: 'UTC' })
+      const dayNum = dayDate.getUTCDate()
+
+      message += `\n${separator}\n`
+      message += `*${t('day')} ${idx + 1} · ${dayNum} ${monthName}*\n`
+
+      sessionsForDay.forEach(session => {
+        const sessionTitle = getEventTitle(session)
+        const timeStr = session.start_time
+          ? (session.end_time ? formatTimeRange(session.start_time, session.end_time) : session.start_time.replace(/^0/, ''))
+          : null
+        message += `\n${timeStr ? `${timeStr} | ` : ''}*${sessionTitle}*\n`
+        message += formatSessionParts(sessionPartsMap.get(session.id) || [])
+      })
+    })
+
+    return message
+  }
+
   const sharePartToWhatsApp = (part: Part, event: Event) => {
     const message = generatePartMessage(part, event)
     const encodedMessage = encodeURIComponent(message)
@@ -1779,7 +1861,7 @@ export default function PublicPage({
             </div>
 
             {/* Convention Header Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 mb-6 border border-gray-100 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 mb-6 border border-gray-100 dark:border-gray-700 relative">
               <div className="flex items-center gap-2 mb-3 flex-wrap">
                 {(() => {
                   const style = getEventTypeBadgeStyle(selectedConvention.type)
@@ -1803,6 +1885,67 @@ export default function PublicPage({
                   <span>{getConventionDays(selectedConvention).length} {t('days')}</span>
                 </div>
               </div>
+
+              {/* Share button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setOpenShareDropdown(openShareDropdown === 'convention' ? null : 'convention')
+                }}
+                className={`absolute top-5 ${isRTL ? 'left-5' : 'right-5'} bg-white dark:bg-gray-700 text-green-500 dark:text-green-400 border border-green-500 dark:border-green-600 rounded-full p-2 hover:bg-green-50 dark:hover:bg-gray-600 transition-all flex-shrink-0 z-10`}
+                data-share-button
+                title={t('share')}
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
+
+              {/* Share Dropdown */}
+              {openShareDropdown === 'convention' && (
+                <div data-share-dropdown className={`absolute ${isRTL ? 'left-5' : 'right-5'} top-16 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 py-2 min-w-[160px] z-20`}>
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation()
+                      const message = await buildConventionShareMessage(selectedConvention)
+                      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank')
+                      setOpenShareDropdown(null)
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors dark:text-gray-200"
+                  >
+                    <MessageCircle className="w-5 h-5 text-green-600" />
+                    <span>{t('whatsapp')}</span>
+                  </button>
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation()
+                      const message = await buildConventionShareMessage(selectedConvention)
+                      window.open(`https://t.me/share/url?url=&text=${encodeURIComponent(message)}`, '_blank')
+                      setOpenShareDropdown(null)
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors dark:text-gray-200"
+                  >
+                    <Send className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <span>{t('telegram')}</span>
+                  </button>
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation()
+                      const message = await buildConventionShareMessage(selectedConvention)
+                      navigator.clipboard.writeText(message)
+                      setSharedPart(selectedConvention.id)
+                      setTimeout(() => setSharedPart(null), 2000)
+                      setOpenShareDropdown(null)
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors dark:text-gray-200"
+                  >
+                    {sharedPart === selectedConvention.id ? (
+                      <Check className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <Copy className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    )}
+                    <span>{t('copyAsText')}</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Day Navigation Tabs */}
