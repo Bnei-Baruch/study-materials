@@ -53,6 +53,14 @@ func createEventIndexes(ctx context.Context, collection *mongo.Collection) error
 				{Key: "date", Value: -1},
 			},
 		},
+		{
+			// Sparse unique index: enforces no duplicate external_id values
+			// while allowing multiple documents with no external_id set.
+			Keys: bson.D{{Key: "external_id", Value: 1}},
+			Options: options.Index().
+				SetUnique(true).
+				SetSparse(true),
+		},
 	}
 
 	_, err := collection.Indexes().CreateMany(ctx, indexes)
