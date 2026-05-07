@@ -270,6 +270,8 @@ function AdminPageContent() {
   const [filterHidden, setFilterHidden] = useState<'all' | 'hidden' | 'visible'>('all')
   const [filterSync, setFilterSync] = useState<'all' | 'synced' | 'manual'>('all')
   const [filterType, setFilterType] = useState<string>('all')
+  const [showSpecialEvents, setShowSpecialEvents] = useState(false)
+  const SPECIAL_EVENT_TYPES = ['convention', 'holiday', 'special_event']
   const [eventTypes, setEventTypes] = useState<Array<{ name: string; titles: { [k: string]: string } }>>([])
   const { user, logout } = useAuth()
 
@@ -499,8 +501,18 @@ function AdminPageContent() {
                 </button>
               ))}
             </div>
-            {(filterPublic !== 'all' || filterHidden !== 'all' || filterSync !== 'all' || filterType !== 'all') && (
-              <button onClick={() => { setFilterPublic('all'); setFilterHidden('all'); setFilterSync('all'); setFilterType('all') }}
+            <div className="w-px h-5 bg-gray-200" />
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Special events</span>
+              <button
+                onClick={() => setShowSpecialEvents(v => !v)}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${showSpecialEvents ? 'bg-blue-600' : 'bg-gray-300'}`}
+              >
+                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${showSpecialEvents ? 'translate-x-4' : 'translate-x-1'}`} />
+              </button>
+            </div>
+            {(filterPublic !== 'all' || filterHidden !== 'all' || filterSync !== 'all' || filterType !== 'all' || showSpecialEvents) && (
+              <button onClick={() => { setFilterPublic('all'); setFilterHidden('all'); setFilterSync('all'); setFilterType('all'); setShowSpecialEvents(false) }}
                 className="ml-auto text-xs text-gray-400 hover:text-gray-600 underline">
                 Clear filters
               </button>
@@ -516,6 +528,7 @@ function AdminPageContent() {
             if (filterSync === 'synced' && !e.external_id) return false
             if (filterSync === 'manual' && e.external_id) return false
             if (filterType !== 'all' && e.type !== filterType) return false
+            if (!showSpecialEvents && filterType === 'all' && SPECIAL_EVENT_TYPES.includes(e.type)) return false
             return true
           })
           return filtered.length === 0 ? (
