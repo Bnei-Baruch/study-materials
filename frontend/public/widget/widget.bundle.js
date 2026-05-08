@@ -22135,6 +22135,30 @@ var StudyMaterialsWidgetBundle = (() => {
       error: "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
       noEventsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0443\u0440\u043E\u043A\u0456\u0432",
       viewAllMaterials: "\u041F\u0435\u0440\u0435\u0433\u043B\u044F\u043D\u0443\u0442\u0438 \u0432\u0441\u0456 \u043D\u0430\u0432\u0447\u0430\u043B\u044C\u043D\u0456 \u043C\u0430\u0442\u0435\u0440\u0456\u0430\u043B\u0438"
+    },
+    tr: {
+      studyMaterials: "\xC7al\u0131\u015Fma Materyalleri",
+      selectLesson: "Listeden bir ders se\xE7in",
+      loading: "Y\xFCkleniyor...",
+      error: "Veri y\xFCkleme hatas\u0131",
+      noEventsAvailable: "Kullan\u0131labilir ders yok",
+      viewAllMaterials: "T\xFCm \xE7al\u0131\u015Fma materyallerini g\xF6r\xFCnt\xFCle"
+    },
+    "pt-BR": {
+      studyMaterials: "Materiais de Estudo",
+      selectLesson: "Selecione uma aula da lista",
+      loading: "Carregando...",
+      error: "Erro ao carregar dados",
+      noEventsAvailable: "Nenhuma aula dispon\xEDvel",
+      viewAllMaterials: "Ver todos os materiais de estudo"
+    },
+    bg: {
+      studyMaterials: "\u0423\u0447\u0435\u0431\u043D\u0438 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u0438",
+      selectLesson: "\u0418\u0437\u0431\u0435\u0440\u0435\u0442\u0435 \u0443\u0440\u043E\u043A \u043E\u0442 \u0441\u043F\u0438\u0441\u044A\u043A\u0430",
+      loading: "\u0417\u0430\u0440\u0435\u0436\u0434\u0430\u043D\u0435...",
+      error: "\u0413\u0440\u0435\u0448\u043A\u0430 \u043F\u0440\u0438 \u0437\u0430\u0440\u0435\u0436\u0434\u0430\u043D\u0435 \u043D\u0430 \u0434\u0430\u043D\u043D\u0438",
+      noEventsAvailable: "\u041D\u044F\u043C\u0430 \u043D\u0430\u043B\u0438\u0447\u043D\u0438 \u0443\u0440\u043E\u0446\u0438",
+      viewAllMaterials: "\u0412\u0438\u0436\u0442\u0435 \u0432\u0441\u0438\u0447\u043A\u0438 \u0443\u0447\u0435\u0431\u043D\u0438 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u0438"
     }
   };
   function EmbeddedEventsList({
@@ -22159,7 +22183,9 @@ var StudyMaterialsWidgetBundle = (() => {
           const params = new URLSearchParams({
             public: "true",
             limit: limit.toString(),
-            offset: "0"
+            offset: "0",
+            hide_from_lessons_tab: "false",
+            exclude_types: "convention,holiday,special_event"
           });
           const response = yield fetch(`${apiBaseUrl}/api/events?${params}`);
           if (!response.ok) {
@@ -22233,7 +22259,10 @@ var StudyMaterialsWidgetBundle = (() => {
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "de", children: "Deutsch" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "it", children: "Italiano" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "fr", children: "Fran\xE7ais" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "uk", children: "\u0423\u043A\u0440\u0430\u0457\u043D\u0441\u044C\u043A\u0430" })
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "uk", children: "\u0423\u043A\u0440\u0430\u0457\u043D\u0441\u044C\u043A\u0430" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "tr", children: "T\xFCrk\xE7e" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "pt-BR", children: "Portugu\xEAs" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "bg", children: "\u0411\u044A\u043B\u0433\u0430\u0440\u0441\u043A\u0438" })
             ]
           }
         ) })
@@ -22328,7 +22357,9 @@ var StudyMaterialsWidgetBundle = (() => {
       error: "\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05D8\u05E2\u05D9\u05E0\u05EA \u05D4\u05E0\u05EA\u05D5\u05E0\u05D9\u05DD",
       noPartsAvailable: "\u05D0\u05D9\u05DF \u05D7\u05DC\u05E7\u05D9\u05DD \u05D6\u05DE\u05D9\u05E0\u05D9\u05DD",
       back: "\u05D7\u05D6\u05E8\u05D4",
-      copyAsText: "\u05D4\u05E2\u05EA\u05E7 \u05DB\u05D8\u05E7\u05E1\u05D8"
+      copyAsText: "\u05D4\u05E2\u05EA\u05E7 \u05DB\u05D8\u05E7\u05E1\u05D8",
+      startPoint: "\u05D3\u05D1\u05E8 \u05D4\u05DE\u05EA\u05D7\u05D9\u05DC:",
+      endPoint: "\u05E2\u05D3:"
     },
     en: {
       preparation: "Lesson Preparation",
@@ -22350,7 +22381,9 @@ var StudyMaterialsWidgetBundle = (() => {
       error: "Error loading data",
       noPartsAvailable: "No parts available",
       back: "Back",
-      copyAsText: "Copy as text"
+      copyAsText: "Copy as text",
+      startPoint: "From:",
+      endPoint: "To:"
     },
     ru: {
       preparation: "\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u043A \u0443\u0440\u043E\u043A\u0443",
@@ -22372,7 +22405,9 @@ var StudyMaterialsWidgetBundle = (() => {
       error: "\u041E\u0448\u0438\u0431\u043A\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438 \u0434\u0430\u043D\u043D\u044B\u0445",
       noPartsAvailable: "\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0447\u0430\u0441\u0442\u0435\u0439",
       back: "\u041D\u0430\u0437\u0430\u0434",
-      copyAsText: "\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043A\u0430\u043A \u0442\u0435\u043A\u0441\u0442"
+      copyAsText: "\u041A\u043E\u043F\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043A\u0430\u043A \u0442\u0435\u043A\u0441\u0442",
+      startPoint: "\u041E\u0442:",
+      endPoint: "\u0414\u043E:"
     },
     es: {
       preparation: "Preparaci\xF3n de la lecci\xF3n",
@@ -22394,7 +22429,9 @@ var StudyMaterialsWidgetBundle = (() => {
       error: "Error al cargar datos",
       noPartsAvailable: "No hay partes disponibles",
       back: "Volver",
-      copyAsText: "Copiar como texto"
+      copyAsText: "Copiar como texto",
+      startPoint: "Desde:",
+      endPoint: "Hasta:"
     },
     de: {
       preparation: "Lektionsvorbereitung",
@@ -22416,7 +22453,9 @@ var StudyMaterialsWidgetBundle = (() => {
       error: "Fehler beim Laden der Daten",
       noPartsAvailable: "Keine Teile verf\xFCgbar",
       back: "Zur\xFCck",
-      copyAsText: "Als Text kopieren"
+      copyAsText: "Als Text kopieren",
+      startPoint: "Von:",
+      endPoint: "Bis:"
     },
     it: {
       preparation: "Preparazione della lezione",
@@ -22438,7 +22477,9 @@ var StudyMaterialsWidgetBundle = (() => {
       error: "Errore nel caricamento dei dati",
       noPartsAvailable: "Nessuna parte disponibile",
       back: "Indietro",
-      copyAsText: "Copia come testo"
+      copyAsText: "Copia come testo",
+      startPoint: "Da:",
+      endPoint: "A:"
     },
     fr: {
       preparation: "Pr\xE9paration de la le\xE7on",
@@ -22460,7 +22501,9 @@ var StudyMaterialsWidgetBundle = (() => {
       error: "Erreur de chargement des donn\xE9es",
       noPartsAvailable: "Aucune partie disponible",
       back: "Retour",
-      copyAsText: "Copier en tant que texte"
+      copyAsText: "Copier en tant que texte",
+      startPoint: "De:",
+      endPoint: "\xC0:"
     },
     uk: {
       preparation: "\u041F\u0456\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0434\u043E \u0443\u0440\u043E\u043A\u0443",
@@ -22482,7 +22525,81 @@ var StudyMaterialsWidgetBundle = (() => {
       error: "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
       noPartsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0447\u0430\u0441\u0442\u0438\u043D",
       back: "\u041D\u0430\u0437\u0430\u0434",
-      copyAsText: "\u041A\u043E\u043F\u0456\u044E\u0432\u0430\u0442\u0438 \u044F\u043A \u0442\u0435\u043A\u0441\u0442"
+      copyAsText: "\u041A\u043E\u043F\u0456\u044E\u0432\u0430\u0442\u0438 \u044F\u043A \u0442\u0435\u043A\u0441\u0442",
+      startPoint: "\u0412\u0456\u0434:",
+      endPoint: "\u0414\u043E:"
+    },
+    tr: {
+      preparation: "Ders Haz\u0131rl\u0131\u011F\u0131",
+      part: "B\xF6l\xFCm",
+      shareLesson: "Payla\u015F",
+      shareSection: "Payla\u015F",
+      copyLink: "Ba\u011Flant\u0131y\u0131 Kopyala",
+      copied: "Kopyaland\u0131!",
+      readSource: "Kayna\u011F\u0131 Oku",
+      watchLesson: "Dersi \u0130zle",
+      readDocument: "Belge",
+      viewExcerpts: "Se\xE7ilmi\u015F Al\u0131nt\u0131lar",
+      viewTranscript: "Ders Transkripti",
+      viewProgram: "Belge",
+      readingBeforeSleep: "Uyku \xD6ncesi Okuma",
+      lessonPreparation: "Ders Haz\u0131rl\u0131\u011F\u0131",
+      lineupForHosts: "Sunucular i\xE7in Program",
+      loading: "Y\xFCkleniyor...",
+      error: "Veri y\xFCkleme hatas\u0131",
+      noPartsAvailable: "Kullan\u0131labilir b\xF6l\xFCm yok",
+      back: "Geri",
+      copyAsText: "Metin olarak Kopyala",
+      startPoint: "Ba\u015Flang\u0131\xE7:",
+      endPoint: "Biti\u015F:"
+    },
+    "pt-BR": {
+      preparation: "Prepara\xE7\xE3o da Aula",
+      part: "Parte",
+      shareLesson: "Compartilhar",
+      shareSection: "Compartilhar",
+      copyLink: "Copiar Link",
+      copied: "Copiado!",
+      readSource: "Ler a Fonte",
+      watchLesson: "Assistir Aula",
+      readDocument: "Documento",
+      viewExcerpts: "Trechos Selecionados",
+      viewTranscript: "Transcri\xE7\xE3o da Aula",
+      viewProgram: "Documento",
+      readingBeforeSleep: "Leitura Antes de Dormir",
+      lessonPreparation: "Prepara\xE7\xE3o da Aula",
+      lineupForHosts: "Lineup para Apresentadores",
+      loading: "Carregando...",
+      error: "Erro ao carregar dados",
+      noPartsAvailable: "Nenhuma parte dispon\xEDvel",
+      back: "Voltar",
+      copyAsText: "Copiar como Texto",
+      startPoint: "De:",
+      endPoint: "At\xE9:"
+    },
+    bg: {
+      preparation: "\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0437\u0430 \u0443\u0440\u043E\u043A\u0430",
+      part: "\u0427\u0430\u0441\u0442",
+      shareLesson: "\u0421\u043F\u043E\u0434\u0435\u043B\u044F\u043D\u0435",
+      shareSection: "\u0421\u043F\u043E\u0434\u0435\u043B\u044F\u043D\u0435",
+      copyLink: "\u041A\u043E\u043F\u0438\u0440\u0430\u043D\u0435 \u043D\u0430 \u0432\u0440\u044A\u0437\u043A\u0430",
+      copied: "\u041A\u043E\u043F\u0438\u0440\u0430\u043D\u043E!",
+      readSource: "\u041F\u0440\u043E\u0447\u0435\u0442\u0438 \u0438\u0437\u0442\u043E\u0447\u043D\u0438\u043A\u0430",
+      watchLesson: "\u0413\u043B\u0435\u0434\u0430\u0439 \u0443\u0440\u043E\u043A\u0430",
+      readDocument: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442",
+      viewExcerpts: "\u0418\u0437\u0431\u0440\u0430\u043D\u0438 \u043E\u0442\u043A\u044A\u0441\u0438",
+      viewTranscript: "\u0422\u0440\u0430\u043D\u0441\u043A\u0440\u0438\u043F\u0442 \u043D\u0430 \u0443\u0440\u043E\u043A\u0430",
+      viewProgram: "\u0414\u043E\u043A\u0443\u043C\u0435\u043D\u0442",
+      readingBeforeSleep: "\u0427\u0435\u0442\u0435\u043D\u0435 \u043F\u0440\u0435\u0434\u0438 \u0441\u044A\u043D",
+      lessonPreparation: "\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0437\u0430 \u0443\u0440\u043E\u043A\u0430",
+      lineupForHosts: "\u041F\u0440\u043E\u0433\u0440\u0430\u043C\u0430 \u0437\u0430 \u0432\u043E\u0434\u0435\u0449\u0438",
+      loading: "\u0417\u0430\u0440\u0435\u0436\u0434\u0430\u043D\u0435...",
+      error: "\u0413\u0440\u0435\u0448\u043A\u0430 \u043F\u0440\u0438 \u0437\u0430\u0440\u0435\u0436\u0434\u0430\u043D\u0435 \u043D\u0430 \u0434\u0430\u043D\u043D\u0438",
+      noPartsAvailable: "\u041D\u044F\u043C\u0430 \u043D\u0430\u043B\u0438\u0447\u043D\u0438 \u0447\u0430\u0441\u0442\u0438",
+      back: "\u041D\u0430\u0437\u0430\u0434",
+      copyAsText: "\u041A\u043E\u043F\u0438\u0440\u0430\u0439 \u043A\u0430\u0442\u043E \u0442\u0435\u043A\u0441\u0442",
+      startPoint: "\u041E\u0442:",
+      endPoint: "\u0414\u043E:"
     }
   };
   function EmbeddedLessonSidebar({
@@ -22524,7 +22641,10 @@ var StudyMaterialsWidgetBundle = (() => {
             throw new Error("Failed to fetch parts");
           }
           const partsData = yield partsRes.json();
-          const fetchedParts = partsData.parts || [];
+          const fetchedParts = (partsData.parts || []).map((p) => {
+            var _a2;
+            return __spreadProps(__spreadValues({}, p), { part_number: (_a2 = p.part_number) != null ? _a2 : p.order });
+          });
           setParts(fetchedParts);
           setExpandedSections(fetchedParts.map((_, idx) => idx));
         } catch (err) {
@@ -22572,7 +22692,8 @@ var StudyMaterialsWidgetBundle = (() => {
     });
     const getSectionShareText = (part) => {
       var _a2, _b2;
-      const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`;
+      const displayNum = part.part_number;
+      const partNumber = displayNum === 0 ? t.preparation : `${t.part} ${displayNum}`;
       const links = [
         ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => `${t.readSource}: ${s.source_url}`)) || [],
         part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
@@ -22598,7 +22719,8 @@ ${links.join("\n")}`;
       const date = formatEventDate(event.date, event.start_time, event.end_time);
       const partsText = parts.map((part) => {
         var _a3, _b2;
-        const partNumber = part.order === 0 ? t.preparation : `${t.part} ${part.order}`;
+        const displayNum = part.part_number;
+        const partNumber = displayNum === 0 ? t.preparation : `${t.part} ${displayNum}`;
         const links = [
           ...((_a3 = part.sources) == null ? void 0 : _a3.map((s) => `${t.readSource}: ${s.source_url}`)) || [],
           part.excerpts_link && `${t.viewExcerpts}: ${part.excerpts_link}`,
@@ -22776,12 +22898,13 @@ ${partsText}`;
       parts.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "p-2 sm:p-4 text-center text-gray-500 dark:text-gray-400 text-[12px] sm:text-[13px]", children: t.noPartsAvailable }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: "space-y-2 sm:space-y-3 p-1.5 sm:p-3", children: parts.map((part, index) => {
         var _a2, _b2;
         const isExpanded = expandedSections.includes(index);
-        const colors = getSectionColor(part.order);
-        const partTitle = part.order === 0 ? t.preparation : `${t.part} ${part.order}: ${part.title}`;
+        const displayNum = part.part_number;
+        const colors = getSectionColor(displayNum);
+        const partTitle = displayNum === 0 ? t.preparation : `${t.part} ${displayNum}: ${part.title}`;
         const allLinks = [
-          ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => ({ type: "source", text: t.readSource, url: s.source_url, page: s.page_number }))) || [],
+          ...((_a2 = part.sources) == null ? void 0 : _a2.map((s) => ({ type: "source", text: t.readSource, url: s.source_url, page: s.page_number, start_point: s.start_point, end_point: s.end_point }))) || [],
           part.excerpts_link && { type: "document", text: t.viewExcerpts, url: part.excerpts_link },
-          part.transcript_link && { type: "document", text: t.viewTranscript, url: part.transcript_link },
+          part.transcript_link && { type: "document", text: t.viewTranscript, url: part.transcript_link, start_point: part.transcript_start_point, end_point: part.transcript_end_point },
           part.lesson_link && { type: "video", text: t.watchLesson, url: part.lesson_link },
           part.program_link && { type: "audio", text: t.viewProgram, url: part.program_link },
           part.reading_before_sleep_link && { type: "document", text: t.readingBeforeSleep, url: part.reading_before_sleep_link },
@@ -22819,45 +22942,52 @@ ${partsText}`;
                   )
                 ] })
               ] }),
-              isExpanded && allLinks.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: `space-y-1 sm:space-y-1.5 ${isRTL ? "pr-1.5 sm:pr-2.5 pl-1.5 sm:pl-2.5" : "px-1.5 sm:px-2.5"} pb-1.5 sm:pb-2.5`, children: allLinks.map((link, linkIdx) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-                "div",
-                {
-                  className: `flex items-center gap-1 sm:gap-2 ${colors.bg} rounded-md p-1 sm:p-2 hover:opacity-80 transition-all group`,
-                  children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `${colors.text} flex-shrink-0`, children: getLinkIcon(link.url, link.type) }),
-                    /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
-                      "a",
-                      {
-                        href: link.url,
-                        className: `flex-1 ${colors.text} hover:underline truncate text-[14px] sm:text-[14px]`,
-                        target: "_blank",
-                        rel: "noopener noreferrer",
-                        children: [
-                          link.text,
-                          link.page && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "text-gray-500 dark:text-gray-400 text-[12px] sm:text-[12px]", children: [
-                            " (p. ",
-                            link.page,
-                            ")"
-                          ] })
-                        ]
-                      }
-                    ),
-                    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
-                      "button",
-                      {
-                        onClick: (e) => {
-                          e.preventDefault();
-                          copyToClipboard(link.url);
-                        },
-                        className: `${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all flex-shrink-0`,
-                        title: t.copyLink,
-                        children: copiedUrl === link.url ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Copy, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" })
-                      }
-                    )
-                  ]
-                },
-                linkIdx
-              )) })
+              isExpanded && allLinks.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { className: `space-y-1 sm:space-y-1.5 ${isRTL ? "pr-1.5 sm:pr-2.5 pl-1.5 sm:pl-2.5" : "px-1.5 sm:px-2.5"} pb-1.5 sm:pb-2.5`, children: allLinks.map((link, linkIdx) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: `${colors.bg} rounded-md`, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex items-center gap-1 sm:gap-2 p-1 sm:p-2 hover:opacity-80 transition-all group", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { className: `${colors.text} flex-shrink-0`, children: getLinkIcon(link.url, link.type) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
+                    "a",
+                    {
+                      href: link.url,
+                      className: `flex-1 ${colors.text} hover:underline truncate text-[14px] sm:text-[14px]`,
+                      target: "_blank",
+                      rel: "noopener noreferrer",
+                      children: [
+                        link.text,
+                        link.page && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("span", { className: "text-gray-500 dark:text-gray-400 text-[12px] sm:text-[12px]", children: [
+                          " (p. ",
+                          link.page,
+                          ")"
+                        ] })
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(
+                    "button",
+                    {
+                      onClick: (e) => {
+                        e.preventDefault();
+                        copyToClipboard(link.url);
+                      },
+                      className: `${colors.text} hover:bg-white hover:bg-opacity-50 rounded p-0.5 sm:p-1 transition-all flex-shrink-0`,
+                      title: t.copyLink,
+                      children: copiedUrl === link.url ? /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Check, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" }) : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Copy, { className: "w-2.5 h-2.5 sm:w-3 sm:h-3" })
+                    }
+                  )
+                ] }),
+                (link.start_point || link.end_point) && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "text-xs text-gray-600 dark:text-gray-400 pe-[22px] sm:pe-[30px] ps-8 pb-2 space-y-1", children: [
+                  link.start_point && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("strong", { children: t.startPoint }),
+                    " ",
+                    link.start_point
+                  ] }),
+                  link.end_point && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("strong", { children: t.endPoint }),
+                    " ",
+                    link.end_point
+                  ] })
+                ] })
+              ] }, linkIdx)) })
             ]
           },
           part.id

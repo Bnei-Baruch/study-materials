@@ -3,12 +3,13 @@
  * (frontend is relative to same host, backend URL comes from process.env)
  */
 export const getApiBaseUrl = (): string => {
-  // In browser, this will use the NEXT_PUBLIC_API_URL if set
-  // Otherwise empty string for same-origin requests
+  // Browser requests always use same-origin so they go through the Next.js proxy.
+  // The proxy rewrites /api/* to the backend on the Docker internal network,
+  // which satisfies the backend's trusted-IP check without needing an API key.
   if (typeof window !== 'undefined') {
-    return process.env.NEXT_PUBLIC_API_URL || '';
+    return '';
   }
-  
+
   // On server-side, use the backend URL from environment
   return process.env.API_BACKEND_URL || 'http://localhost:8080';
 };

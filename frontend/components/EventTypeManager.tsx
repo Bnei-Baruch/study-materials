@@ -109,12 +109,14 @@ function SortableEventTypeRow({
           >
             <Edit2 size={16} />
           </button>
-          <button
-            onClick={() => onDelete(eventType.id)}
-            className="px-2 py-1 text-sm bg-red-50 hover:bg-red-100 text-red-700 rounded transition"
-          >
-            <Trash2 size={16} />
-          </button>
+          {!['convention', 'holiday', 'special_event'].includes(eventType.name) && (
+            <button
+              onClick={() => onDelete(eventType.id)}
+              className="px-2 py-1 text-sm bg-red-50 hover:bg-red-100 text-red-700 rounded transition"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
         </div>
       </td>
     </tr>
@@ -387,12 +389,14 @@ export default function EventTypeManager() {
             >
               Cancel
             </button>
-            <button
-              onClick={() => setDeleteConfirm(editingType.id)}
-              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 ml-auto"
-            >
-              Delete
-            </button>
+            {!['convention', 'holiday', 'special_event'].includes(editingType.name) && (
+              <button
+                onClick={() => setDeleteConfirm(editingType.id)}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 ml-auto"
+              >
+                Delete
+              </button>
+            )}
           </div>
         </div>
       )}

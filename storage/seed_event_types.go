@@ -136,17 +136,53 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 			color: "gray",
 			order: 6,
 			titles: map[string]string{
-				"he": "אחר",
-				"en": "Other",
-				"ru": "Другое",
-				"es": "Otro",
-				"de": "Andere",
-				"it": "Altro",
-				"fr": "Autre",
-				"uk": "Інше",
-				"tr": "Diğer",
+				"he":    "אחר",
+				"en":    "Other",
+				"ru":    "Другое",
+				"es":    "Otro",
+				"de":    "Andere",
+				"it":    "Altro",
+				"fr":    "Autre",
+				"uk":    "Інше",
+				"tr":    "Diğer",
 				"pt-BR": "Outro",
 				"bg":    "Друго",
+			},
+		},
+		{
+			name:  "holiday",
+			color: "orange",
+			order: 7,
+			titles: map[string]string{
+				"he":    "חג",
+				"en":    "Holiday",
+				"ru":    "Праздник",
+				"es":    "Festividad",
+				"de":    "Feiertag",
+				"it":    "Festività",
+				"fr":    "Fête",
+				"uk":    "Свято",
+				"tr":    "Bayram",
+				"pt-BR": "Feriado",
+				"bg":    "Празник",
+			},
+		},
+		{
+			name:  "special_event",
+			color: "teal",
+			order: 8,
+			titles: map[string]string{
+				"he":    "אירוע מיוחד",
+				"en":    "Special Event",
+				"ru":    "Специальное мероприятие",
+				"es":    "Evento especial",
+				"de":    "Besondere Veranstaltung",
+				"it":    "Evento speciale",
+				"fr":    "Événement spécial",
+				"uk":    "Особлива подія",
+				"tr":    "Özel Etkinlik",
+				"pt-BR": "Evento Especial",
+				"bg":    "Специално събитие",
 			},
 		},
 	}
@@ -165,4 +201,26 @@ func SeedDefaultEventTypes(store EventTypeStore) error {
 
 	log.Printf("Seeded %d default event types", len(defaults))
 	return nil
+}
+
+// EnsureEventTypeColors updates the color of specific event types to their
+// canonical values. Run on every startup to fix legacy DB records.
+func EnsureEventTypeColors(store EventTypeStore) {
+	updates := map[string]string{
+		"holiday":       "orange",
+		"special_event": "teal",
+		"convention":    "purple",
+	}
+	for name, color := range updates {
+		et, err := store.GetEventTypeByName(name)
+		if err != nil || et == nil {
+			continue
+		}
+		if et.Color != color {
+			et.Color = color
+			if err := store.UpdateEventType(et); err != nil {
+				log.Printf("Failed to update color for %s: %v", name, err)
+			}
+		}
+	}
 }

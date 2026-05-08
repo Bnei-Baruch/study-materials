@@ -57,6 +57,11 @@ func serverFn(cmd *cobra.Command, args []string) {
 		log.Fatalf("Failed to seed default event types: %v", err)
 	}
 
+	// Backfill part_number for parts created before the field existed
+	if err := storage.MigrateLegacyParts(partStore); err != nil {
+		log.Fatalf("Failed to migrate legacy parts: %v", err)
+	}
+
 	log.Printf("Initialized MongoDB storage: %s/%s", mongoURI, mongoDatabase)
 
 	// Initialize kabbalahmedia client
@@ -108,7 +113,21 @@ func serverFn(cmd *cobra.Command, args []string) {
 		log.Println("API secret key protection enabled")
 	}
 
+	// Ensure canonical event type colors (fixes legacy DB records)
+	storage.EnsureEventTypeColors(mongoEventTypeStore)
+
 	// Start API server with dependencies
 	app := api.NewApp(partStore, eventStore, mongoEventTypeStore, mongoTemplateStore, kabbalahmediaClient, templateConfig, apiSecretKey)
+
+	// Background sync from events.kli.one every 10 minutes
+	go func() {
+		app.SyncExternalEvents()
+		ticker := time.NewTicker(10 * time.Minute)
+		defer ticker.Stop()
+		for range ticker.C {
+			app.SyncExternalEvents()
+		}
+	}()
+
 	app.Init()
 }

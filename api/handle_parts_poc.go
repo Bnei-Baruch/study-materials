@@ -11,6 +11,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func intPtr(v int) *int { return &v }
+
 // HandleCreatePart creates a new lesson part (POC)
 func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 	var req storage.CreatePartRequest
@@ -66,6 +68,19 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Auto-assign order (sort position) as max existing order + 1 for this event
+	autoOrder := 1
+	if req.EventID != "" {
+		allParts, err := a.store.ListParts()
+		if err == nil {
+			for _, p := range allParts {
+				if p.EventID == req.EventID && p.Order >= autoOrder {
+					autoOrder = p.Order + 1
+				}
+			}
+		}
+	}
+
 	// Create part
 	part := &storage.LessonPart{
 		Title:                  req.Title,
@@ -74,9 +89,12 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 		PartType:               partType,
 		Language:               language,
 		EventID:                req.EventID,
-		Order:                  req.Order,
+		PartNumber:             intPtr(req.PartNumber),
+		Order:                  autoOrder,
 		ExcerptsLink:           req.ExcerptsLink,
 		TranscriptLink:         req.TranscriptLink,
+		TranscriptStartPoint:   req.TranscriptStartPoint,
+		TranscriptEndPoint:     req.TranscriptEndPoint,
 		LessonLink:             req.LessonLink,
 		ProgramLink:            req.ProgramLink,
 		ReadingBeforeSleepLink: req.ReadingBeforeSleepLink,
@@ -109,7 +127,7 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 
 		// Determine title for translation stub
 		stubTitle := "[Translation needed]"
-		if part.Order == 0 {
+		if part.PartNumber == nil || *part.PartNumber == 0 {
 			// For preparation parts, use translated title from config
 			if translatedTitle, ok := a.templateConfig.Preparation[lang]; ok {
 				stubTitle = translatedTitle
@@ -151,6 +169,7 @@ func (a *App) HandleCreatePart(w http.ResponseWriter, r *http.Request) {
 		PartType:    part.PartType,
 		Language:    lang,
 		EventID:     part.EventID,
+		PartNumber:  part.PartNumber,
 		Order:       part.Order,
 		// Copy shared links (same across languages)
 		ExcerptsLink:           part.ExcerptsLink,
@@ -214,10 +233,13 @@ func (a *App) HandleUpdatePart(w http.ResponseWriter, r *http.Request) {
 	// Update all editable fields
 	existingPart.Title = req.Title
 	existingPart.Description = req.Description
+	existingPart.PartNumber = intPtr(req.PartNumber)
 	existingPart.Order = req.Order
 	existingPart.Sources = req.Sources
 	existingPart.ExcerptsLink = req.ExcerptsLink
 	existingPart.TranscriptLink = req.TranscriptLink
+	existingPart.TranscriptStartPoint = req.TranscriptStartPoint
+	existingPart.TranscriptEndPoint = req.TranscriptEndPoint
 	existingPart.LessonLink = req.LessonLink
 	existingPart.ProgramLink = req.ProgramLink
 	existingPart.ReadingBeforeSleepLink = req.ReadingBeforeSleepLink

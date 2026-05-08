@@ -129,6 +129,18 @@ func (a *App) HandleUpdateEventType(w http.ResponseWriter, r *http.Request) {
 func (a *App) HandleDeleteEventType(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
+	et, err := a.eventTypeStore.GetEventType(id)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Event type not found: %v", err), http.StatusNotFound)
+		return
+	}
+
+	protected := map[string]bool{"convention": true, "holiday": true, "special_event": true}
+	if protected[et.Name] {
+		http.Error(w, "This event type is protected and cannot be deleted", http.StatusForbidden)
+		return
+	}
+
 	if err := a.eventTypeStore.DeleteEventType(id); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to delete event type: %v", err), http.StatusNotFound)
 		return
