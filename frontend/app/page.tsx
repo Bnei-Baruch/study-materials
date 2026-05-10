@@ -2119,7 +2119,7 @@ export default function PublicPage({
             {activeTab === 'conventions' ? (
               // Conventions Tab
               <div>
-                {((): JSX.Element => {
+                {((): React.ReactElement => {
                   const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' }) // YYYY-MM-DD in IL time
                   const isUpcoming = (c: Event) => {
                     const endStr = (c.end_date || c.date).split('T')[0]
