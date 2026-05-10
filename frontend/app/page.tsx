@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
-import { formatEventDate, formatDateOnly } from '@/lib/dateUtils'
+import { formatDateOnly } from '@/lib/dateUtils'
 import { groupEventsByDate, getDateGroupColorClasses } from '@/lib/eventGrouping'
 import {
   BookOpen,
@@ -22,7 +22,6 @@ import {
   Filter,
   X,
   ChevronLeft,
-  ChevronRight,
 } from 'lucide-react'
 
 interface Event {
@@ -128,9 +127,9 @@ const TRANSLATIONS = {
     days: 'ימים',
     backToConventions: 'חזרה לרשימה',
     todayBadge: 'היום',
-    noEvents: 'אין אירועים זמינים',
+    noEvents: 'חומרי הלימוד יעלו בקרוב',
     backToEvents: 'חזרה לרשימת השיעורים',
-    noMaterials: 'אין חומרים זמינים',
+    noMaterials: 'חומרי הלימוד יעלו בקרוב',
     originalDate: 'תאריך השיעור המקורי: ',
     page: 'עמ\'',
     copyLink: 'העתק קישור',
@@ -172,9 +171,9 @@ const TRANSLATIONS = {
     days: 'days',
     backToConventions: 'Back to list',
     todayBadge: 'Today',
-    noEvents: 'No events available',
+    noEvents: 'Study materials coming soon',
     backToEvents: 'Back to events',
-    noMaterials: 'No materials available',
+    noMaterials: 'Study materials coming soon',
     originalDate: 'Original lesson date: ',
     page: 'p.',
     copyLink: 'Copy link',
@@ -216,9 +215,9 @@ const TRANSLATIONS = {
     days: 'дней',
     backToConventions: 'Назад к списку',
     todayBadge: 'Сегодня',
-    noEvents: 'Нет доступных событий',
+    noEvents: 'Учебные материалы скоро появятся',
     backToEvents: 'Вернуться к событиям',
-    noMaterials: 'Нет доступных материалов',
+    noMaterials: 'Учебные материалы скоро появятся',
     originalDate: 'Дата оригинального урока: ',
     page: 'стр.',
     copyLink: 'Копировать ссылку',
@@ -260,9 +259,9 @@ const TRANSLATIONS = {
     days: 'días',
     backToConventions: 'Volver a la lista',
     todayBadge: 'Hoy',
-    noEvents: 'No hay eventos disponibles',
+    noEvents: 'Los materiales de estudio estarán disponibles pronto',
     backToEvents: 'Volver a eventos',
-    noMaterials: 'No hay materiales disponibles',
+    noMaterials: 'Los materiales de estudio estarán disponibles pronto',
     originalDate: 'Fecha de la lección original: ',
     page: 'p.',
     copyLink: 'Copiar enlace',
@@ -304,9 +303,9 @@ const TRANSLATIONS = {
     days: 'Tage',
     backToConventions: 'Zurück zur Liste',
     todayBadge: 'Heute',
-    noEvents: 'Keine Veranstaltungen verfügbar',
+    noEvents: 'Lernmaterialien folgen in Kürze',
     backToEvents: 'Zurück zu Veranstaltungen',
-    noMaterials: 'Keine Materialien verfügbar',
+    noMaterials: 'Lernmaterialien folgen in Kürze',
     originalDate: 'Ursprüngliches Lektionsdatum: ',
     page: 'S.',
     copyLink: 'Link kopieren',
@@ -348,9 +347,9 @@ const TRANSLATIONS = {
     days: 'giorni',
     backToConventions: 'Torna alla lista',
     todayBadge: 'Oggi',
-    noEvents: 'Nessun evento disponibile',
+    noEvents: 'I materiali di studio saranno disponibili a breve',
     backToEvents: 'Torna agli eventi',
-    noMaterials: 'Nessun materiale disponibile',
+    noMaterials: 'I materiali di studio saranno disponibili a breve',
     originalDate: 'Data della lezione originale: ',
     page: 'p.',
     copyLink: 'Copia link',
@@ -392,9 +391,9 @@ const TRANSLATIONS = {
     days: 'jours',
     backToConventions: 'Retour à la liste',
     todayBadge: 'Aujourd\'hui',
-    noEvents: 'Aucun événement disponible',
+    noEvents: 'Les matériaux d\'étude seront disponibles bientôt',
     backToEvents: 'Retour aux événements',
-    noMaterials: 'Aucun matériel disponible',
+    noMaterials: 'Les matériaux d\'étude seront disponibles bientôt',
     originalDate: 'Date de la leçon originale: ',
     page: 'p.',
     copyLink: 'Copier le lien',
@@ -436,9 +435,9 @@ const TRANSLATIONS = {
     days: 'днів',
     backToConventions: 'Назад до списку',
     todayBadge: 'Сьогодні',
-    noEvents: 'Немає доступних подій',
+    noEvents: 'Навчальні матеріали незабаром з\'являться',
     backToEvents: 'Повернутися до подій',
-    noMaterials: 'Немає доступних матеріалів',
+    noMaterials: 'Навчальні матеріали незабаром з\'являться',
     originalDate: 'Дата оригінального уроку: ',
     page: 'стор.',
     copyLink: 'Копіювати посилання',
@@ -480,9 +479,9 @@ const TRANSLATIONS = {
     days: 'gün',
     backToConventions: 'Listeye Dön',
     todayBadge: 'Bugün',
-    noEvents: 'Kullanılabilir etkinlik yok',
+    noEvents: 'Çalışma materyalleri yakında gelecek',
     backToEvents: 'Etkinliklere geri dön',
-    noMaterials: 'Kullanılabilir materyal yok',
+    noMaterials: 'Çalışma materyalleri yakında gelecek',
     originalDate: 'Orijinal ders tarihi: ',
     page: 's.',
     copyLink: 'Bağlantıyı kopyala',
@@ -524,9 +523,9 @@ const TRANSLATIONS = {
     days: 'dias',
     backToConventions: 'Voltar à lista',
     todayBadge: 'Hoje',
-    noEvents: 'Nenhum evento disponível',
+    noEvents: 'Os materiais de estudo estarão disponíveis em breve',
     backToEvents: 'Voltar para eventos',
-    noMaterials: 'Nenhum material disponível',
+    noMaterials: 'Os materiais de estudo estarão disponíveis em breve',
     originalDate: 'Data da aula original: ',
     page: 'p.',
     copyLink: 'Copiar link',
@@ -568,9 +567,9 @@ const TRANSLATIONS = {
     days: 'дни',
     backToConventions: 'Назад към списъка',
     todayBadge: 'Днес',
-    noEvents: 'Няма налични събития',
+    noEvents: 'Учебните материали скоро ще бъдат налични',
     backToEvents: 'Обратно към събитията',
-    noMaterials: 'Няма налични материали',
+    noMaterials: 'Учебните материали скоро ще бъдат налични',
     originalDate: 'Дата на оригиналния урок: ',
     page: 'стр.',
     copyLink: 'Копирай връзка',
@@ -623,6 +622,7 @@ export default function PublicPage({
   const [sharedPart, setSharedPart] = useState<string | null>(null)
   const [expandedParts, setExpandedParts] = useState<Set<string>>(new Set())
   const [openShareDropdown, setOpenShareDropdown] = useState<string | null>(null)
+  const [openCalendarDropdown, setOpenCalendarDropdown] = useState<string | null>(null)
   const [showFilters, setShowFilters] = useState(false)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
@@ -648,6 +648,61 @@ export default function PublicPage({
   // Translation helper
   const t = (key: keyof typeof TRANSLATIONS.en) => {
     return TRANSLATIONS[language as keyof typeof TRANSLATIONS]?.[key] || TRANSLATIONS.en[key]
+  }
+
+  const calendarNextDay = (dateStr: string): string => {
+    const [y, m, d] = dateStr.split('T')[0].split('-').map(Number)
+    const next = new Date(y, m - 1, d + 1)
+    return `${next.getFullYear()}${String(next.getMonth() + 1).padStart(2, '0')}${String(next.getDate()).padStart(2, '0')}`
+  }
+
+  const escapeICS = (str: string) =>
+    str.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
+
+  const downloadICS = (convention: Event) => {
+    const titles = convention.titles as Record<string, string | undefined> | undefined
+    const title = titles?.[language] || titles?.['he'] || titles?.['en'] || ''
+    const start = convention.date.split('T')[0].replace(/-/g, '')
+    const endBase = convention.end_date ? convention.end_date : convention.date
+    const end = calendarNextDay(endBase)
+    const uid = `${convention.id}@study.kli.one`
+    const now = new Date()
+    const dtstamp = `${now.getUTCFullYear()}${String(now.getUTCMonth() + 1).padStart(2, '0')}${String(now.getUTCDate()).padStart(2, '0')}T${String(now.getUTCHours()).padStart(2, '0')}${String(now.getUTCMinutes()).padStart(2, '0')}${String(now.getUTCSeconds()).padStart(2, '0')}Z`
+    const url = `${window.location.origin}/conventions/${convention.id}`
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//KLI Study//study.kli.one//EN',
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `DTSTAMP:${dtstamp}`,
+      `DTSTART;VALUE=DATE:${start}`,
+      `DTEND;VALUE=DATE:${end}`,
+      `SUMMARY:${escapeICS(title)}`,
+      `URL:${url}`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n')
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `${title || 'event'}.ics`
+    link.click()
+    URL.revokeObjectURL(link.href)
+  }
+
+  const getGoogleCalendarUrl = (convention: Event): string => {
+    const titles = convention.titles as Record<string, string | undefined> | undefined
+    const title = titles?.[language] || titles?.['he'] || titles?.['en'] || ''
+    const start = convention.date.split('T')[0].replace(/-/g, '')
+    const endBase = convention.end_date ? convention.end_date : convention.date
+    const end = calendarNextDay(endBase)
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: title,
+      dates: `${start}/${end}`,
+    })
+    return `https://calendar.google.com/calendar/render?${params}`
   }
 
   // Format time range for display (removes leading zeros, uses language-specific separator)
@@ -800,13 +855,15 @@ export default function PublicPage({
     }
   }, [parts])
 
-  // Close share dropdown when clicking outside
+  // Close share/calendar dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      // Don't close if clicking inside a dropdown or share button
       if (!target.closest('[data-share-dropdown]') && !target.closest('[data-share-button]')) {
         setOpenShareDropdown(null)
+      }
+      if (!target.closest('[data-calendar-dropdown]')) {
+        setOpenCalendarDropdown(null)
       }
     }
     document.addEventListener('click', handleClickOutside)
@@ -897,9 +954,9 @@ export default function PublicPage({
       const data = await response.json()
       const sessions: Event[] = data.events || []
       setConventionSessions(sessions)
-      // Auto-select first day
+      // Auto-select first day (min date, API returns newest-first)
       if (sessions.length > 0) {
-        const firstDay = sessions[0].date.split('T')[0]
+        const firstDay = sessions.map(s => s.date.split('T')[0]).sort()[0]
         setSelectedConventionDay(firstDay)
       }
     } catch (error) {
@@ -1303,7 +1360,6 @@ export default function PublicPage({
            `Event ${event.number}`
   }
 
-  const CONVENTION_TYPES = ['convention', 'holiday', 'special_event']
 
   const getConventionDays = (convention: Event): string[] => {
     const start = new Date(convention.date)
@@ -2063,7 +2119,7 @@ export default function PublicPage({
             {activeTab === 'conventions' ? (
               // Conventions Tab
               <div>
-                {(() => {
+                {((): JSX.Element => {
                   const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' }) // YYYY-MM-DD in IL time
                   const isUpcoming = (c: Event) => {
                     const endStr = (c.end_date || c.date).split('T')[0]
@@ -2121,9 +2177,9 @@ export default function PublicPage({
                             const dayDisplay = daysCount > 1 ? (language === 'he' ? `${endDay}-${startDay}` : `${startDay}-${endDay}`) : `${startDay}`
 
                             return (
-                              <div key={convention.id} onClick={() => handleConventionClick(convention)} className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden flex items-stretch cursor-pointer hover:shadow-lg transition-shadow">
+                              <div key={convention.id} onClick={() => handleConventionClick(convention)} className="bg-white dark:bg-gray-800 rounded-xl shadow-md flex items-stretch cursor-pointer hover:shadow-lg transition-shadow relative">
                                 {/* Date column */}
-                                <div className={`w-20 flex-shrink-0 flex flex-col items-center justify-center py-3 gap-0.5 ${style.bg}`}>
+                                <div className={`w-20 flex-shrink-0 flex flex-col items-center justify-center py-3 gap-0.5 rounded-s-xl ${style.bg}`}>
                                   <span className={`text-xs font-medium ${style.text}`}>{monthName}</span>
                                   <span className={`font-bold leading-none ${style.text}`} style={{ fontSize: daysCount > 1 ? '20px' : '28px' }}>{dayDisplay}</span>
                                   <span className={`text-xs ${style.text}`}>{year}</span>
@@ -2161,23 +2217,36 @@ export default function PublicPage({
                                   </div>
                                 </div>
 
-                                {/* Action buttons */}
-                                <div className="flex flex-col gap-2 p-3 justify-center flex-shrink-0">
+                                {/* Add to calendar — absolute top-end corner */}
+                                <div className="absolute top-2 end-2" data-calendar-dropdown>
                                   <button
-                                    onClick={(e) => { e.stopPropagation(); handleConventionClick(convention) }}
-                                    className={`px-3 py-2 rounded-lg text-white font-medium text-xs flex items-center gap-1 ${style.dot.replace('bg-', 'bg-')} hover:opacity-90 transition-opacity`}
-                                    style={{ backgroundColor: style.dot.includes('purple') ? '#7c3aed' : style.dot.includes('teal') ? '#0d9488' : style.dot.includes('orange') ? '#ea580c' : '#2563eb' }}
+                                    onClick={(e) => { e.stopPropagation(); setOpenCalendarDropdown(openCalendarDropdown === convention.id ? null : convention.id) }}
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium transition-colors shadow-sm"
                                   >
-                                    {t('toStudyMaterials')}
-                                    <ChevronLeft className={`w-4 h-4 ${isRTL ? '' : 'rotate-180'}`} />
+                                    <span>{t('addToCalendar')}</span>
+                                    <Calendar className="w-3.5 h-3.5" />
                                   </button>
-                                  <button
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="px-3 py-2 rounded-lg text-gray-700 dark:text-gray-200 font-medium text-xs border border-gray-300 dark:border-gray-600 hover:border-gray-500 dark:hover:border-gray-400 transition-colors flex items-center gap-1"
-                                  >
-                                    {t('addToCalendar')}
-                                    <span>+</span>
-                                  </button>
+                                  {openCalendarDropdown === convention.id && (
+                                    <div className="absolute z-50 top-full mt-1 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg overflow-hidden end-0">
+                                      <a
+                                        href={getGoogleCalendarUrl(convention)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => { e.stopPropagation(); setOpenCalendarDropdown(null) }}
+                                        className="flex items-center gap-2 px-3 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                      >
+                                        <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                                        Google Calendar
+                                      </a>
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); setOpenCalendarDropdown(null); downloadICS(convention) }}
+                                        className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                      >
+                                        <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none"><path d="M12 16l-4-4h2.5V4h3v8H16l-4 4z" fill="currentColor"/><path d="M4 20h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                                        {language === 'he' ? 'הורדת קובץ ICS' : language === 'ru' ? 'Скачать ICS' : language === 'es' ? 'Descargar ICS' : 'Download ICS'}
+                                      </button>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             )
@@ -2286,7 +2355,6 @@ export default function PublicPage({
                             style={activeConventions.length > 0 ? (() => {
                               const c = activeConventions[0]
                               const isHoliday = c.type === 'holiday'
-                              const s = getEventTypeBadgeStyle(c.type)
                               const accent = isDark
                                 ? (c.type === 'holiday' ? '#fb923c' : c.type === 'special_event' ? '#2dd4bf' : '#a78bfa')
                                 : (c.type === 'holiday' ? '#ea580c' : c.type === 'special_event' ? '#0d9488' : '#7c3aed')

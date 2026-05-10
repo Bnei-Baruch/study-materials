@@ -22,7 +22,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'בחר שיעור מהרשימה',
     loading: 'טוען...',
     error: 'שגיאה בטעינת הנתונים',
-    noEventsAvailable: 'אין שיעורים זמינים',
+    noEventsAvailable: 'חומרי הלימוד יעלו בקרוב',
     viewAllMaterials: 'צפייה בכל חומרי הלימוד',
   },
   en: {
@@ -30,7 +30,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'Select a lesson from the list',
     loading: 'Loading...',
     error: 'Error loading data',
-    noEventsAvailable: 'No lessons available',
+    noEventsAvailable: 'Study materials coming soon',
     viewAllMaterials: 'View all study materials',
   },
   ru: {
@@ -38,7 +38,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'Выберите урок из списка',
     loading: 'Загрузка...',
     error: 'Ошибка загрузки данных',
-    noEventsAvailable: 'Нет доступных уроков',
+    noEventsAvailable: 'Учебные материалы скоро появятся',
     viewAllMaterials: 'Посмотреть все учебные материалы',
   },
   es: {
@@ -46,7 +46,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'Seleccione una lección de la lista',
     loading: 'Cargando...',
     error: 'Error al cargar datos',
-    noEventsAvailable: 'No hay lecciones disponibles',
+    noEventsAvailable: 'Los materiales de estudio estarán disponibles pronto',
     viewAllMaterials: 'Ver todos los materiales de estudio',
   },
   de: {
@@ -54,7 +54,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'Wählen Sie eine Lektion aus der Liste',
     loading: 'Lädt...',
     error: 'Fehler beim Laden der Daten',
-    noEventsAvailable: 'Keine Lektionen verfügbar',
+    noEventsAvailable: 'Lernmaterialien folgen in Kürze',
     viewAllMaterials: 'Alle Studienmaterialien anzeigen',
   },
   it: {
@@ -62,7 +62,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'Seleziona una lezione dall\'elenco',
     loading: 'Caricamento...',
     error: 'Errore nel caricamento dei dati',
-    noEventsAvailable: 'Nessuna lezione disponibile',
+    noEventsAvailable: 'I materiali di studio saranno disponibili a breve',
     viewAllMaterials: 'Visualizza tutti i materiali di studio',
   },
   fr: {
@@ -70,7 +70,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'Sélectionnez une leçon dans la liste',
     loading: 'Chargement...',
     error: 'Erreur de chargement des données',
-    noEventsAvailable: 'Aucune leçon disponible',
+    noEventsAvailable: 'Les matériaux d\'étude seront disponibles bientôt',
     viewAllMaterials: 'Voir tous les matériaux d\'étude',
   },
   uk: {
@@ -78,7 +78,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'Виберіть урок зі списку',
     loading: 'Завантаження...',
     error: 'Помилка завантаження даних',
-    noEventsAvailable: 'Немає доступних уроків',
+    noEventsAvailable: 'Навчальні матеріали незабаром з\'являться',
     viewAllMaterials: 'Переглянути всі навчальні матеріали',
   },
   tr: {
@@ -86,7 +86,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'Listeden bir ders seçin',
     loading: 'Yükleniyor...',
     error: 'Veri yükleme hatası',
-    noEventsAvailable: 'Kullanılabilir ders yok',
+    noEventsAvailable: 'Çalışma materyalleri yakında gelecek',
     viewAllMaterials: 'Tüm çalışma materyallerini görüntüle',
   },
   'pt-BR': {
@@ -94,7 +94,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'Selecione uma aula da lista',
     loading: 'Carregando...',
     error: 'Erro ao carregar dados',
-    noEventsAvailable: 'Nenhuma aula disponível',
+    noEventsAvailable: 'Os materiais de estudo estarão disponíveis em breve',
     viewAllMaterials: 'Ver todos os materiais de estudo',
   },
   bg: {
@@ -102,7 +102,7 @@ const LIST_TRANSLATIONS: Record<string, ListTranslations> = {
     selectLesson: 'Изберете урок от списъка',
     loading: 'Зареждане...',
     error: 'Грешка при зареждане на данни',
-    noEventsAvailable: 'Няма налични уроци',
+    noEventsAvailable: 'Учебните материали скоро ще бъдат налични',
     viewAllMaterials: 'Вижте всички учебни материали',
   },
 }
