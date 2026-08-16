@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { getApiUrl } from '@/lib/api'
 import { SourceSearch } from './SourceSearch'
+import LineupSelect from './LineupSelect'
 
 interface Source {
   source_id: string
@@ -525,14 +526,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
                 <label htmlFor="lineupForHostsLink" className="block text-sm font-medium text-gray-700 mb-2">
                   Lineup for the hosts
                 </label>
-                <input
-                  id="lineupForHostsLink"
-                  type="url"
-                  value={lineupForHostsLink}
-                  onChange={(e) => setLineupForHostsLink(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                  placeholder="https://..."
-                />
+                <LineupSelect id="lineupForHostsLink" value={lineupForHostsLink} onChange={setLineupForHostsLink} />
                 <p className="text-xs text-gray-500 mt-1">
                   This link will be copied to all language translations.
                 </p>
