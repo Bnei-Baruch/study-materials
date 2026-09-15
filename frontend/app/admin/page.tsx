@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { getApiUrl } from '@/lib/api'
-import { formatEventDate } from '@/lib/dateUtils'
+import { formatEventDateISO, getIsraelDayKey } from '@/lib/dateUtils'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
@@ -42,6 +42,8 @@ import { CSS } from '@dnd-kit/utilities'
 interface Event {
   id: string
   date: string
+  start_time?: string
+  end_time?: string
   type: string
   number: number
   order: number
@@ -140,7 +142,17 @@ function getDefaultTitle(eventType: string, lang: string): string {
 }
 
 // Sortable event item component
-function SortableEventItem({ event, language }: { event: Event; language: string }) {
+function SortableEventItem({
+  event,
+  language,
+  isNewDay,
+  dayBand,
+}: {
+  event: Event
+  language: string
+  isNewDay: boolean
+  dayBand: boolean
+}) {
   const {
     attributes,
     listeners,
@@ -156,20 +168,15 @@ function SortableEventItem({ event, language }: { event: Event; language: string
     opacity: isDragging ? 0.5 : 1,
   }
 
-  const localeMap: { [key: string]: string } = {
-    he: 'he-IL',
-    en: 'en-US',
-    ru: 'ru-RU',
-    es: 'es-ES',
-    de: 'de-DE',
-    it: 'it-IT',
-    fr: 'fr-FR',
-    uk: 'uk-UA',
+  const formatDate = (dateString: string) => {
+    return formatEventDateISO(dateString, language)
   }
 
-  const formatDate = (dateString: string) => {
-    return formatEventDate(dateString, language)
-  }
+  const timeRange = event.start_time
+    ? `${event.start_time}${event.end_time ? ` – ${event.end_time}` : ''}`
+    : event.end_time
+    ? `– ${event.end_time}`
+    : null
 
   // Get title in selected language or fallback
   const eventTitle = event.titles?.[language as keyof typeof event.titles] || 
@@ -180,7 +187,9 @@ function SortableEventItem({ event, language }: { event: Event; language: string
     <div
       ref={setNodeRef}
       style={style}
-      className="hover:bg-gray-50 transition border-b border-gray-200 last:border-b-0"
+      className={`hover:bg-blue-50 transition border-b border-gray-200 last:border-b-0 ${
+        isNewDay ? 'border-t-2 border-t-gray-300' : ''
+      } ${dayBand ? 'bg-gray-50' : 'bg-white'}`}
     >
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
@@ -214,7 +223,10 @@ function SortableEventItem({ event, language }: { event: Event; language: string
               className="flex items-center gap-4 flex-1 min-w-0"
             >
               <div className="text-sm text-gray-500 w-40 shrink-0">
-                {formatDate(event.date)}
+                <div>{formatDate(event.date)}</div>
+                {timeRange && (
+                  <div className="text-xs text-gray-400">{timeRange}</div>
+                )}
               </div>
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <span className="text-base font-medium text-gray-800 truncate">
@@ -282,6 +294,50 @@ function AdminPageContent() {
     })
   )
 
+  const filteredEvents = useMemo(() => {
+    return events.filter(e => {
+      if (filterPublic === 'public' && !e.public) return false
+      if (filterPublic === 'private' && e.public) return false
+      if (filterHidden === 'hidden' && !e.hide_from_lessons_tab) return false
+      if (filterHidden === 'visible' && e.hide_from_lessons_tab) return false
+      if (filterSync === 'synced' && !e.external_id) return false
+      if (filterSync === 'manual' && e.external_id) return false
+      if (filterType !== 'all' && e.type !== filterType) return false
+      if (!showSpecialEvents && filterType === 'all' && SPECIAL_EVENT_TYPES.includes(e.type)) return false
+      return true
+    })
+  }, [events, filterPublic, filterHidden, filterSync, filterType, showSpecialEvents])
+
+  // Group by day (newest day first), and within a day order by start time
+  // (events with no start time sort last, tied events fall back to manual order)
+  const sortedEvents = useMemo(() => {
+    return [...filteredEvents].sort((a, b) => {
+      const dayA = getIsraelDayKey(a.date)
+      const dayB = getIsraelDayKey(b.date)
+      if (dayA !== dayB) return dayA < dayB ? 1 : -1
+      const timeA = a.start_time || ''
+      const timeB = b.start_time || ''
+      if (timeA !== timeB) {
+        if (!timeA) return 1
+        if (!timeB) return -1
+        return timeA < timeB ? -1 : 1
+      }
+      return a.order - b.order
+    })
+  }, [filteredEvents])
+
+  const dayMeta = useMemo(() => {
+    let dayIndex = -1
+    let prevDayKey: string | null = null
+    return sortedEvents.map(event => {
+      const dayKey = getIsraelDayKey(event.date)
+      const isNewDay = dayKey !== prevDayKey
+      if (isNewDay) dayIndex++
+      prevDayKey = dayKey
+      return { isNewDay, band: dayIndex % 2 === 1 }
+    })
+  }, [sortedEvents])
+
   useEffect(() => {
     // Load language from localStorage
     const saved = localStorage.getItem('admin-language')
@@ -302,7 +358,6 @@ function AdminPageContent() {
         throw new Error('Failed to fetch events')
       }
       const data = await response.json()
-      // Events are already sorted by backend (order asc, then date desc)
       setEvents(data.events || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
@@ -315,12 +370,11 @@ function AdminPageContent() {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
-      const oldIndex = events.findIndex((e) => e.id === active.id)
-      const newIndex = events.findIndex((e) => e.id === over.id)
+      const oldIndex = sortedEvents.findIndex((e) => e.id === active.id)
+      const newIndex = sortedEvents.findIndex((e) => e.id === over.id)
 
-      // Optimistically update UI
-      const newEvents = arrayMove(events, oldIndex, newIndex)
-      setEvents(newEvents)
+      // Reorder within the currently displayed (filtered+sorted) list
+      const newEvents = arrayMove(sortedEvents, oldIndex, newIndex)
 
       // Update order values on backend
       try {
@@ -519,37 +573,30 @@ function AdminPageContent() {
             )}
           </div>
 
-        {(() => {
-          const filtered = events.filter(e => {
-            if (filterPublic === 'public' && !e.public) return false
-            if (filterPublic === 'private' && e.public) return false
-            if (filterHidden === 'hidden' && !e.hide_from_lessons_tab) return false
-            if (filterHidden === 'visible' && e.hide_from_lessons_tab) return false
-            if (filterSync === 'synced' && !e.external_id) return false
-            if (filterSync === 'manual' && e.external_id) return false
-            if (filterType !== 'all' && e.type !== filterType) return false
-            if (!showSpecialEvents && filterType === 'all' && SPECIAL_EVENT_TYPES.includes(e.type)) return false
-            return true
-          })
-          return filtered.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-              <div className="text-gray-500 mb-4">No events found</div>
-              <Link href="/admin/create" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
-                Create Your First Event
-              </Link>
-            </div>
-          ) : (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                <SortableContext items={filtered.map((e) => e.id)} strategy={verticalListSortingStrategy}>
-                  {filtered.map((event) => (
-                    <SortableEventItem key={event.id} event={event} language={language} />
-                  ))}
-                </SortableContext>
-              </DndContext>
-            </div>
-          )
-        })()}
+        {sortedEvents.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+            <div className="text-gray-500 mb-4">No events found</div>
+            <Link href="/admin/create" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+              Create Your First Event
+            </Link>
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={sortedEvents.map((e) => e.id)} strategy={verticalListSortingStrategy}>
+                {sortedEvents.map((event, idx) => (
+                  <SortableEventItem
+                    key={event.id}
+                    event={event}
+                    language={language}
+                    isNewDay={dayMeta[idx].isNewDay}
+                    dayBand={dayMeta[idx].band}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
+        )}
           </>
         )}
 

@@ -51,6 +51,32 @@ export const formatEventDate = (
 }
 
 /**
+ * Get the calendar day key (YYYY-MM-DD) for a date in Israel timezone.
+ * Used for grouping/sorting events by day regardless of stored UTC offset.
+ */
+export const getIsraelDayKey = (dateString: string): string => {
+  return formatDateInIsraelTimezone(dateString, 'en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+}
+
+/**
+ * Format event date as ISO day + localized weekday (e.g., "2026-09-14, Mon")
+ */
+export const formatEventDateISO = (
+  dateString: string,
+  language: string = 'en'
+): string => {
+  const isoDate = getIsraelDayKey(dateString)
+  const weekday = formatDateInIsraelTimezone(dateString, localeMap[language] || 'en-US', {
+    weekday: 'short',
+  })
+  return `${isoDate}, ${weekday}`
+}
+
+/**
  * Format date and time for display (e.g., "01/15/2024, 14:30:00")
  */
 export const formatDateTimeInIsraelTimezone = (
