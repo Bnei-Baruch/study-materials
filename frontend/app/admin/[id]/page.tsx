@@ -8,6 +8,7 @@ import Link from 'next/link'
 import EventTypeBadge from '@/components/EventTypeBadge'
 import PartForm from '@/components/PartForm'
 import { SourceSearch } from '@/components/SourceSearch'
+import LineupSelect from '@/components/LineupSelect'
 import { 
   Mail, 
   ChevronLeft,
@@ -2110,15 +2111,13 @@ const fetchEventAndParts = async () => {
                                       <div>
                                         <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lineup for the hosts</label>
                                         <div className="flex items-center gap-2">
-                                          <input
-                                            type="url"
+                                          <LineupSelect
                                             value={editedPart.lineup_for_hosts_link || ''}
-                                            onChange={(e) => {
-                                              const updated = {...editedPart, lineup_for_hosts_link: e.target.value}
+                                            onChange={(link) => {
+                                              const updated = {...editedPart, lineup_for_hosts_link: link}
                                               setEditedParts({...editedParts, [langCode]: updated})
                                             }}
                                             className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                                            placeholder="https://..."
                                           />
                                           {editedPart.lineup_for_hosts_link && (
                                             <a
@@ -2271,15 +2270,13 @@ const fetchEventAndParts = async () => {
                                       <div>
                                         <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lineup for the hosts</label>
                                         <div className="flex items-center gap-2">
-                                          <input
-                                            type="url"
+                                          <LineupSelect
                                             value={editedPart.lineup_for_hosts_link || ''}
-                                            onChange={(e) => {
-                                              const updated = {...editedPart, lineup_for_hosts_link: e.target.value}
+                                            onChange={(link) => {
+                                              const updated = {...editedPart, lineup_for_hosts_link: link}
                                               setEditedParts({...editedParts, [langCode]: updated})
                                             }}
                                             className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                                            placeholder="https://..."
                                           />
                                           {editedPart.lineup_for_hosts_link && (
                                             <a
@@ -2866,13 +2863,10 @@ const fetchEventAndParts = async () => {
                                   <div>
                                     <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lineup for the hosts</label>
                                     <div className="flex items-center gap-2">
-                                      <input
-                                        type="url"
+                                      <LineupSelect
                                         value={editedPart ? editedPart.lineup_for_hosts_link || '' : part.lineup_for_hosts_link || ''}
-                                        onChange={(e) => editedPart && updateEditedField('lineup_for_hosts_link', e.target.value)}
+                                        onChange={(link) => editedPart && updateEditedField('lineup_for_hosts_link', link)}
                                         className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                        placeholder="https://..."
-                                        
                                       />
                                       {(editedPart ? editedPart.lineup_for_hosts_link : part.lineup_for_hosts_link) && (
                                         <a
@@ -3017,12 +3011,10 @@ const fetchEventAndParts = async () => {
                                   <div>
                                     <label className="block text-gray-600 text-xs mb-1.5 font-medium">Lineup for the hosts</label>
                                     <div className="flex items-center gap-2">
-                                      <input
-                                        type="url"
+                                      <LineupSelect
                                         value={editedPart ? editedPart.lineup_for_hosts_link || '' : part.lineup_for_hosts_link || ''}
-                                        onChange={(e) => editedPart && updateEditedField('lineup_for_hosts_link', e.target.value)}
+                                        onChange={(link) => editedPart && updateEditedField('lineup_for_hosts_link', link)}
                                         className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                        placeholder="https://..."
                                       />
                                       {(editedPart ? editedPart.lineup_for_hosts_link : part.lineup_for_hosts_link) && (
                                         <a

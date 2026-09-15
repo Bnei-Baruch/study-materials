@@ -143,7 +143,7 @@ func (s *MongoDBEventStore) ListEventsFiltered(filter bson.M, limit, offset int)
 
 	// Build find options
 	findOpts := options.Find().
-		SetSort(bson.D{{Key: "order", Value: 1}, {Key: "date", Value: -1}})
+		SetSort(bson.D{{Key: "date", Value: -1}, {Key: "order", Value: 1}})
 
 	if limit > 0 {
 		findOpts.SetLimit(int64(limit))
