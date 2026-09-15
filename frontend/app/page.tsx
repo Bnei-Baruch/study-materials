@@ -2440,8 +2440,6 @@ export default function PublicPage({
                                 </h3>
                               </div>
                               {activeConventions.map(c => {
-                                const cStart = new Date(c.date.split('T')[0] + 'T00:00:00Z')
-                                const dayNum = Math.floor((groupDate.getTime() - cStart.getTime()) / 86400000) + 1
                                 const typeClass = c.type === 'holiday'
                                   ? (isDark ? 'bg-orange-900/50 text-orange-200' : 'bg-orange-100 text-orange-800')
                                   : c.type === 'convention'
@@ -2451,7 +2449,7 @@ export default function PublicPage({
                                 return (
                                   <span key={c.id} className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${typeClass}`}>
                                     {c.type !== 'holiday' && <span className={`w-1.5 h-1.5 rounded-full ${cStyle.dot}`} />}
-                                    {getEventTitle(c)} · {t('day')} {dayNum}
+                                    {getEventTitle(c)}
                                   </span>
                                 )
                               })}
