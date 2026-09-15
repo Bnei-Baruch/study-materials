@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
 import { formatDateOnly } from '@/lib/dateUtils'
-import { groupEventsByDate, getDateGroupColorClasses } from '@/lib/eventGrouping'
+import { groupEventsByDate, getDateGroupColorClasses, hasEventEnded, getJerusalemDateString } from '@/lib/eventGrouping'
 import {
   BookOpen,
   Video,
@@ -148,7 +148,10 @@ const TRANSLATIONS = {
     toDate: 'עד תאריך',
     clearFilters: 'נקה סינון',
     eventsFound: 'שיעורים נמצאו',
-    loadMore: 'לעוד שיעורים >>',
+    loadPrevious: 'טען שיעורים קודמים',
+    endedToday: 'שיעורים הסתיימו היום',
+    show: 'הצג',
+    hide: 'הסתר',
     readingBeforeSleep: 'קטע הכנה לשינה',
     lessonPreparation: 'מסמך הכנה לשיעור',
     watchLesson: 'צפייה בשיעור',
@@ -192,7 +195,10 @@ const TRANSLATIONS = {
     toDate: 'To date',
     clearFilters: 'Clear filters',
     eventsFound: 'events found',
-    loadMore: 'Load more lessons',
+    loadPrevious: 'Load previous lessons',
+    endedToday: 'lessons ended today',
+    show: 'Show',
+    hide: 'Hide',
     readingBeforeSleep: 'Reading Before Sleep',
     lessonPreparation: 'Lesson Preparation',
     watchLesson: 'Watch Lesson',
@@ -236,7 +242,10 @@ const TRANSLATIONS = {
     toDate: 'По дату',
     clearFilters: 'Очистить фильтры',
     eventsFound: 'уроков найдено',
-    loadMore: 'Загрузить еще уроки',
+    loadPrevious: 'Загрузить предыдущие уроки',
+    endedToday: 'уроков завершилось сегодня',
+    show: 'Показать',
+    hide: 'Скрыть',
     readingBeforeSleep: 'Чтение перед сном',
     lessonPreparation: 'Подготовка к уроку',
     watchLesson: 'Смотреть урок',
@@ -280,7 +289,10 @@ const TRANSLATIONS = {
     toDate: 'Hasta fecha',
     clearFilters: 'Limpiar filtros',
     eventsFound: 'lecciones encontradas',
-    loadMore: 'Cargar más lecciones',
+    loadPrevious: 'Cargar lecciones anteriores',
+    endedToday: 'lecciones terminaron hoy',
+    show: 'Mostrar',
+    hide: 'Ocultar',
     readingBeforeSleep: 'Lectura antes de dormir',
     lessonPreparation: 'Preparación de la lección',
     watchLesson: 'Ver lección',
@@ -324,7 +336,10 @@ const TRANSLATIONS = {
     toDate: 'Bis Datum',
     clearFilters: 'Filter löschen',
     eventsFound: 'Lektionen gefunden',
-    loadMore: 'Mehr Lektionen laden',
+    loadPrevious: 'Frühere Lektionen laden',
+    endedToday: 'Lektionen heute beendet',
+    show: 'Anzeigen',
+    hide: 'Ausblenden',
     readingBeforeSleep: 'Lesen vor dem Schlafengehen',
     lessonPreparation: 'Lektionsvorbereitung',
     watchLesson: 'Lektion ansehen',
@@ -368,7 +383,10 @@ const TRANSLATIONS = {
     toDate: 'Alla data',
     clearFilters: 'Cancella filtri',
     eventsFound: 'lezioni trovate',
-    loadMore: 'Carica altre lezioni',
+    loadPrevious: 'Carica lezioni precedenti',
+    endedToday: 'lezioni terminate oggi',
+    show: 'Mostra',
+    hide: 'Nascondi',
     readingBeforeSleep: 'Lettura prima di dormire',
     lessonPreparation: 'Preparazione della lezione',
     watchLesson: 'Guarda la lezione',
@@ -412,7 +430,10 @@ const TRANSLATIONS = {
     toDate: 'À la date',
     clearFilters: 'Effacer les filtres',
     eventsFound: 'leçons trouvées',
-    loadMore: 'Charger plus de leçons',
+    loadPrevious: 'Charger les leçons précédentes',
+    endedToday: 'leçons terminées aujourd\'hui',
+    show: 'Afficher',
+    hide: 'Masquer',
     readingBeforeSleep: 'Lecture avant de dormir',
     lessonPreparation: 'Préparation de la leçon',
     watchLesson: 'Regarder la leçon',
@@ -456,7 +477,10 @@ const TRANSLATIONS = {
     toDate: 'До дати',
     clearFilters: 'Очистити фільтри',
     eventsFound: 'уроків знайдено',
-    loadMore: 'Завантажити більше уроків',
+    loadPrevious: 'Завантажити попередні уроки',
+    endedToday: 'уроків завершилося сьогодні',
+    show: 'Показати',
+    hide: 'Приховати',
     readingBeforeSleep: 'Читання перед сном',
     lessonPreparation: 'Підготовка до уроку',
     watchLesson: 'Дивитися урок',
@@ -500,7 +524,10 @@ const TRANSLATIONS = {
     toDate: 'Bitiş tarihi',
     clearFilters: 'Filtreleri temizle',
     eventsFound: 'ders bulundu',
-    loadMore: 'Daha fazla ders yükle',
+    loadPrevious: 'Önceki dersleri yükle',
+    endedToday: 'ders bugün sona erdi',
+    show: 'Göster',
+    hide: 'Gizle',
     readingBeforeSleep: 'Uyku Öncesi Okuma',
     lessonPreparation: 'Ders Hazırlığı',
     watchLesson: 'Dersi izle',
@@ -544,7 +571,10 @@ const TRANSLATIONS = {
     toDate: 'Até data',
     clearFilters: 'Limpar filtros',
     eventsFound: 'aulas encontradas',
-    loadMore: 'Carregar mais aulas',
+    loadPrevious: 'Carregar aulas anteriores',
+    endedToday: 'aulas terminaram hoje',
+    show: 'Mostrar',
+    hide: 'Ocultar',
     readingBeforeSleep: 'Leitura Antes de Dormir',
     lessonPreparation: 'Preparação da Aula',
     watchLesson: 'Assistir Aula',
@@ -588,7 +618,10 @@ const TRANSLATIONS = {
     toDate: 'До дата',
     clearFilters: 'Изчисти филтрите',
     eventsFound: 'намерени урока',
-    loadMore: 'Зареди още уроци',
+    loadPrevious: 'Зареди предишни уроци',
+    endedToday: 'урока приключиха днес',
+    show: 'Покажи',
+    hide: 'Скрий',
     readingBeforeSleep: 'Четене преди сън',
     lessonPreparation: 'Подготовка за урока',
     watchLesson: 'Гледай урока',
@@ -627,6 +660,8 @@ export default function PublicPage({
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [totalEvents, setTotalEvents] = useState(0)
+  const [showPrevious, setShowPrevious] = useState(false)
+  const [showEndedToday, setShowEndedToday] = useState(false)
   const [activeTab, setActiveTab] = useState<'conventions' | 'lessons'>(initialTab)
   const [conventionFilter, setConventionFilter] = useState<'upcoming' | 'past' | 'all'>('upcoming')
   const [conventions, setConventions] = useState<Event[]>([])
@@ -918,6 +953,7 @@ export default function PublicPage({
       const data = await response.json()
       setEvents(data.events || [])
       setTotalEvents(data.total || 0)
+      setShowPrevious(false)
     } catch (error) {
       console.error('Failed to fetch events:', error)
     } finally {
@@ -975,7 +1011,13 @@ export default function PublicPage({
     }
   }
 
-  const loadMore = async () => {
+  const loadPrevious = async () => {
+    if (!showPrevious) {
+      // Reveal already-fetched events that are past the cutoff first — no network call needed
+      setShowPrevious(true)
+      return
+    }
+
     try {
       const params = new URLSearchParams({
         public: 'true',
@@ -1002,6 +1044,14 @@ export default function PublicPage({
   }
 
   const hasActiveFilters = startDate || endDate
+
+  // Default view: events from before today that already ended are hidden behind "Load previous".
+  // Today's own events always stay visible here; already-ended ones are collapsed inline (see below).
+  const todayJerusalem = getJerusalemDateString()
+  const displayEvents = showPrevious
+    ? events
+    : events.filter(e => e.date.split('T')[0] === todayJerusalem || !hasEventEnded(e))
+  const hasMoreToLoad = showPrevious ? events.length < totalEvents : displayEvents.length < events.length
 
   const fetchParts = async (eventId: string) => {
     try {
@@ -2328,16 +2378,31 @@ export default function PublicPage({
                   )}
                 </div>
 
+                {/* Load Previous Button */}
+                {!loading && hasMoreToLoad && (
+                  <div className="relative flex items-center justify-center mb-4 py-2">
+                    <div className="absolute inset-x-0 border-t border-blue-200 dark:border-blue-800"></div>
+                    <button
+                      onClick={loadPrevious}
+                      className="relative z-10 px-5 py-2 flex items-center gap-1.5 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 rounded-full hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors shadow-md font-semibold"
+                      style={{ fontSize: '14px' }}
+                    >
+                      {t('loadPrevious')}
+                      <ChevronUp className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
                 {/* Events List Grouped by Date */}
                 <div className="space-y-4">
                   {loading ? (
                     <div className="text-center text-gray-600 dark:text-gray-400 py-12">Loading...</div>
-                  ) : events.length === 0 ? (
+                  ) : displayEvents.length === 0 ? (
                     <div className="text-center text-gray-600 dark:text-gray-400 py-12">
                       {t('noEvents')}
                     </div>
                   ) : (
-                    groupEventsByDate(events, language === 'he' ? 'he-IL' : language).map((dateGroup) => {
+                    groupEventsByDate(displayEvents, language === 'he' ? 'he-IL' : language).map((dateGroup) => {
                       const colors = getDateGroupColorClasses(dateGroup.dayIndex)
                       const groupDate = new Date(dateGroup.date + 'T00:00:00Z')
                       const activeConventions = conventions.filter(c => {
@@ -2533,28 +2598,44 @@ export default function PublicPage({
                                   </button>
                                 )
                               }
-                              return topLevel.flatMap(event => [
+                              const renderRow = (event: Event) => [
                                 renderEventRow(event),
                                 ...(childrenMap[event.id] || []).map(child => renderEventRow(child, true, event)),
-                              ])
+                              ]
+
+                              if (dateGroup.date !== todayJerusalem) {
+                                return topLevel.flatMap(renderRow)
+                              }
+
+                              const activeTopLevel = topLevel.filter(ev => !hasEventEnded(ev))
+                              const endedTopLevel = topLevel.filter(ev => hasEventEnded(ev))
+
+                              return (
+                                <>
+                                  {endedTopLevel.length > 0 && (
+                                    <div>
+                                      <button
+                                        onClick={() => setShowEndedToday(v => !v)}
+                                        className="w-full p-4 flex items-center justify-between text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                        style={{ fontSize: '14px' }}
+                                      >
+                                        <span>{endedTopLevel.length} {t('endedToday')}</span>
+                                        <span className="flex items-center gap-1 text-blue-700 dark:text-blue-300 font-semibold">
+                                          {showEndedToday ? t('hide') : t('show')}
+                                          <ChevronDown className={`w-4 h-4 transition-transform ${showEndedToday ? 'rotate-180' : ''}`} />
+                                        </span>
+                                      </button>
+                                      {showEndedToday && endedTopLevel.flatMap(renderRow)}
+                                    </div>
+                                  )}
+                                  {activeTopLevel.flatMap(renderRow)}
+                                </>
+                              )
                             })()}
                           </div>
                         </div>
                       )
                     })
-                  )}
-
-                  {/* Load More Button */}
-                  {events.length > 0 && events.length < totalEvents && (
-                    <div className="mt-8 text-center">
-                      <button
-                        onClick={loadMore}
-                        className="px-6 py-3 bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-300 border-2 border-blue-200 dark:border-blue-800 rounded-xl hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors shadow-md font-semibold"
-                        style={{ fontSize: '14px' }}
-                      >
-                        {t('loadMore')}
-                      </button>
-                    </div>
                   )}
                 </div>
               </div>

@@ -37,9 +37,9 @@ export const groupEventsByDate = (events: any[], locale: string = 'en-US'): Date
     groupMap.get(dateOnly)!.push(event)
   })
   
-  // Convert to array and sort by date DESCENDING (newest first)
-  const sortedDates = Array.from(groupMap.keys()).sort((a, b) => 
-    new Date(b).getTime() - new Date(a).getTime()
+  // Convert to array and sort by date ASCENDING (oldest first)
+  const sortedDates = Array.from(groupMap.keys()).sort((a, b) =>
+    new Date(a).getTime() - new Date(b).getTime()
   )
   
   return sortedDates.map((dateStr) => {
@@ -84,4 +84,63 @@ export const groupEventsByDate = (events: any[], locale: string = 'en-US'): Date
  */
 export const getDateGroupColorClasses = (dayIndex: number) => {
   return DAY_COLORS[dayIndex % 7]
+}
+
+const getJerusalemParts = (instant: Date) => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Jerusalem',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(instant)
+  const get = (type: string) => parts.find(p => p.type === type)?.value ?? '00'
+  return { year: get('year'), month: get('month'), day: get('day'), hour: get('hour'), minute: get('minute') }
+}
+
+// "YYYY-MM-DD" for the given instant in Asia/Jerusalem local time
+export const getJerusalemDateString = (instant: Date = new Date()): string => {
+  const { year, month, day } = getJerusalemParts(instant)
+  return `${year}-${month}-${day}`
+}
+
+// "YYYY-MM-DD HH:MM" in Asia/Jerusalem local time (zero-padded, string-comparable)
+const formatJerusalemDateTime = (instant: Date): string => {
+  const { year, month, day, hour, minute } = getJerusalemParts(instant)
+  return `${year}-${month}-${day} ${hour}:${minute}`
+}
+
+/**
+ * Determine whether an event has ended, using a 30-minute grace period after its end_time.
+ * Events without end_time are considered to run through the end of their calendar day.
+ * start_time/end_time are plain "HH:MM" strings in Asia/Jerusalem local time.
+ */
+export const hasEventEnded = (event: { date: string; end_time?: string }): boolean => {
+  const eventDate = event.date.split('T')[0] // YYYY-MM-DD
+
+  let cutoff: string
+  if (event.end_time) {
+    const [hours, minutes] = event.end_time.split(':').map(Number)
+    const totalMinutes = hours * 60 + minutes + 30
+    const dayOffset = Math.floor(totalMinutes / (24 * 60))
+    const cutoffMinutesOfDay = totalMinutes % (24 * 60)
+    const cutoffHours = Math.floor(cutoffMinutesOfDay / 60)
+    const cutoffMinutes = cutoffMinutesOfDay % 60
+
+    let cutoffDate = eventDate
+    if (dayOffset > 0) {
+      const d = new Date(eventDate + 'T00:00:00Z')
+      d.setUTCDate(d.getUTCDate() + dayOffset)
+      cutoffDate = d.toISOString().split('T')[0]
+    }
+
+    cutoff = `${cutoffDate} ${String(cutoffHours).padStart(2, '0')}:${String(cutoffMinutes).padStart(2, '0')}`
+  } else {
+    cutoff = `${eventDate} 23:59`
+  }
+
+  const nowJerusalem = formatJerusalemDateTime(new Date())
+  return nowJerusalem > cutoff
 }
