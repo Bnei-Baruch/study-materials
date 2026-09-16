@@ -1897,7 +1897,8 @@ const fetchEventAndParts = async () => {
                             if (!langPart) return null
                             
                             const editedPart = editedParts[langCode] || langPart
-                            
+                            const isRTL = langCode === 'he'
+
                             return (
                               <div id={`edit-${langCode}`} key={`edit-${langCode}`} className="space-y-4 p-4 mb-4 border-2 border-gray-300 rounded-lg bg-white">
                                 <h5 className="font-semibold text-gray-900" style={{ fontSize: '14px' }}>
@@ -1929,7 +1930,8 @@ const fetchEventAndParts = async () => {
                                       const updated = {...editedPart, title: e.target.value}
                                       setEditedParts({...editedParts, [langCode]: updated})
                                     }}
-                                    className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                    dir={isRTL ? 'rtl' : 'ltr'}
+                                    className={`w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm ${isRTL ? 'text-right' : 'text-left'}`}
                                     placeholder="Or type custom title..."
                                   />
                                 </div>
@@ -1944,7 +1946,8 @@ const fetchEventAndParts = async () => {
                                       setEditedParts({...editedParts, [langCode]: updated})
                                     }}
                                     rows={2}
-                                    className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-none"
+                                    dir={isRTL ? 'rtl' : 'ltr'}
+                                    className={`w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-none ${isRTL ? 'text-right' : 'text-left'}`}
                                     placeholder="Brief description of the lesson part..."
                                   />
                                 </div>

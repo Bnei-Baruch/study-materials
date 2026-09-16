@@ -53,6 +53,7 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
 
   const [partType, setPartType] = useState('live_lesson')
   const [language, setLanguage] = useState('he')
+  const isRTL = language === 'he'
   const [partNumber, setPartNumber] = useState<number | ''>('') // Start blank
   const [title, setTitle] = useState('') // Start blank
   const [description, setDescription] = useState('')
@@ -364,7 +365,8 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+          dir={isRTL ? 'rtl' : 'ltr'}
+          className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition ${isRTL ? 'text-right' : 'text-left'}`}
           placeholder="e.g., Shamati #1 - There Is None Else Besides Him"
           readOnly={partNumber === 0}
           required
@@ -381,7 +383,8 @@ export default function PartForm({ eventId, eventDate, existingParts, onPartCrea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none"
+          dir={isRTL ? 'rtl' : 'ltr'}
+          className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none ${isRTL ? 'text-right' : 'text-left'}`}
           placeholder="Brief description of the lesson part..."
         />
       </div>
