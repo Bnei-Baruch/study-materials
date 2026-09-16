@@ -28,4 +28,10 @@ export const LINEUP_OPTIONS: LineupOption[] = [
   { name: 'אביהו ומושי - שלישי ערב', link: 'https://docs.google.com/document/d/16xqg_rU5yE9bxM_UlJWkH3T9A6KTj1tMJhHKeehv114/edit?tab=t.0' },
   { name: 'גלעד ואורן - רביעי ערב', link: 'https://docs.google.com/document/d/1GOBZcAJjSiJPCUtCrb-uTItWZcvkP_pzVyHFTHoRNo4/edit?tab=t.0' },
   { name: 'יום שבת בוקר - הנהלה', link: 'https://docs.google.com/document/d/1QtTvd25yaqmW_eMUP0OauuDbgFES2tgaWGXuNVRD86g/edit?usp=drivesdk' },
+
+  // Meals
+  { name: 'סעודת חומוס - שישי', link: 'https://docs.google.com/document/d/1gM-_Wc9_gqA_5xCJo9kprLegXlbXrO2Nomw-VOVSIQs/edit?tab=t.0' },
+  { name: 'סעודה ראשונה - שישי', link: 'https://docs.google.com/document/d/13Ym7zGB2peST3ezLwvIYKFD3JVPR3JdYmBEwjrV8qVo/edit?tab=t.0' },
+  { name: 'סעודה שנייה - שבת', link: 'https://docs.google.com/document/d/1dJ5ujEVnAXTcRebfRasCJxKBnhMzSSMwEidvRlCm39M/edit?tab=t.0' },
+  { name: 'סעודה שלישית - שבת', link: 'https://docs.google.com/document/d/1mZswCvtM_A4n8zVPyvi_k3fSOKiA0pMitcQsVupZ4xg/edit?usp=sharing' },
 ]

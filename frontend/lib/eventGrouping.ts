@@ -11,6 +11,20 @@ export interface DateGroup {
   dayIndex: number // 0=Sunday, 1=Monday, etc.
 }
 
+/**
+ * Compare two events by start_time ascending ("HH:MM" strings). Events without a
+ * start_time sort last. Ties (including two events with no start_time) are equal,
+ * leaving their relative order to the surrounding stable sort.
+ */
+export const compareByStartTime = (a: { start_time?: string }, b: { start_time?: string }): number => {
+  const timeA = a.start_time || ''
+  const timeB = b.start_time || ''
+  if (timeA === timeB) return 0
+  if (!timeA) return 1
+  if (!timeB) return -1
+  return timeA < timeB ? -1 : 1
+}
+
 // Day of week colors (Sunday through Saturday)
 const DAY_COLORS = [
   { border: 'border-rose-500', borderLTR: 'border-rose-500', bg: 'bg-rose-50' },      // Sunday
@@ -73,7 +87,7 @@ export const groupEventsByDate = (events: any[], locale: string = 'en-US'): Date
       date: dateStr,
       dayOfWeek,
       displayDate,
-      events: groupMap.get(dateStr)!,
+      events: groupMap.get(dateStr)!.sort(compareByStartTime),
       dayIndex,
     }
   })

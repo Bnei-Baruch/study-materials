@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { getApiUrl } from '@/lib/api'
 import { formatEventDateISO, getIsraelDayKey } from '@/lib/dateUtils'
+import { compareByStartTime } from '@/lib/eventGrouping'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
@@ -21,24 +22,6 @@ const LANGUAGES = {
   tr: '🇹🇷 Türkçe',
   'pt-BR': '🇧🇷 Português',
 }
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-
 interface Event {
   id: string
   date: string
@@ -141,8 +124,8 @@ function getDefaultTitle(eventType: string, lang: string): string {
   return defaults[eventType]?.[lang] || defaults['morning_lesson']?.[lang] || 'Event'
 }
 
-// Sortable event item component
-function SortableEventItem({
+// Event list item component
+function EventListItem({
   event,
   language,
   isNewDay,
@@ -153,21 +136,6 @@ function SortableEventItem({
   isNewDay: boolean
   dayBand: boolean
 }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: event.id })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  }
-
   const formatDate = (dateString: string) => {
     return formatEventDateISO(dateString, language)
   }
@@ -185,8 +153,6 @@ function SortableEventItem({
 
   return (
     <div
-      ref={setNodeRef}
-      style={style}
       className={`hover:bg-blue-50 transition border-b border-gray-200 last:border-b-0 ${
         isNewDay ? 'border-t-2 border-t-gray-300' : ''
       } ${dayBand ? 'bg-gray-50' : 'bg-white'}`}
@@ -194,29 +160,6 @@ function SortableEventItem({
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 flex-1">
-            {/* Drag handle */}
-            <div
-              {...attributes}
-              {...listeners}
-              className="cursor-grab active:cursor-grabbing p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
-              title="Drag to reorder"
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="4" cy="4" r="1.5" />
-                <circle cx="4" cy="8" r="1.5" />
-                <circle cx="4" cy="12" r="1.5" />
-                <circle cx="12" cy="4" r="1.5" />
-                <circle cx="12" cy="8" r="1.5" />
-                <circle cx="12" cy="12" r="1.5" />
-              </svg>
-            </div>
-
             {/* Date and title - clickable to navigate */}
             <Link
               href={`/admin/${event.id}`}
@@ -287,13 +230,6 @@ function AdminPageContent() {
   const [eventTypes, setEventTypes] = useState<Array<{ name: string; titles: { [k: string]: string } }>>([])
   const { user, logout } = useAuth()
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
-
   const filteredEvents = useMemo(() => {
     return events.filter(e => {
       if (filterPublic === 'public' && !e.public) return false
@@ -309,20 +245,13 @@ function AdminPageContent() {
   }, [events, filterPublic, filterHidden, filterSync, filterType, showSpecialEvents])
 
   // Group by day (newest day first), and within a day order by start time
-  // (events with no start time sort last, tied events fall back to manual order)
+  // (events with no start time sort last) — same rule the public site uses.
   const sortedEvents = useMemo(() => {
     return [...filteredEvents].sort((a, b) => {
       const dayA = getIsraelDayKey(a.date)
       const dayB = getIsraelDayKey(b.date)
       if (dayA !== dayB) return dayA < dayB ? 1 : -1
-      const timeA = a.start_time || ''
-      const timeB = b.start_time || ''
-      if (timeA !== timeB) {
-        if (!timeA) return 1
-        if (!timeB) return -1
-        return timeA < timeB ? -1 : 1
-      }
-      return a.order - b.order
+      return compareByStartTime(a, b)
     })
   }, [filteredEvents])
 
@@ -363,39 +292,6 @@ function AdminPageContent() {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event
-
-    if (over && active.id !== over.id) {
-      const oldIndex = sortedEvents.findIndex((e) => e.id === active.id)
-      const newIndex = sortedEvents.findIndex((e) => e.id === over.id)
-
-      // Reorder within the currently displayed (filtered+sorted) list
-      const newEvents = arrayMove(sortedEvents, oldIndex, newIndex)
-
-      // Update order values on backend
-      try {
-        // Update all affected events with their new order
-        for (let i = 0; i < newEvents.length; i++) {
-          const eventToUpdate = newEvents[i]
-          await fetch(getApiUrl(`/events/${eventToUpdate.id}`), {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ order: i }),
-          })
-        }
-        // Refresh to ensure consistency
-        await fetchEvents()
-      } catch (err) {
-        alert(err instanceof Error ? err.message : 'Failed to update order')
-        // Revert on error
-        await fetchEvents()
-      }
     }
   }
 
@@ -582,19 +478,15 @@ function AdminPageContent() {
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-              <SortableContext items={sortedEvents.map((e) => e.id)} strategy={verticalListSortingStrategy}>
-                {sortedEvents.map((event, idx) => (
-                  <SortableEventItem
-                    key={event.id}
-                    event={event}
-                    language={language}
-                    isNewDay={dayMeta[idx].isNewDay}
-                    dayBand={dayMeta[idx].band}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
+            {sortedEvents.map((event, idx) => (
+              <EventListItem
+                key={event.id}
+                event={event}
+                language={language}
+                isNewDay={dayMeta[idx].isNewDay}
+                dayBand={dayMeta[idx].band}
+              />
+            ))}
           </div>
         )}
           </>
