@@ -266,7 +266,7 @@ func (a *App) SyncExternalEvents() {
 				Type:               localType,
 				Number:             1,
 				Titles:             titles,
-				Public:             true,
+				Public:             false, // operator reviews and publishes manually
 				HideFromLessonsTab: true,
 			}
 			if err := a.eventStore.SaveEvent(event); err != nil {
@@ -412,7 +412,7 @@ func (a *App) SyncExternalEvents() {
 				Type:               localType,
 				Number:             1,
 				Titles:             titles,
-				Public:             true,
+				Public:             false, // operator reviews and publishes manually
 				ParentEventID:      parentEventID,
 				HideFromLessonsTab: false,
 			}
