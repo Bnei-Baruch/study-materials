@@ -131,7 +131,7 @@ func (s *MongoDBEventStore) ListEvents() ([]*Event, error) {
 }
 
 // ListEventsFiltered lists events with filters
-func (s *MongoDBEventStore) ListEventsFiltered(filter bson.M, limit, offset int) ([]Event, int, error) {
+func (s *MongoDBEventStore) ListEventsFiltered(filter bson.M, limit, offset int, ascending bool) ([]Event, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -141,9 +141,14 @@ func (s *MongoDBEventStore) ListEventsFiltered(filter bson.M, limit, offset int)
 		return nil, 0, fmt.Errorf("failed to count events: %w", err)
 	}
 
+	dateDir := -1
+	if ascending {
+		dateDir = 1
+	}
+
 	// Build find options
 	findOpts := options.Find().
-		SetSort(bson.D{{Key: "date", Value: -1}, {Key: "order", Value: 1}})
+		SetSort(bson.D{{Key: "date", Value: dateDir}, {Key: "order", Value: 1}})
 
 	if limit > 0 {
 		findOpts.SetLimit(int64(limit))

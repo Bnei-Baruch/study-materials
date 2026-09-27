@@ -153,6 +153,7 @@ func (a *App) HandleGetEvent(w http.ResponseWriter, r *http.Request) {
 //   - exclude_types (string): comma-separated event types to exclude
 //   - parent_id (string): filter by parent event ID (sessions of a convention)
 //   - hide_from_lessons_tab (bool): filter by hide_from_lessons_tab flag
+//   - sort (string): "asc" for soonest-first, defaults to "desc" (latest-first)
 func (a *App) HandleListEvents(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
 
@@ -240,8 +241,10 @@ func (a *App) HandleListEvents(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	ascending := queryParams.Get("sort") == "asc"
+
 	// Use filtered query
-	events, total, err := a.eventStore.ListEventsFiltered(filter, limit, offset)
+	events, total, err := a.eventStore.ListEventsFiltered(filter, limit, offset, ascending)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to list events: %v", err), http.StatusInternalServerError)
 		return

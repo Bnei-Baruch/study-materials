@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { getApiUrl } from '@/lib/api'
 import { formatEventDateISO, getIsraelDayKey } from '@/lib/dateUtils'
-import { compareByStartTime } from '@/lib/eventGrouping'
+import { compareByStartTime, getJerusalemDateString } from '@/lib/eventGrouping'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
@@ -226,6 +226,9 @@ function AdminPageContent() {
   const [filterSync, setFilterSync] = useState<'all' | 'synced' | 'manual'>('all')
   const [filterType, setFilterType] = useState<string>('all')
   const [showSpecialEvents, setShowSpecialEvents] = useState(false)
+  const [showPastEvents, setShowPastEvents] = useState(false)
+  const [filterFromDate, setFilterFromDate] = useState('')
+  const [filterToDate, setFilterToDate] = useState('')
   const SPECIAL_EVENT_TYPES = ['convention', 'holiday', 'special_event']
   const [eventTypes, setEventTypes] = useState<Array<{ name: string; titles: { [k: string]: string } }>>([])
   const { user, logout } = useAuth()
@@ -240,20 +243,39 @@ function AdminPageContent() {
       if (filterSync === 'manual' && e.external_id) return false
       if (filterType !== 'all' && e.type !== filterType) return false
       if (!showSpecialEvents && filterType === 'all' && SPECIAL_EVENT_TYPES.includes(e.type)) return false
+      const dayKey = getIsraelDayKey(e.date)
+      if (filterFromDate && dayKey < filterFromDate) return false
+      if (filterToDate && dayKey > filterToDate) return false
       return true
     })
-  }, [events, filterPublic, filterHidden, filterSync, filterType, showSpecialEvents])
+  }, [events, filterPublic, filterHidden, filterSync, filterType, showSpecialEvents, filterFromDate, filterToDate])
 
-  // Group by day (newest day first), and within a day order by start time
-  // (events with no start time sort last) — same rule the public site uses.
-  const sortedEvents = useMemo(() => {
+  // Chronological ascending (oldest to newest day), and within a day order by
+  // start time (events with no start time sort last) — same rule the public
+  // site uses. Past days are hidden by default behind "Show previous events".
+  const chronologicalEvents = useMemo(() => {
     return [...filteredEvents].sort((a, b) => {
       const dayA = getIsraelDayKey(a.date)
       const dayB = getIsraelDayKey(b.date)
-      if (dayA !== dayB) return dayA < dayB ? 1 : -1
+      if (dayA !== dayB) return dayA < dayB ? -1 : 1
       return compareByStartTime(a, b)
     })
   }, [filteredEvents])
+
+  const todayKey = getJerusalemDateString()
+  // An explicit date-range filter overrides the "hide past by default" behavior
+  // — the admin asked for that range on purpose, past or not.
+  const hasDateFilter = filterFromDate !== '' || filterToDate !== ''
+  const pastEventsCount = useMemo(
+    () => chronologicalEvents.filter(e => getIsraelDayKey(e.date) < todayKey).length,
+    [chronologicalEvents, todayKey]
+  )
+  const sortedEvents = useMemo(
+    () => (showPastEvents || hasDateFilter)
+      ? chronologicalEvents
+      : chronologicalEvents.filter(e => getIsraelDayKey(e.date) >= todayKey),
+    [chronologicalEvents, showPastEvents, hasDateFilter, todayKey]
+  )
 
   const dayMeta = useMemo(() => {
     let dayIndex = -1
@@ -461,13 +483,39 @@ function AdminPageContent() {
                 <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${showSpecialEvents ? 'translate-x-4' : 'translate-x-1'}`} />
               </button>
             </div>
-            {(filterPublic !== 'all' || filterHidden !== 'all' || filterSync !== 'all' || filterType !== 'all' || showSpecialEvents) && (
-              <button onClick={() => { setFilterPublic('all'); setFilterHidden('all'); setFilterSync('all'); setFilterType('all'); setShowSpecialEvents(false) }}
+            <div className="w-px h-5 bg-gray-200" />
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</span>
+              <input
+                type="date"
+                value={filterFromDate}
+                onChange={e => setFilterFromDate(e.target.value)}
+                className="px-2 py-1 rounded-lg text-xs font-medium border border-gray-200 bg-white text-gray-700 focus:outline-none focus:border-blue-400"
+              />
+              <span className="text-xs text-gray-400">to</span>
+              <input
+                type="date"
+                value={filterToDate}
+                onChange={e => setFilterToDate(e.target.value)}
+                className="px-2 py-1 rounded-lg text-xs font-medium border border-gray-200 bg-white text-gray-700 focus:outline-none focus:border-blue-400"
+              />
+            </div>
+            {(filterPublic !== 'all' || filterHidden !== 'all' || filterSync !== 'all' || filterType !== 'all' || showSpecialEvents || hasDateFilter) && (
+              <button onClick={() => { setFilterPublic('all'); setFilterHidden('all'); setFilterSync('all'); setFilterType('all'); setShowSpecialEvents(false); setFilterFromDate(''); setFilterToDate('') }}
                 className="ml-auto text-xs text-gray-400 hover:text-gray-600 underline">
                 Clear filters
               </button>
             )}
           </div>
+
+        {pastEventsCount > 0 && (
+          <button
+            onClick={() => setShowPastEvents(v => !v)}
+            className="mb-3 text-sm text-blue-600 hover:text-blue-800 underline"
+          >
+            {showPastEvents ? 'Hide previous events' : `Show ${pastEventsCount} previous event${pastEventsCount === 1 ? '' : 's'}`}
+          </button>
+        )}
 
         {sortedEvents.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">

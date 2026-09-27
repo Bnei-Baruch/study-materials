@@ -15,7 +15,7 @@ type EventStore interface {
 	SaveEvent(event *Event) error
 	GetEvent(id string) (*Event, error)
 	ListEvents() ([]*Event, error)
-	ListEventsFiltered(filter bson.M, limit, offset int) ([]Event, int, error)
+	ListEventsFiltered(filter bson.M, limit, offset int, ascending bool) ([]Event, int, error)
 	DeleteEvent(id string) error
 }
 

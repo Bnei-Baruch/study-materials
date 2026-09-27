@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { Calendar, Clock, ChevronDown, ChevronRight, ChevronLeft } from 'lucide-react'
 import { formatDateTimeInIsraelTimezone } from '@/lib/dateUtils'
-import { groupEventsByDate, getDateGroupColorClasses } from '@/lib/eventGrouping'
+import { groupEventsByDate, getDateGroupColorClasses, getJerusalemDateString } from '@/lib/eventGrouping'
 
 // Translation type
 interface ListTranslations {
@@ -155,6 +155,8 @@ export function EmbeddedEventsList({
           offset: '0',
           hide_from_lessons_tab: 'false',
           exclude_types: 'convention,holiday,special_event',
+          sort: 'asc',
+          from_date: getJerusalemDateString(),
         })
 
         const response = await fetch(`${apiBaseUrl}/api/events?${params}`)

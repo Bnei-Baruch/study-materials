@@ -659,8 +659,9 @@ export default function PublicPage({
   const [showFilters, setShowFilters] = useState(false)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [totalEvents, setTotalEvents] = useState(0)
   const [showPrevious, setShowPrevious] = useState(false)
+  const [pastEvents, setPastEvents] = useState<Event[]>([])
+  const [pastTotal, setPastTotal] = useState(0)
   const [showEndedToday, setShowEndedToday] = useState(false)
   const [activeTab, setActiveTab] = useState<'conventions' | 'lessons'>(initialTab)
   const [conventionFilter, setConventionFilter] = useState<'upcoming' | 'past' | 'all'>('upcoming')
@@ -942,18 +943,23 @@ export default function PublicPage({
       setLoading(true)
       const params = new URLSearchParams({
         public: 'true',
-        limit: '10',
+        // Generous cap: comfortably covers the ~30-day sync horizon (a few hundred
+        // rows at most) in one shot, while still guarding against an unbounded
+        // fetch if someone picks a very wide custom date range.
+        limit: '500',
         language: language,
         hide_from_lessons_tab: 'false',
+        sort: 'asc',
       })
-      if (startDate) params.append('from_date', startDate)
+      params.append('from_date', startDate || getJerusalemDateString())
       if (endDate) params.append('to_date', endDate)
 
       const response = await fetch(getApiUrl(`/events?${params}`))
       const data = await response.json()
       setEvents(data.events || [])
-      setTotalEvents(data.total || 0)
       setShowPrevious(false)
+      setPastEvents([])
+      setPastTotal(0)
     } catch (error) {
       console.error('Failed to fetch events:', error)
     } finally {
@@ -1011,30 +1017,32 @@ export default function PublicPage({
     }
   }
 
+  // Past events are fetched on demand, newest-past-first, independently of the
+  // main (today-forward) list — the two are only merged for display.
   const loadPrevious = async () => {
-    if (!showPrevious) {
-      // Reveal already-fetched events that are past the cutoff first — no network call needed
-      setShowPrevious(true)
-      return
-    }
-
+    setShowPrevious(true)
     try {
+      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000)
       const params = new URLSearchParams({
         public: 'true',
         limit: '10',
-        offset: events.length.toString(),
+        offset: pastEvents.length.toString(),
         language: language,
         hide_from_lessons_tab: 'false',
+        sort: 'desc',
+        to_date: getJerusalemDateString(yesterday),
       })
-      if (startDate) params.append('from_date', startDate)
-      if (endDate) params.append('to_date', endDate)
 
       const response = await fetch(getApiUrl(`/events?${params}`))
       const data = await response.json()
-      setEvents([...events, ...(data.events || [])])
-      setTotalEvents(data.total || 0)
+      // to_date is inclusive of the whole day, which for bare-midnight event
+      // dates means it also catches today's rows right at the boundary — drop
+      // those defensively rather than duplicate them into the forward list.
+      const strictlyPast = (data.events || []).filter((e: Event) => e.date.split('T')[0] < todayJerusalem)
+      setPastEvents([...pastEvents, ...strictlyPast])
+      setPastTotal(data.total || 0)
     } catch (error) {
-      console.error('Failed to fetch more events:', error)
+      console.error('Failed to fetch previous events:', error)
     }
   }
 
@@ -1049,9 +1057,11 @@ export default function PublicPage({
   // Today's own events always stay visible here; already-ended ones are collapsed inline (see below).
   const todayJerusalem = getJerusalemDateString()
   const displayEvents = showPrevious
-    ? events
+    ? [...pastEvents, ...events]
     : events.filter(e => e.date.split('T')[0] === todayJerusalem || !hasEventEnded(e))
-  const hasMoreToLoad = showPrevious ? events.length < totalEvents : displayEvents.length < events.length
+  // Before the first click we don't yet know whether any past events exist, so
+  // keep offering the button; after that, go by the fetched total.
+  const hasMoreToLoad = showPrevious ? pastEvents.length < pastTotal : true
 
   const fetchParts = async (eventId: string) => {
     try {
