@@ -27,6 +27,7 @@ type LessonPart struct {
 	CustomLinks            []CustomLink `json:"custom_links,omitempty" bson:"custom_links,omitempty"` // Optional: custom links with titles (language-specific)
 	ShowUpdatedBadge       bool         `json:"show_updated_badge" bson:"show_updated_badge"`
 	CreatedAt              time.Time    `json:"created_at" bson:"created_at"`
+	ExternalID             string       `json:"external_id,omitempty" bson:"external_id,omitempty"` // External system ID for synced parts (bb-lineup slot id)
 }
 
 // Source represents a study source from kabbalahmedia

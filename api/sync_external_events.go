@@ -66,6 +66,20 @@ func isNotBroadcast(ext externalEvent) bool {
 	return strings.Contains(he, "לא משודר") || strings.Contains(he, "אין שידור")
 }
 
+// normalizePortugueseTitleKey rewrites events.kli.one's "pt" title key to the
+// "pt-BR" code this app uses everywhere else (LessonPart.Language, EventType
+// seed titles, templates.json) — left as-is, every event synced from the feed
+// would carry a Portuguese title no widget/admin page ever looks up, silently
+// falling back to Hebrew instead.
+func normalizePortugueseTitleKey(title map[string]string) {
+	if v, ok := title["pt"]; ok {
+		if _, hasPtBR := title["pt-BR"]; !hasPtBR {
+			title["pt-BR"] = v
+		}
+		delete(title, "pt")
+	}
+}
+
 // normalizeTime zero-pads an "H:MM"/"HH:MM" time string to "HH:MM". The feed is
 // inconsistent about padding (e.g. "2:40" vs "02:40"), which breaks any plain
 // string comparison/sort downstream.
@@ -138,6 +152,7 @@ func (a *App) SyncExternalEvents() {
 	for i := range extEvents {
 		extEvents[i].StartTime = normalizeTime(extEvents[i].StartTime)
 		extEvents[i].EndTime = normalizeTime(extEvents[i].EndTime)
+		normalizePortugueseTitleKey(extEvents[i].Title)
 	}
 
 	today := time.Now().UTC().Truncate(24 * time.Hour)

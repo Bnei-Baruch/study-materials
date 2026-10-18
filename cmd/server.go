@@ -119,13 +119,15 @@ func serverFn(cmd *cobra.Command, args []string) {
 	// Start API server with dependencies
 	app := api.NewApp(partStore, eventStore, mongoEventTypeStore, mongoTemplateStore, kabbalahmediaClient, templateConfig, apiSecretKey)
 
-	// Background sync from events.kli.one every 10 minutes
+	// Background sync from events.kli.one and bb-lineup every 10 minutes
 	go func() {
 		app.SyncExternalEvents()
+		app.SyncBBLineupContent()
 		ticker := time.NewTicker(10 * time.Minute)
 		defer ticker.Stop()
 		for range ticker.C {
 			app.SyncExternalEvents()
+			app.SyncBBLineupContent()
 		}
 	}()
 
