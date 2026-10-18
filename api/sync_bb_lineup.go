@@ -112,10 +112,11 @@ type bbLineupLesson struct {
 }
 
 type bbLineupArticleSource struct {
-	ID       string `json:"id"`
-	Ref      string `json:"ref"`
-	Link     string `json:"link"`
-	BookPage *int   `json:"bookPage"`
+	ID         string `json:"id"`
+	Ref        string `json:"ref"`
+	Link       string `json:"link"`
+	BookVolume *int   `json:"bookVolume"`
+	BookPage   *int   `json:"bookPage"`
 }
 
 func fetchBBLineupWeek(weekStart time.Time) (*bbLineupWeek, error) {
@@ -290,6 +291,10 @@ func bbSlotSource(s *bbLineupSlot) []storage.Source {
 		if src.BookPage != nil {
 			pageNumber = fmt.Sprintf("%d", *src.BookPage)
 		}
+		volume := ""
+		if src.BookVolume != nil {
+			volume = fmt.Sprintf("%d", *src.BookVolume)
+		}
 		id := src.ID
 		if id == "" {
 			// The nested object doesn't always carry its own id — the slot's
@@ -300,7 +305,7 @@ func bbSlotSource(s *bbLineupSlot) []storage.Source {
 		if id == "" {
 			id = extractSourceID(src.Link)
 		}
-		return []storage.Source{{SourceID: id, SourceTitle: src.Ref, SourceURL: src.Link, PageNumber: pageNumber}}
+		return []storage.Source{{SourceID: id, SourceTitle: src.Ref, SourceURL: src.Link, Volume: volume, PageNumber: pageNumber}}
 	}
 	if s.StudyMaterialLink != "" {
 		id := s.StudyMaterialSourceID
@@ -511,6 +516,36 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 		// Always the same standardized segment, never individually labeled.
 		titleHe = "הכנה לשיעור"
 	}
+
+	// The operator may have picked a template for this section from our own
+	// /api/templates list (part_header.partType) — when it matches one of
+	// our templates, its pre-translated title is authoritative for every
+	// language, overriding the citation-style title derived above. Looked up
+	// here (before the blank-title check below) so a section with no
+	// lesson/source/label of its own — e.g. a live discussion slot that only
+	// carries a host document link — still gets a title as long as the
+	// operator assigned it a template, instead of being silently dropped.
+	var templateTranslations map[string]string
+	if item.TemplateID != "" {
+		for _, t := range a.templateConfig.Templates {
+			if t.ID == item.TemplateID {
+				templateTranslations = t.Translations
+				break
+			}
+		}
+	}
+	if templateTranslations == nil && s.SlotType == "lesson_preparation" {
+		// Same standardized segment everywhere — use the system's own
+		// preparation translations rather than leaving non-Hebrew as
+		// "[Translation needed]".
+		templateTranslations = a.templateConfig.Preparation
+	}
+	if titleHe == "" {
+		if tv, ok := templateTranslations["he"]; ok && tv != "" {
+			titleHe = tv
+		}
+	}
+
 	// Keep the precise citation (book/page/article, e.g. a specific Rabash
 	// letter) for the description — once a template title (a generic
 	// category name) takes over below, this is the only place that detail
@@ -630,7 +665,7 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 			if src.SourceID == "" {
 				continue
 			}
-			if cit, err := a.kabbalahmediaClient.GetSourceCitation(src.SourceID, "he", src.PageNumber); err == nil && cit != "" {
+			if cit, err := a.kabbalahmediaClient.GetSourceCitation(src.SourceID, "he", src.Volume, src.PageNumber); err == nil && cit != "" {
 				citationHe = cit
 			}
 			break
@@ -638,26 +673,6 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 	}
 
 	partNumber := item.PartNumber
-
-	// The operator may have picked a template for this section from our own
-	// /api/templates list (part_header.partType) — when it matches one of
-	// our templates, its pre-translated title is authoritative for every
-	// language, overriding the citation-style title derived above.
-	var templateTranslations map[string]string
-	if item.TemplateID != "" {
-		for _, t := range a.templateConfig.Templates {
-			if t.ID == item.TemplateID {
-				templateTranslations = t.Translations
-				break
-			}
-		}
-	}
-	if templateTranslations == nil && s.SlotType == "lesson_preparation" {
-		// Same standardized segment everywhere — use the system's own
-		// preparation translations rather than leaving non-Hebrew as
-		// "[Translation needed]".
-		templateTranslations = a.templateConfig.Preparation
-	}
 
 	for _, lang := range a.templateConfig.Languages {
 		title := titleHe
@@ -694,6 +709,7 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 					SourceID:    src.SourceID,
 					SourceTitle: t,
 					SourceURL:   fmt.Sprintf("https://kabbalahmedia.info/sources/%s", src.SourceID),
+					Volume:      src.Volume,
 					PageNumber:  src.PageNumber,
 				})
 				// A proper citation (author, article/chapter number, year —
@@ -702,7 +718,7 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 				// fall back to kabbalahmedia's translated breadcrumb title
 				// when no citation convention is confirmed for this language.
 				if description == "" && title != t {
-					if cit, err := a.kabbalahmediaClient.GetSourceCitation(src.SourceID, lang, src.PageNumber); err == nil && cit != "" {
+					if cit, err := a.kabbalahmediaClient.GetSourceCitation(src.SourceID, lang, src.Volume, src.PageNumber); err == nil && cit != "" {
 						description = cit
 					} else if t != "" {
 						description = t

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -56,6 +57,22 @@ var pageLabel = map[string]string{
 	"tr":    "s.",
 	"pt-BR": "pág.",
 	"bg":    "стр.",
+}
+
+// volumeLabel is the standard abbreviation for "volume", same source and
+// reasoning as pageLabel (bb-lineup's studyMaterialSource.bookVolume).
+var volumeLabel = map[string]string{
+	"he":    "כרך",
+	"en":    "Vol.",
+	"ru":    "Том",
+	"es":    "Vol.",
+	"de":    "Bd.",
+	"it":    "Vol.",
+	"fr":    "Vol.",
+	"uk":    "Том",
+	"tr":    "Cilt",
+	"pt-BR": "Vol.",
+	"bg":    "Том",
 }
 
 // SQDataResponse represents the API response
@@ -263,6 +280,46 @@ func findSourcePath(node SourceNode, sourceID string) []SourceNode {
 	return nil
 }
 
+// hebrewNumeral renders a small positive integer as a Hebrew gematria numeral
+// with the standard punctuation (a geresh after a single letter, gershayim
+// before the last of two or more), e.g. 3 -> "ג׳", 15 -> "ט״ו" (using the
+// conventional 9+6 substitution to avoid spelling the Tetragrammaton's first
+// two letters). Good enough for book volume numbers, which in practice never
+// exceed a handful.
+func hebrewNumeral(n int) string {
+	if n <= 0 {
+		return strconv.Itoa(n)
+	}
+	units := []string{"", "א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט"}
+	tens := []string{"", "י", "כ", "ל", "מ", "נ", "ס", "ע", "פ", "צ"}
+	hundreds := []string{"", "ק", "ר", "ש", "ת"}
+
+	var letters string
+	h := n / 100
+	rem := n % 100
+	if h > 0 && h < len(hundreds) {
+		letters += hundreds[h]
+	}
+	switch rem {
+	case 15:
+		letters += "טו"
+	case 16:
+		letters += "טז"
+	default:
+		letters += tens[rem/10] + units[rem%10]
+	}
+
+	r := []rune(letters)
+	switch len(r) {
+	case 0:
+		return strconv.Itoa(n)
+	case 1:
+		return string(r) + "׳"
+	default:
+		return string(r[:len(r)-1]) + "״" + string(r[len(r)-1:])
+	}
+}
+
 // GetSourceCitation renders a proper bibliographic citation for a source in a
 // given language — e.g. "Рабаш. Статья 31, 1987. Что такое заключение союза в
 // духовной работе" for a standalone numbered/dated article, or
@@ -271,11 +328,12 @@ func findSourcePath(node SourceNode, sourceID string) []SourceNode {
 // " | "-joined breadcrumb GetSourceTitle returns. Falls back to that
 // breadcrumb style (short author name, "." separators) when the source isn't
 // a numbered/dated article or the language has no confirmed citation
-// convention (see articleCitationFormat). pageNumber, when non-empty, is
-// inserted as a "<page label> <N>" segment right before the final title —
-// it comes from bb-lineup's own data (studyMaterialSource.bookPage), since
-// the kabbalahmedia tree itself has no concept of page numbers.
-func (c *Client) GetSourceCitation(sourceID string, language string, pageNumber string) (string, error) {
+// convention (see articleCitationFormat). volume and pageNumber, when
+// non-empty, are each inserted as a "<label> <N>" segment right before the
+// final title — they come from bb-lineup's own data
+// (studyMaterialSource.bookVolume / .bookPage), since the kabbalahmedia tree
+// itself has no concept of volumes or page numbers.
+func (c *Client) GetSourceCitation(sourceID string, language string, volume string, pageNumber string) (string, error) {
 	if err := c.ensureSourcesCacheForLanguage(language); err != nil {
 		return "", fmt.Errorf("failed to load sources for language %s: %w", language, err)
 	}
@@ -308,16 +366,38 @@ func (c *Client) GetSourceCitation(sourceID string, language string, pageNumber 
 		}
 	}
 
-	segments := make([]string, 0, len(path)+1)
+	// Hebrew's own convention for a volume+page reference attaches the volume
+	// as a Hebrew numeral letter directly to the author name and drops the
+	// collection/category name entirely (e.g. "רב\"ש ג׳. עמ' 1616. <title>",
+	// not "רב\"ש. רשומות. כרך 3, עמ' 1616. <title>") — matching the hand-typed
+	// citations already used elsewhere in this app (lesson.sourceRef).
+	if language == "he" && volume != "" && pageNumber != "" {
+		if n, err := strconv.Atoi(volume); err == nil && n > 0 {
+			return fmt.Sprintf("%s %s. עמ' %s. %s", authorName, hebrewNumeral(n), pageNumber, leaf.Name), nil
+		}
+	}
+
+	segments := make([]string, 0, len(path)+2)
 	for _, n := range path[1:] {
 		segments = append(segments, n.Name)
 	}
-	if pageNumber != "" {
-		if label, ok := pageLabel[language]; ok {
-			leafTitle := segments[len(segments)-1]
-			segments[len(segments)-1] = label + " " + pageNumber
-			segments = append(segments, leafTitle)
+
+	var locators []string
+	if volume != "" {
+		if label, ok := volumeLabel[language]; ok {
+			locators = append(locators, label+" "+volume)
 		}
 	}
+	if pageNumber != "" {
+		if label, ok := pageLabel[language]; ok {
+			locators = append(locators, label+" "+pageNumber)
+		}
+	}
+	if len(locators) > 0 {
+		leafTitle := segments[len(segments)-1]
+		segments[len(segments)-1] = strings.Join(locators, ", ")
+		segments = append(segments, leafTitle)
+	}
+
 	return authorName + ". " + strings.Join(segments, ". "), nil
 }
