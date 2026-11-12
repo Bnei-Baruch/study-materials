@@ -27,6 +27,7 @@ export const LINEUP_OPTIONS: LineupOption[] = [
   { name: 'קהילת הלומדים - שני ערב', link: 'https://docs.google.com/document/d/11_Nd219yljBX3PsNqxHk8J08cj2UlN-NDznIea7pEv0/edit?usp=drivesdk' },
   { name: 'אביהו ומושי - שלישי ערב', link: 'https://docs.google.com/document/d/16xqg_rU5yE9bxM_UlJWkH3T9A6KTj1tMJhHKeehv114/edit?tab=t.0' },
   { name: 'גלעד ואורן - רביעי ערב', link: 'https://docs.google.com/document/d/1GOBZcAJjSiJPCUtCrb-uTItWZcvkP_pzVyHFTHoRNo4/edit?tab=t.0' },
+  { name: 'מבנה העולמות העליונים - חמישי ערב', link: 'https://docs.google.com/document/d/1oz7HLUAFVdzSKND_4TlG4O2vPjvJzX5WbDabeukb37I/edit?tab=t.0' },
   { name: 'יום שבת בוקר - הנהלה', link: 'https://docs.google.com/document/d/1QtTvd25yaqmW_eMUP0OauuDbgFES2tgaWGXuNVRD86g/edit?usp=drivesdk' },
 
   // Meals

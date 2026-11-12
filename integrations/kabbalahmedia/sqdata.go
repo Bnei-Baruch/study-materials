@@ -42,39 +42,6 @@ var articleCitationFormat = map[string]string{
 	"bg": "%[1]s. Статия %[2]s, %[3]s г. %[4]s",
 }
 
-// pageLabel is the standard abbreviation for "page" used when a citation
-// includes a book/volume page number (from bb-lineup's own studyMaterialSource
-// data, not the kabbalahmedia tree — it has no notion of page numbers).
-var pageLabel = map[string]string{
-	"he":    "עמ'",
-	"en":    "p.",
-	"ru":    "стр.",
-	"es":    "pág.",
-	"de":    "S.",
-	"it":    "pag.",
-	"fr":    "p.",
-	"uk":    "стор.",
-	"tr":    "s.",
-	"pt-BR": "pág.",
-	"bg":    "стр.",
-}
-
-// volumeLabel is the standard abbreviation for "volume", same source and
-// reasoning as pageLabel (bb-lineup's studyMaterialSource.bookVolume).
-var volumeLabel = map[string]string{
-	"he":    "כרך",
-	"en":    "Vol.",
-	"ru":    "Том",
-	"es":    "Vol.",
-	"de":    "Bd.",
-	"it":    "Vol.",
-	"fr":    "Vol.",
-	"uk":    "Том",
-	"tr":    "Cilt",
-	"pt-BR": "Vol.",
-	"bg":    "Том",
-}
-
 // SQDataResponse represents the API response
 type SQDataResponse struct {
 	Sources    []SourceNode  `json:"sources"`
@@ -286,7 +253,13 @@ func findSourcePath(node SourceNode, sourceID string) []SourceNode {
 // conventional 9+6 substitution to avoid spelling the Tetragrammaton's first
 // two letters). Good enough for book volume numbers, which in practice never
 // exceed a handful.
-func hebrewNumeral(n int) string {
+// hebrewVolumeLetter renders a small positive integer as bare Hebrew gematria
+// letters (no punctuation — callers append their own apostrophe, matching the
+// plain-ASCII style production uses, e.g. "א'" rather than a typographic
+// geresh), e.g. 3 -> "ג", 15 -> "טו" (the conventional 9+6 substitution,
+// avoiding the Tetragrammaton's first two letters). Good enough for book
+// volume numbers, which in practice never exceed a handful.
+func hebrewVolumeLetter(n int) string {
 	if n <= 0 {
 		return strconv.Itoa(n)
 	}
@@ -308,16 +281,10 @@ func hebrewNumeral(n int) string {
 	default:
 		letters += tens[rem/10] + units[rem%10]
 	}
-
-	r := []rune(letters)
-	switch len(r) {
-	case 0:
+	if letters == "" {
 		return strconv.Itoa(n)
-	case 1:
-		return string(r) + "׳"
-	default:
-		return string(r[:len(r)-1]) + "״" + string(r[len(r)-1:])
 	}
+	return letters
 }
 
 // GetSourceCitation renders a proper bibliographic citation for a source in a
@@ -366,38 +333,35 @@ func (c *Client) GetSourceCitation(sourceID string, language string, volume stri
 		}
 	}
 
-	// Hebrew's own convention for a volume+page reference attaches the volume
-	// as a Hebrew numeral letter directly to the author name and drops the
-	// collection/category name entirely (e.g. "רב\"ש ג׳. עמ' 1616. <title>",
-	// not "רב\"ש. רשומות. כרך 3, עמ' 1616. <title>") — matching the hand-typed
-	// citations already used elsewhere in this app (lesson.sourceRef).
-	if language == "he" && volume != "" && pageNumber != "" {
+	// Hebrew's own convention for a page reference drops the collection/
+	// category name entirely (e.g. "רב\"ש ג'. עמ' 1616. <title>", not
+	// "רב\"ש. רשומות. כרך 3, עמ' 1616. <title>") — matching the hand-typed
+	// citations already used elsewhere in this app (lesson.sourceRef). The
+	// volume, when known, becomes a Hebrew numeral letter (plain ASCII
+	// apostrophe, not a geresh) directly after the author name — when it
+	// isn't (bb-lineup's own ArticleSource table often has a page with no
+	// volume), the author name is simply followed by the page. Confirmed
+	// across ~20 production examples: the item number is NOT included even
+	// when the source has one (only 2 outliers did, likely just inconsistent
+	// manual typing, not a real rule) — only the quoted title, prefixed with
+	// "מאמר" for the Articles collection.
+	if language == "he" && pageNumber != "" {
+		title := fmt.Sprintf("מאמר \"%s\"", leaf.Name)
+		authorLocator := authorName
 		if n, err := strconv.Atoi(volume); err == nil && n > 0 {
-			return fmt.Sprintf("%s %s. עמ' %s. %s", authorName, hebrewNumeral(n), pageNumber, leaf.Name), nil
+			authorLocator = fmt.Sprintf("%s %s'", authorName, hebrewVolumeLetter(n))
 		}
+		return fmt.Sprintf("%s. עמ' %s. %s", authorLocator, pageNumber, title), nil
 	}
 
-	segments := make([]string, 0, len(path)+2)
+	// Note: volume/page are deliberately NOT used below — they describe the
+	// Hebrew edition's own pagination (bb-lineup's ArticleSource table is
+	// Hebrew-only). A translated edition is a different book with its own
+	// unrelated page numbers, so inventing a "p. N" for it here would cite
+	// the wrong page of the wrong physical book.
+	segments := make([]string, 0, len(path))
 	for _, n := range path[1:] {
 		segments = append(segments, n.Name)
 	}
-
-	var locators []string
-	if volume != "" {
-		if label, ok := volumeLabel[language]; ok {
-			locators = append(locators, label+" "+volume)
-		}
-	}
-	if pageNumber != "" {
-		if label, ok := pageLabel[language]; ok {
-			locators = append(locators, label+" "+pageNumber)
-		}
-	}
-	if len(locators) > 0 {
-		leafTitle := segments[len(segments)-1]
-		segments[len(segments)-1] = strings.Join(locators, ", ")
-		segments = append(segments, leafTitle)
-	}
-
 	return authorName + ". " + strings.Join(segments, ". "), nil
 }
