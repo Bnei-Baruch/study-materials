@@ -41,18 +41,21 @@ func extractLessonID(link string) string {
 }
 
 // bbAdoptionKey returns the existingByEventLesson lookup key for a content
-// item, or "" if there's no reliable way to match it against a pre-existing
-// manually-created part. Lesson-linked content matches by lesson ID;
-// lesson_preparation (which never has a link) matches by the event's one
-// PartNumber-0 slot instead.
-func bbAdoptionKey(eventID, slotType, lessonLink, lang string) string {
+// item. Lesson-linked content matches by lesson ID; lesson_preparation
+// (which never has a link) matches by the event's one PartNumber-0 slot;
+// anything else (e.g. a live "study_between_friends"/"society" section with
+// no lesson at all, just a host document) falls back to matching by its
+// PartNumber — the best available signal when there's no lesson to key off,
+// and far better than always creating a duplicate of a pre-existing manual
+// part in that position.
+func bbAdoptionKey(eventID, slotType, lessonLink string, partNumber int, lang string) string {
 	if lid := extractLessonID(lessonLink); lid != "" {
 		return eventID + "|" + lid + "|" + lang
 	}
 	if slotType == "lesson_preparation" {
 		return eventID + "|prep|" + lang
 	}
-	return ""
+	return fmt.Sprintf("%s|part%d|%s", eventID, partNumber, lang)
 }
 
 // bbLineupHorizonBackDays/ForwardDays bound how much of the calendar this sync
@@ -443,6 +446,13 @@ func (a *App) SyncBBLineupContent() {
 			// No lesson link to match on (the prep segment never has one) —
 			// PartNumber 0 is an unambiguous, one-per-event convention.
 			existingByEventLesson[p.EventID+"|prep|"+p.Language] = p
+			continue
+		}
+		if p.PartNumber != nil {
+			// No lesson link at all (e.g. a live "study_between_friends"
+			// section with just a host document) — fall back to matching by
+			// position, same convention as bbAdoptionKey's own fallback.
+			existingByEventLesson[fmt.Sprintf("%s|part%d|%s", p.EventID, *p.PartNumber, p.Language)] = p
 		}
 	}
 
@@ -833,7 +843,7 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 				continue
 			}
 			updatedCount++
-		} else if adoptKey := bbAdoptionKey(event.ID, s.SlotType, lessonLink, lang); adoptKey != "" && existingByEventLesson[adoptKey] != nil {
+		} else if adoptKey := bbAdoptionKey(event.ID, s.SlotType, lessonLink, partNumber, lang); existingByEventLesson[adoptKey] != nil {
 			// A manually-created part already covers this exact lesson (or,
 			// for lesson_preparation, is the event's one prep slot) — adopt
 			// it instead of creating a duplicate. Keep the operator's own
