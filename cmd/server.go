@@ -116,16 +116,40 @@ func serverFn(cmd *cobra.Command, args []string) {
 	// Ensure canonical event type colors (fixes legacy DB records)
 	storage.EnsureEventTypeColors(mongoEventTypeStore)
 
-	// Start API server with dependencies
-	app := api.NewApp(partStore, eventStore, mongoEventTypeStore, mongoTemplateStore, kabbalahmediaClient, templateConfig, apiSecretKey)
+	// bb-lineup base URL (content-planning app synced into LessonParts)
+	bbLineupBaseURL := viper.GetString("bb_lineup.base_url")
+	if bbLineupBaseURL == "" {
+		bbLineupBaseURL = "https://lineup.kab.info"
+	}
+	log.Printf("bb-lineup base URL: %s", bbLineupBaseURL)
 
-	// Background sync from events.kli.one every 10 minutes
+	// Start API server with dependencies
+	app := api.NewApp(partStore, eventStore, mongoEventTypeStore, mongoTemplateStore, kabbalahmediaClient, templateConfig, apiSecretKey, bbLineupBaseURL)
+
+	// bb-lineup sync can be paused independently (e.g. while investigating a
+	// data issue) without touching the events.kli.one sync or redeploying —
+	// just restart with BB_LINEUP_SYNC_ENABLED=false.
+	bbLineupSyncEnabled := true
+	if viper.IsSet("bb_lineup.sync_enabled") {
+		bbLineupSyncEnabled = viper.GetBool("bb_lineup.sync_enabled")
+	}
+	if !bbLineupSyncEnabled {
+		log.Println("bb-lineup sync: DISABLED (BB_LINEUP_SYNC_ENABLED=false)")
+	}
+
+	// Background sync from events.kli.one and bb-lineup every 10 minutes
 	go func() {
 		app.SyncExternalEvents()
+		if bbLineupSyncEnabled {
+			app.SyncBBLineupContent()
+		}
 		ticker := time.NewTicker(10 * time.Minute)
 		defer ticker.Stop()
 		for range ticker.C {
 			app.SyncExternalEvents()
+			if bbLineupSyncEnabled {
+				app.SyncBBLineupContent()
+			}
 		}
 	}()
 

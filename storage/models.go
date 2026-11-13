@@ -27,6 +27,7 @@ type LessonPart struct {
 	CustomLinks            []CustomLink `json:"custom_links,omitempty" bson:"custom_links,omitempty"` // Optional: custom links with titles (language-specific)
 	ShowUpdatedBadge       bool         `json:"show_updated_badge" bson:"show_updated_badge"`
 	CreatedAt              time.Time    `json:"created_at" bson:"created_at"`
+	ExternalID             string       `json:"external_id,omitempty" bson:"external_id,omitempty"` // External system ID for synced parts (bb-lineup slot id)
 }
 
 // Source represents a study source from kabbalahmedia
@@ -34,6 +35,7 @@ type Source struct {
 	SourceID    string `json:"source_id" bson:"source_id"`
 	SourceTitle string `json:"source_title" bson:"source_title"`
 	SourceURL   string `json:"source_url" bson:"source_url"`
+	Volume      string `json:"volume,omitempty" bson:"volume,omitempty"`             // Optional: book volume the page number belongs to (e.g., "1")
 	PageNumber  string `json:"page_number,omitempty" bson:"page_number,omitempty"`   // Optional: page in source (e.g., "42", "15-17")
 	StartPoint  string `json:"start_point,omitempty" bson:"start_point,omitempty"`   // Optional: paragraph text marking the start of relevant section
 	EndPoint    string `json:"end_point,omitempty" bson:"end_point,omitempty"`       // Optional: paragraph text marking the end of relevant section

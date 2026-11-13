@@ -11,18 +11,27 @@ export interface DateGroup {
   dayIndex: number // 0=Sunday, 1=Monday, etc.
 }
 
+// Minutes since midnight for an "H:MM"/"HH:MM" string, or null if unparseable.
+// Comparing the raw strings breaks when hours aren't zero-padded consistently
+// (e.g. "2:40" sorts after "12:00" lexicographically, though it's earlier).
+const timeToMinutes = (time: string): number | null => {
+  const match = time.match(/^(\d{1,2}):(\d{2})$/)
+  if (!match) return null
+  return parseInt(match[1], 10) * 60 + parseInt(match[2], 10)
+}
+
 /**
- * Compare two events by start_time ascending ("HH:MM" strings). Events without a
- * start_time sort last. Ties (including two events with no start_time) are equal,
- * leaving their relative order to the surrounding stable sort.
+ * Compare two events by start_time ascending. Events without a start_time sort
+ * last. Ties (including two events with no start_time) are equal, leaving their
+ * relative order to the surrounding stable sort.
  */
 export const compareByStartTime = (a: { start_time?: string }, b: { start_time?: string }): number => {
-  const timeA = a.start_time || ''
-  const timeB = b.start_time || ''
-  if (timeA === timeB) return 0
-  if (!timeA) return 1
-  if (!timeB) return -1
-  return timeA < timeB ? -1 : 1
+  const minutesA = a.start_time ? timeToMinutes(a.start_time) : null
+  const minutesB = b.start_time ? timeToMinutes(b.start_time) : null
+  if (minutesA === minutesB) return 0
+  if (minutesA === null) return 1
+  if (minutesB === null) return -1
+  return minutesA - minutesB
 }
 
 // Day of week colors (Sunday through Saturday)
