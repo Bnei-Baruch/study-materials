@@ -121,6 +121,13 @@ type bbLineupLesson struct {
 	TranscriptionLink string                  `json:"transcriptionLink"`
 	RecordingDate     string                  `json:"recordingDate"`
 	BroadcastDate     string                  `json:"broadcastDate"`
+	// Series.ConsumptionMode == "continuous" marks a book studied a little
+	// each day (e.g. Talmud Eser Sefirot): ArticleSource.BookPage is then
+	// only the book/part's start page, identical every day, not the day's
+	// reading position.
+	Series *struct {
+		ConsumptionMode string `json:"consumptionMode"`
+	} `json:"series"`
 }
 
 // bbLineupComponent names a reusable lineup building-block a slot was created
@@ -752,6 +759,34 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 	// (some use this convention, some use "Article No., Year", some omit the
 	// page entirely), while production's own citations always follow this
 	// one convention regardless of what bb-lineup happens to say.
+	// For a continuous series the lesson's static page is misleading (see
+	// bbLineupLesson.Series): drop it, and prefer the day's real reference
+	// typed in a sibling live slot's narratorScript (first line) when present.
+	continuousLesson := false
+	for _, x := range all {
+		if x.Lesson != nil && x.Lesson.Series != nil && x.Lesson.Series.ConsumptionMode == "continuous" {
+			continuousLesson = true
+			break
+		}
+	}
+	liveCitationHe := ""
+	if continuousLesson {
+		for i := range sources {
+			sources[i].PageNumber = ""
+			sources[i].Volume = ""
+		}
+		liveCitationHe = bbFirstNonEmpty(all, func(x bbLineupSlot) string {
+			if x.SlotType == "recorded_lesson" {
+				return ""
+			}
+			line := strings.TrimSpace(strings.SplitN(strings.TrimSpace(x.NarratorScript), "\n", 2)[0])
+			if len(line) > 200 {
+				return ""
+			}
+			return line
+		})
+	}
+
 	for _, src := range sources {
 		if src.SourceID == "" {
 			continue
@@ -760,6 +795,10 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 			citationHe = cit
 		}
 		break
+	}
+
+	if liveCitationHe != "" {
+		citationHe = liveCitationHe
 	}
 
 	partNumber := item.PartNumber
