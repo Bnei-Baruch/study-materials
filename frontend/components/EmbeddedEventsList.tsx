@@ -349,6 +349,12 @@ export function EmbeddedEventsList({
             study.kli.one
           </div>
         </a>
+        <a
+          href="mailto:study-materials@kab.co.il"
+          className="block text-center mt-2 text-[12px] text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+        >
+          study-materials@kab.co.il
+        </a>
       </div>
     </div>
   )

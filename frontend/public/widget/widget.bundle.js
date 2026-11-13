@@ -22006,6 +22006,19 @@ var StudyMaterialsWidgetBundle = (() => {
   var Video = createLucideIcon("video", __iconNode14);
 
   // lib/eventGrouping.ts
+  var timeToMinutes = (time) => {
+    const match = time.match(/^(\d{1,2}):(\d{2})$/);
+    if (!match) return null;
+    return parseInt(match[1], 10) * 60 + parseInt(match[2], 10);
+  };
+  var compareByStartTime = (a, b) => {
+    const minutesA = a.start_time ? timeToMinutes(a.start_time) : null;
+    const minutesB = b.start_time ? timeToMinutes(b.start_time) : null;
+    if (minutesA === minutesB) return 0;
+    if (minutesA === null) return 1;
+    if (minutesB === null) return -1;
+    return minutesA - minutesB;
+  };
   var DAY_COLORS = [
     { border: "border-rose-500", borderLTR: "border-rose-500", bg: "bg-rose-50" },
     // Sunday
@@ -22032,7 +22045,7 @@ var StudyMaterialsWidgetBundle = (() => {
       groupMap.get(dateOnly).push(event);
     });
     const sortedDates = Array.from(groupMap.keys()).sort(
-      (a, b) => new Date(b).getTime() - new Date(a).getTime()
+      (a, b) => new Date(a).getTime() - new Date(b).getTime()
     );
     return sortedDates.map((dateStr) => {
       const date = /* @__PURE__ */ new Date(dateStr + "T00:00:00Z");
@@ -22060,13 +22073,33 @@ var StudyMaterialsWidgetBundle = (() => {
         date: dateStr,
         dayOfWeek,
         displayDate,
-        events: groupMap.get(dateStr),
+        events: groupMap.get(dateStr).sort(compareByStartTime),
         dayIndex
       };
     });
   };
   var getDateGroupColorClasses = (dayIndex) => {
     return DAY_COLORS[dayIndex % 7];
+  };
+  var getJerusalemParts = (instant) => {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Jerusalem",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).formatToParts(instant);
+    const get = (type) => {
+      var _a, _b;
+      return (_b = (_a = parts.find((p) => p.type === type)) == null ? void 0 : _a.value) != null ? _b : "00";
+    };
+    return { year: get("year"), month: get("month"), day: get("day"), hour: get("hour"), minute: get("minute") };
+  };
+  var getJerusalemDateString = (instant = /* @__PURE__ */ new Date()) => {
+    const { year, month, day } = getJerusalemParts(instant);
+    return `${year}-${month}-${day}`;
   };
 
   // components/EmbeddedEventsList.tsx
@@ -22077,7 +22110,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "\u05D1\u05D7\u05E8 \u05E9\u05D9\u05E2\u05D5\u05E8 \u05DE\u05D4\u05E8\u05E9\u05D9\u05DE\u05D4",
       loading: "\u05D8\u05D5\u05E2\u05DF...",
       error: "\u05E9\u05D2\u05D9\u05D0\u05D4 \u05D1\u05D8\u05E2\u05D9\u05E0\u05EA \u05D4\u05E0\u05EA\u05D5\u05E0\u05D9\u05DD",
-      noEventsAvailable: "\u05D0\u05D9\u05DF \u05E9\u05D9\u05E2\u05D5\u05E8\u05D9\u05DD \u05D6\u05DE\u05D9\u05E0\u05D9\u05DD",
+      noEventsAvailable: "\u05D7\u05D5\u05DE\u05E8\u05D9 \u05D4\u05DC\u05D9\u05DE\u05D5\u05D3 \u05D9\u05E2\u05DC\u05D5 \u05D1\u05E7\u05E8\u05D5\u05D1",
       viewAllMaterials: "\u05E6\u05E4\u05D9\u05D9\u05D4 \u05D1\u05DB\u05DC \u05D7\u05D5\u05DE\u05E8\u05D9 \u05D4\u05DC\u05D9\u05DE\u05D5\u05D3"
     },
     en: {
@@ -22085,7 +22118,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "Select a lesson from the list",
       loading: "Loading...",
       error: "Error loading data",
-      noEventsAvailable: "No lessons available",
+      noEventsAvailable: "Study materials coming soon",
       viewAllMaterials: "View all study materials"
     },
     ru: {
@@ -22093,7 +22126,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0443\u0440\u043E\u043A \u0438\u0437 \u0441\u043F\u0438\u0441\u043A\u0430",
       loading: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430...",
       error: "\u041E\u0448\u0438\u0431\u043A\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0438 \u0434\u0430\u043D\u043D\u044B\u0445",
-      noEventsAvailable: "\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0445 \u0443\u0440\u043E\u043A\u043E\u0432",
+      noEventsAvailable: "\u0423\u0447\u0435\u0431\u043D\u044B\u0435 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u044B \u0441\u043A\u043E\u0440\u043E \u043F\u043E\u044F\u0432\u044F\u0442\u0441\u044F",
       viewAllMaterials: "\u041F\u043E\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C \u0432\u0441\u0435 \u0443\u0447\u0435\u0431\u043D\u044B\u0435 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u044B"
     },
     es: {
@@ -22101,7 +22134,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "Seleccione una lecci\xF3n de la lista",
       loading: "Cargando...",
       error: "Error al cargar datos",
-      noEventsAvailable: "No hay lecciones disponibles",
+      noEventsAvailable: "Los materiales de estudio estar\xE1n disponibles pronto",
       viewAllMaterials: "Ver todos los materiales de estudio"
     },
     de: {
@@ -22109,7 +22142,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "W\xE4hlen Sie eine Lektion aus der Liste",
       loading: "L\xE4dt...",
       error: "Fehler beim Laden der Daten",
-      noEventsAvailable: "Keine Lektionen verf\xFCgbar",
+      noEventsAvailable: "Lernmaterialien folgen in K\xFCrze",
       viewAllMaterials: "Alle Studienmaterialien anzeigen"
     },
     it: {
@@ -22117,7 +22150,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "Seleziona una lezione dall'elenco",
       loading: "Caricamento...",
       error: "Errore nel caricamento dei dati",
-      noEventsAvailable: "Nessuna lezione disponibile",
+      noEventsAvailable: "I materiali di studio saranno disponibili a breve",
       viewAllMaterials: "Visualizza tutti i materiali di studio"
     },
     fr: {
@@ -22125,7 +22158,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "S\xE9lectionnez une le\xE7on dans la liste",
       loading: "Chargement...",
       error: "Erreur de chargement des donn\xE9es",
-      noEventsAvailable: "Aucune le\xE7on disponible",
+      noEventsAvailable: "Les mat\xE9riaux d'\xE9tude seront disponibles bient\xF4t",
       viewAllMaterials: "Voir tous les mat\xE9riaux d'\xE9tude"
     },
     uk: {
@@ -22133,7 +22166,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "\u0412\u0438\u0431\u0435\u0440\u0456\u0442\u044C \u0443\u0440\u043E\u043A \u0437\u0456 \u0441\u043F\u0438\u0441\u043A\u0443",
       loading: "\u0417\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F...",
       error: "\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445",
-      noEventsAvailable: "\u041D\u0435\u043C\u0430\u0454 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0438\u0445 \u0443\u0440\u043E\u043A\u0456\u0432",
+      noEventsAvailable: "\u041D\u0430\u0432\u0447\u0430\u043B\u044C\u043D\u0456 \u043C\u0430\u0442\u0435\u0440\u0456\u0430\u043B\u0438 \u043D\u0435\u0437\u0430\u0431\u0430\u0440\u043E\u043C \u0437'\u044F\u0432\u043B\u044F\u0442\u044C\u0441\u044F",
       viewAllMaterials: "\u041F\u0435\u0440\u0435\u0433\u043B\u044F\u043D\u0443\u0442\u0438 \u0432\u0441\u0456 \u043D\u0430\u0432\u0447\u0430\u043B\u044C\u043D\u0456 \u043C\u0430\u0442\u0435\u0440\u0456\u0430\u043B\u0438"
     },
     tr: {
@@ -22141,7 +22174,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "Listeden bir ders se\xE7in",
       loading: "Y\xFCkleniyor...",
       error: "Veri y\xFCkleme hatas\u0131",
-      noEventsAvailable: "Kullan\u0131labilir ders yok",
+      noEventsAvailable: "\xC7al\u0131\u015Fma materyalleri yak\u0131nda gelecek",
       viewAllMaterials: "T\xFCm \xE7al\u0131\u015Fma materyallerini g\xF6r\xFCnt\xFCle"
     },
     "pt-BR": {
@@ -22149,7 +22182,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "Selecione uma aula da lista",
       loading: "Carregando...",
       error: "Erro ao carregar dados",
-      noEventsAvailable: "Nenhuma aula dispon\xEDvel",
+      noEventsAvailable: "Os materiais de estudo estar\xE3o dispon\xEDveis em breve",
       viewAllMaterials: "Ver todos os materiais de estudo"
     },
     bg: {
@@ -22157,7 +22190,7 @@ var StudyMaterialsWidgetBundle = (() => {
       selectLesson: "\u0418\u0437\u0431\u0435\u0440\u0435\u0442\u0435 \u0443\u0440\u043E\u043A \u043E\u0442 \u0441\u043F\u0438\u0441\u044A\u043A\u0430",
       loading: "\u0417\u0430\u0440\u0435\u0436\u0434\u0430\u043D\u0435...",
       error: "\u0413\u0440\u0435\u0448\u043A\u0430 \u043F\u0440\u0438 \u0437\u0430\u0440\u0435\u0436\u0434\u0430\u043D\u0435 \u043D\u0430 \u0434\u0430\u043D\u043D\u0438",
-      noEventsAvailable: "\u041D\u044F\u043C\u0430 \u043D\u0430\u043B\u0438\u0447\u043D\u0438 \u0443\u0440\u043E\u0446\u0438",
+      noEventsAvailable: "\u0423\u0447\u0435\u0431\u043D\u0438\u0442\u0435 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u0438 \u0441\u043A\u043E\u0440\u043E \u0449\u0435 \u0431\u044A\u0434\u0430\u0442 \u043D\u0430\u043B\u0438\u0447\u043D\u0438",
       viewAllMaterials: "\u0412\u0438\u0436\u0442\u0435 \u0432\u0441\u0438\u0447\u043A\u0438 \u0443\u0447\u0435\u0431\u043D\u0438 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u0438"
     }
   };
@@ -22185,7 +22218,9 @@ var StudyMaterialsWidgetBundle = (() => {
             limit: limit.toString(),
             offset: "0",
             hide_from_lessons_tab: "false",
-            exclude_types: "convention,holiday,special_event"
+            exclude_types: "convention,holiday,special_event",
+            sort: "asc",
+            from_date: getJerusalemDateString()
           });
           const response = yield fetch(`${apiBaseUrl}/api/events?${params}`);
           if (!response.ok) {
@@ -22317,19 +22352,29 @@ var StudyMaterialsWidgetBundle = (() => {
           dateGroup.date
         );
       }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 sm:p-4", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-        "a",
-        {
-          href: "https://study.kli.one",
-          target: "_blank",
-          rel: "noopener noreferrer",
-          className: "block w-full text-center bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-gray-700 border-2 border-blue-300 dark:border-gray-600 rounded-lg p-2 sm:p-3 transition-all",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-700 dark:text-blue-300 font-medium text-[14px] sm:text-[14px]", children: t.viewAllMaterials }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-600 dark:text-blue-400 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]", children: "study.kli.one" })
-          ]
-        }
-      ) })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "p-2 sm:p-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+          "a",
+          {
+            href: "https://study.kli.one",
+            target: "_blank",
+            rel: "noopener noreferrer",
+            className: "block w-full text-center bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-gray-700 border-2 border-blue-300 dark:border-gray-600 rounded-lg p-2 sm:p-3 transition-all",
+            children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-700 dark:text-blue-300 font-medium text-[14px] sm:text-[14px]", children: t.viewAllMaterials }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-blue-600 dark:text-blue-400 mt-0.5 sm:mt-1 text-[12px] sm:text-[12px]", children: "study.kli.one" })
+            ]
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "a",
+          {
+            href: "mailto:study-materials@kab.co.il",
+            className: "block text-center mt-2 text-[12px] text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400",
+            children: "study-materials@kab.co.il"
+          }
+        )
+      ] })
     ] });
   }
 
