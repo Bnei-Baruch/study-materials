@@ -33,6 +33,7 @@ interface Event {
   public: boolean
   hide_from_lessons_tab: boolean
   external_id?: string
+  parts_count?: number
   titles?: {
     he?: string
     en?: string
@@ -181,6 +182,11 @@ function EventListItem({
                 {event.external_id && (
                   <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-600 border border-blue-200" title="Synced from events.kli.one">
                     sync
+                  </span>
+                )}
+                {(event.parts_count ?? 0) > 0 && (
+                  <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200" title={`${event.parts_count} Hebrew part(s) added`}>
+                    parts ({event.parts_count})
                   </span>
                 )}
                 <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${event.public ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-500 border border-gray-200'}`}>

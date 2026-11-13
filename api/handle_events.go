@@ -250,9 +250,27 @@ func (a *App) HandleListEvents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Annotate each event with the number of Hebrew parts attached to it
+	partCounts := map[string]int{}
+	if parts, perr := a.store.ListParts(); perr == nil {
+		for _, p := range parts {
+			if p.EventID != "" && p.Language == "he" {
+				partCounts[p.EventID]++
+			}
+		}
+	}
+	type eventWithParts struct {
+		storage.Event
+		PartsCount int `json:"parts_count"`
+	}
+	annotated := make([]eventWithParts, len(events))
+	for i, e := range events {
+		annotated[i] = eventWithParts{Event: e, PartsCount: partCounts[e.ID]}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"events":   events,
+		"events":   annotated,
 		"total":    total,
 		"returned": len(events),
 		"limit":    limit,
