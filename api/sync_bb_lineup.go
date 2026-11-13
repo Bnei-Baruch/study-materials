@@ -40,22 +40,25 @@ func extractLessonID(link string) string {
 	return ""
 }
 
-// bbAdoptionKey returns the existingByEventLesson lookup key for a content
-// item. Lesson-linked content matches by lesson ID; lesson_preparation
-// (which never has a link) matches by the event's one PartNumber-0 slot;
-// anything else (e.g. a live "study_between_friends"/"society" section with
-// no lesson at all, just a host document) falls back to matching by its
-// PartNumber — the best available signal when there's no lesson to key off,
-// and far better than always creating a duplicate of a pre-existing manual
-// part in that position.
-func bbAdoptionKey(eventID, slotType, lessonLink string, partNumber int, lang string) string {
+// bbAdoptionKeys returns, in order of preference, the existingByEventLesson
+// lookup keys for a content item. Lesson-linked content tries its lesson ID
+// first; lesson_preparation (which never has a link) tries the event's one
+// PartNumber-0 slot. Every item also tries its PartNumber as a fallback —
+// the best available signal when there's no lesson to key off, and also a
+// safety net for when bb-lineup's content at a position was swapped from a
+// lesson-based slot to a lesson-less one (or vice versa): the pre-existing
+// part is indexed by its OWN lesson ID (if it has one) and would otherwise
+// never be found by a same-position item that now has none, or a different
+// one.
+func bbAdoptionKeys(eventID, slotType, lessonLink string, partNumber int, lang string) []string {
+	var keys []string
 	if lid := extractLessonID(lessonLink); lid != "" {
-		return eventID + "|" + lid + "|" + lang
+		keys = append(keys, eventID+"|"+lid+"|"+lang)
 	}
 	if slotType == "lesson_preparation" {
-		return eventID + "|prep|" + lang
+		keys = append(keys, eventID+"|prep|"+lang)
 	}
-	return fmt.Sprintf("%s|part%d|%s", eventID, partNumber, lang)
+	return append(keys, fmt.Sprintf("%s|part%d|%s", eventID, partNumber, lang))
 }
 
 // bbLineupHorizonBackDays/ForwardDays bound how much of the calendar this sync
@@ -428,6 +431,12 @@ func (a *App) SyncBBLineupContent() {
 	// embedded in their own link, language) — lets a new bb-lineup slot
 	// recognize "this exact lesson already has a part here" and adopt it
 	// (keeping the operator's own title) instead of creating a duplicate.
+	// Also indexed by (event, PartNumber, language) regardless of whether a
+	// lesson link is present: bb-lineup content at a given position can be
+	// swapped from a lesson-based slot to a lesson-less one (or vice versa)
+	// by an editor, which looks, to the lesson-ID key alone, like a totally
+	// different item — the position key is what still recognizes it as the
+	// same section.
 	existingByEventLesson := make(map[string]*storage.LessonPart, len(allParts))
 	maxOrderByEvent := make(map[string]int, len(events))
 	for _, p := range allParts {
@@ -440,20 +449,17 @@ func (a *App) SyncBBLineupContent() {
 		}
 		if lid := extractLessonID(p.LessonLink); lid != "" {
 			existingByEventLesson[p.EventID+"|"+lid+"|"+p.Language] = p
+		}
+		if p.PartNumber == nil {
 			continue
 		}
-		if p.PartNumber != nil && *p.PartNumber == 0 {
+		if *p.PartNumber == 0 {
 			// No lesson link to match on (the prep segment never has one) —
 			// PartNumber 0 is an unambiguous, one-per-event convention.
 			existingByEventLesson[p.EventID+"|prep|"+p.Language] = p
 			continue
 		}
-		if p.PartNumber != nil {
-			// No lesson link at all (e.g. a live "study_between_friends"
-			// section with just a host document) — fall back to matching by
-			// position, same convention as bbAdoptionKey's own fallback.
-			existingByEventLesson[fmt.Sprintf("%s|part%d|%s", p.EventID, *p.PartNumber, p.Language)] = p
-		}
+		existingByEventLesson[fmt.Sprintf("%s|part%d|%s", p.EventID, *p.PartNumber, p.Language)] = p
 	}
 
 	seenSlotIDs := make(map[string]bool)
@@ -815,6 +821,13 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 		}
 
 		key := s.ID + "|" + lang + "|" + event.ID
+		adoptKey := ""
+		for _, k := range bbAdoptionKeys(event.ID, s.SlotType, lessonLink, partNumber, lang) {
+			if existingByEventLesson[k] != nil {
+				adoptKey = k
+				break
+			}
+		}
 		if existing, ok := existingByExtLang[key]; ok {
 			// bb-lineup is the source of truth for Title, same as every other
 			// synced field — always take the freshly computed value (a
@@ -843,7 +856,7 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 				continue
 			}
 			updatedCount++
-		} else if adoptKey := bbAdoptionKey(event.ID, s.SlotType, lessonLink, partNumber, lang); existingByEventLesson[adoptKey] != nil {
+		} else if adoptKey != "" {
 			// A manually-created part already covers this exact lesson (or,
 			// for lesson_preparation, is the event's one prep slot) — adopt
 			// it instead of creating a duplicate. Keep the operator's own

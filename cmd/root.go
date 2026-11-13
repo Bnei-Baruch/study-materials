@@ -41,6 +41,7 @@ func initConfig() {
 	viper.BindEnv("templates.path", "TEMPLATES_PATH")
 	viper.BindEnv("api.secret_key", "API_SECRET_KEY")
 	viper.BindEnv("bb_lineup.base_url", "BB_LINEUP_URL")
+	viper.BindEnv("bb_lineup.sync_enabled", "BB_LINEUP_SYNC_ENABLED")
 
 	// Read config file (if exists)
 	if err := viper.ReadInConfig(); err != nil {
