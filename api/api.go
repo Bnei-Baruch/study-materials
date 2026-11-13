@@ -24,10 +24,11 @@ type App struct {
 	templateConfig      *storage.TemplateConfig
 	emailService        *EmailService
 	apiSecretKey        string
+	bbLineupBaseURL     string
 }
 
 // NewApp creates a new App instance with dependencies
-func NewApp(partStore storage.PartStore, eventStore storage.EventStore, eventTypeStore storage.EventTypeStore, templateStore storage.TemplateStore, kabbalahmediaClient *kabbalahmedia.Client, templateConfig *storage.TemplateConfig, apiSecretKey string) *App {
+func NewApp(partStore storage.PartStore, eventStore storage.EventStore, eventTypeStore storage.EventTypeStore, templateStore storage.TemplateStore, kabbalahmediaClient *kabbalahmedia.Client, templateConfig *storage.TemplateConfig, apiSecretKey string, bbLineupBaseURL string) *App {
 	return &App{
 		store:               partStore,
 		eventStore:          eventStore,
@@ -37,6 +38,7 @@ func NewApp(partStore storage.PartStore, eventStore storage.EventStore, eventTyp
 		templateConfig:      templateConfig,
 		emailService:        NewEmailService(),
 		apiSecretKey:        apiSecretKey,
+		bbLineupBaseURL:     bbLineupBaseURL,
 	}
 }
 

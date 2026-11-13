@@ -116,8 +116,15 @@ func serverFn(cmd *cobra.Command, args []string) {
 	// Ensure canonical event type colors (fixes legacy DB records)
 	storage.EnsureEventTypeColors(mongoEventTypeStore)
 
+	// bb-lineup base URL (content-planning app synced into LessonParts)
+	bbLineupBaseURL := viper.GetString("bb_lineup.base_url")
+	if bbLineupBaseURL == "" {
+		bbLineupBaseURL = "https://lineup.kab.info"
+	}
+	log.Printf("bb-lineup base URL: %s", bbLineupBaseURL)
+
 	// Start API server with dependencies
-	app := api.NewApp(partStore, eventStore, mongoEventTypeStore, mongoTemplateStore, kabbalahmediaClient, templateConfig, apiSecretKey)
+	app := api.NewApp(partStore, eventStore, mongoEventTypeStore, mongoTemplateStore, kabbalahmediaClient, templateConfig, apiSecretKey, bbLineupBaseURL)
 
 	// Background sync from events.kli.one and bb-lineup every 10 minutes
 	go func() {

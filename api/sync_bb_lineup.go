@@ -55,8 +55,6 @@ func bbAdoptionKey(eventID, slotType, lessonLink, lang string) string {
 	return ""
 }
 
-const bbLineupBaseURL = "http://10.77.1.124:3000"
-
 // bbLineupHorizonBackDays/ForwardDays bound how much of the calendar this sync
 // rescans on every run: recent past (bb-lineup content is sometimes finalized
 // a little late) through the same forward horizon used for regular events.
@@ -135,8 +133,8 @@ type bbLineupArticleSource struct {
 	BookPage   *int   `json:"bookPage"`
 }
 
-func fetchBBLineupWeek(weekStart time.Time) (*bbLineupWeek, error) {
-	url := fmt.Sprintf("%s/api/lineup/%s", bbLineupBaseURL, weekStart.Format("2006-01-02"))
+func fetchBBLineupWeek(baseURL string, weekStart time.Time) (*bbLineupWeek, error) {
+	url := fmt.Sprintf("%s/api/lineup/%s", baseURL, weekStart.Format("2006-01-02"))
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
@@ -452,7 +450,7 @@ func (a *App) SyncBBLineupContent() {
 	created, updated := 0, 0
 
 	for _, ws := range bbLineupWeekStarts(startRange, endRange) {
-		week, err := fetchBBLineupWeek(ws)
+		week, err := fetchBBLineupWeek(a.bbLineupBaseURL, ws)
 		if err != nil {
 			log.Printf("[bb-lineup sync] Fetch %s error: %v", ws.Format("2006-01-02"), err)
 			continue
@@ -772,6 +770,11 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 			}
 			langSources = []storage.Source{}
 			for _, src := range sources {
+				// Volume/page describe the Hebrew edition's own pagination —
+				// a translated edition is a different book with unrelated
+				// page numbers, so they never carry over to other languages.
+				src.Volume = ""
+				src.PageNumber = ""
 				if src.SourceID == "" {
 					langSources = append(langSources, src)
 					continue
@@ -785,8 +788,6 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 					SourceID:    src.SourceID,
 					SourceTitle: t,
 					SourceURL:   fmt.Sprintf("https://kabbalahmedia.info/sources/%s", src.SourceID),
-					Volume:      src.Volume,
-					PageNumber:  src.PageNumber,
 				})
 				// A proper citation (author, article/chapter number, year —
 				// the same style already used on the production site) is the
