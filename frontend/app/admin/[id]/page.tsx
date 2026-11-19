@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
-import { formatEventDate, formatDateTimeInIsraelTimezone, formatDateForInput } from '@/lib/dateUtils'
+import { formatEventDate, formatDateForInput } from '@/lib/dateUtils'
 import Link from 'next/link'
 import EventTypeBadge from '@/components/EventTypeBadge'
 import PartForm from '@/components/PartForm'
@@ -35,8 +35,6 @@ import {
   Search,
   ExternalLink,
   Copy,
-  Send,
-  RefreshCw,
 } from 'lucide-react'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
@@ -1012,37 +1010,6 @@ const fetchEventAndParts = async () => {
     }
   }
 
-  const sendEventEmail = async (isUpdate: boolean = false) => {
-    if (!event) return
-
-    try {
-      const response = await fetch(getApiUrl(`/events/${event.id}/send-email`), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ is_update: isUpdate }),
-      })
-
-      const data = await response.json()
-
-      if (data.already_sent && !isUpdate) {
-        setEmailSentAt(data.sent_at)
-        alert('Email already sent on: ' + formatDateTimeInIsraelTimezone(data.sent_at))
-      } else if (data.success) {
-        setEmailSentAt(data.sent_at)
-        if (isUpdate) {
-          alert('Update email sent successfully!')
-        } else {
-          alert('Email sent successfully!')
-          await fetchEventAndParts() // Refresh to get updated email_sent_at
-        }
-      }
-    } catch (err) {
-      alert('Failed to send email: ' + (err instanceof Error ? err.message : 'Unknown error'))
-    }
-  }
-
   const handlePartCreated = async () => {
     setShowPartForm(false)
     setSelectedLanguage('ALL') // Switch to ALL view to show edit form for all languages
@@ -1210,30 +1177,7 @@ const fetchEventAndParts = async () => {
             </div>
 
             {/* Event Actions Row */}
-            <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => sendEventEmail(false)}
-                  disabled={!!emailSentAt}
-                  className="px-3 py-1.5 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ fontSize: '12px' }}
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  Send Mail
-                </button>
-
-                {emailSentAt && (
-                  <button
-                    onClick={() => sendEventEmail(true)}
-                    className="px-3 py-1.5 border border-purple-300 text-purple-700 rounded-lg hover:bg-purple-50 transition-colors flex items-center gap-2"
-                    style={{ fontSize: '12px' }}
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    Update Mail
-                  </button>
-                )}
-              </div>
-
+            <div className="pt-4 border-t border-gray-100 flex items-center justify-end">
               {/* Edit, Duplicate, Delete Buttons */}
               <div className="flex items-center gap-2">
                 {editingEvent && (
