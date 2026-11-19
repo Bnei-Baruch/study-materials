@@ -298,21 +298,11 @@ func (a *App) HandleGetEventParts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get all parts and filter by event_id
-	allParts, err := a.store.ListParts()
+	// Get parts for this event, filtered at the query level
+	eventParts, err := a.store.ListPartsByEvent(eventID, languageFilter)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to list parts: %v", err), http.StatusInternalServerError)
 		return
-	}
-
-	var eventParts []*storage.LessonPart
-	for _, part := range allParts {
-		if part.EventID == eventID {
-			// Apply language filter if provided
-			if languageFilter == "" || part.Language == languageFilter {
-				eventParts = append(eventParts, part)
-			}
-		}
 	}
 
 	// Sort by order, then by language for consistent ordering

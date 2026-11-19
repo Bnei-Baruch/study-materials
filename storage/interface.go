@@ -7,6 +7,8 @@ type PartStore interface {
 	SavePart(part *LessonPart) error
 	GetPart(id string) (*LessonPart, error)
 	ListParts() ([]*LessonPart, error)
+	ListPartsByEvent(eventID, language string) ([]*LessonPart, error)
+	CountPartsByLanguageGroupedByEvent(language string) (map[string]int, error)
 	DeletePart(id string) error
 }
 

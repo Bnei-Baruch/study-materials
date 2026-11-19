@@ -251,13 +251,10 @@ func (a *App) HandleListEvents(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Annotate each event with the number of Hebrew parts attached to it
-	partCounts := map[string]int{}
-	if parts, perr := a.store.ListParts(); perr == nil {
-		for _, p := range parts {
-			if p.EventID != "" && p.Language == "he" {
-				partCounts[p.EventID]++
-			}
-		}
+	partCounts, err := a.store.CountPartsByLanguageGroupedByEvent("he")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to count parts: %v", err), http.StatusInternalServerError)
+		return
 	}
 	type eventWithParts struct {
 		storage.Event

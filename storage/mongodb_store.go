@@ -140,6 +140,67 @@ func (s *MongoDBStore) ListParts() ([]*LessonPart, error) {
 	return parts, nil
 }
 
+// ListPartsByEvent returns parts for a single event, optionally filtered by language.
+// language == "" matches all languages for that event.
+func (s *MongoDBStore) ListPartsByEvent(eventID, language string) ([]*LessonPart, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	filter := bson.M{"event_id": eventID}
+	if language != "" {
+		filter["language"] = language
+	}
+
+	cursor, err := s.collection.Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list parts by event: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var parts []*LessonPart
+	if err = cursor.All(ctx, &parts); err != nil {
+		return nil, fmt.Errorf("failed to decode parts: %w", err)
+	}
+
+	return parts, nil
+}
+
+// CountPartsByLanguageGroupedByEvent returns, for the given language, a map of
+// event_id -> number of parts in that language.
+func (s *MongoDBStore) CountPartsByLanguageGroupedByEvent(language string) (map[string]int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: bson.D{{Key: "language", Value: language}}}},
+		{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: "$event_id"},
+			{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},
+		}}},
+	}
+
+	cursor, err := s.collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, fmt.Errorf("failed to aggregate part counts: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var results []struct {
+		EventID string `bson:"_id"`
+		Count   int    `bson:"count"`
+	}
+	if err = cursor.All(ctx, &results); err != nil {
+		return nil, fmt.Errorf("failed to decode part counts: %w", err)
+	}
+
+	counts := make(map[string]int, len(results))
+	for _, r := range results {
+		counts[r.EventID] = r.Count
+	}
+
+	return counts, nil
+}
+
 // DeletePart deletes a lesson part by ID
 func (s *MongoDBStore) DeletePart(id string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
