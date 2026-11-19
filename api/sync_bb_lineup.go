@@ -62,10 +62,14 @@ func bbAdoptionKeys(eventID, slotType, lessonLink string, partNumber int, lang s
 }
 
 // bbLineupHorizonBackDays/ForwardDays bound how much of the calendar this sync
-// rescans on every run: recent past (bb-lineup content is sometimes finalized
-// a little late) through the same forward horizon used for regular events.
+// rescans on every run. Back is 0 — future-only, on purpose: rescanning past
+// events meant every run could silently overwrite a manual correction made
+// to already-published content (titles, translated sources, custom links)
+// for as long as the sync stayed on, which is exactly what happened here.
+// Only touching what hasn't aired yet means a manual fix made once, after a
+// lesson airs, is never touched again.
 const (
-	bbLineupHorizonBackDays    = 30
+	bbLineupHorizonBackDays    = 0
 	bbLineupHorizonForwardDays = 30
 )
 
@@ -685,7 +689,7 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 	// Sources and custom links accumulate across every slot in the section
 	// (deduped by URL) — this is exactly what "several links under one
 	// part" means: the section's whole material, not just the primary's.
-	var sources []storage.Source
+	sources := []storage.Source{} // never nil — a nil slice serializes to JSON null and crashes the admin UI
 	seenSourceURL := map[string]int{} // URL -> index into sources
 	var customLinks []storage.CustomLink
 	seenLinkURL := map[string]bool{}
