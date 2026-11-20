@@ -122,6 +122,23 @@ interface CustomLink {
   url: string
 }
 
+interface PendingSync {
+  title?: string
+  description?: string
+  date?: string
+  part_number?: number
+  order?: number
+  lesson_link?: string
+  transcript_link?: string
+  lineup_for_hosts_link?: string
+  program_link?: string
+  recorded_lesson_date?: string
+  reading_before_sleep_link?: string
+  lesson_preparation_link?: string
+  sources?: Source[]
+  custom_links?: CustomLink[]
+}
+
 interface Part {
   id: string
   title: string
@@ -144,6 +161,43 @@ interface Part {
   lineup_for_hosts_link?: string
   custom_links?: CustomLink[]
   show_updated_badge?: boolean
+  pending_sync?: PendingSync
+}
+
+// PendingSyncBadge: shown next to a field's read-mode display when bb-lineup
+// has a newer value than what's live, because an operator's edit diverged
+// from what the sync last wrote. Clicking it accepts lineup's value for just
+// that field. Hidden while the part is open in the inline editor to avoid a
+// race between an unsaved draft and this server-side accept call.
+function PendingSyncBadge({
+  part,
+  field,
+  isEditing,
+  onAccept,
+}: {
+  part: Part
+  field: string
+  isEditing: boolean
+  onAccept: (partId: string, field: string) => void
+}) {
+  const pendingValue = part.pending_sync?.[field as keyof PendingSync]
+  if (pendingValue === undefined || pendingValue === null || isEditing) return null
+
+  const preview = Array.isArray(pendingValue) ? `${pendingValue.length} item(s)` : String(pendingValue)
+
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation()
+        onAccept(part.id, field)
+      }}
+      title={`Lineup has a newer value: "${preview}"`}
+      className="ml-2 text-xs font-medium px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
+    >
+      ⟳ newer lineup value
+    </button>
+  )
 }
 
 export default function AdminEventDetailPage() {
@@ -282,6 +336,18 @@ function AdminEventDetailPageContent() {
     fetchTemplates()
   }, [])
 
+
+const acceptPendingSync = async (partId: string, field: string) => {
+    try {
+      const res = await fetch(getApiUrl(`/parts/${partId}/accept-pending/${field}`), {
+        method: 'POST',
+      })
+      if (!res.ok) throw new Error(`Failed to accept pending ${field}`)
+      await fetchEventAndParts()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to accept pending value')
+    }
+  }
 
 const fetchEventAndParts = async () => {
     try {
@@ -1641,12 +1707,14 @@ const fetchEventAndParts = async () => {
                                 {/* Title */}
                                 <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '13px' }}>
                                   {langPart.title}
+                                  <PendingSyncBadge part={langPart} field="title" isEditing={isEditingThisOrder} onAccept={acceptPendingSync} />
                                 </p>
 
                                 {/* Description */}
                                 {langPart.description && (
                                   <p className="text-gray-600 mb-3" style={{ fontSize: '13px' }}>
                                     {langPart.description}
+                                    <PendingSyncBadge part={langPart} field="description" isEditing={isEditingThisOrder} onAccept={acceptPendingSync} />
                                   </p>
                                 )}
 
@@ -2444,12 +2512,14 @@ const fetchEventAndParts = async () => {
                           {/* Title */}
                           <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '13px' }}>
                             {part.title}
+                            <PendingSyncBadge part={part} field="title" isEditing={isEditing} onAccept={acceptPendingSync} />
                           </p>
 
                           {/* Description */}
                           {part.description && (
                             <p className="text-gray-600 mb-3" style={{ fontSize: '13px' }}>
                               {part.description}
+                              <PendingSyncBadge part={part} field="description" isEditing={isEditing} onAccept={acceptPendingSync} />
                             </p>
                           )}
 

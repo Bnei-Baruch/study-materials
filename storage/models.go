@@ -28,6 +28,71 @@ type LessonPart struct {
 	ShowUpdatedBadge       bool         `json:"show_updated_badge" bson:"show_updated_badge"`
 	CreatedAt              time.Time    `json:"created_at" bson:"created_at"`
 	ExternalID             string       `json:"external_id,omitempty" bson:"external_id,omitempty"` // External system ID for synced parts (bb-lineup slot id)
+	// SyncBaseline is bb-lineup sync's private "last value I wrote" memory — nil
+	// means this part has never been synced, or predates this field. Never
+	// exposed over the API.
+	SyncBaseline *LessonPartSyncBaseline `json:"-" bson:"sync_baseline,omitempty"`
+	// PendingSync holds fresh bb-lineup values the sync couldn't apply because
+	// a field had diverged from baseline. Exposed over the API so the admin UI
+	// can render a per-field "lineup has a newer version" badge.
+	PendingSync *LessonPartSyncPending `json:"pending_sync,omitempty" bson:"pending_sync,omitempty"`
+}
+
+// LessonPartSyncBaseline is bb-lineup sync's private memory of the last value IT
+// wrote to each sync-owned, admin-editable field. Compared against the live
+// field on every sync run: live == baseline means no one has touched the field
+// since the last sync write (safe to refresh); live != baseline means something
+// changed it since (leave it alone). Never exposed over the API.
+type LessonPartSyncBaseline struct {
+	Title                  string       `bson:"title"`
+	Description            string       `bson:"description"`
+	Date                   time.Time    `bson:"date"`
+	PartNumber             *int         `bson:"part_number"`
+	Order                  int          `bson:"order"`
+	LessonLink             string       `bson:"lesson_link"`
+	TranscriptLink         string       `bson:"transcript_link"`
+	LineupForHostsLink     string       `bson:"lineup_for_hosts_link"`
+	ProgramLink            string       `bson:"program_link"`
+	RecordedLessonDate     string       `bson:"recorded_lesson_date"`
+	ReadingBeforeSleepLink string       `bson:"reading_before_sleep_link"`
+	LessonPreparationLink  string       `bson:"lesson_preparation_link"`
+	Sources                []Source     `bson:"sources"`
+	CustomLinks            []CustomLink `bson:"custom_links"`
+}
+
+// LessonPartSyncPending holds, per tracked field, the freshest bb-lineup value
+// the sync computed on its most recent run while that field was diverged from
+// baseline — so the admin UI can show "lineup has a newer version" and let the
+// operator accept it. A nil pointer means "nothing pending right now"; pointer
+// types (including for slices) exist purely to distinguish "nothing pending"
+// from "pending value happens to be the zero value".
+type LessonPartSyncPending struct {
+	Title                  *string       `json:"title,omitempty" bson:"title,omitempty"`
+	Description            *string       `json:"description,omitempty" bson:"description,omitempty"`
+	Date                   *time.Time    `json:"date,omitempty" bson:"date,omitempty"`
+	PartNumber             *int          `json:"part_number,omitempty" bson:"part_number,omitempty"`
+	Order                  *int          `json:"order,omitempty" bson:"order,omitempty"`
+	LessonLink             *string       `json:"lesson_link,omitempty" bson:"lesson_link,omitempty"`
+	TranscriptLink         *string       `json:"transcript_link,omitempty" bson:"transcript_link,omitempty"`
+	LineupForHostsLink     *string       `json:"lineup_for_hosts_link,omitempty" bson:"lineup_for_hosts_link,omitempty"`
+	ProgramLink            *string       `json:"program_link,omitempty" bson:"program_link,omitempty"`
+	RecordedLessonDate     *string       `json:"recorded_lesson_date,omitempty" bson:"recorded_lesson_date,omitempty"`
+	ReadingBeforeSleepLink *string       `json:"reading_before_sleep_link,omitempty" bson:"reading_before_sleep_link,omitempty"`
+	LessonPreparationLink  *string       `json:"lesson_preparation_link,omitempty" bson:"lesson_preparation_link,omitempty"`
+	Sources                *[]Source     `json:"sources,omitempty" bson:"sources,omitempty"`
+	CustomLinks            *[]CustomLink `json:"custom_links,omitempty" bson:"custom_links,omitempty"`
+}
+
+// IsEmpty reports whether no field currently has a pending sync value.
+func (p *LessonPartSyncPending) IsEmpty() bool {
+	if p == nil {
+		return true
+	}
+	return p.Title == nil && p.Description == nil && p.Date == nil && p.PartNumber == nil &&
+		p.Order == nil && p.LessonLink == nil && p.TranscriptLink == nil &&
+		p.LineupForHostsLink == nil && p.ProgramLink == nil && p.RecordedLessonDate == nil &&
+		p.ReadingBeforeSleepLink == nil && p.LessonPreparationLink == nil &&
+		p.Sources == nil && p.CustomLinks == nil
 }
 
 // Source represents a study source from kabbalahmedia

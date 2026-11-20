@@ -152,6 +152,7 @@ func (a *App) initRouters() {
 	a.router.HandleFunc("/api/parts/{id}", a.HandleGetPart).Methods(http.MethodGet, http.MethodOptions)
 	a.router.HandleFunc("/api/parts/{id}", a.HandleUpdatePart).Methods(http.MethodPut, http.MethodOptions)
 	a.router.HandleFunc("/api/parts/{id}", a.HandleDeletePart).Methods(http.MethodDelete, http.MethodOptions)
+	a.router.HandleFunc("/api/parts/{id}/accept-pending/{field}", a.HandleAcceptPendingSync).Methods(http.MethodPost, http.MethodOptions)
 	a.router.HandleFunc("/api/sources/search", a.HandleSearchSources).Methods(http.MethodGet, http.MethodOptions)
 	a.router.HandleFunc("/api/sources/title", a.HandleGetSourceTitle).Methods(http.MethodGet, http.MethodOptions)
 
