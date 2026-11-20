@@ -105,8 +105,24 @@ func (c *Client) SearchSources(query string) ([]SourceResult, error) {
 	return results, nil
 }
 
+// kabbalahmediaLangCode maps our own language codes to the 2-letter codes
+// kabbalahmedia's sqdata API requires (it rejects anything else with
+// "Language must be 2 characters long") — "pt-BR" is the only one of our 11
+// codes that isn't already 2 characters, but this handles any future
+// "xx-YY"-style code the same way rather than special-casing just this one.
+func kabbalahmediaLangCode(lang string) string {
+	if len(lang) == 2 {
+		return lang
+	}
+	if i := strings.Index(lang, "-"); i == 2 {
+		return lang[:2]
+	}
+	return lang
+}
+
 // ensureSourcesCacheForLanguage fetches and caches sources for a specific language
 func (c *Client) ensureSourcesCacheForLanguage(lang string) error {
+	lang = kabbalahmediaLangCode(lang)
 	cacheMutex.RLock()
 	if cachedSources[lang] != nil {
 		cacheMutex.RUnlock()
@@ -182,6 +198,7 @@ func (c *Client) searchNodeMultiLang(node SourceNode, path string, query string,
 
 // GetSourceTitle retrieves the title of a source in a specific language
 func (c *Client) GetSourceTitle(sourceID string, language string) (string, error) {
+	language = kabbalahmediaLangCode(language)
 	// Ensure cache is loaded for the requested language
 	if err := c.ensureSourcesCacheForLanguage(language); err != nil {
 		return "", fmt.Errorf("failed to load sources for language %s: %w", language, err)
@@ -301,6 +318,7 @@ func hebrewVolumeLetter(n int) string {
 // (studyMaterialSource.bookVolume / .bookPage), since the kabbalahmedia tree
 // itself has no concept of volumes or page numbers.
 func (c *Client) GetSourceCitation(sourceID string, language string, volume string, pageNumber string) (string, error) {
+	language = kabbalahmediaLangCode(language)
 	if err := c.ensureSourcesCacheForLanguage(language); err != nil {
 		return "", fmt.Errorf("failed to load sources for language %s: %w", language, err)
 	}

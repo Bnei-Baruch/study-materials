@@ -16,6 +16,57 @@ import (
 
 var bbLessonIDPattern = regexp.MustCompile(`/cu/([A-Za-z0-9]+)`)
 var bbSourceIDPattern = regexp.MustCompile(`/sources/([A-Za-z0-9]+)`)
+var kabbalahmediaHePrefixPattern = regexp.MustCompile(`^(https?://kabbalahmedia\.info)/he(/.*)$`)
+
+// localizeKabMediaLink strips a leading "/he" path segment from a
+// kabbalahmedia.info URL for any non-Hebrew language. bb-lineup's own data
+// is Hebrew-origin, so every link it gives us (lesson links, lineup docs,
+// marked-article custom links, ...) comes pre-baked with "/he/" and would
+// otherwise be reused verbatim across all 11 languages — kabbalahmedia's
+// client already resolves the visitor's own language dynamically when no
+// language segment is present, so a bare (no-prefix) URL is correct for
+// every language except Hebrew, which keeps "/he/" as-is. A no-op for
+// empty strings or URLs that don't match (e.g. non-kabbalahmedia domains).
+func localizeKabMediaLink(url, lang string) string {
+	if lang == "he" || url == "" {
+		return url
+	}
+	return kabbalahmediaHePrefixPattern.ReplaceAllString(url, "$1$2")
+}
+
+// localizeKabMediaSourceLink is localizeKabMediaLink's counterpart
+// specifically for .../sources/ links: bb-lineup's own source links carry a
+// Hebrew-text-excerpt highlight (srchstart/srchend/source_language) or page
+// anchor in the query string, which only makes sense against the Hebrew
+// edition's text — a translated edition is a different text with unrelated
+// offsets/pages, so the whole query string is dropped for every other
+// language, on top of the usual "/he/" prefix strip. Unlike lesson/program
+// links (where the query string is the video clip/slide selector and must be
+// kept for every language), this is the one link kind where "drop everything
+// after ?" is actually correct.
+func localizeKabMediaSourceLink(url, lang string) string {
+	url = localizeKabMediaLink(url, lang)
+	if lang == "he" || url == "" {
+		return url
+	}
+	if i := strings.IndexByte(url, '?'); i != -1 {
+		url = url[:i]
+	}
+	return url
+}
+
+// localizeKabMediaCustomLinkURL picks the right localizer for a custom
+// link's URL: bb-lineup's custom-links list can itself contain a plain
+// .../sources/ link (an editor pasting a source excerpt as a "custom" link
+// rather than it coming through the dedicated Sources field), which needs
+// the same query-string drop as localizeKabMediaSourceLink; anything else
+// (Google Docs, lineup docs, ...) only gets the usual "/he/" prefix strip.
+func localizeKabMediaCustomLinkURL(url, lang string) string {
+	if bbSourceIDPattern.MatchString(url) {
+		return localizeKabMediaSourceLink(url, lang)
+	}
+	return localizeKabMediaLink(url, lang)
+}
 
 // extractSourceID pulls the kabbalahmedia catalog ID out of a source URL
 // (e.g. ".../sources/cQYbzWhd" or ".../he/sources/hwh1BLAL?page=50") — the ID
@@ -62,10 +113,14 @@ func bbAdoptionKeys(eventID, slotType, lessonLink string, partNumber int, lang s
 }
 
 // bbLineupHorizonBackDays/ForwardDays bound how much of the calendar this sync
-// rescans on every run: recent past (bb-lineup content is sometimes finalized
-// a little late) through the same forward horizon used for regular events.
+// rescans on every run. Back is 0 — future-only, on purpose: rescanning past
+// events meant every run could silently overwrite a manual correction made
+// to already-published content (titles, translated sources, custom links)
+// for as long as the sync stayed on, which is exactly what happened here.
+// Only touching what hasn't aired yet means a manual fix made once, after a
+// lesson airs, is never touched again.
 const (
-	bbLineupHorizonBackDays    = 30
+	bbLineupHorizonBackDays    = 0
 	bbLineupHorizonForwardDays = 30
 )
 
@@ -685,7 +740,7 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 	// Sources and custom links accumulate across every slot in the section
 	// (deduped by URL) — this is exactly what "several links under one
 	// part" means: the section's whole material, not just the primary's.
-	var sources []storage.Source
+	sources := []storage.Source{} // never nil — a nil slice serializes to JSON null and crashes the admin UI
 	seenSourceURL := map[string]int{} // URL -> index into sources
 	var customLinks []storage.CustomLink
 	seenLinkURL := map[string]bool{}
@@ -830,6 +885,7 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 				// page numbers, so they never carry over to other languages.
 				src.Volume = ""
 				src.PageNumber = ""
+				src.SourceURL = localizeKabMediaSourceLink(src.SourceURL, lang)
 				if src.SourceID == "" {
 					langSources = append(langSources, src)
 					continue
@@ -859,6 +915,24 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 			}
 		}
 
+		// bb-lineup's own links are Hebrew-origin — drop the "/he/" prefix
+		// for every other language (see localizeKabMediaLink). The raw,
+		// un-localized lessonLink is still used below for adoption-key
+		// matching, since extractLessonID pulls the same /cu/ID regardless
+		// of language prefix.
+		langLessonLink := localizeKabMediaLink(lessonLink, lang)
+		langLineupLink := localizeKabMediaLink(lineupLink, lang)
+		langProgramLink := localizeKabMediaLink(programLink, lang)
+		langLessonPreparationLink := localizeKabMediaLink(lessonPreparationLink, lang)
+		langReadingBeforeSleepLink := localizeKabMediaLink(readingBeforeSleepLink, lang)
+		langCustomLinks := customLinks
+		if lang != "he" {
+			langCustomLinks = make([]storage.CustomLink, len(customLinks))
+			for i, cl := range customLinks {
+				langCustomLinks[i] = storage.CustomLink{Title: cl.Title, URL: localizeKabMediaCustomLinkURL(cl.URL, lang)}
+			}
+		}
+
 		key := s.ID + "|" + lang + "|" + event.ID
 		adoptKey := ""
 		for _, k := range bbAdoptionKeys(event.ID, s.SlotType, lessonLink, partNumber, lang) {
@@ -868,28 +942,15 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 			}
 		}
 		if existing, ok := existingByExtLang[key]; ok {
-			// bb-lineup is the source of truth for Title, same as every other
-			// synced field — always take the freshly computed value (a
-			// template pick, updated host names, ...) unless it comes back
-			// empty, rather than freezing whatever was there at first sync.
-			if title != "" {
-				existing.Title = title
-			}
-			existing.PartType = partType
-			existing.Date = event.Date
-			existing.EventID = event.ID
-			existing.PartNumber = &partNumber
-			existing.Order = order
-			existing.Description = description
-			existing.LessonLink = lessonLink
-			existing.TranscriptLink = transcript
-			existing.LineupForHostsLink = lineupLink
-			existing.ProgramLink = programLink
-			existing.RecordedLessonDate = recDate
-			existing.ReadingBeforeSleepLink = readingBeforeSleepLink
-			existing.LessonPreparationLink = lessonPreparationLink
-			existing.Sources = langSources
-			existing.CustomLinks = customLinks
+			applyBBLineupSync(existing, bbLineupFreshFields{
+				PartType: partType, EventID: event.ID,
+				Title: title, Description: description, Date: event.Date,
+				PartNumber: partNumber, Order: order,
+				LessonLink: langLessonLink, TranscriptLink: transcript, LineupForHostsLink: langLineupLink,
+				ProgramLink: langProgramLink, RecordedLessonDate: recDate,
+				ReadingBeforeSleepLink: langReadingBeforeSleepLink, LessonPreparationLink: langLessonPreparationLink,
+				Sources: langSources, CustomLinks: langCustomLinks,
+			})
 			if err := a.store.SavePart(existing); err != nil {
 				log.Printf("[bb-lineup sync] Update part %s error: %v", key, err)
 				continue
@@ -898,23 +959,45 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 		} else if adoptKey != "" {
 			// A manually-created part already covers this exact lesson (or,
 			// for lesson_preparation, is the event's one prep slot) — adopt
-			// it instead of creating a duplicate. Keep the operator's own
-			// title; only take over the technical fields bb-lineup owns.
+			// it instead of creating a duplicate. Any tracked field the
+			// operator already filled in before this slot existed upstream
+			// is preserved, with bb-lineup's value offered as a pending/
+			// accept badge — same treatment as an edit made after normal
+			// sync ownership begins. Anything left at its zero value is
+			// filled in from bb-lineup. Order always comes from bb-lineup at
+			// adoption (auto-assigned on manual creation, not a deliberate
+			// operator choice; must stay consistent with other synced
+			// content's ordering).
 			existing := existingByEventLesson[adoptKey]
 			existing.ExternalID = s.ID
 			existing.PartType = partType
-			existing.PartNumber = &partNumber
+			existing.Date = event.Date
+			existing.EventID = event.ID
 			existing.Order = order
-			existing.Description = description
-			existing.LessonLink = lessonLink
-			existing.TranscriptLink = transcript
-			existing.LineupForHostsLink = lineupLink
-			existing.ProgramLink = programLink
-			existing.RecordedLessonDate = recDate
-			existing.ReadingBeforeSleepLink = readingBeforeSleepLink
-			existing.LessonPreparationLink = lessonPreparationLink
-			existing.Sources = langSources
-			existing.CustomLinks = customLinks
+
+			p := &storage.LessonPartSyncPending{}
+			if title != "" {
+				adoptScalarField(&existing.Title, title, &p.Title)
+			}
+			adoptScalarField(&existing.Description, description, &p.Description)
+			adoptScalarField(&existing.LessonLink, langLessonLink, &p.LessonLink)
+			adoptScalarField(&existing.TranscriptLink, transcript, &p.TranscriptLink)
+			adoptScalarField(&existing.LineupForHostsLink, langLineupLink, &p.LineupForHostsLink)
+			adoptScalarField(&existing.ProgramLink, langProgramLink, &p.ProgramLink)
+			adoptScalarField(&existing.RecordedLessonDate, recDate, &p.RecordedLessonDate)
+			adoptScalarField(&existing.ReadingBeforeSleepLink, langReadingBeforeSleepLink, &p.ReadingBeforeSleepLink)
+			adoptScalarField(&existing.LessonPreparationLink, langLessonPreparationLink, &p.LessonPreparationLink)
+			adoptSliceField(&existing.Sources, langSources, &p.Sources)
+			adoptSliceField(&existing.CustomLinks, langCustomLinks, &p.CustomLinks)
+			adoptPartNumberField(existing, partNumber, p)
+
+			existing.SyncBaseline = newSyncBaseline(existing)
+			if p.IsEmpty() {
+				existing.PendingSync = nil
+			} else {
+				existing.PendingSync = p
+			}
+
 			if err := a.store.SavePart(existing); err != nil {
 				log.Printf("[bb-lineup sync] Adopt part %s error: %v", key, err)
 				continue
@@ -933,16 +1016,17 @@ func (a *App) upsertBBLineupPart(item bbContentItem, event storage.Event, order 
 				EventID:            event.ID,
 				PartNumber:         &partNumber,
 				Order:              order,
-				LessonLink:             lessonLink,
+				LessonLink:             langLessonLink,
 				TranscriptLink:         transcript,
-				LineupForHostsLink:     lineupLink,
-				ProgramLink:            programLink,
+				LineupForHostsLink:     langLineupLink,
+				ProgramLink:            langProgramLink,
 				RecordedLessonDate:     recDate,
-				ReadingBeforeSleepLink: readingBeforeSleepLink,
-				LessonPreparationLink:  lessonPreparationLink,
+				ReadingBeforeSleepLink: langReadingBeforeSleepLink,
+				LessonPreparationLink:  langLessonPreparationLink,
 				Sources:                langSources,
-				CustomLinks:            customLinks,
+				CustomLinks:            langCustomLinks,
 			}
+			p.SyncBaseline = newSyncBaseline(p)
 			if err := a.store.SavePart(p); err != nil {
 				log.Printf("[bb-lineup sync] Create part %s error: %v", key, err)
 				continue

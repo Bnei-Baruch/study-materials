@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { getApiUrl } from '@/lib/api'
-import { formatEventDate, formatDateTimeInIsraelTimezone, formatDateForInput } from '@/lib/dateUtils'
+import { formatEventDate, formatDateForInput } from '@/lib/dateUtils'
 import Link from 'next/link'
 import EventTypeBadge from '@/components/EventTypeBadge'
 import PartForm from '@/components/PartForm'
@@ -35,8 +35,6 @@ import {
   Search,
   ExternalLink,
   Copy,
-  Send,
-  RefreshCw,
 } from 'lucide-react'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
@@ -124,6 +122,23 @@ interface CustomLink {
   url: string
 }
 
+interface PendingSync {
+  title?: string
+  description?: string
+  date?: string
+  part_number?: number
+  order?: number
+  lesson_link?: string
+  transcript_link?: string
+  lineup_for_hosts_link?: string
+  program_link?: string
+  recorded_lesson_date?: string
+  reading_before_sleep_link?: string
+  lesson_preparation_link?: string
+  sources?: Source[]
+  custom_links?: CustomLink[]
+}
+
 interface Part {
   id: string
   title: string
@@ -146,6 +161,43 @@ interface Part {
   lineup_for_hosts_link?: string
   custom_links?: CustomLink[]
   show_updated_badge?: boolean
+  pending_sync?: PendingSync
+}
+
+// PendingSyncBadge: shown next to a field's read-mode display when bb-lineup
+// has a newer value than what's live, because an operator's edit diverged
+// from what the sync last wrote. Clicking it accepts lineup's value for just
+// that field. Hidden while the part is open in the inline editor to avoid a
+// race between an unsaved draft and this server-side accept call.
+function PendingSyncBadge({
+  part,
+  field,
+  isEditing,
+  onAccept,
+}: {
+  part: Part
+  field: string
+  isEditing: boolean
+  onAccept: (partId: string, field: string) => void
+}) {
+  const pendingValue = part.pending_sync?.[field as keyof PendingSync]
+  if (pendingValue === undefined || pendingValue === null || isEditing) return null
+
+  const preview = Array.isArray(pendingValue) ? `${pendingValue.length} item(s)` : String(pendingValue)
+
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation()
+        onAccept(part.id, field)
+      }}
+      title={`Lineup has a newer value: "${preview}"`}
+      className="ml-2 text-xs font-medium px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
+    >
+      ⟳ newer lineup value
+    </button>
+  )
 }
 
 export default function AdminEventDetailPage() {
@@ -284,6 +336,18 @@ function AdminEventDetailPageContent() {
     fetchTemplates()
   }, [])
 
+
+const acceptPendingSync = async (partId: string, field: string) => {
+    try {
+      const res = await fetch(getApiUrl(`/parts/${partId}/accept-pending/${field}`), {
+        method: 'POST',
+      })
+      if (!res.ok) throw new Error(`Failed to accept pending ${field}`)
+      await fetchEventAndParts()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to accept pending value')
+    }
+  }
 
 const fetchEventAndParts = async () => {
     try {
@@ -1012,37 +1076,6 @@ const fetchEventAndParts = async () => {
     }
   }
 
-  const sendEventEmail = async (isUpdate: boolean = false) => {
-    if (!event) return
-
-    try {
-      const response = await fetch(getApiUrl(`/events/${event.id}/send-email`), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ is_update: isUpdate }),
-      })
-
-      const data = await response.json()
-
-      if (data.already_sent && !isUpdate) {
-        setEmailSentAt(data.sent_at)
-        alert('Email already sent on: ' + formatDateTimeInIsraelTimezone(data.sent_at))
-      } else if (data.success) {
-        setEmailSentAt(data.sent_at)
-        if (isUpdate) {
-          alert('Update email sent successfully!')
-        } else {
-          alert('Email sent successfully!')
-          await fetchEventAndParts() // Refresh to get updated email_sent_at
-        }
-      }
-    } catch (err) {
-      alert('Failed to send email: ' + (err instanceof Error ? err.message : 'Unknown error'))
-    }
-  }
-
   const handlePartCreated = async () => {
     setShowPartForm(false)
     setSelectedLanguage('ALL') // Switch to ALL view to show edit form for all languages
@@ -1210,30 +1243,7 @@ const fetchEventAndParts = async () => {
             </div>
 
             {/* Event Actions Row */}
-            <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => sendEventEmail(false)}
-                  disabled={!!emailSentAt}
-                  className="px-3 py-1.5 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ fontSize: '12px' }}
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  Send Mail
-                </button>
-
-                {emailSentAt && (
-                  <button
-                    onClick={() => sendEventEmail(true)}
-                    className="px-3 py-1.5 border border-purple-300 text-purple-700 rounded-lg hover:bg-purple-50 transition-colors flex items-center gap-2"
-                    style={{ fontSize: '12px' }}
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    Update Mail
-                  </button>
-                )}
-              </div>
-
+            <div className="pt-4 border-t border-gray-100 flex items-center justify-end">
               {/* Edit, Duplicate, Delete Buttons */}
               <div className="flex items-center gap-2">
                 {editingEvent && (
@@ -1697,12 +1707,14 @@ const fetchEventAndParts = async () => {
                                 {/* Title */}
                                 <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '13px' }}>
                                   {langPart.title}
+                                  <PendingSyncBadge part={langPart} field="title" isEditing={isEditingThisOrder} onAccept={acceptPendingSync} />
                                 </p>
 
                                 {/* Description */}
                                 {langPart.description && (
                                   <p className="text-gray-600 mb-3" style={{ fontSize: '13px' }}>
                                     {langPart.description}
+                                    <PendingSyncBadge part={langPart} field="description" isEditing={isEditingThisOrder} onAccept={acceptPendingSync} />
                                   </p>
                                 )}
 
@@ -2500,12 +2512,14 @@ const fetchEventAndParts = async () => {
                           {/* Title */}
                           <p className="text-gray-700 font-medium mb-2" style={{ fontSize: '13px' }}>
                             {part.title}
+                            <PendingSyncBadge part={part} field="title" isEditing={isEditing} onAccept={acceptPendingSync} />
                           </p>
 
                           {/* Description */}
                           {part.description && (
                             <p className="text-gray-600 mb-3" style={{ fontSize: '13px' }}>
                               {part.description}
+                              <PendingSyncBadge part={part} field="description" isEditing={isEditing} onAccept={acceptPendingSync} />
                             </p>
                           )}
 
